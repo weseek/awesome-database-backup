@@ -1,0 +1,21 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "baseUrl": ".",
+    "paths": {
+      "~/*": ["./*"],
+      "@awesome-backup/*": ["../*/src"],
+    }
+  },
+  "include": [
+    "src",
+    "bin"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "src/public/**",
+    "**/*.test.ts"
+  ],
+}

@@ -1,0 +1,12 @@
+{
+  /* default compiler options */
+  "compilerOptions": {
+    "strict": true,
+    "declaration": true,
+    "noResolve": false,
+    "preserveConstEnums": true,
+    "sourceMap": true,
+    "noEmit": false,
+    "inlineSources": true
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "name": "core",
+  "version": "0.0.1",
+  "description": "core module of awesome-backup",
+  "author": "Ryu Sato <ryu@weseek.co.jp>",
+  "license": "MIT",
+  "homepage": "https://github.com/ryu-sato/awesome-backup#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ryu-sato/awesome-backup.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ryu-sato/awesome-backup/issues"
+  },
+  "main": "dist/index.js",
+  "directories": {
+    "test": "__tests__"
+  },
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "tsc-alias": "^1.5.0",
+    "typescript": "^4.5.4"
+  },
+  "devDependencies": {
+    "@types/node": "^17.0.4"
+  },
+  "engines": {
+    "node": ">= 14 < 15",
+    "yarn": ">= 1.22.4"
+  }
+}
