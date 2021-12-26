@@ -10,12 +10,12 @@
   },
   "include": [
     "src",
-    "bin"
+    "bin",
+    "__tests__/**/*.test.ts"
   ],
   "exclude": [
     "node_modules",
     "dist",
-    "src/public/**",
-    "**/*.test.ts"
-  ],
+    "src/public/**"
+  ]
 }
