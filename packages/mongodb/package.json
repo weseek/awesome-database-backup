@@ -13,7 +13,7 @@
     "url": "https://github.com/ryu-sato/awesome-backup/issues"
   },
   "main": "dist/mongodb/src/index.js",
-  "types": "src/index.ts",
+  "types": "dist/mongodb/src/index.d.ts",
   "directories": {
     "test": "__tests__"
   },
