@@ -22,7 +22,9 @@
   ],
   "scripts": {
     "build": "tsc && tsc-alias",
-    "test": "cross-env NODE_ENV=test jest --passWithNoTests"
+    "test": "cross-env NODE_ENV=test jest --passWithNoTests",
+    "lint": "eslint src --ext .ts",
+    "lint:fix": "eslint src --ext .ts --fix"
   },
   "dependencies": {
     "@awesome-backup/core": "^0.0.1",
@@ -39,7 +41,15 @@
     "@babel/preset-typescript": "^7.16.5",
     "@types/jest": "^27.0.3",
     "@types/node": "^14.17.0",
+    "@typescript-eslint/eslint-plugin": "^5.8.1",
+    "@typescript-eslint/parser": "^5.8.1",
+    "babel-eslint": "^10.1.0",
     "babel-jest": "^27.4.5",
+    "eslint": "^8.5.0",
+    "eslint-config-weseek": "^1.1.0",
+    "eslint-import-resolver-typescript": "^2.5.0",
+    "eslint-plugin-import": "^2.25.3",
+    "eslint-plugin-jest": "^25.3.2",
     "jest": "^27.4.5"
   },
   "engines": {
