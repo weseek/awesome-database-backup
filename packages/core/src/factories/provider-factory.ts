@@ -1,6 +1,6 @@
-import { IProvider } from '@awesome-backup/core/interfaces/provider'
-import { S3Provider } from '@awesome-backup/core/providers/s3'
-import { GCSProvider } from '@awesome-backup/core/providers/gcs'
+import { IProvider } from '@awesome-backup/core/interfaces/provider';
+import { S3Provider } from '@awesome-backup/core/providers/s3';
+import { GCSProvider } from '@awesome-backup/core/providers/gcs';
 
 export function generateProvider(url: string): IProvider {
   const urlObj = new URL(url);
@@ -10,5 +10,5 @@ export function generateProvider(url: string): IProvider {
     case 'gcs:':
       return new GCSProvider();
   }
-  throw new Error(`URL scheme must be 's3' or 'gcs'.`);
+  throw new Error('URL scheme must be \'s3\' or \'gcs\'.');
 }
