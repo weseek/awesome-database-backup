@@ -1,6 +1,6 @@
-import { IProvider } from '../interfaces/provider'
-import { S3Provider } from '../providers/s3'
-import { GCSProvider } from '../providers/gcs'
+import { IProvider } from '@awesome-backup/core/interfaces/provider'
+import { S3Provider } from '@awesome-backup/core/providers/s3'
+import { GCSProvider } from '@awesome-backup/core/providers/gcs'
 
 export function generateProvider(url: string): IProvider {
   const urlObj = new URL(url);

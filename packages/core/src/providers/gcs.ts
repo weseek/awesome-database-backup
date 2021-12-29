@@ -1,4 +1,4 @@
-import { IProvider } from '../interfaces/provider'
+import { IProvider } from '@awesome-backup/core/interfaces/provider'
 
 export class GCSProvider implements IProvider {
   exists(url: string): Promise<boolean> {

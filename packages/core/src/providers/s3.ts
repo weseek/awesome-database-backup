@@ -1,4 +1,4 @@
-import { IProvider } from '../interfaces/provider'
+import { IProvider } from '@awesome-backup/core/interfaces/provider'
 import {
   S3Client, S3ClientConfig,
   GetObjectCommand, GetObjectCommandInput,

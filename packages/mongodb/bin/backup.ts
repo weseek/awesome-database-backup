@@ -18,7 +18,7 @@
 
 import { program } from 'commander';
 import { basename } from 'path';
-import { generateProvider } from '../../core/src';
+import { generateProvider } from '@awesome-backup/core';
 
 const packageJson = require('../package.json');
 const version = packageJson.version;
