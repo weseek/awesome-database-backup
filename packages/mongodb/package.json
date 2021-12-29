@@ -21,7 +21,7 @@
     "src"
   ],
   "scripts": {
-    "build": "yarn tsc && yarn tsc-alias",
+    "build": "tsc && tsc-alias",
     "test": "cross-env NODE_ENV=test jest --passWithNoTests"
   },
   "dependencies": {
@@ -29,6 +29,7 @@
     "commander": "^8.3.0",
     "cross-env": "^7.0.3",
     "ts-node": "^10.4.0",
+    "ts-node-dev": "^1.1.8",
     "tsc-alias": "^1.5.0",
     "typescript": "^4.5.4"
   },
