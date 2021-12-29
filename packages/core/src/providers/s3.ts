@@ -65,7 +65,7 @@ export class S3Provider implements IProvider {
 
   listFiles(url: string): Promise<string[]> {
     const parseResult = parseFilePath(url);
-    if (typeof parseResult !== 'object') return Promise.resolve([]);
+    if (parseResult == null || typeof parseResult !== 'object') return Promise.reject(new Error(`URI ${url} is not S3's`));
 
     const s3Uri = parseResult as S3URI;
     const params: ListObjectsCommandInput = {
@@ -75,9 +75,9 @@ export class S3Provider implements IProvider {
     return new Promise((resolve, reject) => {
       this.client.send(command)
         .then((response) => {
-          if (response == null || response.Contents == null) return reject(new Error('ListObjectsCommand return null'));
+          if (response == null || response.Contents == null) return reject(new Error('ListObjectsCommand return null or Contents is null'));
 
-          resolve(response.Contents.map((content: any) => content.key));
+          resolve(response.Contents.map((content: any) => content.Key));
         })
         .catch((e: any) => {
           reject(e);
@@ -87,9 +87,7 @@ export class S3Provider implements IProvider {
 
   deleteFile(url: string): Promise<void> {
     const parseResult = parseFilePath(url);
-    if (typeof parseResult !== 'object') {
-      return Promise.resolve();
-    }
+    if (parseResult == null || typeof parseResult !== 'object') return Promise.reject(new Error(`URI ${url} is not S3's`));
 
     const s3Uri = parseResult as S3URI;
     const params: DeleteObjectCommandInput = {
@@ -111,6 +109,9 @@ export class S3Provider implements IProvider {
   copyFile(copySource: string, copyDestination: string): Promise<void> {
     const parseSourceResult = parseFilePath(copySource);
     const parseDestinationResult = parseFilePath(copyDestination);
+    if (parseSourceResult == null || parseDestinationResult == null) {
+      return Promise.reject(new Error('At least the copy source or destination must be an S3 endpoint.'));
+    }
 
     /* Upload local file to S3 */
     if (typeof parseSourceResult === 'string' && typeof parseDestinationResult === 'object') {
