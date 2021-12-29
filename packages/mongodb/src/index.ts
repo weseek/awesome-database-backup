@@ -1,16 +1,20 @@
-import { IBackup } from '@awesome-backup/core'
+// import { IProvider, generateProvider } from '@awesome-backup/core'
+// import { stat, readFileSync, writeFileSync } from 'fs';
 
-export class MongoDBAwesomeBackup implements IBackup {
-  exists(url: string): Promise<boolean> {
-    throw new Error('Method not implemented.');
-  }
-  listFiles(url: string): Promise<string> {
-    throw new Error('Method not implemented.');
-  }
-  deleteFile(url: string): Promise<void> {
-    throw new Error('Method not implemented.');
-  }
-  copyFiles(copyFrom: string, copyTo: string): Promise<void> {
-    throw new Error('Method not implemented.');
-  }
-}
+// export class MongoDBAwesomeBackup {
+//   provider: IProvider;
+
+//   constructor(backupTo: string) {
+//     try {
+//       this.provider = generateProvider(backupTo);
+//     } catch(e) {
+//       throw new Error(`Cannot generate factory: ${e}`);
+//     }
+//   }
+
+//   backup(backupTo: string): Promise<void> {
+//     const tempFile = '/tmp/temp';
+//     writeFileSync('/tmp/temp', 'temp');
+//     this.provider.copyFile(tempFile, backupTo);
+//   }
+// }

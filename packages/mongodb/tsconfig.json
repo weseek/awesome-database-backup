@@ -2,11 +2,7 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "./dist",
-    "baseUrl": ".",
-    "paths": {
-      "~/*": ["./*"],
-      "@awesome-backup/*": ["../*/src"],
-    }
+    "baseUrl": "."
   },
   "include": [
     "src",
@@ -16,6 +12,7 @@
   "exclude": [
     "node_modules",
     "dist",
-    "src/public/**"
+    "src/public/**",
+    "coverage"
   ]
 }

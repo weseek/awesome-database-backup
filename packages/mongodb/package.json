@@ -1,5 +1,5 @@
 {
-  "name": "mongodb",
+  "name": "@awesome-backup/mongodb",
   "version": "0.0.1",
   "description": "> TODO: description",
   "author": "Ryu Sato <ryu@weseek.co.jp>",
@@ -12,7 +12,8 @@
   "bugs": {
     "url": "https://github.com/ryu-sato/awesome-backup/issues"
   },
-  "main": "dist/index.js",
+  "main": "dist/mongodb/src/index.js",
+  "types": "src/index.ts",
   "directories": {
     "test": "__tests__"
   },
@@ -20,10 +21,12 @@
     "src"
   ],
   "scripts": {
-    "build": "yarn tsc && tsc-alias",
+    "build": "yarn tsc && yarn tsc-alias",
     "test": "cross-env NODE_ENV=test jest --passWithNoTests"
   },
   "dependencies": {
+    "@awesome-backup/core": "^0.0.1",
+    "commander": "^8.3.0",
     "cross-env": "^7.0.3",
     "ts-node": "^10.4.0",
     "tsc-alias": "^1.5.0",
