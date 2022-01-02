@@ -1,7 +1,7 @@
 {
   "name": "@awesome-backup/mongodb",
   "version": "0.0.1",
-  "description": "> TODO: description",
+  "description": "Collection of scripts which backup MongoDB databases to Amazon S3 or Google Cloud Storage. You can set a custom S3 endpoint to use S3 based services like DigitalOcean Spaces instead of Amazon S3.",
   "author": "Ryu Sato <ryu@weseek.co.jp>",
   "license": "MIT",
   "homepage": "https://github.com/ryu-sato/awesome-backup#readme",
@@ -22,6 +22,9 @@
   ],
   "scripts": {
     "build": "tsc && tsc-alias",
+
+    "// for development": "",
+    "ts-node-dev": "cross-env NODE_ENV=development ts-node-dev -r tsconfig-paths/register bin/backup",
     "test": "cross-env NODE_ENV=test jest --passWithNoTests",
     "lint": "eslint src --ext .ts",
     "lint:fix": "eslint src --ext .ts --fix"
@@ -32,6 +35,7 @@
     "cross-env": "^7.0.3"
   },
   "devDependencies": {
+    "tsconfig-paths": "^3.12.0"
   },
   "engines": {
     "node": ">= 16.13.1 < 17",
