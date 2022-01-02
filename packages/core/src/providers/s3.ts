@@ -69,9 +69,9 @@ export class S3Provider implements IProvider {
     return new Promise((resolve, reject) => {
       this.client.send(command)
         .then((response) => {
-          if (response == null || response.Contents == null) return reject(new Error('ListObjectsCommand return null or Contents is null'));
+          if (response == null) return reject(new Error('ListObjectsCommand return null or Contents is null'));
 
-          resolve(response.Contents.map((content: any) => content.Key));
+          resolve(response.Contents?.map((content: any) => content.Key) || []);
         })
         .catch((e: any) => {
           reject(e);
