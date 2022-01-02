@@ -30,10 +30,8 @@
     "@aws-sdk/client-s3": "^3.45.0",
     "cross-env": "^7.0.3"
   },
-  "devDependencies": {
-  },
   "engines": {
-    "node": ">= 14.17.0 < 15",
+    "node": ">= 16.13.1 < 17",
     "yarn": ">= 1.22.4"
   }
 }
