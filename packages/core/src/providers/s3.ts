@@ -8,6 +8,7 @@ import {
   ListObjectsCommand, ListObjectsCommandInput,
 } from '@aws-sdk/client-s3';
 import { readFileSync, createWriteStream } from 'fs';
+import { basename } from 'path';
 
 interface S3URI {
   bucket: string,
@@ -56,10 +57,28 @@ export class S3Provider implements IProvider {
     });
   }
 
-  listFiles(url: string): Promise<string[]> {
+  /**
+   * List objects specified by S3's URI
+   *
+   * If the URI is not a folder, only objects with an exact match will be returned.
+   *
+   * If the URI is a folder, it returns a list of objects under the folder. (URL must end with a slash)
+   * You can remove a folder from the list by setting the "includeFolderInList" option to false.
+   *
+   * The returned list will be the absolute path from the bucket.
+   * (If the url is "s3://bucket-name/directory", it will look like ["/directory/object-name1", "/directory/object-name2"])
+   * You can get an object name like file name by setting the "absolutePath" option to false.
+   * (If the url is "s3://bucket-name/directory", it will look like ["object-name1", "object-name2"])
+   */
+  listFiles(url: string, optionsRequired: Record<string, boolean> = {}): Promise<string[]> {
+    const defaultOption: Record<string, boolean> = {
+      includeFolderInList: false,
+      absolutePath: true,
+    };
+    const options = { ...defaultOption, ...optionsRequired };
+
     const parseResult = parseFilePath(url);
     if (parseResult == null) return Promise.reject(new Error(`URI ${url} is not correct S3's`));
-
     const s3Uri = parseResult as S3URI;
     const params: ListObjectsCommandInput = {
       Bucket: s3Uri.bucket,
@@ -71,7 +90,18 @@ export class S3Provider implements IProvider {
         .then((response) => {
           if (response == null) return reject(new Error('ListObjectsCommand return null or Contents is null'));
 
-          resolve(response.Contents?.map((content: any) => content.Key) || []);
+          let files = response.Contents?.map((content: any) => content.Key) || [];
+          if (!url.endsWith('/')) {
+            /* If it is not a folder, only the exact matching object will be returned. */
+            files = files.filter((key: string) => key === s3Uri.key);
+          }
+          else {
+            files = files.filter((key: string) => (options.includeFolderInList ? true : key !== s3Uri.key));
+          }
+          if (!options.absolutePath) {
+            files = files.map((key: string) => basename(key));
+          }
+          resolve(files);
         })
         .catch((e: any) => {
           reject(e);
@@ -79,6 +109,12 @@ export class S3Provider implements IProvider {
     });
   }
 
+  /**
+   * Delete an object specified by S3's URI
+   *
+   * The function will not fail even if the object to be deleted does not exist.
+   * Also, when removing a directory, the URL must end with a slash. (ex. 's3://bucket-name/directory/')
+   */
   deleteFile(url: string): Promise<void> {
     const parseResult = parseFilePath(url);
     if (parseResult == null) return Promise.reject(new Error(`URI ${url} is not correct S3's`));
