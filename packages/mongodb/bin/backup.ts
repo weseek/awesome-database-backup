@@ -41,13 +41,13 @@ program
     const provider = generateProvider(targetBucketUrl);
     provider
       .listFiles(targetBucketUrl)
-      .then((listFiles) => {
+      .then((listFiles: string[]) => {
         console.log(`--- files of ${targetBucketUrl} ---`);
         console.log(listFiles);
       })
       .catch((e: any) => {
         console.log(e);
       });
-  })
+  });
 
 program.parse(process.argv);
