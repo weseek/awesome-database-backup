@@ -7,7 +7,7 @@ import {
   DeleteObjectCommand, DeleteObjectCommandInput,
   ListObjectsCommand, ListObjectsCommandInput,
 } from '@aws-sdk/client-s3';
-import { stat, readFileSync, createWriteStream } from 'fs';
+import { readFileSync, createWriteStream } from 'fs';
 
 interface S3URI {
   bucket: string,
@@ -15,9 +15,10 @@ interface S3URI {
 }
 
 /**
- * Parse file path or URI(start with "s3:")
+ * Parse S3's URI(start with "s3:")
+ * If it is not S3's URL, return null.
  */
-function parseFilePath(path: string): S3URI | string | null {
+function parseFilePath(path: string): S3URI | null {
   /* S3 URI */
   if (path.startsWith('s3:')) {
     // https://regex101.com/r/vDGuGY/1
@@ -31,14 +32,6 @@ function parseFilePath(path: string): S3URI | string | null {
     catch (e) {
       return null;
     }
-  /* Local file path */
-  }
-  else {
-    stat(path, (error, stats) => {
-      if (error) return null;
-      if (!stats.isFile()) return null;
-      return path;
-    });
   }
   return null;
 }
@@ -65,7 +58,7 @@ export class S3Provider implements IProvider {
 
   listFiles(url: string): Promise<string[]> {
     const parseResult = parseFilePath(url);
-    if (parseResult == null || typeof parseResult !== 'object') return Promise.reject(new Error(`URI ${url} is not S3's`));
+    if (parseResult == null) return Promise.reject(new Error(`URI ${url} is not correct S3's`));
 
     const s3Uri = parseResult as S3URI;
     const params: ListObjectsCommandInput = {
@@ -87,7 +80,7 @@ export class S3Provider implements IProvider {
 
   deleteFile(url: string): Promise<void> {
     const parseResult = parseFilePath(url);
-    if (parseResult == null || typeof parseResult !== 'object') return Promise.reject(new Error(`URI ${url} is not S3's`));
+    if (parseResult == null) return Promise.reject(new Error(`URI ${url} is not correct S3's`));
 
     const s3Uri = parseResult as S3URI;
     const params: DeleteObjectCommandInput = {
@@ -109,27 +102,25 @@ export class S3Provider implements IProvider {
   copyFile(copySource: string, copyDestination: string): Promise<void> {
     const parseSourceResult = parseFilePath(copySource);
     const parseDestinationResult = parseFilePath(copyDestination);
-    if (parseSourceResult == null || parseDestinationResult == null) {
-      return Promise.reject(new Error('At least the copy source or destination must be an S3 endpoint.'));
-    }
 
     /* Upload local file to S3 */
-    if (typeof parseSourceResult === 'string' && typeof parseDestinationResult === 'object') {
+    if (parseSourceResult == null && parseDestinationResult != null) {
       const destinationS3Uri = parseDestinationResult as S3URI;
-      return this.uploadFile(parseSourceResult, destinationS3Uri);
+      return this.uploadFile(copySource, destinationS3Uri);
     }
     /* Download S3 object and save as local file */
-    if (typeof parseSourceResult === 'object' && typeof parseDestinationResult === 'string') {
+    if (parseSourceResult != null && parseDestinationResult == null) {
       const sourceS3Uri = parseSourceResult as S3URI;
-      return this.downloadFile(sourceS3Uri, parseDestinationResult);
+      return this.downloadFile(sourceS3Uri, copyDestination);
     }
     /* Copy S3 object and save as another S3 object */
-    if (typeof parseSourceResult === 'object' && typeof parseDestinationResult === 'object') {
+    if (parseSourceResult != null && parseDestinationResult != null) {
       const sourceS3Uri = parseSourceResult as S3URI;
       const destinationS3Uri = parseDestinationResult as S3URI;
       return this.copyFileOnRemote(sourceS3Uri, destinationS3Uri);
     }
-    throw new Error('At least the copy source or destination must be an S3 endpoint.');
+
+    return Promise.reject(new Error('At least the copy source or destination must be an S3 endpoint.'));
   }
 
   uploadFile(sourceFilePath: string, destinationS3Uri: S3URI): Promise<void> {
