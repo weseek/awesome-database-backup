@@ -281,7 +281,7 @@ describe('S3Provider', () => {
       it('reject and throw Error', async() => {
         const provider = new ModuleHolder.S3Provider({});
         const s3uri = { bucket: 'bucket-name', key: 'object-name' };
-        await expect(provider.downloadFile(s3uri, '/path/to/file')).resolves.toBe(undefined);
+        await expect(provider.downloadFile(s3uri, '/path/to/file')).rejects.toThrowError();
       });
     });
   });
