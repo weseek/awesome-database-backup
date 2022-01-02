@@ -63,6 +63,7 @@ export class S3Provider implements IProvider {
     const s3Uri = parseResult as S3URI;
     const params: ListObjectsCommandInput = {
       Bucket: s3Uri.bucket,
+      Prefix: s3Uri.key,
     };
     const command = new ListObjectsCommand(params);
     return new Promise((resolve, reject) => {
