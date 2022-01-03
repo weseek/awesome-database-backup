@@ -20,11 +20,14 @@
 
 import { program } from 'commander';
 import { basename, join } from 'path';
+import { format } from 'date-fns';
 import {
   generateProvider,
   configExistS3, createConfigS3, unlinkConfigS3,
 } from '@awesome-backup/core';
 import { backup, compress } from '@awesome-backup/mongodb';
+
+const tmp = require('tmp');
 
 const packageJson = require(join(__dirname, '..', 'package.json'));
 const version = packageJson.version;
@@ -43,43 +46,43 @@ program
   .option('--cronmode', 'Run `backup` as cron mode. In Cron mode, `backup` will be executed periodically.', false)
   .option('--healthcheck-url <HEALTHCHECK_URL>', 'URL that gets called after a successful backup (eg. https://healthchecks.io)')
   .action(async(targetBucketUrl, options) => {
-    console.log(`=== ${basename(__filename)} started at ${Date().toLocaleString()} ===`);
+    tmp.dir({ unsafeCleanup: true }, async(error: any, path: string, cleanUpCallback: any) => {
+      try {
+        console.log(`=== ${basename(__filename)} started at ${Date().toLocaleString()} ===`);
+        const target = join(path, `${format(new Date(), 'yyyyMMddHHmmss')}`);
 
-    const noConfiguration = configExistS3();
-    if (noConfiguration) {
-      if (options.awsRegion == null || options.awsAccessKeyId == null || options.awsSecretAccessKey == null) {
-        console.error('If the configuration file does not exist, you will need to set "--aws-region", "--aws-access-key-id", and "--aws-secret-access-key".');
-        return;
-      }
-    }
+        const noConfiguration = configExistS3();
+        if (noConfiguration) {
+          if (options.awsRegion == null || options.awsAccessKeyId == null || options.awsSecretAccessKey == null) {
+            console.error('If the configuration file does not exist, '
+                          + 'you will need to set "--aws-region", "--aws-access-key-id", and "--aws-secret-access-key".');
+            return;
+          }
+        }
+        /* If the configuration file does not exist, create it temporarily from the options,
+          and delete it when it is no longer needed. */
+        if (noConfiguration) {
+          createConfigS3(options);
+        }
 
-    /* If the configuration file does not exist, create it temporarily from the options,
-       and delete it when it is no longer needed. */
-    if (noConfiguration) {
-      createConfigS3(options);
-    }
-    const provider = generateProvider(targetBucketUrl);
+        const provider = generateProvider(targetBucketUrl);
+        console.log('dump MongoDB...');
+        await backup(target);
+        console.log(`backup ${target}...`);
+        const { compressedFilePath } = await compress(target);
+        await provider.copyFile(compressedFilePath, targetBucketUrl);
 
-    const target = '/tmp/backup_20220103/mongo';
-
-    console.log('dump MongoDB...');
-    backup(target);
-
-    console.log(`backup ${target}...`);
-    const { compressedFilePath } = await compress(target);
-    provider
-      .copyFile(compressedFilePath, targetBucketUrl)
-      .then(() => {
-        console.log('succeeded');
-      })
-      .catch((e: any) => {
-        console.log(e);
-      })
-      .finally(() => {
         if (noConfiguration) {
           unlinkConfigS3();
         }
-      });
+      }
+      catch (e: any) {
+        console.error(e);
+      }
+      finally {
+        cleanUpCallback();
+      }
+    });
   });
 
 program.parse(process.argv);

@@ -170,7 +170,7 @@ export class S3Provider implements IProvider {
   uploadFile(sourceFilePath: string, destinationS3Uri: S3URI): Promise<void> {
     const params: PutObjectCommandInput = {
       Bucket: destinationS3Uri.bucket,
-      Key: destinationS3Uri.key,
+      Key: destinationS3Uri.key.endsWith('/') ? destinationS3Uri.key + basename(sourceFilePath) : destinationS3Uri.key,
       Body: readFileSync(sourceFilePath),
     };
     const command = new PutObjectCommand(params);

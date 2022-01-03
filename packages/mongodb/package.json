@@ -22,7 +22,6 @@
   ],
   "scripts": {
     "build": "tsc && tsc-alias",
-
     "// for development": "",
     "ts-node-dev": "cross-env NODE_ENV=development ts-node-dev -r tsconfig-paths/register",
     "test": "cross-env NODE_ENV=test jest --passWithNoTests",
@@ -32,7 +31,8 @@
   "dependencies": {
     "@awesome-backup/core": "^0.0.1",
     "commander": "^8.3.0",
-    "cross-env": "^7.0.3"
+    "cross-env": "^7.0.3",
+    "date-fns": "^2.28.0"
   },
   "devDependencies": {
     "tsconfig-paths": "^3.12.0"
