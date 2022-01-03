@@ -21,5 +21,4 @@ export async function backup(destinationPath: string, mongodumpRequiredOptions?:
       resolve();
     });
   });
-
 }

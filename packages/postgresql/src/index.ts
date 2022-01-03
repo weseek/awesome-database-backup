@@ -1,5 +1,4 @@
 import { exec } from 'child_process';
-import { dirname, basename } from 'path';
 
 const kebabCase = require('kebab-case');
 
@@ -36,5 +35,4 @@ export async function backup(destinationPath: string, pgdumpRequiredOptions?: Re
       resolve();
     });
   });
-
 }
