@@ -67,7 +67,8 @@ program
           + 'running on the "mongo" on port number 27017.', 'mongo')
   .option('--cronmode', 'Run `backup` as cron mode. In Cron mode, `backup` will be executed periodically.', false)
   .option('--cron-expression <CRON_EXPRESSION>', 'Cron expression (ex. CRON_EXPRESSION="0 4 * * *" if you want to run at 4:00 every day)')
-  .option('--healthcheck-url <HEALTHCHECK_URL>', 'URL that gets called after a successful backup (eg. https://healthchecks.io)')
+  // [TODO] implement below option
+  // .option('--healthcheck-url <HEALTHCHECK_URL>', 'URL that gets called after a successful backup (eg. https://healthchecks.io)')
   .action(async(targetBucketUrl, options) => {
     if (options.cronmode) {
       if (options.cronExpression == null) {

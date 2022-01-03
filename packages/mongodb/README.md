@@ -26,6 +26,5 @@ Options:
   --mongodb-host                                   Specifies the resolvable hostname of the MongoDB deployment.By default, `backup` attempts to connect to a MongoDB instancerunning on the "mongo" on port number 27017. (default: "mongo")
   --cronmode                                       Run `backup` as cron mode. In Cron mode, `backup` will be executed periodically. (default: false)
   --cron-expression <CRON_EXPRESSION>              Cron expression (ex. CRON_EXPRESSION="0 4 * * *" if you want to run at 4:00 every day)
-  --healthcheck-url <HEALTHCHECK_URL>              URL that gets called after a successful backup (eg. https://healthchecks.io)
   -h, --help                                       display help for command
 ```

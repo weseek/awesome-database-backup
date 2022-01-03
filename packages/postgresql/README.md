@@ -25,7 +25,6 @@ Options:
   --backupfile-prefix <BACKUPFILE_PREFIX>               Prefix of backup file. (default: "backup")
   --cronmode                                            Run `backup` as cron mode. In Cron mode, `backup` will be executed periodically. (default: false)
   --cron-expression <CRON_EXPRESSION>                   Cron expression (ex. CRON_EXPRESSION="0 4 * * *" if you want to run at 4:00 every day)
-  --healthcheck-url <HEALTHCHECK_URL>                   URL that gets called after a successful backup (eg. https://healthchecks.io)
   --postgresql-host <POSTGRESQL_HOST>                   database server host or socket directory
   --postgresql-port <POSTGRESQL_PORT>                   database server port number
   --postgresql-username <POSTGRESQL_USERNAME>           connect as specified database user

@@ -65,7 +65,8 @@ program
   .option('--backupfile-prefix <BACKUPFILE_PREFIX>', 'Prefix of backup file.', 'backup')
   .option('--cronmode', 'Run `backup` as cron mode. In Cron mode, `backup` will be executed periodically.', false)
   .option('--cron-expression <CRON_EXPRESSION>', 'Cron expression (ex. CRON_EXPRESSION="0 4 * * *" if you want to run at 4:00 every day)')
-  .option('--healthcheck-url <HEALTHCHECK_URL>', 'URL that gets called after a successful backup (eg. https://healthchecks.io)')
+  // [TODO] implement below option
+  // .option('--healthcheck-url <HEALTHCHECK_URL>', 'URL that gets called after a successful backup (eg. https://healthchecks.io)')
   /* PostgreSQL options are "--postgresql-XXX", which corresponds to the "--XXX" option of the tool used internally. */
   .option('--postgresql-host <POSTGRESQL_HOST>', 'database server host or socket directory')
   .option('--postgresql-port <POSTGRESQL_PORT>', 'database server port number')
