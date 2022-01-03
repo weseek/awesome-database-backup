@@ -1,20 +1,38 @@
-// import { IProvider, generateProvider } from '@awesome-backup/core'
-// import { stat, readFileSync, writeFileSync } from 'fs';
+import { exec } from 'child_process';
+import { dirname, basename } from 'path';
 
-// export class MongoDBAwesomeBackup {
-//   provider: IProvider;
+export function backup(destinationPath: string, mongodumpRequiredOptions?: Record<string, string>): void {
+  const defaultMongodumpOptions: Record<string, string> = {};
+  const outputOption: Record<string, string> = { '-o': destinationPath };
+  // [TODO] block "--output" option
+  // [TODO] block injection string
+  const mongodumpOptions: Record<string, string> = {
+    ...defaultMongodumpOptions,
+    ...mongodumpRequiredOptions,
+    ...outputOption,
+  };
 
-//   constructor(backupTo: string) {
-//     try {
-//       this.provider = generateProvider(backupTo);
-//     } catch(e) {
-//       throw new Error(`Cannot generate factory: ${e}`);
-//     }
-//   }
+  const backupCommand = 'mongodump';
+  const optionsString = Object.keys(mongodumpOptions).map((key: string) => (mongodumpOptions[key] ? [key, mongodumpOptions[key]].join('=') : key)).join(' ');
+  exec(`${backupCommand} ${optionsString}`);
+}
 
-//   backup(backupTo: string): Promise<void> {
-//     const tempFile = '/tmp/temp';
-//     writeFileSync('/tmp/temp', 'temp');
-//     this.provider.copyFile(tempFile, backupTo);
-//   }
-// }
+export async function compress(compressTargetPath: string): Promise<Record<string, string>> {
+  const compressedFilePath = `${compressTargetPath}.tar.gz`;
+  const defaultTarOption = {
+    '-j': '',
+    '-c': '',
+    '-v': '',
+    '-f': compressedFilePath,
+    '-C': dirname(compressedFilePath),
+  };
+  const tarOptions: Record<string, string> = {
+    ...defaultTarOption,
+  };
+  const compressCommand = 'tar';
+  const optionsString = Object.keys(tarOptions).map((key: string) => (tarOptions[key] ? [key, tarOptions[key]].join(' ') : key)).join(' ');
+  const valuesString = basename(compressTargetPath);
+  console.log(`${compressCommand} ${optionsString} ${valuesString}`);
+  await exec(`${compressCommand} ${optionsString} ${valuesString}`);
+  return { compressedFilePath };
+}

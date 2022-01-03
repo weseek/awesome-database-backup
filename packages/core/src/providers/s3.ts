@@ -136,6 +136,13 @@ export class S3Provider implements IProvider {
     });
   }
 
+  /**
+   * Copy a single file
+   *
+   * The file to be copied can also seamlessly handle objects on S3.
+   * If the copy source is a local file and the copy destination is the URI of S3, the file is uploaded to S3.
+   * If the source and destination are S3 URIs, the S3 object will be copied directly.
+   */
   copyFile(copySource: string, copyDestination: string): Promise<void> {
     const parseSourceResult = parseFilePath(copySource);
     const parseDestinationResult = parseFilePath(copyDestination);

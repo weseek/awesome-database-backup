@@ -24,6 +24,7 @@ import {
   generateProvider,
   configExistS3, createConfigS3, unlinkConfigS3,
 } from '@awesome-backup/core';
+import { backup, compress } from '@awesome-backup/mongodb';
 
 const packageJson = require(join(__dirname, '..', 'package.json'));
 const version = packageJson.version;
@@ -40,6 +41,7 @@ program
           + 'By default, `backup` attempts to connect to a MongoDB instance'
           + 'running on the "mongo" on port number 27017.', 'mongo')
   .option('--cronmode', 'Run `backup` as cron mode. In Cron mode, `backup` will be executed periodically.', false)
+  .option('--healthcheck-url <HEALTHCHECK_URL>', 'URL that gets called after a successful backup (eg. https://healthchecks.io)')
   .action(async(targetBucketUrl, options) => {
     console.log(`=== ${basename(__filename)} started at ${Date().toLocaleString()} ===`);
 
@@ -58,10 +60,17 @@ program
     }
     const provider = generateProvider(targetBucketUrl);
 
+    const target = '/tmp/backup_20220103/mongo';
+
+    console.log('dump MongoDB...');
+    backup(target);
+
+    console.log(`backup ${target}...`);
+    const { compressedFilePath } = await compress(target);
     provider
-      .listFiles(targetBucketUrl, { absolutePath: true, includeFolderInList: true })
-      .then((response: string[]) => {
-        console.log(`--- ${response} ---`);
+      .copyFile(compressedFilePath, targetBucketUrl)
+      .then(() => {
+        console.log('succeeded');
       })
       .catch((e: any) => {
         console.log(e);
