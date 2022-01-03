@@ -17,8 +17,8 @@
     "paths": {
       "@awesome-backup/core": ["../core/src"],
       "@awesome-backup/core/*": ["../core/src/*"],
-      "@awesome-backup/mongodb": ["../mongodb"],
-      "@awesome-backup/mongodb/*": ["../mongodb/*"]
+      "@awesome-backup/mongodb": ["../mongodb/src"],
+      "@awesome-backup/mongodb/*": ["../mongodb/src/*"]
     }
   }
 }
