@@ -26,14 +26,12 @@ import {
   configExistS3, createConfigS3, unlinkConfigS3,
 } from '@awesome-backup/core';
 import { backup, compress } from '@awesome-backup/mongodb';
+import { PACKAGE_VERSION } from '@awesome-backup/postgresql/config/version';
 
 const tmp = require('tmp');
 
-const packageJson = require(join(__dirname, '..', 'package.json'));
-const version = packageJson.version;
-
 program
-  .version(version)
+  .version(PACKAGE_VERSION)
   .argument('<TARGET_BUCKET_URL>', 'URL of target bucket')
   // Required fields that are intentionally treat as optional so that they can be specified by environment variables.
   .option('--aws-region <AWS_REGION>', 'AWS Region')

@@ -18,7 +18,9 @@
       "@awesome-backup/core": ["../core/src"],
       "@awesome-backup/core/*": ["../core/src/*"],
       "@awesome-backup/mongodb": ["../mongodb/src"],
-      "@awesome-backup/mongodb/*": ["../mongodb/src/*"]
+      "@awesome-backup/mongodb/*": ["../mongodb/src/*"],
+      "@awesome-backup/postgresql": ["../postgresql/src"],
+      "@awesome-backup/postgresql/*": ["../postgresql/src/*"]
     }
   }
 }
