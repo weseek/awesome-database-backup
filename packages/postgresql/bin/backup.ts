@@ -13,9 +13,6 @@ import { PACKAGE_VERSION } from '@awesome-backup/postgresql/config/version';
 
 const tmp = require('tmp');
 const schedule = require('node-schedule');
-import { promisify } from 'util';
-const exec = promisify(require('child_process').exec);
-
 
 async function main(targetBucketUrl: string, options: Record<string, string>) {
   tmp.dir({ unsafeCleanup: true }, async(error: any, path: string, cleanUpCallback: any) => {
