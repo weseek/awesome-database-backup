@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { program } from 'commander';
-import { basename, join, dirname } from 'path';
+import { basename, join } from 'path';
 import { format } from 'date-fns';
 import {
   generateProvider,
@@ -10,9 +10,6 @@ import {
 } from '@awesome-backup/core';
 import { restore, convertOption } from '@awesome-backup/postgresql';
 import { PACKAGE_VERSION } from '@awesome-backup/postgresql/config/version';
-import { promisify } from 'util';
-
-const exec = promisify(require('child_process').exec);
 
 const tmp = require('tmp');
 const schedule = require('node-schedule');
