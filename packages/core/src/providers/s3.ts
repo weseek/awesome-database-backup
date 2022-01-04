@@ -10,6 +10,8 @@ import {
 import { readFileSync, createWriteStream } from 'fs';
 import { basename } from 'path';
 
+const { pipeline } = require('stream/promises');
+
 interface S3URI {
   bucket: string,
   key: string
@@ -196,27 +198,13 @@ export class S3Provider implements IProvider {
         .then((response) => {
           if (response == null) return reject(new Error('GetObjectCommand return null'));
 
-          try {
-            const readableStream = response.Body as ReadableStream;
-            const writeStream = createWriteStream(destinationFilePath);
-            const reader = readableStream.getReader();
-            reader.read()
-              .then(function processBytes({ done, value }): Promise<Record<string, unknown>|undefined>|undefined {
-                if (done) return;
-
-                writeStream.write(value);
-                return reader.read().then(processBytes);
-              })
-              .then(() => {
-                resolve();
-              })
-              .catch((e: any) => {
-                reject(e);
-              });
-          }
-          catch (e) {
-            reject(e);
-          }
+          pipeline(response.Body, createWriteStream(destinationFilePath))
+            .then(() => {
+              resolve();
+            })
+            .catch((e: any) => {
+              reject(e);
+            });
         })
         .catch((e: any) => {
           reject(e);
