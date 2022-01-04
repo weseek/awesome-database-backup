@@ -72,12 +72,12 @@ export class S3Provider implements IProvider {
    * You can get an object name like file name by setting the "absolutePath" option to false.
    * (If the url is "s3://bucket-name/directory", it will look like ["object-name1", "object-name2"])
    */
-  listFiles(url: string, optionsRequired: Record<string, boolean> = {}): Promise<string[]> {
+  listFiles(url: string, optionsRequired?: Record<string, boolean>): Promise<string[]> {
     const defaultOption: Record<string, boolean> = {
       includeFolderInList: false,
       absolutePath: true,
     };
-    const options = { ...defaultOption, ...optionsRequired };
+    const options = optionsRequired ? { ...defaultOption, ...optionsRequired } : defaultOption;
 
     const parseResult = parseFilePath(url);
     if (parseResult == null) return Promise.reject(new Error(`URI ${url} is not correct S3's`));
