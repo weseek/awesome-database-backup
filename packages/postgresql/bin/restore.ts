@@ -39,14 +39,9 @@ async function main(targetBucketUrl: string, options: Record<string, string>) {
 
       const provider = generateProvider(targetBucketUrl);
       await provider.copyFile(targetBucketUrl, target);
-      let ret = await exec(`ls -al ${target}`);
-      console.log(ret.stdout);
       console.log(`expands ${target}...`);
       const { expandedPath } = await expand(target);
-      ret = await exec(`ls -al ${dirname(expandedPath)}`);
-      console.log(ret.stdout);
       const pgtoolOption = convertOption(options);
-      console.log(pgtoolOption);
       console.log('restore PostgreSQL...');
       await restore(expandedPath, pgtoolOption);
 
