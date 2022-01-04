@@ -12,7 +12,6 @@ import { restore, convertOption } from '@awesome-backup/postgresql';
 import { PACKAGE_VERSION } from '@awesome-backup/postgresql/config/version';
 
 const tmp = require('tmp');
-const schedule = require('node-schedule');
 
 async function main(targetBucketUrl: string, options: Record<string, string>) {
   tmp.dir({ unsafeCleanup: true }, async(error: any, path: string, cleanUpCallback: any) => {
@@ -82,19 +81,7 @@ program
       These options may not available depending on the version of the tool.
       `.replace(/^ {4}/mg, ''))
   .action(async(targetBucketUrl, options) => {
-    if (options.cronmode) {
-      if (options.cronExpression == null) {
-        console.error('The option "--cron-expression" must be specified in cron mode.');
-        return;
-      }
-      console.log(`=== started in cron mode ${format(new Date(), 'yyyy/MM/dd HH:mm:ss')} ===`);
-      schedule.scheduleJob(options.cronExpression, async() => {
-        await main(targetBucketUrl, options);
-      });
-    }
-    else {
-      await main(targetBucketUrl, options);
-    }
+    await main(targetBucketUrl, options);
   });
 
 program.parse(process.argv);
