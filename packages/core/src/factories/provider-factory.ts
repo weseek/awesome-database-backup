@@ -9,7 +9,7 @@ export function generateProvider(url: string, config: S3ClientConfig|null = null
     case 's3:':
       return new S3Provider(config || {});
     case 'gcs:':
-      return new GCSProvider();
+      return new GCSProvider(config || {});
   }
   throw new Error('URL scheme must be \'s3\' or \'gcs\'.');
 }

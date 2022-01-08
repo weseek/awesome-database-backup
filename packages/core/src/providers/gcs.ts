@@ -2,6 +2,12 @@ import { IProvider } from '@awesome-backup/core/interfaces/provider';
 
 export class GCSProvider implements IProvider {
 
+  name: string;
+
+  constructor(config: any) {
+    this.name = 'GCS';
+  }
+
   exists(url: string): Promise<boolean> {
     throw new Error('Method not implemented.');
   }

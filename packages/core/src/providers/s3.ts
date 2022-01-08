@@ -1,4 +1,4 @@
-import { IProvider } from '@awesome-backup/core/interfaces/provider';
+import { IProvider, listFilesOptions } from '@awesome-backup/core/interfaces/provider';
 import {
   S3Client, S3ClientConfig,
   GetObjectCommand, GetObjectCommandInput,
@@ -12,7 +12,7 @@ import { basename } from 'path';
 
 const { pipeline } = require('stream/promises');
 
-interface S3URI {
+declare interface S3URI {
   bucket: string,
   key: string
 }
@@ -41,9 +41,12 @@ function parseFilePath(path: string): S3URI | null {
 
 export class S3Provider implements IProvider {
 
+  name: string;
+
   client: S3Client;
 
   constructor(config: S3ClientConfig) {
+    this.name = 'S3';
     this.client = new S3Client(config);
   }
 
@@ -72,10 +75,11 @@ export class S3Provider implements IProvider {
    * You can get an object name like file name by setting the "absolutePath" option to false.
    * (If the url is "s3://bucket-name/directory", it will look like ["object-name1", "object-name2"])
    */
-  listFiles(url: string, optionsRequired?: Record<string, boolean>): Promise<string[]> {
-    const defaultOption: Record<string, boolean> = {
+  listFiles(url: string, optionsRequired?: listFilesOptions): Promise<string[]> {
+    const defaultOption: listFilesOptions = {
       includeFolderInList: false,
       absolutePath: true,
+      exactMatch: true,
     };
     const options = optionsRequired ? { ...defaultOption, ...optionsRequired } : defaultOption;
 
@@ -92,13 +96,13 @@ export class S3Provider implements IProvider {
         .then((response) => {
           if (response == null) return reject(new Error('ListObjectsCommand return null or Contents is null'));
 
+          /* If it is not a folder, only forward matching objects will be returned. */
           let files = response.Contents?.map((content: any) => content.Key) || [];
-          if (!url.endsWith('/')) {
-            /* If it is not a folder, only the exact matching object will be returned. */
-            files = files.filter((key: string) => key === s3Uri.key);
-          }
-          else {
+          if (url.endsWith('/')) {
             files = files.filter((key: string) => (options.includeFolderInList ? true : key !== s3Uri.key));
+          }
+          else if (options.exactMatch) {
+            files = files.filter((key: string) => key === s3Uri.key);
           }
           if (!options.absolutePath) {
             files = files.map((key: string) => basename(key));
