@@ -15,7 +15,7 @@ import { PACKAGE_VERSION } from '@awesome-backup/postgresql/config/version';
 const tmp = require('tmp');
 const schedule = require('node-schedule');
 
-/* Prune command option types */
+/* Backup command option types */
 declare interface BackupOptions {
   awsRegion: string
   awsAccessKeyId: string,
