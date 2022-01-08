@@ -3,4 +3,5 @@ export * from './factories/provider-config-factory';
 export * from './interfaces/provider';
 export * from './providers/s3';
 export * from './providers/gcs';
+export * from './utils/cli-option';
 export * from './utils/tar';

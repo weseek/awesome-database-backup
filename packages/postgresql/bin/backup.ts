@@ -3,56 +3,129 @@
 import { program } from 'commander';
 import { basename, join } from 'path';
 import { format } from 'date-fns';
+import { exec } from 'child_process';
 import {
   generateProvider,
   configExistS3, createConfigS3, unlinkConfigS3,
   compress,
+  convertOption,
 } from '@awesome-backup/core';
-import { backup, convertOption } from '@awesome-backup/postgresql';
 import { PACKAGE_VERSION } from '@awesome-backup/postgresql/config/version';
 
 const tmp = require('tmp');
 const schedule = require('node-schedule');
 
-async function main(targetBucketUrl: string, options: Record<string, string>) {
-  tmp.dir({ unsafeCleanup: true }, async(error: any, path: string, cleanUpCallback: any) => {
-    try {
-      console.log(`=== ${basename(__filename)} started at ${format(new Date(), 'yyyy/MM/dd HH:mm:ss')} ===`);
-      const target = join(path, `${options.backupfilePrefix}-${format(new Date(), 'yyyyMMddHHmmss')}`);
+/* Prune command option types */
+declare interface BackupOptions {
+  awsRegion: string
+  awsAccessKeyId: string,
+  awsSecretAccessKey: string,
+  backupfilePrefix: string,
+  cronmode: boolean,
+  cronExpression: string,
+  postgresqlDbname: string,
+  postgresqlHost: string,
+  postgresqlDatabase: string,
+  postgresqlPort: number,
+  postgresqlUsername: string,
+  postgresqlNoPassword: boolean,
+  postgresqlPassword: boolean,
+  postgresqlRole: string,
+  postgresqlDataOnly: boolean,
+  postgresqlClean: boolean,
+  postgresqlEncoding: string,
+  postgresqlGlobalsOnly: boolean,
+  postgresqlNoOwner: boolean,
+  postgresqlRolesOnly: boolean,
+  postgresqlSchemaOnly: boolean,
+  postgresqlSuperuser: string,
+  postgresqlTablespacesOnly: boolean,
+  postgresqlNoPrivileges: boolean,
+  postgresqlBinaryUpgrade: boolean,
+  postgresqlColumnInserts: boolean,
+  postgresqlDisableDollarQuoting: boolean,
+  postgresqlDisableTriggers: boolean,
+  postgresqlExcludeDatabase: string,
+  postgresqlExtraFloatDigits: number,
+  postgresqlIfExists: boolean,
+  postgresqlInserts: boolean,
+  postgresqlLoadViaPartitionRoot: string,
+  postgresqlNoComments: boolean,
+  postgresqlNoPublications: boolean,
+  postgresqlNoRolePasswords: boolean,
+  postgresqlNoSecurityLabels: boolean,
+  postgresqlNoSubscriptions: boolean,
+  postgresqlNoSync: boolean,
+  postgresqlNoTablespaces: boolean,
+  postgresqlNoUnloggedTableData: boolean,
+  postgresqlOnConflictDoNothing: boolean,
+  postgresqlQuoteAllIdentifiers: boolean,
+  postgresqlRowsPerInsert: number,
+  postgresqlUseSetSessionAuthorization: boolean,
+}
 
-      const noConfiguration = configExistS3();
-      if (noConfiguration) {
-        if (options.awsRegion == null || options.awsAccessKeyId == null || options.awsSecretAccessKey == null) {
-          console.error('If the configuration file does not exist, '
-                        + 'you will need to set "--aws-region", "--aws-access-key-id", and "--aws-secret-access-key".');
-          return;
-        }
-      }
-      /* If the configuration file does not exist, create it temporarily from the options,
-        and delete it when it is no longer needed. */
-      if (noConfiguration) {
-        createConfigS3(options);
-      }
+function backup(destinationPath: string, pgdumpRequiredOptions?: Record<string, string>): Promise<void> {
+  const backupCommand = 'pg_dumpall';
+  const defaultPGdumpOptions: Record<string, string> = {
+  };
+  const outputOption: Record<string, string> = {
+    '--file': destinationPath,
+  };
+  // [TODO] block "--file" option
+  // [TODO] block injection string
+  const pgdumpOptions: Record<string, string> = {
+    ...defaultPGdumpOptions,
+    ...pgdumpRequiredOptions,
+    ...outputOption,
+  };
 
-      const provider = generateProvider(targetBucketUrl);
-      const pgtoolOption = convertOption(options);
-      console.log('dump PostgreSQL...');
-      await backup(target, pgtoolOption);
-      console.log(`backup ${target}...`);
-      const { compressedFilePath } = await compress(target);
-      await provider.copyFile(compressedFilePath, targetBucketUrl);
-
-      if (noConfiguration) {
-        unlinkConfigS3();
+  const optionsString = Object.keys(pgdumpOptions).map((key: string) => (pgdumpOptions[key] ? [key, pgdumpOptions[key]].join('=') : key)).join(' ');
+  return new Promise((resolve, reject) => {
+    exec(`${backupCommand} ${optionsString}`, (error, stdout, stderr) => {
+      if (error) {
+        return reject(error);
       }
-    }
-    catch (e: any) {
-      console.error(e);
-    }
-    finally {
-      cleanUpCallback();
-    }
+      console.log(stdout);
+      console.error(stderr);
+      resolve();
+    });
   });
+}
+
+async function main(targetBucketUrl: URL, options: BackupOptions) {
+  tmp.setGracefulCleanup();
+  const tmpdir = tmp.dirSync({ unsafeCleanup: true });
+
+  console.log(`=== ${basename(__filename)} started at ${format(new Date(), 'yyyy/MM/dd HH:mm:ss')} ===`);
+  const target = join(tmpdir.name, `${options.backupfilePrefix}-${format(Date.now(), 'yyyyMMddHHmmss')}`);
+
+  const noConfiguration = configExistS3();
+  if (noConfiguration) {
+    if (options.awsRegion == null || options.awsAccessKeyId == null || options.awsSecretAccessKey == null) {
+      console.error('If the configuration file does not exist, '
+                    + 'you will need to set "--aws-region", "--aws-access-key-id", and "--aws-secret-access-key".');
+      return;
+    }
+  }
+  /* If the configuration file does not exist, create it temporarily from the options,
+    and delete it when it is no longer needed. */
+  const { awsRegion, awsAccessKeyId, awsSecretAccessKey } = options;
+  if (noConfiguration) {
+    createConfigS3({ awsRegion, awsAccessKeyId, awsSecretAccessKey });
+  }
+
+  const provider = generateProvider(targetBucketUrl);
+  const pgtoolOption = convertOption(Object(options), 'postgresql');
+  console.log('dump PostgreSQL...');
+  await backup(target, pgtoolOption);
+  console.log(`backup ${target}...`);
+  const { compressedFilePath } = await compress(target);
+  await provider.copyFile(compressedFilePath, targetBucketUrl.toString());
+
+  if (noConfiguration) {
+    unlinkConfigS3();
+  }
+  tmpdir.removeCallback();
 }
 
 program
@@ -75,7 +148,7 @@ program
   .option('--postgresql-dbname <POSTGRESQL_CONNSTR>', 'connect using connection string')
   .option('--postgresql-host <POSTGRESQL_HOST>', 'database server host or socket directory')
   .option('--postgresql-database <POSTGRESQL_DBNAME>', 'alternative default database')
-  .option('--postgresql-port <POSTGRESQL_PORT>', 'database server port number')
+  .option('--postgresql-port <POSTGRESQL_PORT>', 'database server port number', parseInt)
   .option('--postgresql-username <POSTGRESQL_USERNAME>', 'connect as specified database user')
   .option('--postgresql-no-password', 'never prompt for password')
   .option('--postgresql-password', 'force password prompt (should happen automatically)')
@@ -83,20 +156,20 @@ program
   /* Options controlling the output content */
   .option('--postgresql-data-only', 'dump only the data, not the schema')
   .option('--postgresql-clean', 'clean (drop) databases before recreating')
-  .option('--postgresql-encoding=ENCODING', 'dump the data in encoding ENCODING')
+  .option('--postgresql-encoding <POSTGRESQL_ENCODING>', 'dump the data in encoding ENCODING')
   .option('--postgresql-globals-only', 'dump only global objects, no databases')
   .option('--postgresql-no-owner', 'skip restoration of object ownership')
   .option('--postgresql-roles-only', 'dump only roles, no databases or tablespaces')
   .option('--postgresql-schema-only', 'dump only the schema, no data')
-  .option('--postgresql-superuser=NAME', 'superuser user name to use in the dump')
+  .option('--postgresql-superuser <POSTGRESQL_NAME>', 'superuser user name to use in the dump')
   .option('--postgresql-tablespaces-only', 'dump only tablespaces, no databases or roles')
   .option('--postgresql-no-privileges', 'do not dump privileges (grant/revoke)')
   .option('--postgresql-binary-upgrade', 'for use by upgrade utilities only')
   .option('--postgresql-column-inserts', 'dump data as INSERT commands with column names')
   .option('--postgresql-disable-dollar-quoting', 'disable dollar quoting, use SQL standard quoting')
   .option('--postgresql-disable-triggers', 'disable triggers during data-only restore')
-  .option('--postgresql-exclude-database=PATTERN', 'exclude databases whose name matches PATTERN')
-  .option('--postgresql-extra-float-digits=NUM', 'override default setting for extra_float_digits')
+  .option('--postgresql-exclude-database <POSTGRESQL_PATTERN>', 'exclude databases whose name matches PATTERN')
+  .option('--postgresql-extra-float-digits <POSTGRESQL_NUM>', 'override default setting for extra_float_digits', parseInt)
   .option('--postgresql-if-exists', 'use IF EXISTS when dropping objects')
   .option('--postgresql-inserts', 'dump data as INSERT commands, rather than COPY')
   .option('--postgresql-load-via-partition-root', 'load partitions via the root table')
@@ -110,7 +183,7 @@ program
   .option('--postgresql-no-unlogged-table-data', 'do not dump unlogged table data')
   .option('--postgresql-on-conflict-do-nothing', 'add ON CONFLICT DO NOTHING to INSERT commands')
   .option('--postgresql-quote-all-identifiers', 'quote all identifiers, even if not key words')
-  .option('--postgresql-rows-per-insert=NROWS', 'number of rows per INSERT; implies --inserts')
+  .option('--postgresql-rows-per-insert <POSTGRESQL_NROWS>', 'number of rows per INSERT; implies --inserts', parseInt)
   .option('--postgresql-use-set-session-authorization', 'use SET SESSION AUTHORIZATION commands instead of ALTER OWNER commands to set ownership')
   .addHelpText('after', `
     TIPS:
@@ -121,7 +194,8 @@ program
       PostgreSQL options are "--postgresql-XXX", which corresponds to the "--XXX" option of the tool used internally.
       These options may not available depending on the version of the tool.
       `.replace(/^ {4}/mg, ''))
-  .action(async(targetBucketUrl, options) => {
+  .action(async(targetBucketUrlString, options: BackupOptions) => {
+    const targetBucketUrl = new URL(targetBucketUrlString);
     if (options.cronmode) {
       if (options.cronExpression == null) {
         console.error('The option "--cron-expression" must be specified in cron mode.');
@@ -129,11 +203,21 @@ program
       }
       console.log(`=== started in cron mode ${format(new Date(), 'yyyy/MM/dd HH:mm:ss')} ===`);
       schedule.scheduleJob(options.cronExpression, async() => {
-        await main(targetBucketUrl, options);
+        try {
+          await main(targetBucketUrl, options);
+        }
+        catch (e: any) {
+          console.error(e);
+        }
       });
     }
     else {
-      await main(targetBucketUrl, options);
+      try {
+        await main(targetBucketUrl, options);
+      }
+      catch (e: any) {
+        console.error(e);
+      }
     }
   });
 
