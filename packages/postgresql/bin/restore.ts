@@ -3,12 +3,12 @@
 import { program } from 'commander';
 import { basename, join } from 'path';
 import { format } from 'date-fns';
-import { exec } from 'child_process';
 import {
   generateProvider,
   configExistS3, createConfigS3, unlinkConfigS3,
   expand,
   convertOption,
+  execute,
 } from '@awesome-backup/core';
 import { PACKAGE_VERSION } from '@awesome-backup/postgresql/config/version';
 
@@ -26,31 +26,15 @@ declare interface RestoreOptions {
   postgresqlPassword: boolean,
 }
 
-export function restore(sourcePath: string, pgrestoreRequiredOptions?: Record<string, string>): Promise<void> {
+function restore(sourcePath: string, pgrestoreRequiredOptions?: Record<string, string>) {
   const restoreCommand = 'psql';
-  const defaultPGdumpOptions: Record<string, string> = {};
+  const pdrestoreDefaultOptions: Record<string, string> = {
+  };
   const inputOption: Record<string, string> = {
     '--file': sourcePath,
   };
-  // [TODO] block "--file" option
-  // [TODO] block injection string
-  const pgdumpOptions: Record<string, string> = {
-    ...defaultPGdumpOptions,
-    ...pgrestoreRequiredOptions,
-    ...inputOption,
-  };
-
-  const optionsString = Object.keys(pgdumpOptions).map((key: string) => (pgdumpOptions[key] ? [key, pgdumpOptions[key]].join('=') : key)).join(' ');
-  return new Promise((resolve, reject) => {
-    exec(`${restoreCommand} ${optionsString}`, (error, stdout, stderr) => {
-      if (error) {
-        return reject(error);
-      }
-      console.log(stdout);
-      console.error(stderr);
-      resolve();
-    });
-  });
+  const pgdumpArgs = '';
+  return execute(restoreCommand, [pgdumpArgs], { ...(pgrestoreRequiredOptions || {}), ...inputOption }, pdrestoreDefaultOptions);
 }
 
 async function main(targetBucketUrl: URL, options: RestoreOptions) {
@@ -81,7 +65,13 @@ async function main(targetBucketUrl: URL, options: RestoreOptions) {
   const { expandedPath } = await expand(target);
   const pgtoolOption = convertOption(Object(options), 'postgresql');
   console.log('restore PostgreSQL...');
-  await restore(expandedPath, pgtoolOption);
+  const [stdout, stderr] = await restore(expandedPath, pgtoolOption);
+  if (stdout) {
+    console.log(stdout);
+  }
+  if (stderr) {
+    console.error(stderr);
+  }
 
   if (noConfiguration) {
     unlinkConfigS3();

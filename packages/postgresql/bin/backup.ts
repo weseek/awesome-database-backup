@@ -9,8 +9,10 @@ import {
   configExistS3, createConfigS3, unlinkConfigS3,
   compress,
   convertOption,
+  execute,
 } from '@awesome-backup/core';
 import { PACKAGE_VERSION } from '@awesome-backup/postgresql/config/version';
+import { stdout } from 'process';
 
 const tmp = require('tmp');
 const schedule = require('node-schedule');
@@ -64,32 +66,15 @@ declare interface BackupOptions {
   postgresqlUseSetSessionAuthorization: boolean,
 }
 
-function backup(destinationPath: string, pgdumpRequiredOptions?: Record<string, string>): Promise<void> {
+function backup(destinationPath: string, pgdumpRequiredOptions?: Record<string, string>) {
   const backupCommand = 'pg_dumpall';
-  const defaultPGdumpOptions: Record<string, string> = {
+  const pddumpDefaultOptions: Record<string, string> = {
   };
   const outputOption: Record<string, string> = {
     '--file': destinationPath,
   };
-  // [TODO] block "--file" option
-  // [TODO] block injection string
-  const pgdumpOptions: Record<string, string> = {
-    ...defaultPGdumpOptions,
-    ...pgdumpRequiredOptions,
-    ...outputOption,
-  };
-
-  const optionsString = Object.keys(pgdumpOptions).map((key: string) => (pgdumpOptions[key] ? [key, pgdumpOptions[key]].join('=') : key)).join(' ');
-  return new Promise((resolve, reject) => {
-    exec(`${backupCommand} ${optionsString}`, (error, stdout, stderr) => {
-      if (error) {
-        return reject(error);
-      }
-      console.log(stdout);
-      console.error(stderr);
-      resolve();
-    });
-  });
+  const pgdumpArgs = '';
+  return execute(backupCommand, [pgdumpArgs], { ...(pgdumpRequiredOptions || {}), ...outputOption }, pddumpDefaultOptions);
 }
 
 async function main(targetBucketUrl: URL, options: BackupOptions) {
@@ -117,7 +102,13 @@ async function main(targetBucketUrl: URL, options: BackupOptions) {
   const provider = generateProvider(targetBucketUrl);
   const pgtoolOption = convertOption(Object(options), 'postgresql');
   console.log('dump PostgreSQL...');
-  await backup(target, pgtoolOption);
+  const [stdout, stderr] = await backup(target, pgtoolOption);
+  if (stdout) {
+    console.log(stdout);
+  }
+  if (stderr) {
+    console.error(stderr);
+  }
   console.log(`backup ${target}...`);
   const { compressedFilePath } = await compress(target);
   await provider.copyFile(compressedFilePath, targetBucketUrl.toString());
