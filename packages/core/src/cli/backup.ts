@@ -5,6 +5,12 @@ import { compress } from '../utils/tar';
 
 const schedule = require('node-schedule');
 const tmp = require('tmp');
+const axios = require('axios');
+const axiosRetry = require('axios-retry');
+const EventEmitter = require('events');
+
+const backupEmitter = new EventEmitter();
+const _EXIT_BACKUP = 'AWSOME_BACKUP_EXIT_BACKUP';
 
 /* Backup command option types */
 export declare interface IBackupCLIOption {
@@ -14,6 +20,7 @@ export declare interface IBackupCLIOption {
   backupfilePrefix: string,
   cronmode: boolean,
   cronExpression: string,
+  healthchecksUrl: string,
 }
 
 export class AbstractBackupCLI {
@@ -27,6 +34,14 @@ export class AbstractBackupCLI {
   }
 
   async main(targetBucketUrl: URL, options: IBackupCLIOption): Promise<void> {
+    if (options.healthchecksUrl != null && backupEmitter.listenerCount(_EXIT_BACKUP) === 0) {
+      const healthchecksUrl = new URL(options.healthchecksUrl);
+      axiosRetry(axios, { retries: 3 });
+      backupEmitter.addListener(_EXIT_BACKUP, async() => {
+        await axios.get(healthchecksUrl.toString()).catch(((e: any) => { console.log(`Cannot GET ${healthchecksUrl.toString()}: ${e.toString()}`) }));
+      });
+    }
+
     tmp.setGracefulCleanup();
     const tmpdir = tmp.dirSync({ unsafeCleanup: true });
 
@@ -45,6 +60,8 @@ export class AbstractBackupCLI {
     console.log(`backup ${target}...`);
     const { compressedFilePath } = await compress(target);
     await provider.copyFile(compressedFilePath, targetBucketUrl.toString());
+
+    backupEmitter.emit(_EXIT_BACKUP);
   }
 
   async mainCronMode(targetBucketUrl: URL, options: IBackupCLIOption): Promise<void> {

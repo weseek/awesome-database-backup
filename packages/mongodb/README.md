@@ -25,6 +25,7 @@ Options:
   --backupfile-prefix <BACKUPFILE_PREFIX>             Prefix of backup file. (default: "backup")
   --cronmode                                          Run `backup` as cron mode. In Cron mode, `backup` will be executed periodically. (default: false)
   --cron-expression <CRON_EXPRESSION>                 Cron expression (ex. CRON_EXPRESSION="0 4 * * *" if you want to run at 4:00 every day)
+  --healthcheck-url <HEALTHCHECK_URL>                 URL that gets called after a successful backup (eg. https://healthchecks.io)
   --mongodb-host <MONGODB_hostname>                   mongodb host to connect to (setname/host1,host2 for replica sets) (default: "mongo")
   --mongodb-port <MONGODB_port>                       server port (can also use --host hostname:port)
   --mongodb-gssapiServiceName <MONGODB_SERVICE_NAME>  service name to use when authenticating using GSSAPI/Kerberos ('mongodb' by default)
