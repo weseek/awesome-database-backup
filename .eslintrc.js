@@ -17,6 +17,7 @@ module.exports = {
     'import/prefer-default-export': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/no-var-requires': 'off',
+    'no-console': 'off',
     indent: [
       'error',
       2,
