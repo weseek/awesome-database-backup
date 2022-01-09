@@ -18,7 +18,7 @@ async function main(targetBucketUrl: string, options: Record<string, string>) {
   tmp.dir({ unsafeCleanup: true }, async(error: any, path: string, cleanUpCallback: any) => {
     try {
       console.log(`=== ${basename(__filename)} started at ${Date().toLocaleString()} ===`);
-      const target = join(path, `${options.backupfilePrefix}-${format(new Date(), 'yyyyMMddHHmmss')}`);
+      const target = join(path, `${options.backupfilePrefix}-${format(Date.now(), 'yyyyMMddHHmmss')}`);
 
       const noConfiguration = configExistS3();
       if (noConfiguration) {
@@ -75,7 +75,7 @@ program
         console.error('The option "--cron-expression" must be specified in cron mode.');
         return;
       }
-      console.log(`=== started in cron mode ${format(new Date(), 'yyyy/MM/dd HH:mm:ss')} ===`);
+      console.log(`=== started in cron mode ${format(Date.now(), 'yyyy/MM/dd HH:mm:ss')} ===`);
       schedule.scheduleJob(options.cronExpression, async() => {
         await main(targetBucketUrl, options);
       });
