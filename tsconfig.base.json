@@ -1,4 +1,6 @@
 {
+  "lib": "es2019",
+
   /* default compiler options */
   "compilerOptions": {
     "strict": true,

@@ -6,6 +6,7 @@ import {
   execute,
   AbstractRestoreCLI,
   IRestoreCLIOption,
+  convertOption,
 } from '@awesome-backup/core';
 import { PACKAGE_VERSION } from '@awesome-backup/postgresql/config/version';
 
@@ -20,15 +21,21 @@ declare interface IPostgreSQLRestoreOption extends IRestoreCLIOption {
 
 class PostgreSQLRestoreCLI extends AbstractRestoreCLI {
 
-  async restore(sourcePath: string, pgrestoreRequiredOptions?: Record<string, string>) {
+  convertOption(option: IRestoreCLIOption): Record<string, string> {
+    const optionPrefix = 'postgresql';
+    return convertOption(Object(option), optionPrefix);
+  }
+
+  async restore(sourcePath: string, psqlRequiredOptions?: Record<string, string>) {
     const restoreCommand = 'psql';
-    const pdrestoreDefaultOptions: Record<string, string> = {
+    const psqlDefaultOptions: Record<string, string> = {
     };
     const inputOption: Record<string, string> = {
       '--file': sourcePath,
     };
-    const pgdumpArgs = '';
-    return execute(restoreCommand, [pgdumpArgs], { ...(pgrestoreRequiredOptions || {}), ...inputOption }, pdrestoreDefaultOptions);
+    const psqlArgs = '';
+    console.log('restore PostgreSQL...');
+    return execute(restoreCommand, [psqlArgs], { ...(psqlRequiredOptions || {}), ...inputOption }, psqlDefaultOptions);
   }
 
 }

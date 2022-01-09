@@ -5,7 +5,7 @@ import {
   configExistS3, createConfigS3,
   PruneCLI, IPruneCLIOption,
 } from '@awesome-backup/core';
-import { PACKAGE_VERSION } from '@awesome-backup/postgresql/config/version';
+import { PACKAGE_VERSION } from '../src/config/version';
 
 program
   .version(PACKAGE_VERSION)

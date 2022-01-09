@@ -1,7 +1,6 @@
 import { format } from 'date-fns';
 import { basename, join } from 'path';
 import { generateProvider } from '../factories/provider-factory';
-import { convertOption } from '../utils/cli-option';
 import { expand } from '../utils/tar';
 const tmp = require('tmp');
 
@@ -14,7 +13,11 @@ export declare interface IRestoreCLIOption {
 
 export class AbstractRestoreCLI {
 
-  async restore(sourcePath: string, pgrestoreRequiredOptions?: Record<string, string>): Promise<string[]> {
+  convertOption(option: IRestoreCLIOption): Record<string, string|number|boolean|string[]|number[]> {
+    throw new Error('Method not implemented.');
+  }
+
+  async restore(sourcePath: string, pgrestoreRequiredOptions?: Record<string, string|number|boolean|string[]|number[]>): Promise<string[]> {
     throw new Error('Method not implemented.');
   }
 
@@ -29,9 +32,8 @@ export class AbstractRestoreCLI {
     await provider.copyFile(targetBucketUrl.toString(), target);
     console.log(`expands ${target}...`);
     const { expandedPath } = await expand(target);
-    const pgtoolOption = convertOption(Object(options), 'postgresql');
-    console.log('restore PostgreSQL...');
-    const [stdout, stderr] = await this.restore(expandedPath, pgtoolOption);
+    const toolOption = this.convertOption(options);
+    const [stdout, stderr] = await this.restore(expandedPath, toolOption);
     if (stdout) {
       console.log(stdout);
     }

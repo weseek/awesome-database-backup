@@ -1,7 +1,6 @@
 import { format } from 'date-fns';
 import { basename, join } from 'path';
 import { generateProvider } from '../factories/provider-factory';
-import { convertOption } from '../utils/cli-option';
 import { compress } from '../utils/tar';
 
 const schedule = require('node-schedule');
@@ -19,7 +18,11 @@ export declare interface IBackupCLIOption {
 
 export class AbstractBackupCLI {
 
-  async backup(destinationPath: string, pgdumpRequiredOptions?: Record<string, string>): Promise<string[]> {
+  convertOption(option: IBackupCLIOption): Record<string, string|number|boolean|string[]|number[]> {
+    throw new Error('Method not implemented.');
+  }
+
+  async backup(destinationPath: string, pgdumpRequiredOptions?: Record<string, string|number|boolean|string[]|number[]>): Promise<string[]> {
     throw new Error('Method not implemented.');
   }
 
@@ -31,8 +34,8 @@ export class AbstractBackupCLI {
     const target = join(tmpdir.name, `${options.backupfilePrefix}-${format(Date.now(), 'yyyyMMddHHmmss')}`);
 
     const provider = generateProvider(targetBucketUrl);
-    const pgtoolOption = convertOption(Object(options), 'postgresql');
-    const [stdout, stderr] = await this.backup(target, pgtoolOption);
+    const toolOption = this.convertOption(options);
+    const [stdout, stderr] = await this.backup(target, toolOption);
     if (stdout) {
       console.log(stdout);
     }

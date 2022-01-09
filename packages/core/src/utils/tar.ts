@@ -6,9 +6,9 @@ const command = 'tar';
 export async function compress(compressTargetPath: string): Promise<Record<string, string>> {
   const compressedFilePath = `${compressTargetPath}.tar.bz2`;
   const tarOption = {
-    '-j': '',
-    '-c': '',
-    '-v': '',
+    '-j': true,
+    '-c': true,
+    '-v': true,
     '-f': compressedFilePath,
     '-C': dirname(compressTargetPath), // This is set to treat all paths to be compressed as the current path.
   };
@@ -21,9 +21,9 @@ export async function compress(compressTargetPath: string): Promise<Record<strin
 
 export async function expand(expandTargetPath: string): Promise<Record<string, string>> {
   const tarOption = {
-    '-j': '',
-    '-x': '',
-    '-v': '',
+    '-j': true,
+    '-x': true,
+    '-v': true,
     '-f': expandTargetPath,
     '-C': dirname(expandTargetPath),
   };

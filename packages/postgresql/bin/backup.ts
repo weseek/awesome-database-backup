@@ -5,8 +5,9 @@ import {
   configExistS3, createConfigS3,
   execute,
   AbstractBackupCLI, IBackupCLIOption,
+  convertOption,
 } from '@awesome-backup/core';
-import { PACKAGE_VERSION } from '@awesome-backup/postgresql/config/version';
+import { PACKAGE_VERSION } from '../src/config/version';
 
 /* Backup command option types */
 declare interface IPostgreSQLBackupOption extends IBackupCLIOption {
@@ -52,6 +53,11 @@ declare interface IPostgreSQLBackupOption extends IBackupCLIOption {
 }
 
 class PostgreSQLBackupCLI extends AbstractBackupCLI {
+
+  convertOption(option: IBackupCLIOption): Record<string, string> {
+    const optionPrefix = 'postgresql';
+    return convertOption(Object(option), optionPrefix);
+  }
 
   async backup(destinationPath: string, pgdumpRequiredOptions?: Record<string, string>) {
     const backupCommand = 'pg_dumpall';
