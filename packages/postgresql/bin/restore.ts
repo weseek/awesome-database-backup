@@ -41,7 +41,7 @@ async function main(targetBucketUrl: URL, options: RestoreOptions) {
   tmp.setGracefulCleanup();
   const tmpdir = tmp.dirSync({ unsafeCleanup: true });
 
-  console.log(`=== ${basename(__filename)} started at ${format(new Date(), 'yyyy/MM/dd HH:mm:ss')} ===`);
+  console.log(`=== ${basename(__filename)} started at ${format(Date.now(), 'yyyy/MM/dd HH:mm:ss')} ===`);
   const target = join(tmpdir.name, basename(targetBucketUrl.pathname));
 
   const noConfiguration = configExistS3();
