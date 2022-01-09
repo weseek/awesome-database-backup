@@ -13,6 +13,49 @@ import { PACKAGE_VERSION } from '../src/config/version';
 /* Restore command option types */
 declare interface IMongoDBRestoreOption extends IRestoreCLIOption {
   mongodbHost: string,
+  mongodbPort: number,
+  mongodbGssapiServiceName: string,
+  mongodbGssapiHostName: string,
+  mongodbSsl: boolean,
+  mongodbSslCAFile: string,
+  mongodbSslPEMKeyFile: string,
+  mongodbSslPEMKeyPassword: string,
+  mongodbSslCRLFile: string,
+  mongodbSslAllowInvalidCertificates: boolean,
+  mongodbSslAllowInvalidHostnames: boolean,
+  mongodbSslFIPSMode: boolean,
+  mongodbUsername: string,
+  mongodbPassword: string,
+  mongodbAuthenticationDatabase: string,
+  mongodbAuthenticationMechanism: string,
+  mongodbUri: string,
+  mongodbDb: string,
+  mongodbCollection: string,
+  mongodbExcludeCollection: string[],
+  mongodbExcludeCollectionsWithPrefix: string[],
+  mongodbNsExclude: string,
+  mongodbNsInclude: string,
+  mongodbNsFrom: string,
+  mongodbNsTo: string,
+  mongodbObjcheck: boolean,
+  mongodbOplogReplay: boolean,
+  mongodbOplogLimit: number,
+  mongodbOplogFile: string,
+  mongodbArchive: string,
+  mongodbRestoreDbUsersAndRoles: boolean,
+  mongodbDir: string,
+  mongodbGzip: boolean,
+  mongodbDrop: boolean,
+  mongodbDryRun: boolean,
+  mongodbWriteConcern: string,
+  mongodbNoIndexRestore: boolean,
+  mongodbNoOptionsRestore: boolean,
+  mongodbKeepIndexVersion: boolean,
+  mongodbMaintainInsertionOrder: boolean,
+  mongodbNumParallelCollections: number,
+  mongodbNumInsertionWorkersPerCollection: number,
+  mongodbStopOnError: boolean,
+  mongodbBypassDocumentValidation: boolean,
 }
 
 class MongoDBRestoreCLI extends AbstractRestoreCLI {
@@ -45,7 +88,7 @@ program
    */
   /* connection options */
   .option('--mongodb-host <hostname>', 'mongodb host to connect to (setname/host1,host2 for replica sets)')
-  .option('--mongodb-port <port>', 'server port (can also use --host hostname:port)')
+  .option('--mongodb-port <port>', 'server port (can also use --host hostname:port)', parseInt)
   /* kerberos options */
   .option('--mongodb-gssapiServiceName <service-name>', 'service name to use when authenticating using GSSAPI/Kerberos (\'mongodb\' by default)')
   .option('--mongodb-gssapiHostName <host-name>', 'hostname to use when authenticating using GSSAPI/Kerberos (remote server\'s address by default)')
@@ -77,7 +120,7 @@ program
   /* input options */
   .option('--mongodb-objcheck', 'validate all objects before inserting')
   .option('--mongodb-oplogReplay', 'replay oplog for point-in-time restore')
-  .option('--mongodb-oplogLimit <seconds>', 'only include oplog entries before the provided Timestamp')
+  .option('--mongodb-oplogLimit <seconds>', 'only include oplog entries before the provided Timestamp', parseInt)
   .option('--mongodb-oplogFile <filename>', 'oplog file to use for replay of oplog')
   .option('--mongodb-archive <filename>', 'restore dump from the specified archive file.  If flag is specified without a value, archive is read from stdin')
   .option('--mongodb-restoreDbUsersAndRoles', 'restore user and role definitions for the given database')
@@ -86,13 +129,15 @@ program
   /* restore options */
   .option('--mongodb-drop', 'drop each collection before import')
   .option('--mongodb-dryRun', 'view summary without importing anything. recommended with verbosity')
-  .option('--mongodb-writeConcern <write-concern>', 'write concern options e.g. --writeConcern majority, --writeConcern \'{w: 3, wtimeout: 500, fsync: true, j: true}\'')
+  .option('--mongodb-writeConcern <write-concern>',
+    'write concern options e.g. --writeConcern majority, --writeConcern \'{w: 3, wtimeout: 500, fsync: true, j: true}\'')
   .option('--mongodb-noIndexRestore', 'don\'t restore indexes')
   .option('--mongodb-noOptionsRestore', 'don\'t restore collection options')
   .option('--mongodb-keepIndexVersion', 'don\'t update index version')
   .option('--mongodb-maintainInsertionOrder', 'preserve order of documents during restoration')
   .option('--mongodb-numParallelCollections <num>', 'number of collections to restore in parallel (4 by default) (default: 4)', parseInt)
-  .option('--mongodb-numInsertionWorkersPerCollection <num>', 'number of insert operations to run concurrently per collection (1 by default) (default: 1)', parseInt)
+  .option('--mongodb-numInsertionWorkersPerCollection <num>',
+    'number of insert operations to run concurrently per collection (1 by default) (default: 1)', parseInt)
   .option('--mongodb-stopOnError', 'stop restoring if an error is encountered on insert (off by default)')
   .option('--mongodb-bypassDocumentValidation', 'bypass document validation')
   .addHelpText('after', `
