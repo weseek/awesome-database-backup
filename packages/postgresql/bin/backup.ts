@@ -3,7 +3,6 @@
 import { program } from 'commander';
 import { basename, join } from 'path';
 import { format } from 'date-fns';
-import { exec } from 'child_process';
 import {
   generateProvider,
   configExistS3, createConfigS3, unlinkConfigS3,
@@ -12,7 +11,6 @@ import {
   execute,
 } from '@awesome-backup/core';
 import { PACKAGE_VERSION } from '@awesome-backup/postgresql/config/version';
-import { stdout } from 'process';
 
 const tmp = require('tmp');
 const schedule = require('node-schedule');
