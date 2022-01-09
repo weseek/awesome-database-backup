@@ -1,41 +1,11 @@
 #!/usr/bin/env node
 
 import { program } from 'commander';
-import { format, subDays } from 'date-fns';
 import {
-  generateProvider,
   configExistS3, createConfigS3,
+  PruneCLI, IPruneCLIOption,
 } from '@awesome-backup/core';
 import { PACKAGE_VERSION } from '@awesome-backup/postgresql/config/version';
-
-/* Prune command option types */
-declare interface PruneOptions {
-  awsRegion: string
-  awsAccessKeyId: string,
-  awsSecretAccessKey: string,
-  backupfilePrefix: string,
-  deleteDivide: number,
-  deleteTargetDaysLeft: number,
-}
-
-async function prune(targetBucketUrl: URL, options: PruneOptions) {
-  const secondsPerDay = 60 * 60 * 24;
-  const targetBackupDay = subDays(Date.now(), options.deleteTargetDaysLeft);
-  const isDeleteBackupDay = (Math.trunc(targetBackupDay.getTime() / 1000 / secondsPerDay) % options.deleteDivide === 0);
-  if (!isDeleteBackupDay) {
-    // do nothing
-    return;
-  }
-
-  const provider = generateProvider(targetBucketUrl);
-  const targetBackupUrlPrefix = new URL(`${options.backupfilePrefix}-${format(targetBackupDay, 'yyyyMMdd')}`, targetBucketUrl).toString();
-  const targetBackupFiles = await provider.listFiles(targetBackupUrlPrefix, { exactMatch: false, absolutePath: false });
-  for (const targetBackup of targetBackupFiles) {
-    const targetBackupUrl = new URL(targetBackup, targetBucketUrl);
-    provider.deleteFile(targetBackupUrl.toString());
-    console.log(`DELETED past backuped file on ${provider.name}: ${targetBackupUrl}`);
-  }
-}
 
 program
   .version(PACKAGE_VERSION)
@@ -47,7 +17,7 @@ program
   .option('--backupfile-prefix <BACKUPFILE_PREFIX>', 'Prefix of backup file.', 'backup')
   .option('--delete-divide <DELETE_DIVIDE>', 'delete divide', parseInt, 3)
   .option('--delete-target-days-left <DELETE_TARGET_DAYS_LEFT>', 'How many days ago to be deleted', parseInt, 4)
-  .action(async(targetBucketUrlString, options: PruneOptions) => {
+  .action(async(targetBucketUrlString, options: IPruneCLIOption) => {
     if (!configExistS3()) {
       if (options.awsRegion == null || options.awsAccessKeyId == null || options.awsSecretAccessKey == null) {
         console.error('If the configuration file does not exist, '
@@ -63,7 +33,7 @@ program
 
     const targetBucketUrl = new URL(targetBucketUrlString);
     try {
-      await prune(targetBucketUrl, options);
+      await new PruneCLI().main(targetBucketUrl, options);
     }
     catch (e: any) {
       console.error(e);

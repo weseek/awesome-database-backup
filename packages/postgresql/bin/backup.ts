@@ -1,28 +1,15 @@
 #!/usr/bin/env node
 
 import { program } from 'commander';
-import { basename, join } from 'path';
-import { format } from 'date-fns';
 import {
-  generateProvider,
   configExistS3, createConfigS3,
-  compress,
-  convertOption,
   execute,
+  AbstractBackupCLI, IBackupCLIOption,
 } from '@awesome-backup/core';
 import { PACKAGE_VERSION } from '@awesome-backup/postgresql/config/version';
 
-const tmp = require('tmp');
-const schedule = require('node-schedule');
-
 /* Backup command option types */
-declare interface BackupOptions {
-  awsRegion: string
-  awsAccessKeyId: string,
-  awsSecretAccessKey: string,
-  backupfilePrefix: string,
-  cronmode: boolean,
-  cronExpression: string,
+declare interface IPostgreSQLBackupOption extends IBackupCLIOption {
   postgresqlDbname: string,
   postgresqlHost: string,
   postgresqlDatabase: string,
@@ -64,42 +51,20 @@ declare interface BackupOptions {
   postgresqlUseSetSessionAuthorization: boolean,
 }
 
-function backup(destinationPath: string, pgdumpRequiredOptions?: Record<string, string>) {
-  const backupCommand = 'pg_dumpall';
-  const pddumpDefaultOptions: Record<string, string> = {
-  };
-  const outputOption: Record<string, string> = {
-    '--file': destinationPath,
-  };
-  const pgdumpArgs = '';
-  return execute(backupCommand, [pgdumpArgs], { ...(pgdumpRequiredOptions || {}), ...outputOption }, pddumpDefaultOptions);
-}
+class PostgreSQLBackupCLI extends AbstractBackupCLI {
 
-async function main(targetBucketUrl: URL, options: BackupOptions) {
-  tmp.setGracefulCleanup();
-  const tmpdir = tmp.dirSync({ unsafeCleanup: true });
-
-  console.log(`=== ${basename(__filename)} started at ${format(Date.now(), 'yyyy/MM/dd HH:mm:ss')} ===`);
-  const target = join(tmpdir.name, `${options.backupfilePrefix}-${format(Date.now(), 'yyyyMMddHHmmss')}`);
-
-  const provider = generateProvider(targetBucketUrl);
-  const pgtoolOption = convertOption(Object(options), 'postgresql');
-  console.log('dump PostgreSQL...');
-  const [stdout, stderr] = await backup(target, pgtoolOption);
-  if (stdout) {
-    console.log(stdout);
+  async backup(destinationPath: string, pgdumpRequiredOptions?: Record<string, string>) {
+    const backupCommand = 'pg_dumpall';
+    const pddumpDefaultOptions: Record<string, string> = {
+    };
+    const outputOption: Record<string, string> = {
+      '--file': destinationPath,
+    };
+    const pgdumpArgs = '';
+    console.log('dump PostgreSQL...');
+    return execute(backupCommand, [pgdumpArgs], { ...(pgdumpRequiredOptions || {}), ...outputOption }, pddumpDefaultOptions);
   }
-  if (stderr) {
-    console.warn(stderr);
-  }
-  console.log(`backup ${target}...`);
-  const { compressedFilePath } = await compress(target);
-  await provider.copyFile(compressedFilePath, targetBucketUrl.toString());
-}
 
-async function mainCronMode(targetBucketUrl: URL, options: BackupOptions) {
-  console.log(`=== started in cron mode ${format(Date.now(), 'yyyy/MM/dd HH:mm:ss')} ===`);
-  await schedule.scheduleJob(options.cronExpression, async() => { await main(targetBucketUrl, options) });
 }
 
 program
@@ -168,7 +133,7 @@ program
       PostgreSQL options are "--postgresql-XXX", which corresponds to the "--XXX" option of the tool used internally.
       These options may not available depending on the version of the tool.
       `.replace(/^ {4}/mg, ''))
-  .action(async(targetBucketUrlString, options: BackupOptions) => {
+  .action(async(targetBucketUrlString, options: IPostgreSQLBackupOption) => {
     if (options.cronmode && options.cronExpression == null) {
       console.error('The option "--cron-expression" must be specified in cron mode.');
       return;
@@ -189,10 +154,10 @@ program
     try {
       const targetBucketUrl = new URL(targetBucketUrlString);
       if (options.cronmode) {
-        await mainCronMode(targetBucketUrl, options);
+        await new PostgreSQLBackupCLI().mainCronMode(targetBucketUrl, options);
       }
       else {
-        await main(targetBucketUrl, options);
+        await new PostgreSQLBackupCLI().main(targetBucketUrl, options);
       }
     }
     catch (e: any) {

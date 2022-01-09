@@ -1,3 +1,7 @@
+export * from './cli/backup';
+export * from './cli/list';
+export * from './cli/prune';
+export * from './cli/restore';
 export * from './factories/provider-factory';
 export * from './factories/provider-config-factory';
 export * from './interfaces/provider';

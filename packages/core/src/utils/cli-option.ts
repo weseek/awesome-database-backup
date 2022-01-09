@@ -16,7 +16,7 @@ export function convertOption(option: Record<string, string|number|boolean>, pre
 }
 
 export async function execute(
-    command: string, args?: string[], option?: Record<string, string>, defaultOption?: Record<string, string>
+    command: string, args?: string[], option?: Record<string, string>, defaultOption?: Record<string, string>,
 ): Promise<string[]> {
   const mergedOption = { ...defaultOption, ...option };
   const optionsString = Object.keys(mergedOption).map((key: string) => (mergedOption[key] ? [key, mergedOption[key]].join(' ') : key)).join(' ');

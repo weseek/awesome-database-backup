@@ -1,24 +1,16 @@
 #!/usr/bin/env node
 
 import { program } from 'commander';
-import { basename, join } from 'path';
-import { format } from 'date-fns';
 import {
-  generateProvider,
   configExistS3, createConfigS3,
-  expand,
-  convertOption,
   execute,
+  AbstractRestoreCLI,
+  IRestoreCLIOption,
 } from '@awesome-backup/core';
 import { PACKAGE_VERSION } from '@awesome-backup/postgresql/config/version';
 
-const tmp = require('tmp');
-
 /* Restore command option types */
-declare interface RestoreOptions {
-  awsRegion: string
-  awsAccessKeyId: string,
-  awsSecretAccessKey: string,
+declare interface IPostgreSQLRestoreOption extends IRestoreCLIOption {
   postgresqlHost: string,
   postgresqlPort: number,
   postgresqlUsername: string,
@@ -26,37 +18,19 @@ declare interface RestoreOptions {
   postgresqlPassword: boolean,
 }
 
-function restore(sourcePath: string, pgrestoreRequiredOptions?: Record<string, string>) {
-  const restoreCommand = 'psql';
-  const pdrestoreDefaultOptions: Record<string, string> = {
-  };
-  const inputOption: Record<string, string> = {
-    '--file': sourcePath,
-  };
-  const pgdumpArgs = '';
-  return execute(restoreCommand, [pgdumpArgs], { ...(pgrestoreRequiredOptions || {}), ...inputOption }, pdrestoreDefaultOptions);
-}
+class PostgreSQLRestoreCLI extends AbstractRestoreCLI {
 
-async function main(targetBucketUrl: URL, options: RestoreOptions) {
-  tmp.setGracefulCleanup();
-  const tmpdir = tmp.dirSync({ unsafeCleanup: true });
-
-  console.log(`=== ${basename(__filename)} started at ${format(Date.now(), 'yyyy/MM/dd HH:mm:ss')} ===`);
-  const target = join(tmpdir.name, basename(targetBucketUrl.pathname));
-
-  const provider = generateProvider(targetBucketUrl);
-  await provider.copyFile(targetBucketUrl.toString(), target);
-  console.log(`expands ${target}...`);
-  const { expandedPath } = await expand(target);
-  const pgtoolOption = convertOption(Object(options), 'postgresql');
-  console.log('restore PostgreSQL...');
-  const [stdout, stderr] = await restore(expandedPath, pgtoolOption);
-  if (stdout) {
-    console.log(stdout);
+  async restore(sourcePath: string, pgrestoreRequiredOptions?: Record<string, string>) {
+    const restoreCommand = 'psql';
+    const pdrestoreDefaultOptions: Record<string, string> = {
+    };
+    const inputOption: Record<string, string> = {
+      '--file': sourcePath,
+    };
+    const pgdumpArgs = '';
+    return execute(restoreCommand, [pgdumpArgs], { ...(pgrestoreRequiredOptions || {}), ...inputOption }, pdrestoreDefaultOptions);
   }
-  if (stderr) {
-    console.warn(stderr);
-  }
+
 }
 
 program
@@ -85,7 +59,7 @@ program
       PostgreSQL options are "--postgresql-XXX", which corresponds to the "--XXX" option of the tool used internally.
       These options may not available depending on the version of the tool.
       `.replace(/^ {4}/mg, ''))
-  .action(async(targetBucketUrlString, options) => {
+  .action(async(targetBucketUrlString, options: IPostgreSQLRestoreOption) => {
     if (!configExistS3()) {
       if (options.awsRegion == null || options.awsAccessKeyId == null || options.awsSecretAccessKey == null) {
         console.error('If the configuration file does not exist, '
@@ -101,7 +75,7 @@ program
 
     const targetBucketUrl = new URL(targetBucketUrlString);
     try {
-      await main(targetBucketUrl, options);
+      await new PostgreSQLRestoreCLI().main(targetBucketUrl, options);
     }
     catch (e: any) {
       console.error(e);
