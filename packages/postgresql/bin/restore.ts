@@ -5,7 +5,7 @@ import { basename, join } from 'path';
 import { format } from 'date-fns';
 import {
   generateProvider,
-  configExistS3, createConfigS3, unlinkConfigS3,
+  configExistS3, createConfigS3,
   expand,
   convertOption,
   execute,
@@ -44,21 +44,6 @@ async function main(targetBucketUrl: URL, options: RestoreOptions) {
   console.log(`=== ${basename(__filename)} started at ${format(Date.now(), 'yyyy/MM/dd HH:mm:ss')} ===`);
   const target = join(tmpdir.name, basename(targetBucketUrl.pathname));
 
-  const noConfiguration = configExistS3();
-  if (noConfiguration) {
-    if (options.awsRegion == null || options.awsAccessKeyId == null || options.awsSecretAccessKey == null) {
-      console.error('If the configuration file does not exist, '
-                    + 'you will need to set "--aws-region", "--aws-access-key-id", and "--aws-secret-access-key".');
-      return;
-    }
-  }
-  /* If the configuration file does not exist, create it temporarily from the options,
-    and delete it when it is no longer needed. */
-  const { awsRegion, awsAccessKeyId, awsSecretAccessKey } = options;
-  if (noConfiguration) {
-    createConfigS3({ awsRegion, awsAccessKeyId, awsSecretAccessKey });
-  }
-
   const provider = generateProvider(targetBucketUrl);
   await provider.copyFile(targetBucketUrl.toString(), target);
   console.log(`expands ${target}...`);
@@ -72,11 +57,6 @@ async function main(targetBucketUrl: URL, options: RestoreOptions) {
   if (stderr) {
     console.warn(stderr);
   }
-
-  if (noConfiguration) {
-    unlinkConfigS3();
-  }
-  tmp.removeCallback();
 }
 
 program
@@ -106,6 +86,19 @@ program
       These options may not available depending on the version of the tool.
       `.replace(/^ {4}/mg, ''))
   .action(async(targetBucketUrlString, options) => {
+    if (!configExistS3()) {
+      if (options.awsRegion == null || options.awsAccessKeyId == null || options.awsSecretAccessKey == null) {
+        console.error('If the configuration file does not exist, '
+                      + 'you will need to set "--aws-region", "--aws-access-key-id", and "--aws-secret-access-key".');
+        return;
+      }
+
+      /* If the configuration file does not exist, it is created temporarily from the options,
+        and it will be deleted when process exit. */
+      const { awsRegion, awsAccessKeyId, awsSecretAccessKey } = options;
+      createConfigS3({ awsRegion, awsAccessKeyId, awsSecretAccessKey });
+    }
+
     const targetBucketUrl = new URL(targetBucketUrlString);
     try {
       await main(targetBucketUrl, options);

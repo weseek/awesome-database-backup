@@ -5,7 +5,7 @@ import { basename, join } from 'path';
 import { format } from 'date-fns';
 import {
   generateProvider,
-  configExistS3, createConfigS3, unlinkConfigS3,
+  configExistS3, createConfigS3,
   compress,
   convertOption,
   execute,
@@ -82,21 +82,6 @@ async function main(targetBucketUrl: URL, options: BackupOptions) {
   console.log(`=== ${basename(__filename)} started at ${format(Date.now(), 'yyyy/MM/dd HH:mm:ss')} ===`);
   const target = join(tmpdir.name, `${options.backupfilePrefix}-${format(Date.now(), 'yyyyMMddHHmmss')}`);
 
-  const noConfiguration = configExistS3();
-  if (noConfiguration) {
-    if (options.awsRegion == null || options.awsAccessKeyId == null || options.awsSecretAccessKey == null) {
-      console.error('If the configuration file does not exist, '
-                    + 'you will need to set "--aws-region", "--aws-access-key-id", and "--aws-secret-access-key".');
-      return;
-    }
-  }
-  /* If the configuration file does not exist, create it temporarily from the options,
-    and delete it when it is no longer needed. */
-  const { awsRegion, awsAccessKeyId, awsSecretAccessKey } = options;
-  if (noConfiguration) {
-    createConfigS3({ awsRegion, awsAccessKeyId, awsSecretAccessKey });
-  }
-
   const provider = generateProvider(targetBucketUrl);
   const pgtoolOption = convertOption(Object(options), 'postgresql');
   console.log('dump PostgreSQL...');
@@ -110,11 +95,11 @@ async function main(targetBucketUrl: URL, options: BackupOptions) {
   console.log(`backup ${target}...`);
   const { compressedFilePath } = await compress(target);
   await provider.copyFile(compressedFilePath, targetBucketUrl.toString());
+}
 
-  if (noConfiguration) {
-    unlinkConfigS3();
-  }
-  tmpdir.removeCallback();
+async function mainCronMode(targetBucketUrl: URL, options: BackupOptions) {
+  console.log(`=== started in cron mode ${format(Date.now(), 'yyyy/MM/dd HH:mm:ss')} ===`);
+  await schedule.scheduleJob(options.cronExpression, async() => { await main(targetBucketUrl, options) });
 }
 
 program
@@ -184,29 +169,34 @@ program
       These options may not available depending on the version of the tool.
       `.replace(/^ {4}/mg, ''))
   .action(async(targetBucketUrlString, options: BackupOptions) => {
-    const targetBucketUrl = new URL(targetBucketUrlString);
-    if (options.cronmode) {
-      if (options.cronExpression == null) {
-        console.error('The option "--cron-expression" must be specified in cron mode.');
+    if (options.cronmode && options.cronExpression == null) {
+      console.error('The option "--cron-expression" must be specified in cron mode.');
+      return;
+    }
+    if (!configExistS3()) {
+      if (options.awsRegion == null || options.awsAccessKeyId == null || options.awsSecretAccessKey == null) {
+        console.error('If the configuration file does not exist, '
+                      + 'you will need to set "--aws-region", "--aws-access-key-id", and "--aws-secret-access-key".');
         return;
       }
-      console.log(`=== started in cron mode ${format(Date.now(), 'yyyy/MM/dd HH:mm:ss')} ===`);
-      schedule.scheduleJob(options.cronExpression, async() => {
-        try {
-          await main(targetBucketUrl, options);
-        }
-        catch (e: any) {
-          console.error(e);
-        }
-      });
+
+      /* If the configuration file does not exist, it is created temporarily from the options,
+        and it will be deleted when process exit. */
+      const { awsRegion, awsAccessKeyId, awsSecretAccessKey } = options;
+      createConfigS3({ awsRegion, awsAccessKeyId, awsSecretAccessKey });
     }
-    else {
-      try {
+
+    try {
+      const targetBucketUrl = new URL(targetBucketUrlString);
+      if (options.cronmode) {
+        await mainCronMode(targetBucketUrl, options);
+      }
+      else {
         await main(targetBucketUrl, options);
       }
-      catch (e: any) {
-        console.error(e);
-      }
+    }
+    catch (e: any) {
+      console.error(e);
     }
   });
 

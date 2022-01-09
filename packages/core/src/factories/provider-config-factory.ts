@@ -23,11 +23,26 @@ function configPaths(): Record<string, string> {
 
 export function configExistS3(): boolean {
   const { configurationPath, credentialPath } = configPaths();
-  return (!fileExists(configurationPath) && !fileExists(credentialPath));
+  return (fileExists(configurationPath) && fileExists(credentialPath));
+}
+
+export function unlinkConfigS3(): void {
+  const { configurationPath, credentialPath } = configPaths();
+
+  if (fileExists(configurationPath)) {
+    unlinkSync(configurationPath);
+  }
+  if (fileExists(credentialPath)) {
+    unlinkSync(credentialPath);
+  }
 }
 
 export function createConfigS3({ awsRegion, awsAccessKeyId, awsSecretAccessKey }: Record<string, string>): Record<string, string> {
   const { configurationPath, credentialPath } = configPaths();
+
+  /* Automatically remove config files */
+  process.addListener('exit', unlinkConfigS3);
+  process.addListener('SIGINT', unlinkConfigS3);
 
   const configData = `
       [default]
@@ -43,10 +58,4 @@ export function createConfigS3({ awsRegion, awsAccessKeyId, awsSecretAccessKey }
   writeFileSync(credentialPath, credentialData);
 
   return { configurationPath, credentialPath };
-}
-
-export function unlinkConfigS3(): void {
-  const { configurationPath, credentialPath } = configPaths();
-  unlinkSync(configurationPath);
-  unlinkSync(credentialPath);
 }

@@ -4,34 +4,23 @@ import { EOL } from 'os';
 import { program } from 'commander';
 import {
   generateProvider,
-  configExistS3, createConfigS3, unlinkConfigS3,
+  configExistS3, createConfigS3,
 } from '@awesome-backup/core';
 import { PACKAGE_VERSION } from '@awesome-backup/postgresql/config/version';
 
-async function main(targetBucketUrl: URL, options: Record<string, string>) {
+/* List command option types */
+declare interface ListOptions {
+  awsRegion: string
+  awsAccessKeyId: string,
+  awsSecretAccessKey: string,
+}
+
+async function main(targetBucketUrl: URL) {
   console.log(`There are files below in bucket:`);
 
-  const noConfiguration = configExistS3();
-  if (noConfiguration) {
-    if (options.awsRegion == null || options.awsAccessKeyId == null || options.awsSecretAccessKey == null) {
-      console.error('If the configuration file does not exist, '
-                    + 'you will need to set "--aws-region", "--aws-access-key-id", and "--aws-secret-access-key".');
-      return;
-    }
-  }
-  /* If the configuration file does not exist, create it temporarily from the options,
-    and delete it when it is no longer needed. */
-  if (noConfiguration) {
-    createConfigS3(options);
-  }
-
   const provider = generateProvider(targetBucketUrl);
-  const files = await provider.listFiles(targetBucketUrl);
+  const files = await provider.listFiles(targetBucketUrl.toString());
   console.log(files.join(EOL));
-
-  if (noConfiguration) {
-    unlinkConfigS3();
-  }
 }
 
 program
@@ -41,10 +30,22 @@ program
   .option('--aws-region <AWS_REGION>', 'AWS Region')
   .option('--aws-access-key-id <AWS_ACCESS_KEY_ID>', 'Your IAM Access Key ID', process.env.AWS_ACCESS_KEY_ID)
   .option('--aws-secret-access-key <AWS_SECRET_ACCESS_KEY>', 'Your IAM Secret Access Key', process.env.AWS_SECRET_ACCESS_KEY)
-  .action(async(targetBucketUrlString, options) => {
+  .action(async(targetBucketUrlString, options: ListOptions) => {
+    if (!configExistS3()) {
+      if (options.awsRegion == null || options.awsAccessKeyId == null || options.awsSecretAccessKey == null) {
+        console.error('If the configuration file does not exist, '
+                      + 'you will need to set "--aws-region", "--aws-access-key-id", and "--aws-secret-access-key".');
+        return;
+      }
+      /* If the configuration file does not exist, it is created temporarily from the options,
+        and it will be deleted when process exit. */
+      const { awsRegion, awsAccessKeyId, awsSecretAccessKey } = options;
+      createConfigS3({ awsRegion, awsAccessKeyId, awsSecretAccessKey });
+    }
+
     const targetBucketUrl = new URL(targetBucketUrlString);
     try {
-      await main(targetBucketUrl, options);
+      await main(targetBucketUrl);
     }
     catch (e: any) {
       console.error(e);
