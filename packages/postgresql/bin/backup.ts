@@ -190,7 +190,7 @@ program
         console.error('The option "--cron-expression" must be specified in cron mode.');
         return;
       }
-      console.log(`=== started in cron mode ${format(new Date(), 'yyyy/MM/dd HH:mm:ss')} ===`);
+      console.log(`=== started in cron mode ${format(Date.now(), 'yyyy/MM/dd HH:mm:ss')} ===`);
       schedule.scheduleJob(options.cronExpression, async() => {
         try {
           await main(targetBucketUrl, options);
