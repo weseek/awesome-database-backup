@@ -105,7 +105,7 @@ async function main(targetBucketUrl: URL, options: BackupOptions) {
     console.log(stdout);
   }
   if (stderr) {
-    console.error(stderr);
+    console.warn(stderr);
   }
   console.log(`backup ${target}...`);
   const { compressedFilePath } = await compress(target);

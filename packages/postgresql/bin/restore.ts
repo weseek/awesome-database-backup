@@ -70,7 +70,7 @@ async function main(targetBucketUrl: URL, options: RestoreOptions) {
     console.log(stdout);
   }
   if (stderr) {
-    console.error(stderr);
+    console.warn(stderr);
   }
 
   if (noConfiguration) {
