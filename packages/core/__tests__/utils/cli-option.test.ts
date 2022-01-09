@@ -3,7 +3,7 @@ import { ExecException } from 'child_process';
 let cliOption = require('../../src/utils/cli-option');
 
 const originalModule = jest.requireActual('child_process');
-let childProcessModuleMock = {
+const childProcessModuleMock = {
   ...originalModule,
   exec: jest.fn().mockImplementation((
       command: string, callback?: ((error: ExecException | null, stdout: string, stderr: string) => void) | undefined,
