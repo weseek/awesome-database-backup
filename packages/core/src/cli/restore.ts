@@ -2,6 +2,7 @@ import { format } from 'date-fns';
 import { basename, join } from 'path';
 import { generateProvider } from '../factories/provider-factory';
 import { expand } from '../utils/tar';
+
 const tmp = require('tmp');
 
 /* Restore command option types */

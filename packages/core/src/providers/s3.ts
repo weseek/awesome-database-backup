@@ -1,4 +1,5 @@
-import { IProvider, listFilesOptions } from '@awesome-backup/core/interfaces/provider';
+import { readFileSync, createWriteStream } from 'fs';
+import { basename } from 'path';
 import {
   S3Client, S3ClientConfig,
   GetObjectCommand, GetObjectCommandInput,
@@ -7,8 +8,7 @@ import {
   DeleteObjectCommand, DeleteObjectCommandInput,
   ListObjectsCommand, ListObjectsCommandInput,
 } from '@aws-sdk/client-s3';
-import { readFileSync, createWriteStream } from 'fs';
-import { basename } from 'path';
+import { IProvider, listFilesOptions } from '../interfaces/provider';
 
 const { pipeline } = require('stream/promises');
 
