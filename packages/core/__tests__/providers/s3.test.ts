@@ -12,6 +12,7 @@ let core = require('@awesome-backup/core');
 let fs = require('fs');
 
 describe('S3Provider', () => {
+
   beforeEach(async() => {
     jest.resetModules();
     jest.dontMock('@awesome-backup/core');
@@ -184,7 +185,7 @@ describe('S3Provider', () => {
     describe('when copySource and copyDestination are invalid', () => {
       it('reject and throw Error', async() => {
         const provider = new core.S3Provider({});
-        await expect(provider.copyFile('gcs://bucket-name/object-name1', 'gcs://bucket-name/object-name2')).rejects.toThrowError();
+        await expect(provider.copyFile('gs://bucket-name/object-name1', 'gs://bucket-name/object-name2')).rejects.toThrowError();
       });
     });
   });
@@ -259,6 +260,7 @@ describe('S3Provider', () => {
       });
     });
   });
+
   describe('#copyFileOnRemote', () => {
     describe('when S3Client#send resolve', () => {
       beforeEach(async() => {
@@ -290,4 +292,5 @@ describe('S3Provider', () => {
       });
     });
   });
+
 });

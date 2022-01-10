@@ -76,15 +76,15 @@ export class S3Provider implements IProvider {
    * (If the url is "s3://bucket-name/directory", it will look like ["object-name1", "object-name2"])
    */
   listFiles(url: string, optionsRequired?: listFilesOptions): Promise<string[]> {
+    const parseResult = _parseFilePath(url);
+    if (parseResult == null) return Promise.reject(new Error(`URI ${url} is not correct S3's`));
+
     const defaultOption: listFilesOptions = {
       includeFolderInList: false,
       absolutePath: true,
       exactMatch: true,
     };
     const options = optionsRequired ? { ...defaultOption, ...optionsRequired } : defaultOption;
-
-    const parseResult = _parseFilePath(url);
-    if (parseResult == null) return Promise.reject(new Error(`URI ${url} is not correct S3's`));
     const s3Uri = parseResult as S3URI;
     const params: ListObjectsCommandInput = {
       Bucket: s3Uri.bucket,
