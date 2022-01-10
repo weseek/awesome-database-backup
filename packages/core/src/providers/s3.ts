@@ -21,7 +21,7 @@ declare interface S3URI {
  * Parse S3's URI(start with "s3:")
  * If it is not S3's URL, return null.
  */
-function parseFilePath(path: string): S3URI | null {
+function _parseFilePath(path: string): S3URI | null {
   /* S3 URI */
   if (path.startsWith('s3:')) {
     // https://regex101.com/r/vDGuGY/1
@@ -83,7 +83,7 @@ export class S3Provider implements IProvider {
     };
     const options = optionsRequired ? { ...defaultOption, ...optionsRequired } : defaultOption;
 
-    const parseResult = parseFilePath(url);
+    const parseResult = _parseFilePath(url);
     if (parseResult == null) return Promise.reject(new Error(`URI ${url} is not correct S3's`));
     const s3Uri = parseResult as S3URI;
     const params: ListObjectsCommandInput = {
@@ -122,7 +122,7 @@ export class S3Provider implements IProvider {
    * Also, when removing a directory, the URL must end with a slash. (ex. 's3://bucket-name/directory/')
    */
   deleteFile(url: string): Promise<void> {
-    const parseResult = parseFilePath(url);
+    const parseResult = _parseFilePath(url);
     if (parseResult == null) return Promise.reject(new Error(`URI ${url} is not correct S3's`));
 
     const s3Uri = parseResult as S3URI;
@@ -150,8 +150,8 @@ export class S3Provider implements IProvider {
    * If the source and destination are S3 URIs, the S3 object will be copied directly.
    */
   copyFile(copySource: string, copyDestination: string): Promise<void> {
-    const parseSourceResult = parseFilePath(copySource);
-    const parseDestinationResult = parseFilePath(copyDestination);
+    const parseSourceResult = _parseFilePath(copySource);
+    const parseDestinationResult = _parseFilePath(copyDestination);
 
     /* Upload local file to S3 */
     if (parseSourceResult == null && parseDestinationResult != null) {
