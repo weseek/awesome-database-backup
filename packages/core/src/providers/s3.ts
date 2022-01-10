@@ -8,9 +8,9 @@ import {
   DeleteObjectCommand, DeleteObjectCommandInput,
   ListObjectsCommand, ListObjectsCommandInput,
 } from '@aws-sdk/client-s3';
+import { pipeline } from 'stream/promises';
 import { IProvider, listFilesOptions } from '../interfaces/provider';
-
-const { pipeline } = require('stream/promises');
+import internal = require('stream');
 
 declare interface S3URI {
   bucket: string,
@@ -202,7 +202,7 @@ export class S3Provider implements IProvider {
         .then((response) => {
           if (response == null) return reject(new Error('GetObjectCommand return null'));
 
-          pipeline(response.Body, createWriteStream(destinationFilePath))
+          pipeline(response.Body as internal.Readable, createWriteStream(destinationFilePath))
             .then(() => {
               resolve();
             })

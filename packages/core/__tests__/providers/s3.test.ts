@@ -5,7 +5,7 @@ import {
   ListObjectsCommandOutput,
   CopyObjectCommandOutput,
 } from '@aws-sdk/client-s3';
-import { ReadableStream } from 'stream/web';
+import { PassThrough, Readable } from 'stream';
 
 const ModuleHolder: any = {
   S3Client: null,
@@ -27,9 +27,7 @@ describe('S3Provider', () => {
       return {
         ...originalModule,
         readFileSync: jest.fn().mockReturnValue('some body'),
-        createWriteStream: jest.fn().mockReturnValue({
-          write: jest.fn(),
-        }),
+        createWriteStream: jest.fn().mockReturnValue(new PassThrough()),
       };
     });
   });
@@ -75,7 +73,7 @@ describe('S3Provider', () => {
         });
 
         const provider = new ModuleHolder.S3Provider({});
-        const url = 's3://bucket-name/object-name';
+        const url = 's3://bucket-name/';
         await expect(provider.listFiles(url)).resolves.toStrictEqual(['file1']);
       });
     });
@@ -248,23 +246,20 @@ describe('S3Provider', () => {
     describe('when S3Client#send resolve', () => {
       beforeEach(async() => {
         (ModuleHolder.S3Client as jest.MockedClass<typeof ModuleHolder.S3Client>).prototype.send.mockImplementation(() => {
-          return new Promise<GetObjectCommandOutput|null>((resolve) => {
+          return new Promise<any>((resolve) => {
             resolve({
               $metadata: {},
-              Body: new ReadableStream({
-                start(controller) {
-                  controller.enqueue('body');
-                  controller.close();
-                },
-                pull(controller) {},
-                cancel() {},
+              Body: jest.fn().mockImplementation(() => {
+                const readable = new Readable();
+                readable.push(null);
+                return readable;
               }),
             });
           });
         });
       });
 
-      it('reject and throw Error', async() => {
+      it('resolve', async() => {
         const provider = new ModuleHolder.S3Provider({});
         const s3uri = { bucket: 'bucket-name', key: 'object-name' };
         await expect(provider.downloadFile(s3uri, '/path/to/file')).resolves.toBe(undefined);
