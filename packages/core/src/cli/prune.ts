@@ -1,17 +1,27 @@
 import { format, subDays } from 'date-fns';
-import { generateProvider } from '../factories/provider-factory';
+import { IProvider } from '../interfaces/provider';
 
 /* Prune command option types */
 export declare interface IPruneCLIOption {
   awsRegion: string
   awsAccessKeyId: string,
   awsSecretAccessKey: string,
+  gcpProjectId: string,
+  gcpClientEmail: string,
+  gcpPrivateKey: string,
+  gcpServiceAccountKeyJsonPath: string,
   backupfilePrefix: string,
   deleteDivide: number,
   deleteTargetDaysLeft: number,
 }
 
 export class PruneCLI {
+
+  provider: IProvider;
+
+  constructor(provider: IProvider) {
+    this.provider = provider;
+  }
 
   async main(targetBucketUrl: URL, options: IPruneCLIOption): Promise<void> {
     const secondsPerDay = 60 * 60 * 24;
@@ -22,13 +32,12 @@ export class PruneCLI {
       return;
     }
 
-    const provider = generateProvider(targetBucketUrl);
     const targetBackupUrlPrefix = new URL(`${options.backupfilePrefix}-${format(targetBackupDay, 'yyyyMMdd')}`, targetBucketUrl).toString();
-    const targetBackupFiles = await provider.listFiles(targetBackupUrlPrefix, { exactMatch: false, absolutePath: false });
+    const targetBackupFiles = await this.provider.listFiles(targetBackupUrlPrefix, { exactMatch: false, absolutePath: false });
     for (const targetBackup of targetBackupFiles) {
       const targetBackupUrl = new URL(targetBackup, targetBucketUrl);
-      provider.deleteFile(targetBackupUrl.toString());
-      console.log(`DELETED past backuped file on ${provider.name}: ${targetBackupUrl}`);
+      this.provider.deleteFile(targetBackupUrl.toString());
+      console.log(`DELETED past backuped file on ${this.provider.name}: ${targetBackupUrl}`);
     }
   }
 

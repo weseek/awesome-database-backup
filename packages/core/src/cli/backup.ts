@@ -1,7 +1,7 @@
 import { format } from 'date-fns';
 import { basename, join } from 'path';
-import { generateProvider } from '../factories/provider-factory';
 import { compress } from '../utils/tar';
+import { IProvider } from '../interfaces/provider';
 
 const schedule = require('node-schedule');
 const tmp = require('tmp');
@@ -17,6 +17,10 @@ export declare interface IBackupCLIOption {
   awsRegion: string
   awsAccessKeyId: string,
   awsSecretAccessKey: string,
+  gcpProjectId: string,
+  gcpClientEmail: string,
+  gcpPrivateKey: string,
+  gcpServiceAccountKeyJsonPath: string,
   backupfilePrefix: string,
   cronmode: boolean,
   cronExpression: string,
@@ -24,6 +28,12 @@ export declare interface IBackupCLIOption {
 }
 
 export class AbstractBackupCLI {
+
+  provider: IProvider;
+
+  constructor(provider: IProvider) {
+    this.provider = provider;
+  }
 
   convertOption(option: IBackupCLIOption): Record<string, string|number|boolean|string[]|number[]> {
     throw new Error('Method not implemented.');
@@ -48,7 +58,6 @@ export class AbstractBackupCLI {
     console.log(`=== ${basename(__filename)} started at ${format(Date.now(), 'yyyy/MM/dd HH:mm:ss')} ===`);
     const target = join(tmpdir.name, `${options.backupfilePrefix}-${format(Date.now(), 'yyyyMMddHHmmss')}`);
 
-    const provider = generateProvider(targetBucketUrl);
     const toolOption = this.convertOption(options);
     const [stdout, stderr] = await this.backup(target, toolOption);
     if (stdout) {
@@ -59,7 +68,7 @@ export class AbstractBackupCLI {
     }
     console.log(`backup ${target}...`);
     const { compressedFilePath } = await compress(target);
-    await provider.copyFile(compressedFilePath, targetBucketUrl.toString());
+    await this.provider.copyFile(compressedFilePath, targetBucketUrl.toString());
 
     backupEmitter.emit(_EXIT_BACKUP);
   }

@@ -1,4 +1,4 @@
-import { Storage } from '@google-cloud/storage';
+import { Storage, StorageOptions } from '@google-cloud/storage';
 import { IProvider } from '../interfaces/provider';
 
 declare interface GCSURI {
@@ -34,9 +34,9 @@ export class GCSProvider implements IProvider {
 
   client: Storage;
 
-  constructor(config: any) {
+  constructor(config: StorageOptions) {
     this.name = 'GCS';
-    this.client = new Storage();
+    this.client = new Storage(config);
   }
 
   exists(url: string): Promise<boolean> {
@@ -58,7 +58,7 @@ export class GCSProvider implements IProvider {
     return new Promise((resolve, reject) => {
       const targetBucket = this.client.bucket(gcsUrl.bucket);
       targetBucket.getFiles()
-        .then((files) => {
+        .then(([files]) => {
           if (files == null) return reject(new Error('Bucket#getFiles return null'));
 
           const filepaths = files.map(file => file.name);

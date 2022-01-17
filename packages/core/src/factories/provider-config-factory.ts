@@ -14,7 +14,7 @@ function fileExists(path: string): boolean {
   }
 }
 
-function configPaths(): Record<string, string> {
+function configPathsS3(): Record<string, string> {
   const configDirectory = join(process.env.AWS_CONFIG_FILE || join(process.env.HOME || '/', '.aws'));
   const configurationPath = join(configDirectory, 'config');
   const credentialPath = join(configDirectory, 'credentials');
@@ -22,12 +22,12 @@ function configPaths(): Record<string, string> {
 }
 
 export function configExistS3(): boolean {
-  const { configurationPath, credentialPath } = configPaths();
+  const { configurationPath, credentialPath } = configPathsS3();
   return (fileExists(configurationPath) && fileExists(credentialPath));
 }
 
 export function unlinkConfigS3(): void {
-  const { configurationPath, credentialPath } = configPaths();
+  const { configurationPath, credentialPath } = configPathsS3();
 
   if (fileExists(configurationPath)) {
     unlinkSync(configurationPath);
@@ -38,7 +38,7 @@ export function unlinkConfigS3(): void {
 }
 
 export function createConfigS3({ awsRegion, awsAccessKeyId, awsSecretAccessKey }: Record<string, string>): Record<string, string> {
-  const { configurationPath, credentialPath } = configPaths();
+  const { configurationPath, credentialPath } = configPathsS3();
 
   /* Automatically remove config files */
   process.addListener('exit', unlinkConfigS3);

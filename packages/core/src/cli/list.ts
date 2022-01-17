@@ -1,20 +1,28 @@
 import { EOL } from 'os';
-import { generateProvider } from '../factories/provider-factory';
+import { IProvider } from '../interfaces/provider';
 
 /* List command option types */
 export declare interface IListCLIOption {
   awsRegion: string
   awsAccessKeyId: string,
   awsSecretAccessKey: string,
+  gcpProjectId: string,
+  gcpClientEmail: string,
+  gcpPrivateKey: string,
+  gcpServiceAccountKeyJsonPath: string,
 }
 
 export class ListCLI {
 
+  provider: IProvider;
+
+  constructor(provider: IProvider) {
+    this.provider = provider;
+  }
+
   async main(targetBucketUrl: URL): Promise<void> {
     console.log('There are files below in bucket:');
-
-    const provider = generateProvider(targetBucketUrl);
-    const files = await provider.listFiles(targetBucketUrl.toString());
+    const files = await this.provider.listFiles(targetBucketUrl.toString());
     console.log(files.join(EOL));
   }
 
