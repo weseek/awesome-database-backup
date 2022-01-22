@@ -1,4 +1,5 @@
-import { Storage, StorageOptions } from '@google-cloud/storage';
+import { Storage, StorageOptions, File } from '@google-cloud/storage';
+import { join, basename } from 'path';
 import { IProvider } from '../interfaces/provider';
 
 declare interface GCSURI {
@@ -54,11 +55,10 @@ export class GCSProvider implements IProvider {
   listFiles(url: string): Promise<string[]> {
     const gcsUrl = _parseFilePath(url);
     if (gcsUrl == null) return Promise.reject(new Error(`URI ${url} is not correct GCS's`));
-
     return new Promise((resolve, reject) => {
       const targetBucket = this.client.bucket(gcsUrl.bucket);
       targetBucket.getFiles()
-        .then(([files]) => {
+        .then(([files]: File[][]) => {
           if (files == null) return reject(new Error('Bucket#getFiles return null'));
 
           const filepaths = files.map(file => file.name);
@@ -106,8 +106,11 @@ export class GCSProvider implements IProvider {
 
   uploadFile(sourceFilePath: string, destinationGCSUri: GCSURI): Promise<void> {
     return new Promise((resolve, reject) => {
+      const destinationFilePath = (destinationGCSUri.filepath === '' || destinationGCSUri.filepath.endsWith('/'))
+        ? basename(sourceFilePath)
+        : destinationGCSUri.filepath;
       const destinationBucket = this.client.bucket(destinationGCSUri.bucket);
-      destinationBucket.upload(sourceFilePath, { destination: destinationGCSUri.filepath })
+      destinationBucket.upload(sourceFilePath, { destination: destinationFilePath })
         .then(() => resolve())
         .catch(e => reject(e));
     });

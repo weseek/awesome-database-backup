@@ -2,6 +2,7 @@ import { format } from 'date-fns';
 import { basename, join } from 'path';
 import { compress } from '../utils/tar';
 import { IProvider } from '../interfaces/provider';
+import { ICommonCLIOption } from './common';
 
 const schedule = require('node-schedule');
 const tmp = require('tmp');
@@ -13,14 +14,7 @@ const backupEmitter = new EventEmitter();
 const _EXIT_BACKUP = 'AWSOME_BACKUP_EXIT_BACKUP';
 
 /* Backup command option types */
-export declare interface IBackupCLIOption {
-  awsRegion: string
-  awsAccessKeyId: string,
-  awsSecretAccessKey: string,
-  gcpProjectId: string,
-  gcpClientEmail: string,
-  gcpPrivateKey: string,
-  gcpServiceAccountKeyJsonPath: string,
+export declare interface IBackupCLIOption extends ICommonCLIOption {
   backupfilePrefix: string,
   cronmode: boolean,
   cronExpression: string,

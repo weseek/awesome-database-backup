@@ -1,15 +1,9 @@
 import { format, subDays } from 'date-fns';
 import { IProvider } from '../interfaces/provider';
+import { ICommonCLIOption } from './common';
 
 /* Prune command option types */
-export declare interface IPruneCLIOption {
-  awsRegion: string
-  awsAccessKeyId: string,
-  awsSecretAccessKey: string,
-  gcpProjectId: string,
-  gcpClientEmail: string,
-  gcpPrivateKey: string,
-  gcpServiceAccountKeyJsonPath: string,
+export declare interface IPruneCLIOption extends ICommonCLIOption {
   backupfilePrefix: string,
   deleteDivide: number,
   deleteTargetDaysLeft: number,

@@ -11,6 +11,7 @@
     "noEmit": false,
     "inlineSources": true,
     "target": "es2019",
+    "module": "commonjs",
 
     /*
      * basic aliases
