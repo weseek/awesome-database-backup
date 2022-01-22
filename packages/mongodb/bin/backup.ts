@@ -1,8 +1,7 @@
 #!/usr/bin/env node
 
-import { program } from 'commander';
 import {
-  configExistS3, createConfigS3,
+  BinCommon,
   execute,
   AbstractBackupCLI, IBackupCLIOption,
   convertOptionAsCamelCase,
@@ -52,19 +51,18 @@ class MongoDBBackupCLI extends AbstractBackupCLI {
     };
     const mongodumpArgs = '';
     console.log('dump MongoDB...');
-    console.debug(`backupCommand: ${backupCommand}, mongodumpRequiredOptions: ${JSON.stringify(mongodumpRequiredOptions)}, mongodumpArgs: ${mongodumpArgs}`);
     return execute(backupCommand, [mongodumpArgs], { ...(mongodumpRequiredOptions || {}), ...outputOption }, mongodumpDefaultOptions);
   }
 
 }
 
+const program = new BinCommon();
+
 program
   .version(PACKAGE_VERSION)
   .argument('<TARGET_BUCKET_URL>', 'URL of target bucket')
-  // Required fields that are intentionally treat as optional so that they can be specified by environment variables.
-  .option('--aws-region <AWS_REGION>', 'AWS Region')
-  .option('--aws-access-key-id <AWS_ACCESS_KEY_ID>', 'Your IAM Access Key ID', process.env.AWS_ACCESS_KEY_ID)
-  .option('--aws-secret-access-key <AWS_SECRET_ACCESS_KEY>', 'Your IAM Secret Access Key', process.env.AWS_SECRET_ACCESS_KEY)
+  .providerOptions()
+  .providerGenerateHook()
   .option('--backupfile-prefix <BACKUPFILE_PREFIX>', 'Prefix of backup file.', 'backup')
   .option('--cronmode', 'Run `backup` as cron mode. In Cron mode, `backup` will be executed periodically.', false)
   .option('--cron-expression <CRON_EXPRESSION>', 'Cron expression (ex. CRON_EXPRESSION="0 4 * * *" if you want to run at 4:00 every day)')
@@ -109,30 +107,20 @@ program
       These options may not available depending on the version of the tool.
       `.replace(/^ {4}/mg, ''))
   .action(async(targetBucketUrlString, options: IMongoDBBackupOption) => {
-    if (options.cronmode && options.cronExpression == null) {
-      console.error('The option "--cron-expression" must be specified in cron mode.');
-      return;
-    }
-    if (!configExistS3()) {
-      if (options.awsRegion == null || options.awsAccessKeyId == null || options.awsSecretAccessKey == null) {
-        console.error('If the configuration file does not exist, '
-                      + 'you will need to set "--aws-region", "--aws-access-key-id", and "--aws-secret-access-key".');
+    try {
+      if (options.cronmode && options.cronExpression == null) {
+        console.error('The option "--cron-expression" must be specified in cron mode.');
         return;
       }
+      if (program.provider == null) throw new Error('URL scheme is not that of a supported provider.');
 
-      /* If the configuration file does not exist, it is created temporarily from the options,
-        and it will be deleted when process exit. */
-      const { awsRegion, awsAccessKeyId, awsSecretAccessKey } = options;
-      createConfigS3({ awsRegion, awsAccessKeyId, awsSecretAccessKey });
-    }
-
-    try {
       const targetBucketUrl = new URL(targetBucketUrlString);
+      const cli = new MongoDBBackupCLI(program.provider);
       if (options.cronmode) {
-        await new MongoDBBackupCLI().mainCronMode(targetBucketUrl, options);
+        await cli.mainCronMode(targetBucketUrl, options);
       }
       else {
-        await new MongoDBBackupCLI().main(targetBucketUrl, options);
+        await cli.main(targetBucketUrl, options);
       }
     }
     catch (e: any) {

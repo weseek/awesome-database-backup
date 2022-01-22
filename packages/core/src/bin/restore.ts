@@ -1,7 +1,7 @@
 import { format } from 'date-fns';
 import { basename, join } from 'path';
-import { generateProvider } from '../factories/provider-factory';
 import { expand } from '../utils/tar';
+import { IProvider } from '../interfaces/provider';
 
 const tmp = require('tmp');
 
@@ -10,9 +10,19 @@ export declare interface IRestoreCLIOption {
   awsRegion: string
   awsAccessKeyId: string,
   awsSecretAccessKey: string,
+  gcpProjectId: string,
+  gcpClientEmail: string,
+  gcpPrivateKey: string,
+  gcpServiceAccountKeyJsonPath: string,
 }
 
 export class AbstractRestoreCLI {
+
+  provider: IProvider;
+
+  constructor(provider: IProvider) {
+    this.provider = provider;
+  }
 
   convertOption(option: IRestoreCLIOption): Record<string, string|number|boolean|string[]|number[]> {
     throw new Error('Method not implemented.');
@@ -29,8 +39,7 @@ export class AbstractRestoreCLI {
     console.log(`=== ${basename(__filename)} started at ${format(Date.now(), 'yyyy/MM/dd HH:mm:ss')} ===`);
     const target = join(tmpdir.name, basename(targetBucketUrl.pathname));
 
-    const provider = generateProvider(targetBucketUrl);
-    await provider.copyFile(targetBucketUrl.toString(), target);
+    await this.provider.copyFile(targetBucketUrl.toString(), target);
     console.log(`expands ${target}...`);
     const { expandedPath } = await expand(target);
     const toolOption = this.convertOption(options);
