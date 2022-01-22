@@ -19,6 +19,7 @@ export declare interface IBackupCLIOption extends ICommonCLIOption {
   cronmode: boolean,
   cronExpression: string,
   healthchecksUrl: string,
+  backupToolOptions: string,
 }
 
 export class AbstractBackupCLI {
@@ -29,11 +30,7 @@ export class AbstractBackupCLI {
     this.provider = provider;
   }
 
-  convertOption(option: IBackupCLIOption): Record<string, string|number|boolean|string[]|number[]> {
-    throw new Error('Method not implemented.');
-  }
-
-  async backup(destinationPath: string, pgdumpRequiredOptions?: Record<string, string|number|boolean|string[]|number[]>): Promise<string[]> {
+  async backup(destinationPath: string, pgdumpRequiredOptions?: string): Promise<string[]> {
     throw new Error('Method not implemented.');
   }
 
@@ -52,8 +49,7 @@ export class AbstractBackupCLI {
     console.log(`=== ${basename(__filename)} started at ${format(Date.now(), 'yyyy/MM/dd HH:mm:ss')} ===`);
     const target = join(tmpdir.name, `${options.backupfilePrefix}-${format(Date.now(), 'yyyyMMddHHmmss')}`);
 
-    const toolOption = this.convertOption(options);
-    const [stdout, stderr] = await this.backup(target, toolOption);
+    const [stdout, stderr] = await this.backup(target, options.backupToolOptions);
     if (stdout) {
       console.log(stdout);
     }

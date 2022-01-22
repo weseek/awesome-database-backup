@@ -14,6 +14,7 @@ export declare interface IRestoreCLIOption {
   gcpClientEmail: string,
   gcpPrivateKey: string,
   gcpServiceAccountKeyJsonPath: string,
+  restoreToolOptions: string,
 }
 
 export class AbstractRestoreCLI {
@@ -24,11 +25,7 @@ export class AbstractRestoreCLI {
     this.provider = provider;
   }
 
-  convertOption(option: IRestoreCLIOption): Record<string, string|number|boolean|string[]|number[]> {
-    throw new Error('Method not implemented.');
-  }
-
-  async restore(sourcePath: string, pgrestoreRequiredOptions?: Record<string, string|number|boolean|string[]|number[]>): Promise<string[]> {
+  async restore(sourcePath: string, pgrestoreRequiredOptions?: string): Promise<string[]> {
     throw new Error('Method not implemented.');
   }
 
@@ -42,8 +39,7 @@ export class AbstractRestoreCLI {
     await this.provider.copyFile(targetBucketUrl.toString(), target);
     console.log(`expands ${target}...`);
     const { expandedPath } = await expand(target);
-    const toolOption = this.convertOption(options);
-    const [stdout, stderr] = await this.restore(expandedPath, toolOption);
+    const [stdout, stderr] = await this.restore(expandedPath, options.restoreToolOptions);
     if (stdout) {
       console.log(stdout);
     }

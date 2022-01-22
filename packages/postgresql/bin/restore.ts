@@ -25,16 +25,13 @@ class PostgreSQLRestoreCLI extends AbstractRestoreCLI {
     return convertOptionAsCamelCase(Object(option), optionPrefix);
   }
 
-  async restore(sourcePath: string, psqlRequiredOptions?: Record<string, string|number|boolean|string[]|number[]>) {
+  async restore(sourcePath: string, psqlRequiredOptions?: string) {
     const restoreCommand = 'psql';
-    const psqlDefaultOptions: Record<string, string> = {
-    };
-    const inputOption: Record<string, string> = {
-      '--file': sourcePath,
-    };
+    const inputOption = `--file ${sourcePath}`;
     const psqlArgs = '';
+    const psqlOptions = [psqlRequiredOptions, inputOption].join(' ');
     console.log('restore PostgreSQL...');
-    return execute(restoreCommand, [psqlArgs], { ...(psqlRequiredOptions || {}), ...inputOption }, psqlDefaultOptions);
+    return execute(restoreCommand, psqlArgs, psqlOptions);
   }
 
 }
@@ -46,23 +43,14 @@ program
   .argument('<TARGET_BUCKET_URL>', 'URL of target bucket')
   .providerOptions()
   .providerGenerateHook()
-  /*
-   * PostgreSQL options are "--postgresql-XXX", which corresponds to the "--XXX" option of the tool used internally.
-   * !!! These options may not available depending on the version of the tool used internally. !!!
-   */
-  /* Connection options */
-  .option('--postgresql-host <POSTGRESQL_HOST>', 'database server host or socket directory')
-  .option('--postgresql-port <POSTGRESQL_PORT>', 'database server port number', parseInt)
-  .option('--postgresql-username <POSTGRESQL_USERNAME>', 'connect as specified database user')
-  .option('--postgresql-no-password', 'never prompt for password')
-  .option('--postgresql-password', 'force password prompt (should happen automatically)')
+  .option('--restore-tool-options <OPTIONS_STRING>', 'pass options to psql exec (ex. "--host db.example.com --username postgres")')
   .addHelpText('after', `
     TIPS:
       You can omit entering the DB password by setting it as an environment variable like this: \`export PGPASSWORD="password"\
       `.replace(/^ {4}/mg, ''))
   .addHelpText('after', `
     NOTICE:
-      PostgreSQL options are "--postgresql-XXX", which corresponds to the "--XXX" option of the tool used internally.
+      You can pass PostgreSQL options  to the tool used internally.
       These options may not available depending on the version of the tool.
       `.replace(/^ {4}/mg, ''))
   .action(async(targetBucketUrlString, options: IPostgreSQLRestoreOption) => {
