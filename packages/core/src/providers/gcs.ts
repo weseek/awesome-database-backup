@@ -2,7 +2,7 @@ import { Storage, StorageOptions, File } from '@google-cloud/storage';
 import { join, basename } from 'path';
 import { IProvider } from '../interfaces/provider';
 
-declare interface GCSURI {
+export declare interface GCSURI {
   bucket: string,
   filepath: string
 }
@@ -55,6 +55,7 @@ export class GCSProvider implements IProvider {
   listFiles(url: string): Promise<string[]> {
     const gcsUrl = _parseFilePath(url);
     if (gcsUrl == null) return Promise.reject(new Error(`URI ${url} is not correct GCS's`));
+
     return new Promise((resolve, reject) => {
       const targetBucket = this.client.bucket(gcsUrl.bucket);
       targetBucket.getFiles()

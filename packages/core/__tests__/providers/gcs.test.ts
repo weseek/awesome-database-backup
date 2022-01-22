@@ -1,4 +1,5 @@
 import { GetFilesResponse } from '@google-cloud/storage';
+import { GCSURI } from '../../src/providers/gcs';
 
 let core = require('@awesome-backup/core');
 let storage = require('@google-cloud/storage');
@@ -38,7 +39,7 @@ describe('GCSProvider', () => {
 
       it('return files', async() => {
         const bucketMock = {
-          getFiles: jest.fn().mockReturnValue(Promise.resolve([{ name: 'file1' }])),
+          getFiles: jest.fn().mockReturnValue(Promise.resolve([[{ name: 'file1' }]])),
         };
 
         const provider = new core.GCSProvider({});
@@ -191,7 +192,7 @@ describe('GCSProvider', () => {
 
         const provider = new core.GCSProvider({});
         provider.client.bucket = jest.fn().mockReturnValue(bucketMock);
-        const gcsuri = { bucket: 'bucket-name', key: 'object-name' };
+        const gcsuri: GCSURI = { bucket: 'bucket-name', filepath: 'object-name' };
         await expect(provider.uploadFile('/path/to/file', gcsuri)).resolves.toBe(undefined);
       });
     });
@@ -204,12 +205,11 @@ describe('GCSProvider', () => {
 
         const provider = new core.GCSProvider({});
         provider.client.bucket = jest.fn().mockReturnValue(bucketMock);
-        const gcsuri = { bucket: 'bucket-name', key: 'object-name' };
+        const gcsuri: GCSURI = { bucket: 'bucket-name', filepath: 'object-name' };
         await expect(provider.uploadFile('/path/to/file', gcsuri)).rejects.toThrowError();
       });
     });
   });
-
 
   describe('#downloadFile', () => {
     describe('when File#download resolve', () => {
@@ -223,7 +223,7 @@ describe('GCSProvider', () => {
 
         const provider = new core.GCSProvider({});
         provider.client.bucket = jest.fn().mockReturnValue(bucketMock);
-        const gcsuri = { bucket: 'bucket-name', key: 'object-name' };
+        const gcsuri: GCSURI = { bucket: 'bucket-name', filepath: 'object-name' };
         await expect(provider.downloadFile(gcsuri, '/path/to/file')).resolves.toBe(undefined);
       });
     });
@@ -239,7 +239,7 @@ describe('GCSProvider', () => {
 
         const provider = new core.GCSProvider({});
         provider.client.bucket = jest.fn().mockReturnValue(bucketMock);
-        const gcsuri = { bucket: 'bucket-name', key: 'object-name' };
+        const gcsuri: GCSURI = { bucket: 'bucket-name', filepath: 'object-name' };
         await expect(provider.downloadFile(gcsuri, '/path/to/file')).rejects.toThrowError();
       });
     });
@@ -257,8 +257,8 @@ describe('GCSProvider', () => {
 
         const provider = new core.GCSProvider({});
         provider.client.bucket = jest.fn().mockReturnValue(bucketMock);
-        const gcsuriSource = { bucket: 'bucket-name', key: 'object-name1' };
-        const gcsuriDestination = { bucket: 'bucket-name', key: 'object-name2' };
+        const gcsuriSource: GCSURI = { bucket: 'bucket-name', filepath: 'object-name1' };
+        const gcsuriDestination: GCSURI = { bucket: 'bucket-name', filepath: 'object-name2' };
         await expect(provider.copyFileOnRemote(gcsuriSource, gcsuriDestination)).resolves.toBe(undefined);
       });
     });
@@ -274,8 +274,8 @@ describe('GCSProvider', () => {
 
         const provider = new core.GCSProvider({});
         provider.client.bucket = jest.fn().mockReturnValue(bucketMock);
-        const gcsuriSource = { bucket: 'bucket-name', key: 'object-name1' };
-        const gcsuriDestination = { bucket: 'bucket-name', key: 'object-name2' };
+        const gcsuriSource: GCSURI = { bucket: 'bucket-name', filepath: 'object-name1' };
+        const gcsuriDestination: GCSURI = { bucket: 'bucket-name', filepath: 'object-name2' };
         await expect(provider.copyFileOnRemote(gcsuriSource, gcsuriDestination)).rejects.toThrowError();
       });
     });

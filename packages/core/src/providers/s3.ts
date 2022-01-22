@@ -12,7 +12,7 @@ import { pipeline } from 'stream/promises';
 import { IProvider, listFilesOptions } from '../interfaces/provider';
 import internal = require('stream');
 
-declare interface S3URI {
+export declare interface S3URI {
   bucket: string,
   key: string
 }
