@@ -22,7 +22,6 @@ program
 
       const targetBucketUrl = new URL(targetBucketUrlString);
       const cli = new PruneCLI(program.provider);
-
       await cli.main(targetBucketUrl, options);
     }
     catch (e: any) {
