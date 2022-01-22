@@ -11,7 +11,8 @@ const program = new BinCommon();
 program
   .version(PACKAGE_VERSION)
   .argument('<TARGET_BUCKET_URL>', 'URL of target bucket')
-  /* Required fields that are intentionally treat as optional so that they can be specified by environment variables. */
+  .providerOptions()
+  .providerGenerateHook()
   .action(async(targetBucketUrlString: string, options: ICommonCLIOption) => {
     try {
       if (program.provider == null) throw new Error('URL scheme is not that of a supported provider.');

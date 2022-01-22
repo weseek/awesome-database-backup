@@ -11,6 +11,8 @@ const program = new BinCommon();
 program
   .version(PACKAGE_VERSION)
   .argument('<TARGET_BUCKET_URL>', 'URL of target bucket')
+  .providerOptions()
+  .providerGenerateHook()
   .option('--backupfile-prefix <BACKUPFILE_PREFIX>', 'Prefix of backup file.', 'backup')
   .option('--delete-divide <DELETE_DIVIDE>', 'delete divide', parseInt, 3)
   .option('--delete-target-days-left <DELETE_TARGET_DAYS_LEFT>', 'How many days ago to be deleted', parseInt, 4)

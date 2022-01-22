@@ -44,6 +44,8 @@ const program = new BinCommon();
 program
   .version(PACKAGE_VERSION)
   .argument('<TARGET_BUCKET_URL>', 'URL of target bucket')
+  .providerOptions()
+  .providerGenerateHook()
   /*
    * PostgreSQL options are "--postgresql-XXX", which corresponds to the "--XXX" option of the tool used internally.
    * !!! These options may not available depending on the version of the tool used internally. !!!
