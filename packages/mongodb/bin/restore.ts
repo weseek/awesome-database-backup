@@ -35,7 +35,7 @@ program
   .option('--restore-tool-options <OPTIONS_STRING>', 'pass options to mongorestore exec (ex. "--host db.example.com --username admin")')
   .addHelpText('after', `
     NOTICE:
-      MongoDB options are "--mongodb-XXX", which corresponds to the "--XXX" option of the tool used internally.
+      You can pass mongoDB options to the tool used internally.
       These options may not available depending on the version of the tool.
       `.replace(/^ {4}/mg, ''))
   .action(async(targetBucketUrlString, options: IRestoreCLIOption) => {

@@ -40,7 +40,7 @@ program
   .option('--backup-tool-options <OPTIONS_STRING>', 'pass options to mongodump exec (ex. "--host db.example.com --username admin")')
   .addHelpText('after', `
     NOTICE:
-      You can pass PostgreSQL options  to the tool used internally.
+      You can pass mongoDB options to the tool used internally.
       These options may not available depending on the version of the tool.
       `.replace(/^ {4}/mg, ''))
   .action(async(targetBucketUrlString, options: IBackupCLIOption) => {
