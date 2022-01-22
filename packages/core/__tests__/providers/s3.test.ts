@@ -6,6 +6,7 @@ import {
   CopyObjectCommandOutput,
 } from '@aws-sdk/client-s3';
 import { PassThrough, Readable } from 'stream';
+import { S3URI } from '../../src/providers/s3';
 
 let s3client = require('@aws-sdk/client-s3');
 let core = require('@awesome-backup/core');
@@ -193,29 +194,55 @@ describe('S3Provider', () => {
   describe('#uploadFile', () => {
     describe('when S3Client#send resolve', () => {
       beforeEach(async() => {
-        s3client.S3Client.prototype.send = jest.fn().mockImplementation(() => {
-          return new Promise<PutObjectCommandOutput|null>(resolve => resolve(null));
+        jest.resetModules();
+        jest.doMock('@aws-sdk/client-s3', () => {
+          const mock = jest.requireActual('@aws-sdk/client-s3');
+          mock.S3Client.prototype.send = jest.fn().mockResolvedValue(undefined);
+          return mock;
         });
-        fs.readFileSync = jest.fn().mockReturnValue('some body');
+        jest.doMock('fs', () => {
+          const actual = jest.requireActual('fs');
+          return {
+            ...actual,
+            readFileSync: jest.fn().mockReturnValue('some body'),
+          };
+        });
+        fs = require('fs');
+        core = require('@awesome-backup/core');
+        s3client = require('@aws-sdk/client-s3');
       });
 
       it('resolve with undfined', async() => {
         const provider = new core.S3Provider({});
-        const s3uri = { bucket: 'bucket-name', key: 'object-name' };
+        const s3uri: S3URI = { bucket: 'bucket-name', key: 'object-name' };
         await expect(provider.uploadFile('/path/to/file', s3uri)).resolves.toBe(undefined);
       });
     });
 
     describe('when S3Client#send reject', () => {
       beforeEach(async() => {
-        s3client.S3Client.prototype.send = jest.fn().mockImplementation(() => {
-          return new Promise<PutObjectCommandOutput|null>((resolve, reject) => reject(new Error('some error')));
+        jest.resetModules();
+        jest.doMock('@aws-sdk/client-s3', () => {
+          const mock = jest.requireActual('@aws-sdk/client-s3');
+          mock.S3Client.prototype.send = jest.fn().mockRejectedValue(new Error('some error'));
+          return mock;
         });
+        jest.doMock('fs', () => {
+          const actual = jest.requireActual('fs');
+          return {
+            ...actual,
+            readFileSync: jest.fn().mockReturnValue('some body'),
+          };
+        });
+        fs = require('fs');
+        core = require('@awesome-backup/core');
+        s3client = require('@aws-sdk/client-s3');
       });
 
       it('reject and throw Error', async() => {
         const provider = new core.S3Provider({});
-        const s3uri = { bucket: 'bucket-name', key: 'object-name' };
+        const s3uri: S3URI = { bucket: 'bucket-name', key: 'object-name' };
+
         await expect(provider.uploadFile('/path/to/file', s3uri)).rejects.toThrowError();
       });
     });
