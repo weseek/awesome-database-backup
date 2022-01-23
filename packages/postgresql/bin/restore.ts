@@ -5,7 +5,6 @@ import {
   execute,
   AbstractRestoreCLI,
   IRestoreCLIOption,
-  convertOptionAsCamelCase,
 } from '@awesome-backup/core';
 import { PACKAGE_VERSION } from '@awesome-backup/postgresql/config/version';
 
@@ -19,11 +18,6 @@ declare interface IPostgreSQLRestoreOption extends IRestoreCLIOption {
 }
 
 class PostgreSQLRestoreCLI extends AbstractRestoreCLI {
-
-  convertOption(option: IRestoreCLIOption): Record<string, string|number|boolean|string[]|number[]> {
-    const optionPrefix = 'postgresql';
-    return convertOptionAsCamelCase(Object(option), optionPrefix);
-  }
 
   async restore(sourcePath: string, psqlRequiredOptions?: string) {
     const restoreCommand = 'psql';

@@ -4,16 +4,10 @@ import {
   BinCommon,
   execute,
   AbstractBackupCLI, IBackupCLIOption,
-  convertOptionAsCamelCase,
 } from '@awesome-backup/core';
 import { PACKAGE_VERSION } from '../src/config/version';
 
 class MongoDBBackupCLI extends AbstractBackupCLI {
-
-  convertOption(option: IBackupCLIOption): Record<string, string|number|boolean|string[]|number[]> {
-    const optionPrefix = 'mongodb';
-    return convertOptionAsCamelCase(Object(option), optionPrefix);
-  }
 
   async backup(destinationPath: string, mongodumpRequiredOptions?: string): Promise<string[]> {
     const backupCommand = 'mongodump';

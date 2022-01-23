@@ -5,16 +5,10 @@ import {
   execute,
   AbstractRestoreCLI,
   IRestoreCLIOption,
-  convertOptionAsCamelCase,
 } from '@awesome-backup/core';
 import { PACKAGE_VERSION } from '../src/config/version';
 
 class MongoDBRestoreCLI extends AbstractRestoreCLI {
-
-  convertOption(option: IRestoreCLIOption): Record<string, string|number|boolean|string[]|number[]> {
-    const optionPrefix = 'mongodb';
-    return convertOptionAsCamelCase(Object(option), optionPrefix);
-  }
 
   async restore(sourcePath: string, mongorestoreRequiredOptions?: string) {
     const restoreCommand = 'mongorestore';
