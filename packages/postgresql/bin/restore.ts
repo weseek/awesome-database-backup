@@ -3,8 +3,7 @@
 import {
   BinCommon,
   execute,
-  AbstractRestoreCLI,
-  IRestoreCLIOption,
+  AbstractRestoreCLI, IRestoreCLIOption,
 } from '@awesome-backup/core';
 import { PACKAGE_VERSION } from '@awesome-backup/postgresql/config/version';
 
