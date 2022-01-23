@@ -9,7 +9,7 @@ import { PACKAGE_VERSION } from '../src/config/version';
 
 class PostgreSQLBackupCLI extends AbstractBackupCLI {
 
-  async backup(destinationPath: string, pgdumpRequiredOptions?: string) {
+  async backup(destinationPath: string, pgdumpRequiredOptions?: string): Promise<Record<string, string>> {
     const backupCommand = 'pg_dumpall';
     const pgdumpArgs = '';
     const pgdumpOutputOption = `--file ${destinationPath}`;

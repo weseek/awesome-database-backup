@@ -19,7 +19,7 @@ declare interface IPostgreSQLRestoreOption extends IRestoreCLIOption {
 
 class PostgreSQLRestoreCLI extends AbstractRestoreCLI {
 
-  async restore(sourcePath: string, psqlRequiredOptions?: string) {
+  async restore(sourcePath: string, psqlRequiredOptions?: string): Promise<Record<string, string>> {
     const restoreCommand = 'psql';
     const inputOption = `--file ${sourcePath}`;
     const psqlArgs = '';

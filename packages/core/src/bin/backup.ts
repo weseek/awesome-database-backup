@@ -30,7 +30,7 @@ export class AbstractBackupCLI {
     this.provider = provider;
   }
 
-  async backup(destinationPath: string, pgdumpRequiredOptions?: string): Promise<string[]> {
+  async backup(destinationPath: string, pgdumpRequiredOptions?: string): Promise<Record<string, string>> {
     throw new Error('Method not implemented.');
   }
 
@@ -49,7 +49,7 @@ export class AbstractBackupCLI {
     console.log(`=== ${basename(__filename)} started at ${format(Date.now(), 'yyyy/MM/dd HH:mm:ss')} ===`);
     const target = join(tmpdir.name, `${options.backupfilePrefix}-${format(Date.now(), 'yyyyMMddHHmmss')}`);
 
-    const [stdout, stderr] = await this.backup(target, options.backupToolOptions);
+    const { stdout, stderr } = await this.backup(target, options.backupToolOptions);
     if (stdout) {
       console.log(stdout);
     }

@@ -9,7 +9,7 @@ import { PACKAGE_VERSION } from '../src/config/version';
 
 class MongoDBBackupCLI extends AbstractBackupCLI {
 
-  async backup(destinationPath: string, mongodumpRequiredOptions?: string): Promise<string[]> {
+  async backup(destinationPath: string, mongodumpRequiredOptions?: string): Promise<Record<string, string>> {
     const backupCommand = 'mongodump';
     const mongodumpArgs = '';
     const outputOption = `--out ${destinationPath}`;

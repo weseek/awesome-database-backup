@@ -10,11 +10,10 @@ import { PACKAGE_VERSION } from '../src/config/version';
 
 class MongoDBRestoreCLI extends AbstractRestoreCLI {
 
-  async restore(sourcePath: string, mongorestoreRequiredOptions?: string) {
+  async restore(sourcePath: string, mongorestoreRequiredOptions?: string): Promise<Record<string, string>> {
     const restoreCommand = 'mongorestore';
     const mongorestoreArgs = sourcePath;
-    const mongorestoreOptions = [mongorestoreRequiredOptions].join(' ');
-    return execute(restoreCommand, mongorestoreArgs, mongorestoreOptions);
+    return execute(restoreCommand, mongorestoreArgs, mongorestoreRequiredOptions);
   }
 
 }

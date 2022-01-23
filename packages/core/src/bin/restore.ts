@@ -25,7 +25,7 @@ export class AbstractRestoreCLI {
     this.provider = provider;
   }
 
-  async restore(sourcePath: string, pgrestoreRequiredOptions?: string): Promise<string[]> {
+  async restore(sourcePath: string, pgrestoreRequiredOptions?: string): Promise<Record<string, string>> {
     throw new Error('Method not implemented.');
   }
 
@@ -39,7 +39,7 @@ export class AbstractRestoreCLI {
     await this.provider.copyFile(targetBucketUrl.toString(), target);
     console.log(`expands ${target}...`);
     const { expandedPath } = await expand(target);
-    const [stdout, stderr] = await this.restore(expandedPath, options.restoreToolOptions);
+    const { stdout, stderr } = await this.restore(expandedPath, options.restoreToolOptions);
     if (stdout) {
       console.log(stdout);
     }

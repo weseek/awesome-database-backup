@@ -49,7 +49,7 @@ export async function execute(
     command: string,
     args?: string,
     options?: string,
-): Promise<string[]> {
+): Promise<Record<string, string>> {
   const commandParameterSeparator = ' '; // ex. 'command_name <options> arg1 arg2'
 
   const commandString = [command, options, args].join(commandParameterSeparator);
@@ -58,7 +58,7 @@ export async function execute(
       if (error) {
         reject(error);
       }
-      return resolve([stdout, stderr]);
+      return resolve({ stdout, stderr });
     });
   });
 }
