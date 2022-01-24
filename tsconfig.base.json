@@ -13,6 +13,9 @@
     "target": "es2019",
     "module": "commonjs",
 
+    /* Module Resolution Options */
+    "esModuleInterop": true,
+
     /*
      * basic aliases
      *

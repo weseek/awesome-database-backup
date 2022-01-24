@@ -17,13 +17,14 @@
     "@typescript-eslint/eslint-plugin": "^5.8.1",
     "@typescript-eslint/parser": "^5.8.1",
     "babel-eslint": "^10.1.0",
-    "babel-jest": "^27.4.5",
     "eslint": "^8.5.0",
     "eslint-config-weseek": "^1.1.0",
     "eslint-import-resolver-typescript": "^2.5.0",
     "eslint-plugin-import": "^2.25.3",
     "eslint-plugin-jest": "^25.3.2",
     "jest": "^27.4.5",
+    "@types/rewire": "^2.5.28",
+    "rewire": "^6.0.0",
     "commander": "^8.3.0"
   }
 }

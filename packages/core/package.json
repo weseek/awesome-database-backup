@@ -22,7 +22,8 @@
   ],
   "scripts": {
     "build": "tsc && tsc-alias",
-    "test": "cross-env NODE_ENV=test jest --passWithNoTests",
+    "// see: https://github.com/kulshekhar/ts-jest/issues/1029#issuecomment-610284927": "",
+    "test": "cross-env NODE_ENV=test ts-node ../../node_modules/jest/bin/jest.js",
     "lint": "eslint src --ext .ts",
     "lint:fix": "eslint src --ext .ts --fix"
   },
@@ -32,6 +33,8 @@
     "axios": "^0.24.0",
     "axios-retry": "^3.2.4",
     "cross-env": "^7.0.3"
+  },
+  "devDependencies": {
   },
   "engines": {
     "node": ">= 16.13.1 < 17",
