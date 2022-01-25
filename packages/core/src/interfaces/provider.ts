@@ -1,4 +1,4 @@
-export type ProviderType = 'S3' | 'GCS';
+export type StorageProviderType = 'S3' | 'GCS';
 
 export declare interface listFilesOptions {
   includeFolderInList?: boolean,

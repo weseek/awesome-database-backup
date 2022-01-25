@@ -1,6 +1,6 @@
 import { Command } from 'commander';
 import { IStorageClient } from '../interfaces/provider';
-import { getProviderType, generateS3Provider, generateGCSProvider } from '../factories/provider-factory';
+import { getStorageProviderType, generateS3Provider, generateGCSProvider } from '../factories/provider-factory';
 
 /* List command option types */
 export declare interface ICommonCLIOption {
@@ -36,7 +36,7 @@ export class BinCommon extends Command {
         const [targetBucketUrlString] = command.args;
 
         const targetBucketUrl = new URL(targetBucketUrlString);
-        const type = getProviderType(targetBucketUrl);
+        const type = getStorageProviderType(targetBucketUrl);
         if (!type) throw new Error('URL scheme is not that of a supported provider.');
 
         switch (type) {

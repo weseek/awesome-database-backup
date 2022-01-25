@@ -1,12 +1,12 @@
-import { ProviderType } from '../interfaces/provider';
+import { StorageProviderType } from '../interfaces/provider';
 import {
   configExistS3, createConfigS3,
 } from './provider-config-factory';
 import { S3Provider } from '../providers/s3';
 import { GCSProvider } from '../providers/gcs';
 
-export function getProviderType(target: URL): ProviderType|undefined {
-  const typeMap: Record<string, ProviderType> = {
+export function getStorageProviderType(target: URL): StorageProviderType|undefined {
+  const typeMap: Record<string, StorageProviderType> = {
     s3: 'S3',
     gs: 'GCS',
   };
