@@ -1,7 +1,7 @@
 import { format } from 'date-fns';
 import { basename, join } from 'path';
 import { expand } from '../utils/tar';
-import { IProvider } from '../interfaces/provider';
+import { IStorageClient } from '../interfaces/provider';
 
 const tmp = require('tmp');
 
@@ -19,9 +19,9 @@ export declare interface IRestoreCLIOption {
 
 export class AbstractRestoreCLI {
 
-  provider: IProvider;
+  provider: IStorageClient;
 
-  constructor(provider: IProvider) {
+  constructor(provider: IStorageClient) {
     this.provider = provider;
   }
 

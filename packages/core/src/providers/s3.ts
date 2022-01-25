@@ -9,7 +9,7 @@ import {
   ListObjectsCommand, ListObjectsCommandInput,
 } from '@aws-sdk/client-s3';
 import { pipeline } from 'stream/promises';
-import { IProvider, listFilesOptions } from '../interfaces/provider';
+import { IStorageClient, listFilesOptions } from '../interfaces/provider';
 import internal = require('stream');
 
 export declare interface S3URI {
@@ -39,7 +39,7 @@ function _parseFilePath(path: string): S3URI | null {
   return null;
 }
 
-export class S3Provider implements IProvider {
+export class S3Provider implements IStorageClient {
 
   name: string;
 

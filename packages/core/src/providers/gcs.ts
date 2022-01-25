@@ -1,6 +1,6 @@
 import { Storage, StorageOptions, File } from '@google-cloud/storage';
 import { join, basename } from 'path';
-import { IProvider } from '../interfaces/provider';
+import { IStorageClient } from '../interfaces/provider';
 
 export declare interface GCSURI {
   bucket: string,
@@ -29,7 +29,7 @@ function _parseFilePath(path: string): GCSURI | null {
   return null;
 }
 
-export class GCSProvider implements IProvider {
+export class GCSProvider implements IStorageClient {
 
   name: string;
 

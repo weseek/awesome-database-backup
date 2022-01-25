@@ -1,5 +1,5 @@
 import { Command } from 'commander';
-import { IProvider } from '../interfaces/provider';
+import { IStorageClient } from '../interfaces/provider';
 import { getProviderType, generateS3Provider, generateGCSProvider } from '../factories/provider-factory';
 
 /* List command option types */
@@ -15,7 +15,7 @@ export declare interface ICommonCLIOption {
 
 export class BinCommon extends Command {
 
-  storageClient: IProvider|null;
+  storageClient: IStorageClient|null;
 
   constructor(name?: string) {
     super(name);
