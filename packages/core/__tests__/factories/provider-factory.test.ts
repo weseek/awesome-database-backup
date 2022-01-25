@@ -63,7 +63,7 @@ describe('generateS3Provider()', () => {
   });
 });
 
-describe('generateGCSClient()', () => {
+describe('generateGCSServiceClient()', () => {
   beforeEach(() => {
     jest.resetAllMocks();
     jest.dontMock('../../src/factories/provider-factory');
@@ -71,35 +71,35 @@ describe('generateGCSClient()', () => {
   });
 
   describe('in case of "gcpServiceAccountKeyJsonPath" is specified', () => {
-    test("it return GCSClient's instance", () => {
+    test("it return GCSServiceClient's instance", () => {
       const options = {
         gcpServiceAccountKeyJsonPath: '/path/to/file',
       };
-      expect(providerFactory.generateGCSClient(options).constructor.name).toBe('GCSClient');
+      expect(providerFactory.generateGCSServiceClient(options).constructor.name).toBe('GCSServiceClient');
     });
   });
 
   describe('in case of "gcpServiceAccountKeyJsonPath" is not specified, and "projectId", "clientEmail", "privateKey" are specified', () => {
-    test("it return GCSClient's instance", () => {
+    test("it return GCSServiceClient's instance", () => {
       const options = {
         gcpServiceAccountKeyJsonPath: null,
         gcpProjectId: 'projectId',
         gcpClientEmail: 'clientEmail',
         gcpPrivateKey: 'privateKey',
       };
-      expect(providerFactory.generateGCSClient(options).constructor.name).toBe('GCSClient');
+      expect(providerFactory.generateGCSServiceClient(options).constructor.name).toBe('GCSServiceClient');
     });
   });
 
   describe('in case of required options are specified', () => {
-    test("it return GCSClient's instance", () => {
+    test("it return GCSServiceClient's instance", () => {
       const options = {
         gcpServiceAccountKeyJsonPath: null,
         gcpProjectId: null,
         gcpClientEmail: null,
         gcpPrivateKey: null,
       };
-      expect(() => { providerFactory.generateGCSClient(options) }).toThrowError();
+      expect(() => { providerFactory.generateGCSServiceClient(options) }).toThrowError();
     });
   });
 });

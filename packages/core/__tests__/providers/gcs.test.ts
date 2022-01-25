@@ -4,7 +4,7 @@ import { GCSURI } from '../../src/providers/gcs';
 let core = require('@awesome-backup/core');
 let storage = require('@google-cloud/storage');
 
-describe('GCSClient', () => {
+describe('GCSServiceClient', () => {
   beforeEach(async() => {
     jest.resetModules();
     jest.dontMock('@awesome-backup/core');
@@ -16,7 +16,7 @@ describe('GCSClient', () => {
   describe('#exists', () => {
     describe('when listFiles() return object key list which include target object', () => {
       beforeEach(() => {
-        core.GCSClient.prototype.listFiles = jest.fn().mockImplementationOnce(() => {
+        core.GCSServiceClient.prototype.listFiles = jest.fn().mockImplementationOnce(() => {
           return new Promise<string[]>((resolve) => {
             return resolve(['object-name']);
           });
@@ -24,7 +24,7 @@ describe('GCSClient', () => {
       });
 
       it('return true', async() => {
-        const provider = new core.GCSClient({});
+        const provider = new core.GCSServiceClient({});
         const url = 'gs://bucket-name/object-name';
         await expect(provider.exists(url)).resolves.toBe(true);
       });
@@ -42,7 +42,7 @@ describe('GCSClient', () => {
           getFiles: jest.fn().mockReturnValue(Promise.resolve([[{ name: 'file1' }]])),
         };
 
-        const provider = new core.GCSClient({});
+        const provider = new core.GCSServiceClient({});
         provider.client.bucket = jest.fn().mockReturnValue(bucketMock);
         const url = 'gs://bucket-name/';
         await expect(provider.listFiles(url)).resolves.toStrictEqual(['file1']);
@@ -51,7 +51,7 @@ describe('GCSClient', () => {
 
     describe('when request URI is not GCS\'s', () => {
       it('reject with throw exception', async() => {
-        const provider = new core.GCSClient({});
+        const provider = new core.GCSServiceClient({});
         const url = 'http://hostname/';
         await expect(provider.listFiles(url)).rejects.toThrowError();
       });
@@ -63,7 +63,7 @@ describe('GCSClient', () => {
           getFiles: jest.fn().mockReturnValue(Promise.resolve(null)),
         };
 
-        const provider = new core.GCSClient({});
+        const provider = new core.GCSServiceClient({});
         provider.client.bucket = jest.fn().mockReturnValue(bucketMock);
         const url = 'gs://bucket-name/object-name';
         await expect(provider.listFiles(url)).rejects.toThrowError();
@@ -76,7 +76,7 @@ describe('GCSClient', () => {
           getFiles: jest.fn().mockReturnValue(Promise.resolve(null)),
         };
 
-        const provider = new core.GCSClient({});
+        const provider = new core.GCSServiceClient({});
         provider.client.bucket = jest.fn().mockReturnValue(bucketMock);
         const url = 's3://bucket-name/object-name';
         await expect(provider.listFiles(url)).rejects.toThrow();
@@ -94,7 +94,7 @@ describe('GCSClient', () => {
           file: jest.fn().mockReturnValue(fileMock),
         };
 
-        const provider = new core.GCSClient({});
+        const provider = new core.GCSServiceClient({});
         provider.client.bucket = jest.fn().mockReturnValue(bucketMock);
         const url = 'gs://bucket-name/object-name';
         await expect(provider.deleteFile(url)).resolves.toBe(undefined);
@@ -103,7 +103,7 @@ describe('GCSClient', () => {
 
     describe('when request URI is not GCS\'s', () => {
       it('reject and throw Error', async() => {
-        const provider = new core.GCSClient({});
+        const provider = new core.GCSServiceClient({});
         const url = 'http://hostname/';
         await expect(provider.deleteFile(url)).rejects.toThrowError();
       });
@@ -118,7 +118,7 @@ describe('GCSClient', () => {
           file: jest.fn().mockReturnValue(fileMock),
         };
 
-        const provider = new core.GCSClient({});
+        const provider = new core.GCSServiceClient({});
         provider.client.bucket = jest.fn().mockReturnValue(bucketMock);
         const url = 'gs://bucket-name/object-name';
         await expect(provider.deleteFile(url)).rejects.toThrowError();
@@ -129,7 +129,7 @@ describe('GCSClient', () => {
   describe('#copyFile', () => {
     describe('when copySource is local file path and copyDestination is GCS\'s URI', () => {
       beforeEach(async() => {
-        core.GCSClient.prototype.uploadFile = jest.fn().mockImplementation(() => {
+        core.GCSServiceClient.prototype.uploadFile = jest.fn().mockImplementation(() => {
           return new Promise<void>((resolve) => {
             return resolve();
           });
@@ -137,15 +137,15 @@ describe('GCSClient', () => {
       });
 
       it('call uploadFile()', async() => {
-        const provider = new core.GCSClient({});
+        const provider = new core.GCSServiceClient({});
         await provider.copyFile('/path/to/file', 'gs://bucket-name/object-name');
-        expect(core.GCSClient.prototype.uploadFile).toBeCalled();
+        expect(core.GCSServiceClient.prototype.uploadFile).toBeCalled();
       });
     });
 
     describe('when copySource is GCS\'s URI and copyDestination is local file path', () => {
       beforeEach(() => {
-        core.GCSClient.prototype.downloadFile = jest.fn().mockImplementation(() => {
+        core.GCSServiceClient.prototype.downloadFile = jest.fn().mockImplementation(() => {
           return new Promise<void>((resolve) => {
             return resolve();
           });
@@ -153,15 +153,15 @@ describe('GCSClient', () => {
       });
 
       it('call downloadFile()', async() => {
-        const provider = new core.GCSClient({});
+        const provider = new core.GCSServiceClient({});
         await provider.copyFile('gs://bucket-name/object-name', '/path/to/file');
-        expect(core.GCSClient.prototype.downloadFile).toBeCalled();
+        expect(core.GCSServiceClient.prototype.downloadFile).toBeCalled();
       });
     });
 
     describe('when copySource and copyDestination are both GCS\'s URI', () => {
       beforeEach(() => {
-        core.GCSClient.prototype.copyFileOnRemote = jest.fn().mockImplementation(() => {
+        core.GCSServiceClient.prototype.copyFileOnRemote = jest.fn().mockImplementation(() => {
           return new Promise<void>((resolve) => {
             return resolve();
           });
@@ -169,15 +169,15 @@ describe('GCSClient', () => {
       });
 
       it('call copyFileOnRemote()', async() => {
-        const provider = new core.GCSClient({});
+        const provider = new core.GCSServiceClient({});
         await provider.copyFile('gs://bucket-name/object-name1', 'gs://bucket-name/object-name2');
-        expect(core.GCSClient.prototype.copyFileOnRemote).toBeCalled();
+        expect(core.GCSServiceClient.prototype.copyFileOnRemote).toBeCalled();
       });
     });
 
     describe('when copySource and copyDestination are invalid', () => {
       it('reject and throw Error', async() => {
-        const provider = new core.GCSClient({});
+        const provider = new core.GCSServiceClient({});
         await expect(provider.copyFile('s3://bucket-name/object-name1', 's3://bucket-name/object-name2')).rejects.toThrowError();
       });
     });
@@ -190,7 +190,7 @@ describe('GCSClient', () => {
           upload: jest.fn().mockReturnValue(Promise.resolve()),
         };
 
-        const provider = new core.GCSClient({});
+        const provider = new core.GCSServiceClient({});
         provider.client.bucket = jest.fn().mockReturnValue(bucketMock);
         const gcsuri: GCSURI = { bucket: 'bucket-name', filepath: 'object-name' };
         await expect(provider.uploadFile('/path/to/file', gcsuri)).resolves.toBe(undefined);
@@ -203,7 +203,7 @@ describe('GCSClient', () => {
           upload: jest.fn().mockReturnValue(Promise.reject(new Error('some error'))),
         };
 
-        const provider = new core.GCSClient({});
+        const provider = new core.GCSServiceClient({});
         provider.client.bucket = jest.fn().mockReturnValue(bucketMock);
         const gcsuri: GCSURI = { bucket: 'bucket-name', filepath: 'object-name' };
         await expect(provider.uploadFile('/path/to/file', gcsuri)).rejects.toThrowError();
@@ -221,14 +221,14 @@ describe('GCSClient', () => {
           file: jest.fn().mockReturnValue(fileMock),
         };
 
-        const provider = new core.GCSClient({});
+        const provider = new core.GCSServiceClient({});
         provider.client.bucket = jest.fn().mockReturnValue(bucketMock);
         const gcsuri: GCSURI = { bucket: 'bucket-name', filepath: 'object-name' };
         await expect(provider.downloadFile(gcsuri, '/path/to/file')).resolves.toBe(undefined);
       });
     });
 
-    describe('when GCSClient#send reject', () => {
+    describe('when GCSServiceClient#send reject', () => {
       it('reject and throw Error', async() => {
         const fileMock = {
           download: jest.fn().mockReturnValue(Promise.reject(new Error('some error'))),
@@ -237,7 +237,7 @@ describe('GCSClient', () => {
           file: jest.fn().mockReturnValue(fileMock),
         };
 
-        const provider = new core.GCSClient({});
+        const provider = new core.GCSServiceClient({});
         provider.client.bucket = jest.fn().mockReturnValue(bucketMock);
         const gcsuri: GCSURI = { bucket: 'bucket-name', filepath: 'object-name' };
         await expect(provider.downloadFile(gcsuri, '/path/to/file')).rejects.toThrowError();
@@ -255,7 +255,7 @@ describe('GCSClient', () => {
           file: jest.fn().mockReturnValue(fileMock),
         };
 
-        const provider = new core.GCSClient({});
+        const provider = new core.GCSServiceClient({});
         provider.client.bucket = jest.fn().mockReturnValue(bucketMock);
         const gcsuriSource: GCSURI = { bucket: 'bucket-name', filepath: 'object-name1' };
         const gcsuriDestination: GCSURI = { bucket: 'bucket-name', filepath: 'object-name2' };
@@ -272,7 +272,7 @@ describe('GCSClient', () => {
           file: jest.fn().mockReturnValue(fileMock),
         };
 
-        const provider = new core.GCSClient({});
+        const provider = new core.GCSServiceClient({});
         provider.client.bucket = jest.fn().mockReturnValue(bucketMock);
         const gcsuriSource: GCSURI = { bucket: 'bucket-name', filepath: 'object-name1' };
         const gcsuriDestination: GCSURI = { bucket: 'bucket-name', filepath: 'object-name2' };

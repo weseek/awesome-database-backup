@@ -29,7 +29,7 @@ function _parseFilePath(path: string): GCSURI | null {
   return null;
 }
 
-export class GCSClient implements IStorageServiceClient {
+export class GCSServiceClient implements IStorageServiceClient {
 
   name: string;
 
