@@ -6,7 +6,7 @@ import {
   CopyObjectCommandOutput,
 } from '@aws-sdk/client-s3';
 import { PassThrough, Readable } from 'stream';
-import { S3URI } from '../../src/providers/s3';
+import { S3URI } from '../../src/storage-service-clients/s3';
 
 let s3client = require('@aws-sdk/client-s3');
 let core = require('@awesome-backup/core');

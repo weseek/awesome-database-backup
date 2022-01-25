@@ -1,5 +1,5 @@
 import { GetFilesResponse } from '@google-cloud/storage';
-import { GCSURI } from '../../src/providers/gcs';
+import { GCSURI } from '../../src/storage-service-clients/gcs';
 
 let core = require('@awesome-backup/core');
 let storage = require('@google-cloud/storage');
