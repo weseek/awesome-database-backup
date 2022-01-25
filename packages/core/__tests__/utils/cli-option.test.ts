@@ -26,21 +26,21 @@ describe('#execute', () => {
   describe('when called with only "command"', () => {
     it('call "exec" with command', async() => {
       await cliOption.execute('command_name');
-      expect(childProcessModuleMock.exec).toHaveBeenCalledWith('command_name  ', expect.any(Function));
+      expect(childProcessModuleMock.exec).toHaveBeenCalledWith('command_name', expect.any(Function));
     });
   });
 
   describe('when called with arguments', () => {
     it('call "exec" with command and arguments separated by space', async() => {
       await cliOption.execute('command_name', 'arg1');
-      expect(childProcessModuleMock.exec).toHaveBeenCalledWith('command_name  arg1', expect.any(Function));
+      expect(childProcessModuleMock.exec).toHaveBeenCalledWith('command_name arg1', expect.any(Function));
     });
   });
 
   describe('when called with option', () => {
     it('call "exec" with command and option separated by space', async() => {
       await cliOption.execute('command_name', '', '--opt1 value1');
-      expect(childProcessModuleMock.exec).toHaveBeenCalledWith('command_name --opt1 value1 ', expect.any(Function));
+      expect(childProcessModuleMock.exec).toHaveBeenCalledWith('command_name --opt1 value1', expect.any(Function));
     });
   });
 
