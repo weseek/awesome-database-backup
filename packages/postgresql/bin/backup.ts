@@ -25,8 +25,8 @@ const program = new BinCommon();
 program
   .version(PACKAGE_VERSION)
   .argument('<TARGET_BUCKET_URL>', 'URL of target bucket')
-  .providerOptions()
-  .providerGenerateHook()
+  .storageClientOptions()
+  .storageClientGenerateHook()
   .option('--backupfile-prefix <BACKUPFILE_PREFIX>', 'Prefix of backup file.', 'backup')
   .option('--cronmode', 'Run `backup` as cron mode. In Cron mode, `backup` will be executed periodically.', false)
   .option('--cron-expression <CRON_EXPRESSION>', 'Cron expression (ex. CRON_EXPRESSION="0 4 * * *" if you want to run at 4:00 every day)')
@@ -47,10 +47,10 @@ program
         console.error('The option "--cron-expression" must be specified in cron mode.');
         return;
       }
-      if (program.provider == null) throw new Error('URL scheme is not that of a supported provider.');
+      if (program.storageClient == null) throw new Error('URL scheme is not that of a supported provider.');
 
       const targetBucketUrl = new URL(targetBucketUrlString);
-      const cli = new PostgreSQLBackupCLI(program.provider);
+      const cli = new PostgreSQLBackupCLI(program.storageClient);
       if (options.cronmode) {
         await cli.mainCronMode(targetBucketUrl, options);
       }

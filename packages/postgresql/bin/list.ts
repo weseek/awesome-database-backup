@@ -11,14 +11,14 @@ const program = new BinCommon();
 program
   .version(PACKAGE_VERSION)
   .argument('<TARGET_BUCKET_URL>', 'URL of target bucket')
-  .providerOptions()
-  .providerGenerateHook()
+  .storageClientOptions()
+  .storageClientGenerateHook()
   .action(async(targetBucketUrlString: string, options: ICommonCLIOption) => {
     try {
-      if (program.provider == null) throw new Error('URL scheme is not that of a supported provider.');
+      if (program.storageClient == null) throw new Error('URL scheme is not that of a supported provider.');
 
       const targetBucketUrl = new URL(targetBucketUrlString);
-      const cli = new ListCLI(program.provider);
+      const cli = new ListCLI(program.storageClient);
       await cli.main(targetBucketUrl);
     }
     catch (e: any) {

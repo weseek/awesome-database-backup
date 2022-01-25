@@ -15,21 +15,21 @@ export declare interface ICommonCLIOption {
 
 export class BinCommon extends Command {
 
-  provider: IProvider|null;
+  storageClient: IProvider|null;
 
   constructor(name?: string) {
     super(name);
 
-    this.provider = null;
+    this.storageClient = null;
   }
 
-  providerOptions(): BinCommon {
+  storageClientOptions(): BinCommon {
     return this
-      .s3ProviderOptions()
-      .gcsProviderOptions();
+      .s3Options()
+      .gcsOptions();
   }
 
-  providerGenerateHook(): BinCommon {
+  storageClientGenerateHook(): BinCommon {
     return this
       .hook('preAction', (command) => {
         const options = command.opts() as ICommonCLIOption;
@@ -41,24 +41,24 @@ export class BinCommon extends Command {
 
         switch (type) {
           case 'S3':
-            this.provider = generateS3Provider(options);
+            this.storageClient = generateS3Provider(options);
             return;
 
           case 'GCS':
-            this.provider = generateGCSProvider(options);
+            this.storageClient = generateGCSProvider(options);
             return;
         }
       });
   }
 
-  private s3ProviderOptions(): BinCommon {
+  private s3Options(): BinCommon {
     return this
       .option('--aws-region <AWS_REGION>', 'AWS Region')
       .option('--aws-access-key-id <AWS_ACCESS_KEY_ID>', 'Your IAM Access Key ID', process.env.AWS_ACCESS_KEY_ID)
       .option('--aws-secret-access-key <AWS_SECRET_ACCESS_KEY>', 'Your IAM Secret Access Key', process.env.AWS_SECRET_ACCESS_KEY);
   }
 
-  private gcsProviderOptions(): BinCommon {
+  private gcsOptions(): BinCommon {
     return this
       .option('--gcp-project-id <GCP_PROJECT_ID>', 'GCP Project ID', process.env.GCLOUD_PROJECT)
       .option('--gcp-private-key <GCP_PRIVATE_KEY>', 'GCP Private Key')

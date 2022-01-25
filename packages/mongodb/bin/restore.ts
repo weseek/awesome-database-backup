@@ -22,8 +22,8 @@ const program = new BinCommon();
 program
   .version(PACKAGE_VERSION)
   .argument('<TARGET_BUCKET_URL>', 'URL of target bucket')
-  .providerOptions()
-  .providerGenerateHook()
+  .storageClientOptions()
+  .storageClientGenerateHook()
   .option('--restore-tool-options <OPTIONS_STRING>', 'pass options to mongorestore exec (ex. "--host db.example.com --username admin")')
   .addHelpText('after', `
     NOTICE:
@@ -32,10 +32,10 @@ program
       `.replace(/^ {4}/mg, ''))
   .action(async(targetBucketUrlString, options: IRestoreCLIOption) => {
     try {
-      if (program.provider == null) throw new Error('URL scheme is not that of a supported provider.');
+      if (program.storageClient == null) throw new Error('URL scheme is not that of a supported provider.');
 
       const targetBucketUrl = new URL(targetBucketUrlString);
-      const cli = new MongoDBRestoreCLI(program.provider);
+      const cli = new MongoDBRestoreCLI(program.storageClient);
       await cli.main(targetBucketUrl, options);
     }
     catch (e: any) {
