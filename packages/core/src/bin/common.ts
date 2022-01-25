@@ -1,5 +1,5 @@
 import { Command } from 'commander';
-import { IStorageServiceClient } from '../interfaces/storage-client';
+import { IStorageServiceClient } from '../interfaces/storage-service-client';
 import { getStorageProviderType, generateS3ServiceClient, generateGCSServiceClient } from '../factories/provider-factory';
 
 /* List command option types */

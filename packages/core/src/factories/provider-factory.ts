@@ -1,4 +1,4 @@
-import { StorageProviderType } from '../interfaces/storage-client';
+import { StorageProviderType } from '../interfaces/storage-service-client';
 import {
   configExistS3, createConfigS3,
 } from './provider-config-factory';

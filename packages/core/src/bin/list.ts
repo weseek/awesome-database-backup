@@ -1,6 +1,6 @@
 import { EOL } from 'os';
 
-import { IStorageServiceClient } from '../interfaces/storage-client';
+import { IStorageServiceClient } from '../interfaces/storage-service-client';
 
 export class ListCLI {
 

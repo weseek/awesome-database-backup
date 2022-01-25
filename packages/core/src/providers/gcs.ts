@@ -1,6 +1,6 @@
 import { Storage, StorageOptions, File } from '@google-cloud/storage';
 import { join, basename } from 'path';
-import { IStorageServiceClient } from '../interfaces/storage-client';
+import { IStorageServiceClient } from '../interfaces/storage-service-client';
 
 export declare interface GCSURI {
   bucket: string,

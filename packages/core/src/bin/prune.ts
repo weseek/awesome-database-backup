@@ -1,5 +1,5 @@
 import { format, subDays } from 'date-fns';
-import { IStorageServiceClient } from '../interfaces/storage-client';
+import { IStorageServiceClient } from '../interfaces/storage-service-client';
 import { ICommonCLIOption } from './common';
 
 /* Prune command option types */
