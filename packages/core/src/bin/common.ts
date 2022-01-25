@@ -1,6 +1,6 @@
 import { Command } from 'commander';
 import { IStorageServiceClient } from '../interfaces/storage-service-client';
-import { storageProviderType, generateS3ServiceClient, generateGCSServiceClient } from '../factories/provider-factory';
+import { storageProviderType, generateStorageServiceClient } from '../factories/provider-factory';
 
 /* List command option types */
 export declare interface ICommonCLIOption {
@@ -36,18 +36,9 @@ export class BinCommon extends Command {
         const [targetBucketUrlString] = command.args;
 
         const targetBucketUrl = new URL(targetBucketUrlString);
-        switch (storageProviderType(targetBucketUrl)) {
-          case 'S3':
-            this.storageClient = generateS3ServiceClient(options);
-            return;
-
-          case 'GCS':
-            this.storageClient = generateGCSServiceClient(options);
-            return;
-
-          default:
-            throw new Error('URL scheme is not that of a supported provider.');
-        }
+        const type = storageProviderType(targetBucketUrl);
+        if (type == null) throw new Error(`Unknown storage provider type: ${type}`);
+        this.storageClient = generateStorageServiceClient(type, options);
       });
   }
 

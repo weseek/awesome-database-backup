@@ -1,4 +1,5 @@
-import { StorageProviderType } from '../interfaces/storage-service-client';
+import { StorageProviderType, IStorageServiceClient } from '../interfaces/storage-service-client';
+import { ICommonCLIOption } from '../bin/common';
 import {
   configExistS3, createConfigS3,
 } from './provider-config-factory';
@@ -67,4 +68,15 @@ export function generateGCSServiceClient({
       private_key: privateKey,
     },
   });
+}
+
+export function generateStorageServiceClient(type: StorageProviderType, options: ICommonCLIOption): IStorageServiceClient {
+  const factoryMap: { type: StorageProviderType, factory: any }[] = [
+    { type: 'S3', factory: generateS3ServiceClient },
+    { type: 'GCS', factory: generateGCSServiceClient },
+  ];
+  const generator = factoryMap.find(it => it.type === type);
+  if (generator == null) throw new Error(`Unknown factory for type ${type}`);
+
+  return generator.factory(options);
 }
