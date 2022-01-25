@@ -5,7 +5,7 @@ export * from './bin/prune';
 export * from './bin/restore';
 export * from './factories/provider-factory';
 export * from './factories/provider-config-factory';
-export * from './interfaces/provider';
+export * from './interfaces/storage-client';
 export * from './providers/s3';
 export * from './providers/gcs';
 export * from './utils/cli-option';

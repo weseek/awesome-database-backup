@@ -9,7 +9,7 @@ import {
   ListObjectsCommand, ListObjectsCommandInput,
 } from '@aws-sdk/client-s3';
 import { pipeline } from 'stream/promises';
-import { IStorageClient, listFilesOptions } from '../interfaces/provider';
+import { IStorageClient, listFilesOptions } from '../interfaces/storage-client';
 import internal = require('stream');
 
 export declare interface S3URI {

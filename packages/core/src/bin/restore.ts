@@ -1,7 +1,7 @@
 import { format } from 'date-fns';
 import { basename, join } from 'path';
 import { expand } from '../utils/tar';
-import { IStorageClient } from '../interfaces/provider';
+import { IStorageClient } from '../interfaces/storage-client';
 
 const tmp = require('tmp');
 
