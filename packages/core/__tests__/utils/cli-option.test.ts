@@ -1,6 +1,6 @@
 import { ExecException } from 'child_process';
 
-let cliOption = require('../../src/utils/cli-option');
+let cliOption = require('../../src/utils/cli');
 
 const originalModule = jest.requireActual('child_process');
 const childProcessModuleMock = {
@@ -20,7 +20,7 @@ describe('#execute', () => {
   beforeEach(() => {
     jest.resetModules();
     jest.doMock('child_process', () => childProcessModuleMock);
-    cliOption = require('../../src/utils/cli-option');
+    cliOption = require('../../src/utils/cli');
   });
 
   describe('when called with only "command"', () => {
@@ -60,7 +60,7 @@ describe('#execute', () => {
           }),
         };
       });
-      cliOption = require('../../src/utils/cli-option');
+      cliOption = require('../../src/utils/cli');
     });
 
     it('reject', async() => {

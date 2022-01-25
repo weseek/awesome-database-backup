@@ -9,8 +9,8 @@ describe('compress', () => {
     };
     const executeMock = jest.fn().mockResolvedValue(result);
     jest.resetModules();
-    jest.doMock('../../src/utils/cli-option', () => {
-      const actual = jest.requireActual('../../src/utils/cli-option');
+    jest.doMock('../../src/utils/cli', () => {
+      const actual = jest.requireActual('../../src/utils/cli');
       return {
         ...actual,
         execute: executeMock,
@@ -34,8 +34,8 @@ describe('expand', () => {
     };
     const executeMock = jest.fn().mockResolvedValue(result);
     jest.resetModules();
-    jest.doMock('../../src/utils/cli-option', () => {
-      const actual = jest.requireActual('../../src/utils/cli-option');
+    jest.doMock('../../src/utils/cli', () => {
+      const actual = jest.requireActual('../../src/utils/cli');
       return {
         ...actual,
         execute: executeMock,

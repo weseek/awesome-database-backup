@@ -1,5 +1,5 @@
 import { basename, dirname, join } from 'path';
-import { execute } from './cli-option';
+import { execute } from './cli';
 
 const command = 'tar';
 
