@@ -36,10 +36,7 @@ export class BinCommon extends Command {
         const [targetBucketUrlString] = command.args;
 
         const targetBucketUrl = new URL(targetBucketUrlString);
-        const type = getStorageProviderType(targetBucketUrl);
-        if (!type) throw new Error('URL scheme is not that of a supported provider.');
-
-        switch (type) {
+        switch (getStorageProviderType(targetBucketUrl)) {
           case 'S3':
             this.storageClient = generateS3ServiceClient(options);
             return;
@@ -47,6 +44,9 @@ export class BinCommon extends Command {
           case 'GCS':
             this.storageClient = generateGCSServiceClient(options);
             return;
+
+          default:
+            throw new Error('URL scheme is not that of a supported provider.');
         }
       });
   }
