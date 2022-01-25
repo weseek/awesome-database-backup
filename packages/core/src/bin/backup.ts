@@ -1,7 +1,7 @@
 import { format } from 'date-fns';
 import { basename, join } from 'path';
 import { compress } from '../utils/tar';
-import { IStorageClient } from '../interfaces/storage-client';
+import { IStorageServiceClient } from '../interfaces/storage-client';
 import { ICommonCLIOption } from './common';
 
 const schedule = require('node-schedule');
@@ -24,9 +24,9 @@ export declare interface IBackupCLIOption extends ICommonCLIOption {
 
 export class AbstractBackupCLI {
 
-  provider: IStorageClient;
+  provider: IStorageServiceClient;
 
-  constructor(provider: IStorageClient) {
+  constructor(provider: IStorageServiceClient) {
     this.provider = provider;
   }
 

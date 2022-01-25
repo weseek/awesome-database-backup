@@ -1,5 +1,5 @@
 import { format, subDays } from 'date-fns';
-import { IStorageClient } from '../interfaces/storage-client';
+import { IStorageServiceClient } from '../interfaces/storage-client';
 import { ICommonCLIOption } from './common';
 
 /* Prune command option types */
@@ -11,9 +11,9 @@ export declare interface IPruneCLIOption extends ICommonCLIOption {
 
 export class PruneCLI {
 
-  provider: IStorageClient;
+  provider: IStorageServiceClient;
 
-  constructor(provider: IStorageClient) {
+  constructor(provider: IStorageServiceClient) {
     this.provider = provider;
   }
 

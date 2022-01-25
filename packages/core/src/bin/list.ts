@@ -1,12 +1,12 @@
 import { EOL } from 'os';
 
-import { IStorageClient } from '../interfaces/storage-client';
+import { IStorageServiceClient } from '../interfaces/storage-client';
 
 export class ListCLI {
 
-  provider: IStorageClient;
+  provider: IStorageServiceClient;
 
-  constructor(provider: IStorageClient) {
+  constructor(provider: IStorageServiceClient) {
     this.provider = provider;
   }
 

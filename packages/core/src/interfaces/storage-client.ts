@@ -6,7 +6,7 @@ export declare interface listFilesOptions {
   exactMatch?: boolean,
 }
 
-export interface IStorageClient {
+export interface IStorageServiceClient {
   name: string,
 
   exists(url: string): Promise<boolean>,
