@@ -1,6 +1,6 @@
 import { Command } from 'commander';
 import { IStorageClient } from '../interfaces/storage-client';
-import { getStorageProviderType, generateS3Provider, generateGCSProvider } from '../factories/provider-factory';
+import { getStorageProviderType, generateS3Provider, generateGCSClient } from '../factories/provider-factory';
 
 /* List command option types */
 export declare interface ICommonCLIOption {
@@ -45,7 +45,7 @@ export class BinCommon extends Command {
             return;
 
           case 'GCS':
-            this.storageClient = generateGCSProvider(options);
+            this.storageClient = generateGCSClient(options);
             return;
         }
       });

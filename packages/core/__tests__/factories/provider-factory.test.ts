@@ -63,7 +63,7 @@ describe('generateS3Provider()', () => {
   });
 });
 
-describe('generateGCSProvider()', () => {
+describe('generateGCSClient()', () => {
   beforeEach(() => {
     jest.resetAllMocks();
     jest.dontMock('../../src/factories/provider-factory');
@@ -71,35 +71,35 @@ describe('generateGCSProvider()', () => {
   });
 
   describe('in case of "gcpServiceAccountKeyJsonPath" is specified', () => {
-    test("it return GCSProvider's instance", () => {
+    test("it return GCSClient's instance", () => {
       const options = {
         gcpServiceAccountKeyJsonPath: '/path/to/file',
       };
-      expect(providerFactory.generateGCSProvider(options).constructor.name).toBe('GCSProvider');
+      expect(providerFactory.generateGCSClient(options).constructor.name).toBe('GCSClient');
     });
   });
 
   describe('in case of "gcpServiceAccountKeyJsonPath" is not specified, and "projectId", "clientEmail", "privateKey" are specified', () => {
-    test("it return GCSProvider's instance", () => {
+    test("it return GCSClient's instance", () => {
       const options = {
         gcpServiceAccountKeyJsonPath: null,
         gcpProjectId: 'projectId',
         gcpClientEmail: 'clientEmail',
         gcpPrivateKey: 'privateKey',
       };
-      expect(providerFactory.generateGCSProvider(options).constructor.name).toBe('GCSProvider');
+      expect(providerFactory.generateGCSClient(options).constructor.name).toBe('GCSClient');
     });
   });
 
   describe('in case of required options are specified', () => {
-    test("it return GCSProvider's instance", () => {
+    test("it return GCSClient's instance", () => {
       const options = {
         gcpServiceAccountKeyJsonPath: null,
         gcpProjectId: null,
         gcpClientEmail: null,
         gcpPrivateKey: null,
       };
-      expect(() => { providerFactory.generateGCSProvider(options) }).toThrowError();
+      expect(() => { providerFactory.generateGCSClient(options) }).toThrowError();
     });
   });
 });

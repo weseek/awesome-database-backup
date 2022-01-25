@@ -3,7 +3,7 @@ import {
   configExistS3, createConfigS3,
 } from './provider-config-factory';
 import { S3Provider } from '../providers/s3';
-import { GCSProvider } from '../providers/gcs';
+import { GCSClient } from '../providers/gcs';
 
 export function getStorageProviderType(target: URL): StorageProviderType|undefined {
   const typeMap: Record<string, StorageProviderType> = {
@@ -36,7 +36,7 @@ export function generateS3Provider({
   return new S3Provider({});
 }
 
-export function generateGCSProvider({
+export function generateGCSClient({
   gcpServiceAccountKeyJsonPath,
   gcpProjectId,
   gcpClientEmail,
@@ -46,9 +46,9 @@ export function generateGCSProvider({
   gcpProjectId?: string,
   gcpClientEmail?: string,
   gcpPrivateKey?: string,
-}): GCSProvider {
+}): GCSClient {
   if (gcpServiceAccountKeyJsonPath) {
-    return new GCSProvider({ keyFilename: gcpServiceAccountKeyJsonPath });
+    return new GCSClient({ keyFilename: gcpServiceAccountKeyJsonPath });
   }
 
   /* If the configuration file does not exist, it is created temporarily from the options,
@@ -60,7 +60,7 @@ export function generateGCSProvider({
 
   // [MEMO] Converting escaped characters because newline codes cannot be entered in the commander argument.
   const privateKey = gcpPrivateKey?.replace(/\\n/g, '\n');
-  return new GCSProvider({
+  return new GCSClient({
     projectId: gcpProjectId,
     credentials: {
       client_email: gcpClientEmail,
