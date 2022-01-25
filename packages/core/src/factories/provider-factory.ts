@@ -5,7 +5,7 @@ import {
 import { S3ServiceClient } from '../storage-service-clients/s3';
 import { GCSServiceClient } from '../storage-service-clients/gcs';
 
-export function getStorageProviderType(target: URL): StorageProviderType|undefined {
+export function storageProviderType(target: URL): StorageProviderType|undefined {
   const typeMap: Record<string, StorageProviderType> = {
     s3: 'S3',
     gs: 'GCS',
