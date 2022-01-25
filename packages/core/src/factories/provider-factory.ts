@@ -2,7 +2,7 @@ import { StorageProviderType } from '../interfaces/storage-client';
 import {
   configExistS3, createConfigS3,
 } from './provider-config-factory';
-import { S3Provider } from '../providers/s3';
+import { S3ServiceClient } from '../providers/s3';
 import { GCSServiceClient } from '../providers/gcs';
 
 export function getStorageProviderType(target: URL): StorageProviderType|undefined {
@@ -14,7 +14,7 @@ export function getStorageProviderType(target: URL): StorageProviderType|undefin
   return typeMap[key];
 }
 
-export function generateS3Provider({
+export function generateS3ServiceClient({
   awsRegion,
   awsAccessKeyId,
   awsSecretAccessKey,
@@ -22,7 +22,7 @@ export function generateS3Provider({
   awsRegion?: string,
   awsAccessKeyId?: string,
   awsSecretAccessKey?: string,
-}): S3Provider {
+}): S3ServiceClient {
   /* If the configuration file does not exist, it is created temporarily from the options,
     and it will be deleted when process exit. */
   if (!configExistS3()) {
@@ -33,7 +33,7 @@ export function generateS3Provider({
     createConfigS3({ awsRegion, awsAccessKeyId, awsSecretAccessKey });
   }
 
-  return new S3Provider({});
+  return new S3ServiceClient({});
 }
 
 export function generateGCSServiceClient({

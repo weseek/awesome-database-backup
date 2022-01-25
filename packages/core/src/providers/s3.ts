@@ -39,7 +39,7 @@ function _parseFilePath(path: string): S3URI | null {
   return null;
 }
 
-export class S3Provider implements IStorageServiceClient {
+export class S3ServiceClient implements IStorageServiceClient {
 
   name: string;
 

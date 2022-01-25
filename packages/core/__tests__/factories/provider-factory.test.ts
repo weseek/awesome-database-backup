@@ -16,7 +16,7 @@ describe('getStorageProviderType()', () => {
   });
 });
 
-describe('generateS3Provider()', () => {
+describe('generateS3ServiceClient()', () => {
   beforeEach(() => {
     jest.resetAllMocks();
     jest.dontMock('../../src/factories/provider-factory');
@@ -29,8 +29,8 @@ describe('generateS3Provider()', () => {
       jest.spyOn(providerConfigFactory, 'configExistS3').mockReturnValue(true);
     });
 
-    test("it return S3Provider's instance", () => {
-      expect(providerFactory.generateS3Provider({}).constructor.name).toBe('S3Provider');
+    test("it return S3ServiceClient's instance", () => {
+      expect(providerFactory.generateS3ServiceClient({}).constructor.name).toBe('S3ServiceClient');
     });
   });
 
@@ -50,14 +50,14 @@ describe('generateS3Provider()', () => {
           awsSecretAccessKey: 'secretAccessKey',
         };
 
-        expect(providerFactory.generateS3Provider(options).constructor.name).toBe('S3Provider');
+        expect(providerFactory.generateS3ServiceClient(options).constructor.name).toBe('S3ServiceClient');
         expect(spy).toHaveBeenCalled();
       });
     });
 
     describe('in case of required options are not specified', () => {
       test('it throw error', () => {
-        expect(() => { providerFactory.generateS3Provider({}) }).toThrowError();
+        expect(() => { providerFactory.generateS3ServiceClient({}) }).toThrowError();
       });
     });
   });
