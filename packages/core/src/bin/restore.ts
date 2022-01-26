@@ -1,7 +1,14 @@
 import { format } from 'date-fns';
 import { basename, join } from 'path';
+import { Command } from 'commander';
+
 import { expand } from '../utils/tar';
 import { IStorageServiceClient } from '../interfaces/storage-service-client';
+import {
+  addStorageServiceClientOptions,
+  addStorageServiceClientGenerateHook,
+  ICommonCLIOption,
+} from './common';
 
 const tmp = require('tmp');
 
@@ -17,35 +24,59 @@ export declare interface IRestoreCLIOption {
   restoreToolOptions: string,
 }
 
-export class AbstractRestoreCLI {
+export async function restore(
+    storageServiceClient: IStorageServiceClient,
+    restoreDatabaseFunc: (sourcePath: string, restoreToolOptions?: string) => Promise<{ stdout: string, stderr: string }>,
+    targetBucketUrl: URL,
+    options: IRestoreCLIOption,
+): Promise<void> {
+  console.log(`=== ${basename(__filename)} started at ${format(Date.now(), 'yyyy/MM/dd HH:mm:ss')} ===`);
 
-  provider: IStorageServiceClient;
+  tmp.setGracefulCleanup();
+  const tmpdir = tmp.dirSync({ unsafeCleanup: true });
+  const backupFilePath = join(tmpdir.name, basename(targetBucketUrl.pathname));
+  await storageServiceClient.copyFile(targetBucketUrl.toString(), backupFilePath);
 
-  constructor(provider: IStorageServiceClient) {
-    this.provider = provider;
-  }
+  console.log(`expands ${backupFilePath}...`);
+  const { expandedPath } = await expand(backupFilePath);
+  const { stdout, stderr } = await restoreDatabaseFunc(expandedPath, options.restoreToolOptions);
+  if (stdout) console.log(stdout);
+  if (stderr) console.warn(stderr);
+}
 
-  async restore(sourcePath: string, pgrestoreRequiredOptions?: string): Promise<Record<string, string>> {
-    throw new Error('Method not implemented.');
-  }
+export function addRestoreOptions(command: Command): void {
+  addStorageServiceClientOptions(command);
+  command
+    .option('--restore-tool-options <OPTIONS_STRING>', 'pass options to restore tool exec');
+}
 
-  async main(targetBucketUrl: URL, options: IRestoreCLIOption): Promise<void> {
-    tmp.setGracefulCleanup();
-    const tmpdir = tmp.dirSync({ unsafeCleanup: true });
+export function setRestoreAction(
+    restoreDatabaseFunc: (sourcePath: string, restoreToolOptions?: string) => Promise<{ stdout: string, stderr: string }>,
+    command: Command,
+): void {
+  const storageServiceClientHolder: {
+    storageServiceClient: IStorageServiceClient | null,
+  } = {
+    storageServiceClient: null,
+  };
+  addStorageServiceClientGenerateHook(command, storageServiceClientHolder);
 
-    console.log(`=== ${basename(__filename)} started at ${format(Date.now(), 'yyyy/MM/dd HH:mm:ss')} ===`);
-    const target = join(tmpdir.name, basename(targetBucketUrl.pathname));
+  const action = async(targetBucketUrlString: string, otions: IRestoreCLIOption) => {
+    try {
+      if (storageServiceClientHolder.storageServiceClient == null) throw new Error('URL scheme is not that of a supported provider.');
 
-    await this.provider.copyFile(targetBucketUrl.toString(), target);
-    console.log(`expands ${target}...`);
-    const { expandedPath } = await expand(target);
-    const { stdout, stderr } = await this.restore(expandedPath, options.restoreToolOptions);
-    if (stdout) {
-      console.log(stdout);
+      const targetBucketUrl = new URL(targetBucketUrlString);
+      await restore(
+        storageServiceClientHolder.storageServiceClient,
+        restoreDatabaseFunc,
+        targetBucketUrl,
+        otions,
+      );
     }
-    if (stderr) {
-      console.warn(stderr);
+    catch (e: any) {
+      console.error(e);
     }
-  }
+  };
 
+  command.action(action);
 }

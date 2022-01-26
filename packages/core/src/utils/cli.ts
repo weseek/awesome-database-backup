@@ -5,7 +5,7 @@ export async function execute(
     command: string,
     args?: string,
     options?: string,
-): Promise<Record<string, string>> {
+): Promise<{ stdout: string, stderr: string }> {
   const commandParameterSeparator = ' '; // ex. 'command_name <options> arg1 arg2'
 
   const commandString = [command, options, args]
