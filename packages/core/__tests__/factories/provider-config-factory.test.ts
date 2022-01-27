@@ -58,6 +58,10 @@ describe('unlinkConfigS3', () => {
       );
     });
 
+    afterEach(() => {
+      providerConfigFactory = require('../../src/factories/provider-config-factory');
+    });
+
     test('it return undefined, and call "unlinkSync" method', () => {
       const fs = require('fs');
       const unlinkSyncMock = jest.spyOn(fs, 'unlinkSync');
@@ -74,6 +78,11 @@ describe('createConfigS3', () => {
       configurationPath: '/path/to/config',
       credentialPath: '/path/to/credential',
     };
+
+    afterEach(() => {
+      jest.resetModules();
+      providerConfigFactory = require('../../src/factories/provider-config-factory');
+    });
 
     test('it return object which have "configurationPath" and "credentialPath", and call "writeFileSync" method with config data from option', () => {
       const options = {
