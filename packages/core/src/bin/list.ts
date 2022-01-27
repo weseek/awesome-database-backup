@@ -7,43 +7,50 @@ import {
   addStorageServiceClientGenerateHook,
 } from './common';
 
-export async function list(
-    storageServiceClient: IStorageServiceClient,
-    targetBucketUrl: URL,
-): Promise<void> {
-  console.log('There are files below in bucket:');
-  const files = await storageServiceClient.listFiles(targetBucketUrl.toString());
-  console.log(files.join(EOL));
-}
+export class ListCommand extends Command {
 
-export function addListOptions(command: Command): void {
-  addStorageServiceClientOptions(command);
-}
+  async list(
+      storageServiceClient: IStorageServiceClient,
+      targetBucketUrl: URL,
+  ): Promise<void> {
+    console.log('There are files below in bucket:');
+    const files = await storageServiceClient.listFiles(targetBucketUrl.toString());
+    console.log(files.join(EOL));
+  }
 
-export function setListAction(
-    command: Command,
-): void {
-  const storageServiceClientHolder: {
-    storageServiceClient: IStorageServiceClient | null,
-  } = {
-    storageServiceClient: null,
-  };
-  addStorageServiceClientGenerateHook(command, storageServiceClientHolder);
+  setListArgument(): ListCommand {
+    return this.argument('<TARGET_BUCKET_URL>', 'URL of target bucket');
+  }
 
-  const action = async(targetBucketUrlString: string) => {
-    try {
-      if (storageServiceClientHolder.storageServiceClient == null) throw new Error('URL scheme is not that of a supported provider.');
+  addListOptions(): ListCommand {
+    addStorageServiceClientOptions(this);
+    return this;
+  }
 
-      const targetBucketUrl = new URL(targetBucketUrlString);
-      await list(
-        storageServiceClientHolder.storageServiceClient,
-        targetBucketUrl,
-      );
-    }
-    catch (e: any) {
-      console.error(e);
-    }
-  };
+  setListAction(): ListCommand {
+    const storageServiceClientHolder: {
+      storageServiceClient: IStorageServiceClient | null,
+    } = {
+      storageServiceClient: null,
+    };
+    addStorageServiceClientGenerateHook(this, storageServiceClientHolder);
 
-  command.action(action);
+    const action = async(targetBucketUrlString: string) => {
+      try {
+        if (storageServiceClientHolder.storageServiceClient == null) throw new Error('URL scheme is not that of a supported provider.');
+
+        const targetBucketUrl = new URL(targetBucketUrlString);
+        await this.list(
+          storageServiceClientHolder.storageServiceClient,
+          targetBucketUrl,
+        );
+      }
+      catch (e: any) {
+        console.error(e);
+      }
+    };
+
+    return this.action(action);
+  }
+
 }

@@ -28,99 +28,106 @@ export declare interface IBackupCLIOption extends ICommonCLIOption {
   backupToolOptions: string,
 }
 
-export async function backupOnce(
-    storageServiceClient: IStorageServiceClient,
-    dumpDatabaseFunc: (backupFilePath: string, backupToolOptions?: string) => Promise<{ stdout: string, stderr: string }>,
-    targetBucketUrl: URL,
-    options: IBackupCLIOption,
-): Promise<void> {
-  console.log(`=== ${basename(__filename)} started at ${format(Date.now(), 'yyyy/MM/dd HH:mm:ss')} ===`);
+export class BackupCommand extends Command {
 
-  if (options.healthchecksUrl != null && backupEventEmitter.listenerCount(_EXIT_BACKUP) === 0) {
-    const healthChecker = async() => {
-      const healthchecksUrl = new URL(options.healthchecksUrl);
-      axiosRetry(axios, { retries: 3 });
-      await axios
-        .get(healthchecksUrl.toString())
-        .catch((e: any) => {
-          console.log(`Cannot GET ${healthchecksUrl.toString()}: ${e.toString()}`);
-        });
-    };
-    backupEventEmitter.addListener(_EXIT_BACKUP, healthChecker);
+  async backupOnce(
+      storageServiceClient: IStorageServiceClient,
+      dumpDatabaseFunc: (backupFilePath: string, backupToolOptions?: string) => Promise<{ stdout: string, stderr: string }>,
+      targetBucketUrl: URL,
+      options: IBackupCLIOption,
+  ): Promise<void> {
+    console.log(`=== ${basename(__filename)} started at ${format(Date.now(), 'yyyy/MM/dd HH:mm:ss')} ===`);
+
+    if (options.healthchecksUrl != null && backupEventEmitter.listenerCount(_EXIT_BACKUP) === 0) {
+      const healthChecker = async() => {
+        const healthchecksUrl = new URL(options.healthchecksUrl);
+        axiosRetry(axios, { retries: 3 });
+        await axios
+          .get(healthchecksUrl.toString())
+          .catch((e: any) => {
+            console.log(`Cannot GET ${healthchecksUrl.toString()}: ${e.toString()}`);
+          });
+      };
+      backupEventEmitter.addListener(_EXIT_BACKUP, healthChecker);
+    }
+
+    tmp.setGracefulCleanup();
+    const tmpdir = tmp.dirSync({ unsafeCleanup: true });
+    const backupFilePath = join(tmpdir.name, `${options.backupfilePrefix}-${format(Date.now(), 'yyyyMMddHHmmss')}`);
+
+    console.log(`backup ${backupFilePath}...`);
+    const { stdout, stderr } = await dumpDatabaseFunc(backupFilePath, options.backupToolOptions);
+    if (stdout) console.log(stdout);
+    if (stderr) console.warn(stderr);
+
+    const { compressedFilePath } = await compress(backupFilePath);
+    await storageServiceClient.copyFile(compressedFilePath, targetBucketUrl.toString());
+
+    backupEventEmitter.emit(_EXIT_BACKUP);
   }
 
-  tmp.setGracefulCleanup();
-  const tmpdir = tmp.dirSync({ unsafeCleanup: true });
-  const backupFilePath = join(tmpdir.name, `${options.backupfilePrefix}-${format(Date.now(), 'yyyyMMddHHmmss')}`);
+  async backupCronMode(
+      storageServiceClient: IStorageServiceClient,
+      dumpDatabaseFunc: (backupFilePath: string, backupToolOptions?: string) => Promise<{ stdout: string, stderr: string }>,
+      targetBucketUrl: URL,
+      options: IBackupCLIOption,
+  ): Promise<void> {
+    console.log(`=== started in cron mode ${format(Date.now(), 'yyyy/MM/dd HH:mm:ss')} ===`);
+    await schedule.scheduleJob(
+      options.cronExpression,
+      async() => {
+        await this.backupOnce(storageServiceClient, dumpDatabaseFunc, targetBucketUrl, options);
+      },
+    );
+  }
 
-  console.log(`backup ${backupFilePath}...`);
-  const { stdout, stderr } = await dumpDatabaseFunc(backupFilePath, options.backupToolOptions);
-  if (stdout) console.log(stdout);
-  if (stderr) console.warn(stderr);
+  setBackupArgument(): BackupCommand {
+    return this.argument('<TARGET_BUCKET_URL>', 'URL of target bucket');
+  }
 
-  const { compressedFilePath } = await compress(backupFilePath);
-  await storageServiceClient.copyFile(compressedFilePath, targetBucketUrl.toString());
+  addBackupOptions(): BackupCommand {
+    addStorageServiceClientOptions(this);
+    return this
+      .option('--backupfile-prefix <BACKUPFILE_PREFIX>', 'Prefix of backup file.', 'backup')
+      .option('--cronmode', 'Run `backup` as cron mode. In Cron mode, `backup` will be executed periodically.', false)
+      .option('--cron-expression <CRON_EXPRESSION>', 'Cron expression (ex. CRON_EXPRESSION="0 4 * * *" if you want to run at 4:00 every day)')
+      .option('--healthcheck-url <HEALTHCHECK_URL>', 'URL that gets called after a successful backup (eg. https://healthchecks.io)')
+      .option('--backup-tool-options <OPTIONS_STRING>', 'pass options to backup tool exec (ex. "--host db.example.com --username admin")');
+  }
 
-  backupEventEmitter.emit(_EXIT_BACKUP);
-}
+  setBackupAction(
+      dumpDatabaseFunc: (backupFilePath: string, backupToolOptions?: string) => Promise<{ stdout: string, stderr: string }>,
+  ): BackupCommand {
+    const storageServiceClientHolder: {
+      storageServiceClient: IStorageServiceClient | null,
+    } = {
+      storageServiceClient: null,
+    };
+    addStorageServiceClientGenerateHook(this, storageServiceClientHolder);
 
-export async function backupCronMode(
-    storageServiceClient: IStorageServiceClient,
-    dumpDatabaseFunc: (backupFilePath: string, backupToolOptions?: string) => Promise<{ stdout: string, stderr: string }>,
-    targetBucketUrl: URL,
-    options: IBackupCLIOption,
-): Promise<void> {
-  console.log(`=== started in cron mode ${format(Date.now(), 'yyyy/MM/dd HH:mm:ss')} ===`);
-  await schedule.scheduleJob(
-    options.cronExpression,
-    async() => {
-      await backupOnce(storageServiceClient, dumpDatabaseFunc, targetBucketUrl, options);
-    },
-  );
-}
+    const action = async(targetBucketUrlString: string, options: IBackupCLIOption) => {
+      try {
+        if (options.cronmode && options.cronExpression == null) {
+          console.error('The option "--cron-expression" must be specified in cron mode.');
+          return;
+        }
+        if (storageServiceClientHolder.storageServiceClient == null) throw new Error('URL scheme is not that of a supported provider.');
 
-export function addBackupOptions(command: Command): void {
-  addStorageServiceClientOptions(command);
-  command
-    .option('--backupfile-prefix <BACKUPFILE_PREFIX>', 'Prefix of backup file.', 'backup')
-    .option('--cronmode', 'Run `backup` as cron mode. In Cron mode, `backup` will be executed periodically.', false)
-    .option('--cron-expression <CRON_EXPRESSION>', 'Cron expression (ex. CRON_EXPRESSION="0 4 * * *" if you want to run at 4:00 every day)')
-    .option('--healthcheck-url <HEALTHCHECK_URL>', 'URL that gets called after a successful backup (eg. https://healthchecks.io)')
-    .option('--backup-tool-options <OPTIONS_STRING>', 'pass options to backup tool exec (ex. "--host db.example.com --username admin")');
-}
-
-export function setBackupAction(
-    dumpDatabaseFunc: (backupFilePath: string, backupToolOptions?: string) => Promise<{ stdout: string, stderr: string }>,
-    command: Command,
-): void {
-  const storageServiceClientHolder: {
-    storageServiceClient: IStorageServiceClient | null,
-  } = {
-    storageServiceClient: null,
-  };
-  addStorageServiceClientGenerateHook(command, storageServiceClientHolder);
-
-  const action = async(targetBucketUrlString: string, options: IBackupCLIOption) => {
-    try {
-      if (options.cronmode && options.cronExpression == null) {
-        console.error('The option "--cron-expression" must be specified in cron mode.');
-        return;
+        const targetBucketUrl = new URL(targetBucketUrlString);
+        const actionImpl = (options.cronmode ? this.backupCronMode : this.backupOnce);
+        await actionImpl(
+          storageServiceClientHolder.storageServiceClient,
+          dumpDatabaseFunc,
+          targetBucketUrl,
+          options,
+        );
       }
-      if (storageServiceClientHolder.storageServiceClient == null) throw new Error('URL scheme is not that of a supported provider.');
+      catch (e: any) {
+        console.error(e);
+      }
+    };
 
-      const targetBucketUrl = new URL(targetBucketUrlString);
-      const actionImpl = (options.cronmode ? backupCronMode : backupOnce);
-      await actionImpl(
-        storageServiceClientHolder.storageServiceClient,
-        dumpDatabaseFunc,
-        targetBucketUrl,
-        options,
-      );
-    }
-    catch (e: any) {
-      console.error(e);
-    }
-  };
+    return this.action(action);
+  }
 
-  command.action(action);
 }

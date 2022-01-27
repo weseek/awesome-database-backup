@@ -1,9 +1,8 @@
 #!/usr/bin/env node
 
-import { program } from 'commander';
 import {
   execute,
-  addBackupOptions, setBackupAction,
+  BackupCommand,
 } from '@awesome-backup/core';
 import { PACKAGE_VERSION } from '../src/config/version';
 
@@ -16,15 +15,16 @@ async function dumpMongoDB(destinationPath: string, mongodumpRequiredOptions?: s
   return execute(backupCommand, mongodumpArgs, mongodumpOptions);
 }
 
-program
+const backupCommand = new BackupCommand();
+
+backupCommand
   .version(PACKAGE_VERSION)
-  .argument('<TARGET_BUCKET_URL>', 'URL of target bucket');
-addBackupOptions(program);
-program
+  .setBackupArgument()
+  .addBackupOptions()
   .addHelpText('after', `
     NOTICE:
       You can pass mongoDB options by set "--backup-tool-options". (ex. "--host db.example.com --username admin")
-      `.replace(/^ {4}/mg, ''));
-setBackupAction(dumpMongoDB, program);
+      `.replace(/^ {4}/mg, ''))
+  .setBackupAction(dumpMongoDB);
 
-program.parse(process.argv);
+backupCommand.parse(process.argv);

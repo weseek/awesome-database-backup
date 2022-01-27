@@ -1,10 +1,8 @@
 #!/usr/bin/env node
 
-import { program } from 'commander';
-
 import {
   execute,
-  addRestoreOptions, setRestoreAction,
+  RestoreCommand,
 } from '@awesome-backup/core';
 import { PACKAGE_VERSION } from '../src/config/version';
 
@@ -14,15 +12,16 @@ async function restoreMongoDB(sourcePath: string, mongorestoreRequiredOptions?: 
   return execute(restoreCommand, mongorestoreArgs, mongorestoreRequiredOptions);
 }
 
-program
+const restoreCommand = new RestoreCommand();
+
+restoreCommand
   .version(PACKAGE_VERSION)
-  .argument('<TARGET_BUCKET_URL>', 'URL of target bucket');
-addRestoreOptions(program);
-program
+  .setRestoreArgument()
+  .addRestoreOptions()
   .addHelpText('after', `
     NOTICE:
       You can pass mongoDB options by set "--restore-tool-options". (ex. "--host db.example.com --username admin")
-      `.replace(/^ {4}/mg, ''));
-setRestoreAction(restoreMongoDB, program);
+      `.replace(/^ {4}/mg, ''))
+  .setRestoreAction(restoreMongoDB);
 
-program.parse(process.argv);
+restoreCommand.parse(process.argv);
