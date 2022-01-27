@@ -27,8 +27,7 @@ backupCommand
       `.replace(/^ {4}/mg, ''))
   .addHelpText('after', `
     NOTICE:
-      You can pass PostgreSQL options  to the tool used internally.
-      These options may not available depending on the version of the tool.
+      You can pass PostgreSQL options by set "--restore-tool-options". (ex. "--host db.example.com --username postgres")
       `.replace(/^ {4}/mg, ''))
   .setBackupAction(dumpPostgreSQL);
 
