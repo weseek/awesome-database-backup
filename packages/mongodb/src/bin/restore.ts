@@ -4,7 +4,7 @@ import {
   execute,
   RestoreCommand,
 } from '@awesome-backup/core';
-import { PACKAGE_VERSION } from '../src/config/version';
+import { PACKAGE_VERSION } from '../config/version';
 
 async function restoreMongoDB(sourcePath: string, mongorestoreRequiredOptions?: string): Promise<{ stdout: string, stderr: string }> {
   const restoreCommand = 'mongorestore';

@@ -4,7 +4,7 @@ import {
   execute,
   BackupCommand,
 } from '@awesome-backup/core';
-import { PACKAGE_VERSION } from '../src/config/version';
+import { PACKAGE_VERSION } from '../config/version';
 
 async function dumpMongoDB(destinationPath: string, mongodumpRequiredOptions?: string): Promise<{ stdout: string, stderr: string }> {
   const backupCommand = 'mongodump';

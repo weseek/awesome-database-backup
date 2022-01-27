@@ -3,7 +3,7 @@
 import {
   ListCommand,
 } from '@awesome-backup/core';
-import { PACKAGE_VERSION } from '../src/config/version';
+import { PACKAGE_VERSION } from '../config/version';
 
 const listCommand = new ListCommand();
 
