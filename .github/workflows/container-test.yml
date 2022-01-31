@@ -14,7 +14,7 @@ jobs:
         ]
 
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/checkout@2
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v1
     - name: Cache Docker layers
@@ -60,8 +60,8 @@ jobs:
         ]
 
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/checkout@2
     - uses: brpaz/structure-tests-action@v1.1.2
       with:
-          image: awesome-backup/${{ matrix.testingTargetBaseName }}
-          configFile: docker/test/${{ matrix.testingTargetBaseName }}/structure-tests.yaml
+        image: awesome-backup/${{ matrix.testingTargetBaseName }}
+        configFile: ./docker/test/${{ matrix.testingTargetBaseName }}/structure-tests.yml
