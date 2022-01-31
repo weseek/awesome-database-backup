@@ -25,7 +25,7 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-buildx-app-${{ matrix.flavor }}-
           ${{ runner.os }}-buildx-app-
-    - name: Build and push
+    - name: Build
       uses: docker/build-push-action@v2
       with:
         context: .
@@ -36,6 +36,7 @@ jobs:
           packageScope=${{ matrix.packageScope }}
         cache-from: type=local,src=/tmp/.buildx-cache
         cache-to: type=local,mode=max,dest=/tmp/.buildx-cache-new
+        tags: ${{ matrix.packageScope }}
     - name: Move cache
       run: |
         rm -rf /tmp/.buildx-cache
@@ -46,9 +47,16 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        packageScope: [
+          "@awesome-backup/mongodb",
+          "@awesome-backup/postgresql"
+        ]
+
     steps:
     - uses: actions/checkout@master
-    - uses: brpaz/structure-tests-action@v1
+    - uses: brpaz/structure-tests-action@v1.1.2
       with:
-          image: awesome-backup:latest
+          image: ${{ matrix.packageScope }}
           configFile: structure-tests.yaml
