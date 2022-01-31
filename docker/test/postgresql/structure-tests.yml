@@ -3,3 +3,12 @@ commandTests:
   - name: postgresql-backup
     command: sh
     args: ["-c", "node packages/postgresql/dist/postgresql/src/bin/backup.js --help"]
+  - name: postgresql-list
+    command: sh
+    args: ["-c", "node packages/postgresql/dist/postgresql/src/bin/list.js --help"]
+  - name: postgresql-prune
+    command: sh
+    args: ["-c", "node packages/postgresql/dist/postgresql/src/bin/prune.js --help"]
+  - name: postgresql-restore
+    command: sh
+    args: ["-c", "node packages/postgresql/dist/postgresql/src/bin/restore.js --help"]

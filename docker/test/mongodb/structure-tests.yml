@@ -3,3 +3,12 @@ commandTests:
   - name: mongodb-backup
     command: sh
     args: ["-c", "node packages/mongodb/dist/mongodb/src/bin/backup.js --help"]
+  - name: mongodb-list
+    command: sh
+    args: ["-c", "node packages/mongodb/dist/mongodb/src/bin/list.js --help"]
+  - name: mongodb-prune
+    command: sh
+    args: ["-c", "node packages/mongodb/dist/mongodb/src/bin/prune.js --help"]
+  - name: mongodb-restore
+    command: sh
+    args: ["-c", "node packages/mongodb/dist/mongodb/src/bin/restore.js --help"]
