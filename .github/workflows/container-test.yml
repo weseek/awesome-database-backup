@@ -8,7 +8,10 @@ jobs:
 
     strategy:
       matrix:
-        packageScope: [@awesome-backup/mongodb, @awesome-backup/postgresql]
+        packageScope: [
+          "@awesome-backup/mongodb",
+          "@awesome-backup/postgresql"
+        ]
 
     steps:
     - uses: actions/checkout@master
