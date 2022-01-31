@@ -31,17 +31,17 @@ jobs:
         context: .
         file: ./docker/Dockerfile
         platforms: linux/amd64
-        push: false
+        push: true
         build-args: |
           packageScope=@awesome-backup/${{ matrix.testingTargetBaseName }}
         cache-from: type=local,src=/tmp/.buildx-cache
         cache-to: type=local,mode=max,dest=/tmp/.buildx-cache-new
-        tags: awesome-backup/${{ matrix.testingTargetBaseName }}:latest
+        tags: ${{ matrix.testingTargetBaseName }}
     - name: Move cache
       run: |
         rm -rf /tmp/.buildx-cache
         mv /tmp/.buildx-cache-new /tmp/.buildx-cache
     - uses: brpaz/structure-tests-action@v1.1.2
       with:
-        image: awesome-backup/${{ matrix.testingTargetBaseName }}:latest
+        image: ${{ matrix.testingTargetBaseName }}
         configFile: ./docker/test/${{ matrix.testingTargetBaseName }}/structure-tests.yml
