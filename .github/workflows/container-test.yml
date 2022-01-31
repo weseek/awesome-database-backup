@@ -28,7 +28,7 @@ jobs:
     - name: Setup docker image tag
       id: tag
       run: |
-        tag=`${{ matrix.packageScope }} | tr -d '@'`
+        tag=`echo ${{ matrix.packageScope }} | tr -d '@'`
         echo "::set-output name=TAG::$tag"
     - name: Build
       uses: docker/build-push-action@v2
