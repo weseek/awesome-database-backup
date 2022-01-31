@@ -36,12 +36,12 @@ jobs:
           packageScope=@awesome-backup/${{ matrix.testingTargetBaseName }}
         cache-from: type=local,src=/tmp/.buildx-cache
         cache-to: type=local,mode=max,dest=/tmp/.buildx-cache-new
-        tags: awesome-backup/${{ matrix.testingTargetBaseName }}
+        tags: awesome-backup/${{ matrix.testingTargetBaseName }}:latest
     - name: Move cache
       run: |
         rm -rf /tmp/.buildx-cache
         mv /tmp/.buildx-cache-new /tmp/.buildx-cache
     - uses: brpaz/structure-tests-action@v1.1.2
       with:
-        image: awesome-backup/${{ matrix.testingTargetBaseName }}
+        image: awesome-backup/${{ matrix.testingTargetBaseName }}:latest
         configFile: ./docker/test/${{ matrix.testingTargetBaseName }}/structure-tests.yml
