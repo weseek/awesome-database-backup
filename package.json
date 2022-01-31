@@ -28,5 +28,6 @@
     "tsc-alias": "^1.5.0",
     "turbo": "^1.0.28",
     "typescript": "^4.5.4"
-  }
+  },
+  "packageManager": "yarn@1.22.15"
 }
