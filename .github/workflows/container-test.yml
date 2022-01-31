@@ -6,6 +6,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        packageScope: [@awesome-backup/mongodb, @awesome-backup/postgresql]
+
     steps:
     - uses: actions/checkout@master
     - name: Set up Docker Buildx
@@ -26,7 +30,7 @@ jobs:
         platforms: linux/amd64
         push: false
         build-args: |
-          flavor=${{ matrix.flavor }}
+          packageScope=${{ matrix.packageScope }}
         cache-from: type=local,src=/tmp/.buildx-cache
         cache-to: type=local,mode=max,dest=/tmp/.buildx-cache-new
     - name: Move cache
@@ -35,6 +39,8 @@ jobs:
         mv /tmp/.buildx-cache-new /tmp/.buildx-cache
 
   conatiner-test:
+    needs: build
+
     runs-on: ubuntu-latest
 
     steps:
