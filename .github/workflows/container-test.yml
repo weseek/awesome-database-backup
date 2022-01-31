@@ -36,7 +36,7 @@ jobs:
           packageScope=@awesome-backup/${{ matrix.testingTargetBaseName }}
         cache-from: type=local,src=/tmp/.buildx-cache
         cache-to: type=local,mode=max,dest=/tmp/.buildx-cache-new
-        tags: ${{ steps.meta.outputs.tag }}
+        tags: awesome-backup/${{ matrix.testingTargetBaseName }}
     - name: Move cache
       run: |
         rm -rf /tmp/.buildx-cache
