@@ -1,5 +1,5 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "@awesome-backup/tsconfig/tsconfig.base.json",
   "compilerOptions": {
     "outDir": "./dist",
     "baseUrl": "."

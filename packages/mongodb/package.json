@@ -29,6 +29,7 @@
     "lint:fix": "eslint src --ext .ts --fix"
   },
   "dependencies": {
+    "@awesome-backup/tsconfig": "^0.0.1",
     "@awesome-backup/core": "^0.0.1",
     "cross-env": "^7.0.3",
     "date-fns": "^2.28.0",
