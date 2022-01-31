@@ -25,6 +25,11 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-buildx-app-${{ matrix.flavor }}-
           ${{ runner.os }}-buildx-app-
+    - name: Setup docker image tag
+      id: tag
+      run: |
+        tag=`${{ matrix.packageScope }} | tr -d '@'`
+        echo "::set-output name=TAG::$tag"
     - name: Build
       uses: docker/build-push-action@v2
       with:
@@ -36,7 +41,7 @@ jobs:
           packageScope=${{ matrix.packageScope }}
         cache-from: type=local,src=/tmp/.buildx-cache
         cache-to: type=local,mode=max,dest=/tmp/.buildx-cache-new
-        tags: ${{ matrix.packageScope }}:latest
+        tags: ${{ steps.meta.outputs.tag }}
     - name: Move cache
       run: |
         rm -rf /tmp/.buildx-cache
@@ -49,14 +54,14 @@ jobs:
 
     strategy:
       matrix:
-        packageScope: [
-          "@awesome-backup/mongodb",
-          "@awesome-backup/postgresql"
+        testingImage: [
+          "awesome-backup/mongodb",
+          "awesome-backup/postgresql"
         ]
 
     steps:
     - uses: actions/checkout@master
     - uses: brpaz/structure-tests-action@v1.1.2
       with:
-          image: ${{ matrix.packageScope }}:latest
+          image: ${{ matrix.testingImage }}
           configFile: structure-tests.yaml
