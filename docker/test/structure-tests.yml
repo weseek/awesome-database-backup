@@ -1,5 +1,0 @@
-schemaVersion: 2.0.0
-commandTests:
-  - name: postgresql-backup
-    command: sh
-    args: ["-c", "node postgresql/dist/bin/backup.js --help"]

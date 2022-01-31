@@ -21,9 +21,9 @@ jobs:
       uses: actions/cache@v2
       with:
         path: /tmp/.buildx-cache
-        key: ${{ runner.os }}-buildx-app-${{ matrix.flavor }}-${{ github.sha }}
+        key: ${{ runner.os }}-buildx-app-${{ matrix.packageScope }}-${{ github.sha }}
         restore-keys: |
-          ${{ runner.os }}-buildx-app-${{ matrix.flavor }}-
+          ${{ runner.os }}-buildx-app-${{ matrix.packageScope }}-
           ${{ runner.os }}-buildx-app-
     - name: Setup docker image tag
       id: tag
@@ -54,14 +54,14 @@ jobs:
 
     strategy:
       matrix:
-        testingImage: [
-          "awesome-backup/mongodb",
-          "awesome-backup/postgresql"
+        testingTargetBaseName: [
+          "mongodb",
+          "postgresql"
         ]
 
     steps:
     - uses: actions/checkout@master
     - uses: brpaz/structure-tests-action@v1.1.2
       with:
-          image: ${{ matrix.testingImage }}
-          configFile: structure-tests.yaml
+          image: awesome-backup/${{ matrix.testingTargetBaseName }}
+          configFile: docker/test/${{ matrix.testingTargetBaseName }}/structure-tests.yaml
