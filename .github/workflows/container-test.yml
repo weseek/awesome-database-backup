@@ -29,6 +29,7 @@ jobs:
           flavor=${{ matrix.flavor }}
         cache-from: type=local,src=/tmp/.buildx-cache
         cache-to: type=local,mode=max,dest=/tmp/.buildx-cache-new
+        tag: latest
     - name: Move cache
       run: |
         rm -rf /tmp/.buildx-cache
