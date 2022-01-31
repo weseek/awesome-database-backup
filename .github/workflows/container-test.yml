@@ -8,9 +8,9 @@ jobs:
 
     strategy:
       matrix:
-        packageScope: [
-          "@awesome-backup/mongodb",
-          "@awesome-backup/postgresql"
+        testingTargetBaseName: [
+          "mongodb",
+          "postgresql"
         ]
 
     steps:
@@ -21,15 +21,10 @@ jobs:
       uses: actions/cache@v2
       with:
         path: /tmp/.buildx-cache
-        key: ${{ runner.os }}-buildx-app-${{ matrix.packageScope }}-${{ github.sha }}
+        key: ${{ runner.os }}-buildx-app-${{ matrix.testingTargetBaseName }}-${{ github.sha }}
         restore-keys: |
-          ${{ runner.os }}-buildx-app-${{ matrix.packageScope }}-
+          ${{ runner.os }}-buildx-app-${{ matrix.testingTargetBaseName }}-
           ${{ runner.os }}-buildx-app-
-    - name: Setup docker image tag
-      id: tag
-      run: |
-        tag=`echo ${{ matrix.packageScope }}:latest | tr -d '@'`
-        echo "::set-output name=TAG::$tag"
     - name: Build
       uses: docker/build-push-action@v2
       with:
@@ -38,7 +33,7 @@ jobs:
         platforms: linux/amd64
         push: false
         build-args: |
-          packageScope=${{ matrix.packageScope }}
+          packageScope=@awesome-backup/${{ matrix.testingTargetBaseName }}
         cache-from: type=local,src=/tmp/.buildx-cache
         cache-to: type=local,mode=max,dest=/tmp/.buildx-cache-new
         tags: ${{ steps.meta.outputs.tag }}
@@ -46,21 +41,6 @@ jobs:
       run: |
         rm -rf /tmp/.buildx-cache
         mv /tmp/.buildx-cache-new /tmp/.buildx-cache
-
-  conatiner-test:
-    needs: build
-
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        testingTargetBaseName: [
-          "mongodb",
-          "postgresql"
-        ]
-
-    steps:
-    - uses: actions/checkout@v2
     - uses: brpaz/structure-tests-action@v1.1.2
       with:
         image: awesome-backup/${{ matrix.testingTargetBaseName }}
