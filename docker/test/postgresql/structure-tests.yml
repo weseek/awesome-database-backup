@@ -2,13 +2,13 @@ schemaVersion: 2.0.0
 commandTests:
   - name: postgresql-backup
     command: sh
-    args: ["-c", "node apps/postgresql/dist/postgresql/src/bin/backup.js --help"]
+    args: ["-c", "node apps/postgresql/dist/apps/postgresql/src/bin/backup.js --help"]
   - name: postgresql-list
     command: sh
-    args: ["-c", "node apps/postgresql/dist/postgresql/src/bin/list.js --help"]
+    args: ["-c", "node apps/postgresql/dist/apps/postgresql/src/bin/list.js --help"]
   - name: postgresql-prune
     command: sh
-    args: ["-c", "node apps/postgresql/dist/postgresql/src/bin/prune.js --help"]
+    args: ["-c", "node apps/postgresql/dist/apps/postgresql/src/bin/prune.js --help"]
   - name: postgresql-restore
     command: sh
-    args: ["-c", "node apps/postgresql/dist/postgresql/src/bin/restore.js --help"]
+    args: ["-c", "node apps/postgresql/dist/apps/postgresql/src/bin/restore.js --help"]
