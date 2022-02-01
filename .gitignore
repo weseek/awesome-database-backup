@@ -1,5 +1,7 @@
 node_modules
 /packages/*/dist
 /packages/*/coverage
+/apps/*/dist
+/apps/*/coverage
 
 .turbo

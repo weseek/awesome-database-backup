@@ -22,12 +22,12 @@
      * This is an assumption inherited by "tsconfig.json", which is placed in the top directory of each package.
      */
     "paths": {
-      "@awesome-backup/core": ["../core/src"],
-      "@awesome-backup/core/*": ["../core/src/*"],
-      "@awesome-backup/mongodb": ["../mongodb/src"],
-      "@awesome-backup/mongodb/*": ["../mongodb/src/*"],
-      "@awesome-backup/postgresql": ["../postgresql/src"],
-      "@awesome-backup/postgresql/*": ["../postgresql/src/*"]
+      "@awesome-backup/core": ["../../packages/core/src"],
+      "@awesome-backup/core/*": ["../../packages/core/src/*"],
+      "@awesome-backup/mongodb": ["../../apps/mongodb/src"],
+      "@awesome-backup/mongodb/*": ["../../apps/mongodb/src/*"],
+      "@awesome-backup/postgresql": ["../../apps/postgresql/src"],
+      "@awesome-backup/postgresql/*": ["../../apps/postgresql/src/*"]
     }
   }
 }
