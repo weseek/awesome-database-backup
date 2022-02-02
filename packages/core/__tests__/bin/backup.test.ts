@@ -78,7 +78,6 @@ describe('BackupCommand', () => {
       jest.useRealTimers();
     });
 
-
     it('call backupOnce() at specified time', () => {
       const backupCommand = new backup.BackupCommand();
       const storageServiceClientMock = {
@@ -101,7 +100,6 @@ describe('BackupCommand', () => {
   });
 
   describe('setBackupArgument', () => {
-
     it('call argument()', () => {
       const backupCommand = new backup.BackupCommand();
       const argumentMock = jest.fn().mockReturnValue(backupCommand);
@@ -112,13 +110,22 @@ describe('BackupCommand', () => {
   });
 
   describe('addBackupOptions', () => {
-
     it('call option()', () => {
       const backupCommand = new backup.BackupCommand();
       const optionMock = jest.fn().mockReturnValue(backupCommand);
       backupCommand.option = optionMock;
       backupCommand.addBackupOptions();
       expect(optionMock).toBeCalled();
+    });
+  });
+
+  describe('setBackupAction', () => {
+    it('call action()', () => {
+      const backupCommand = new backup.BackupCommand();
+      const actionMock = jest.fn().mockReturnValue(backupCommand);
+      backupCommand.action = actionMock;
+      backupCommand.setBackupAction();
+      expect(actionMock).toBeCalled();
     });
   });
 });
