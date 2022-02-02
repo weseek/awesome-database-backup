@@ -99,4 +99,15 @@ describe('BackupCommand', () => {
       expect(backupOnceMock).toHaveBeenCalledTimes(1);
     });
   });
+
+  describe('setBackupArgument', () => {
+
+    it('call argument()', () => {
+      const backupCommand = new backup.BackupCommand();
+      const argumentMock = jest.fn();
+      backupCommand.argument = argumentMock;
+      backupCommand.setBackupArgument();
+      expect(argumentMock).toBeCalled();
+    });
+  });
 });
