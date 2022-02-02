@@ -104,10 +104,21 @@ describe('BackupCommand', () => {
 
     it('call argument()', () => {
       const backupCommand = new backup.BackupCommand();
-      const argumentMock = jest.fn();
+      const argumentMock = jest.fn().mockReturnValue(backupCommand);
       backupCommand.argument = argumentMock;
       backupCommand.setBackupArgument();
       expect(argumentMock).toBeCalled();
+    });
+  });
+
+  describe('addBackupOptions', () => {
+
+    it('call option()', () => {
+      const backupCommand = new backup.BackupCommand();
+      const optionMock = jest.fn().mockReturnValue(backupCommand);
+      backupCommand.option = optionMock;
+      backupCommand.addBackupOptions();
+      expect(optionMock).toBeCalled();
     });
   });
 });
