@@ -22,10 +22,10 @@ const _EXIT_BACKUP = 'AWSOME_BACKUP_EXIT_BACKUP';
 /* Backup command option types */
 export declare interface IBackupCLIOption extends ICommonCLIOption {
   backupfilePrefix: string,
-  cronmode: boolean,
-  cronExpression: string,
-  healthchecksUrl: string,
-  backupToolOptions: string,
+  cronmode?: boolean,
+  cronExpression?: string,
+  healthchecksUrl?: string,
+  backupToolOptions?: string,
 }
 
 export class BackupCommand extends Command {
@@ -40,7 +40,7 @@ export class BackupCommand extends Command {
 
     if (options.healthchecksUrl != null && backupEventEmitter.listenerCount(_EXIT_BACKUP) === 0) {
       const healthChecker = async() => {
-        const healthchecksUrl = new URL(options.healthchecksUrl);
+        const healthchecksUrl = new URL(options.healthchecksUrl as string);
         axiosRetry(axios, { retries: 3 });
         await axios
           .get(healthchecksUrl.toString())
