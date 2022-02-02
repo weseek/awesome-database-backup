@@ -23,7 +23,7 @@ describe('BackupCommand', () => {
       it('return undefined and call dumpDatabaseFunc()', async() => {
         const backupCommand = new backup.BackupCommand();
         const storageServiceClientMock = {
-          copyFile: jest.fn()
+          copyFile: jest.fn(),
         };
         const dumpDatabaseFuncMock = jest.fn().mockReturnValue({ stdout: "", stderr: "" });
         const targetBucketUrl = new URL('gs://sample.com/bucket');

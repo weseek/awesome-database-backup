@@ -1,6 +1,17 @@
 let list = require('../../src/bin/list');
 
 describe('ListCommand', () => {
+  describe('list', () => {
+    it('return undefined and call dumpDatabaseFunc()', async() => {
+      const listCommand = new list.ListCommand();
+      const storageServiceClientMock = {
+        listFiles: jest.fn().mockReturnValue(['']),
+      };
+      const targetBucketUrl = new URL('gs://sample.com/bucket');
+      await expect(listCommand.list(storageServiceClientMock, targetBucketUrl)).resolves.toBe(undefined);
+    });
+});
+
   describe('setListArgument', () => {
     it('call argument()', () => {
       const listCommand = new list.ListCommand();
