@@ -30,6 +30,11 @@
     "turbo": "^1.0.28",
     "typescript": "^4.5.4"
   },
+  "scripts": {
+    "build": "turbo run dev --parallel --no-cache",
+    "test": "turbo run test",
+    "build": "turbo run build"
+  },
   "packageManager": "yarn@1.22.15",
   "turbo": {
     "pipeline": {
