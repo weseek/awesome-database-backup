@@ -65,7 +65,7 @@ describe('BackupCommand', () => {
           healthchecksUrl: 'http://example.com/',
         };
         await expect(bakupCommand.backupOnce(storageServiceClientMock, dumpDatabaseFuncMock, targetBucketUrl, options)).resolves.toBe(undefined);
-        expect(axiosGetMock).toBeCalled();
+        expect(axiosGetMock).toBeCalledWith(options.healthchecksUrl?.toString());
       });
     });
   });
