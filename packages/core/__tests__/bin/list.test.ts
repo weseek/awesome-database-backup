@@ -2,7 +2,7 @@ let list = require('../../src/bin/list');
 
 describe('ListCommand', () => {
   describe('list', () => {
-    it('return undefined and call dumpDatabaseFunc()', async() => {
+    it('return undefined', async() => {
       const listCommand = new list.ListCommand();
       const storageServiceClientMock = {
         listFiles: jest.fn().mockReturnValue(['']),
