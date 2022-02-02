@@ -91,8 +91,6 @@ describe('BackupCommand', () => {
         cronExpression: '* * * * *',
       };
       const backupOnceMock = jest.fn();
-      console.log(backupCommand);
-      console.log(backupCommand.prototype);
       backupCommand.backupOnce = backupOnceMock;
       backupCommand.backupCronMode(storageServiceClientMock, dumpDatabaseFuncMock, targetBucketUrl, options);
       expect(backupOnceMock).toHaveBeenCalledTimes(0);
