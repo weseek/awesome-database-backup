@@ -70,7 +70,7 @@ describe('GCSServiceClient', () => {
       });
     });
 
-    describe('when request URI is not GCS\'s', () => {
+    describe("when request URI is not GCS's", () => {
       const url = 'http://hostname/';
 
       it('reject with throw exception', async() => {
@@ -123,7 +123,7 @@ describe('GCSServiceClient', () => {
       });
     });
 
-    describe('when request URI is not GCS\'s', () => {
+    describe("when request URI is not GCS's", () => {
       const url = 'http://hostname/';
 
       it('reject and throw Error', async() => {
@@ -169,7 +169,7 @@ describe('GCSServiceClient', () => {
       });
     });
 
-    describe('when copySource and copyDestination are both GCS\'s URI', () => {
+    describe("when copySource and copyDestination are both GCS's URI", () => {
       const copySource = 'gs://bucket-name/object-name1';
       const copyDestination = 'gs://bucket-name/object-name2';
       const copyFileOnRemoteMock = jest.fn().mockResolvedValue(undefined);
@@ -186,8 +186,8 @@ describe('GCSServiceClient', () => {
 
     describe('when copySource and copyDestination are invalid', () => {
       it('reject and throw Error', async() => {
-        const provider = new GCSServiceClient({});
-        await expect(provider.copyFile('s3://bucket-name/object-name1', 's3://bucket-name/object-name2')).rejects.toThrowError();
+        const gcsServiceClient = new GCSServiceClient({});
+        await expect(gcsServiceClient.copyFile('s3://bucket-name/object-name1', 's3://bucket-name/object-name2')).rejects.toThrowError();
       });
     });
   });
