@@ -5,7 +5,6 @@ let core = require('@awesome-backup/core');
 afterEach(() => {
   jest.resetModules();
   jest.dontMock('@awesome-backup/core');
-  jest.dontMock('@google-cloud/storage');
   core = require('@awesome-backup/core');
 });
 
