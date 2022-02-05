@@ -1,22 +1,19 @@
 import { GCSServiceClient, GCSURI } from '../../src/storage-service-clients/gcs';
 
-let core = require('@awesome-backup/core');
-
-afterEach(() => {
-  jest.resetModules();
-  jest.dontMock('@awesome-backup/core');
-  core = require('@awesome-backup/core');
-});
-
 describe('GCSServiceClient', () => {
+  let gcsServiceClient: GCSServiceClient;
+
+  beforeEach(() => {
+    gcsServiceClient = new GCSServiceClient({});
+  });
+
   describe('#exists', () => {
     describe('when listFiles() return object key list which include target object', () => {
       beforeEach(() => {
-        core.GCSServiceClient.prototype.listFiles = jest.fn().mockResolvedValueOnce(['object-name']);
+        gcsServiceClient.listFiles = jest.fn().mockResolvedValueOnce(['object-name']);
       });
 
       it('return true', async() => {
-        const gcsServiceClient = new core.GCSServiceClient({});
         const url = 'gs://bucket-name/object-name';
         await expect(gcsServiceClient.exists(url)).resolves.toBe(true);
       });
@@ -27,7 +24,7 @@ describe('GCSServiceClient', () => {
     let gcsServiceClient: GCSServiceClient;
 
     beforeEach(() => {
-      gcsServiceClient = new core.GCSServiceClient({});
+      gcsServiceClient = new GCSServiceClient({});
     });
 
     describe("when request URI is valid GCS's", () => {
@@ -86,7 +83,7 @@ describe('GCSServiceClient', () => {
     let gcsServiceClient: GCSServiceClient;
 
     beforeEach(() => {
-      gcsServiceClient = new core.GCSServiceClient({});
+      gcsServiceClient = new GCSServiceClient({});
     });
 
     describe("when request URI is valid GCS's", () => {
@@ -139,16 +136,16 @@ describe('GCSServiceClient', () => {
     let gcsServiceClient: GCSServiceClient;
 
     beforeEach(() => {
-      gcsServiceClient = new core.GCSServiceClient({});
+      gcsServiceClient = new GCSServiceClient({});
     });
 
     describe("when copySource is local file path and copyDestination is GCS's URI", () => {
       const copySource = '/path/to/file';
       const copyDestination = 'gs://bucket-name/object-name';
-      const uploadFileMock = jest.fn().mockResolvedValueOnce(undefined);
+      const uploadFileMock = jest.fn().mockResolvedValue(undefined);
 
       beforeEach(async() => {
-        core.GCSServiceClient.prototype.uploadFile = uploadFileMock;
+        gcsServiceClient.uploadFile = uploadFileMock;
         await gcsServiceClient.copyFile(copySource, copyDestination);
       });
 
@@ -160,10 +157,10 @@ describe('GCSServiceClient', () => {
     describe("when copySource is GCS's URI and copyDestination is local file path", () => {
       const copySource = 'gs://bucket-name/object-name';
       const copyDestination = '/path/to/file';
-      const downloadFileMock = jest.fn().mockResolvedValueOnce(undefined);
+      const downloadFileMock = jest.fn().mockResolvedValue(undefined);
 
       beforeEach(async() => {
-        core.GCSServiceClient.prototype.downloadFile = downloadFileMock;
+        gcsServiceClient.downloadFile = downloadFileMock;
         await gcsServiceClient.copyFile(copySource, copyDestination);
       });
 
@@ -175,10 +172,10 @@ describe('GCSServiceClient', () => {
     describe('when copySource and copyDestination are both GCS\'s URI', () => {
       const copySource = 'gs://bucket-name/object-name1';
       const copyDestination = 'gs://bucket-name/object-name2';
-      const copyFileOnRemoteMock = jest.fn().mockResolvedValueOnce(undefined);
+      const copyFileOnRemoteMock = jest.fn().mockResolvedValue(undefined);
 
       beforeEach(async() => {
-        core.GCSServiceClient.prototype.copyFileOnRemote = copyFileOnRemoteMock;
+        gcsServiceClient.copyFileOnRemote = copyFileOnRemoteMock;
         await gcsServiceClient.copyFile(copySource, copyDestination);
       });
 
@@ -189,7 +186,7 @@ describe('GCSServiceClient', () => {
 
     describe('when copySource and copyDestination are invalid', () => {
       it('reject and throw Error', async() => {
-        const provider = new core.GCSServiceClient({});
+        const provider = new GCSServiceClient({});
         await expect(provider.copyFile('s3://bucket-name/object-name1', 's3://bucket-name/object-name2')).rejects.toThrowError();
       });
     });
@@ -202,7 +199,7 @@ describe('GCSServiceClient', () => {
     let gcsServiceClient: GCSServiceClient;
 
     beforeEach(() => {
-      gcsServiceClient = new core.GCSServiceClient({});
+      gcsServiceClient = new GCSServiceClient({});
     });
 
     describe('when File#upload resolve', () => {
@@ -239,7 +236,7 @@ describe('GCSServiceClient', () => {
     let gcsServiceClient: GCSServiceClient;
 
     beforeEach(() => {
-      gcsServiceClient = new core.GCSServiceClient({});
+      gcsServiceClient = new GCSServiceClient({});
     });
 
     describe('when File#download resolve', () => {
@@ -282,7 +279,7 @@ describe('GCSServiceClient', () => {
     let gcsServiceClient: GCSServiceClient;
 
     beforeEach(() => {
-      gcsServiceClient = new core.GCSServiceClient({});
+      gcsServiceClient = new GCSServiceClient({});
     });
 
     describe('when File#copy resolve', () => {
@@ -317,5 +314,4 @@ describe('GCSServiceClient', () => {
       });
     });
   });
-
 });
