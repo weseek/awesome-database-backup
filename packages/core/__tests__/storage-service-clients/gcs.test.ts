@@ -1,15 +1,12 @@
 import { GCSServiceClient, GCSURI } from '../../src/storage-service-clients/gcs';
-import { generateGCSServiceClient } from './../../src/factories/provider-factory';
 
 let core = require('@awesome-backup/core');
-let storage = require('@google-cloud/storage');
 
 afterEach(() => {
   jest.resetModules();
   jest.dontMock('@awesome-backup/core');
   jest.dontMock('@google-cloud/storage');
   core = require('@awesome-backup/core');
-  storage = require('@google-cloud/storage');
 });
 
 describe('GCSServiceClient', () => {
