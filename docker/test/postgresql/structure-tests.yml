@@ -2,44 +2,32 @@ schemaVersion: 2.0.0
 commandTests:
 - name: backup-help
   command: node
-  args:
-  - apps/postgresql/dist/apps/postgresql/src/bin/backup.js
-  - --help
+  args: ["apps/postgresql/dist/apps/postgresql/src/bin/backup.js", "--help"]
 - name: backup-no-arg
   command: node
-  args:
-  - apps/postgresql/dist/apps/postgresql/src/bin/backup.js
+  args: ["apps/postgresql/dist/apps/postgresql/src/bin/backup.js"]
   expectedError: missing required argument 'TARGET_BUCKET_URL'
 
 - name: list-help
   command: node
-  args:
-  - apps/postgresql/dist/apps/postgresql/src/bin/list.js
-  - --help
+  args: ["apps/postgresql/dist/apps/postgresql/src/bin/list.js", "--help"]
 - name: list-no-arg
   command: node
-  args:
-  - apps/postgresql/dist/apps/postgresql/src/bin/list.js
+  args: ["apps/postgresql/dist/apps/postgresql/src/bin/list.js"]
   expectedError: missing required argument 'TARGET_BUCKET_URL'
 
 - name: prune-help
   command: node
-  args:
-  - apps/postgresql/dist/apps/postgresql/src/bin/prune.js
-  - --help
+  args: ["apps/postgresql/dist/apps/postgresql/src/bin/prune.js", "--help"]
 - name: prune-no-arg
   command: node
-  args:
-  - apps/postgresql/dist/apps/postgresql/src/bin/prune.js
+  args: ["apps/postgresql/dist/apps/postgresql/src/bin/prune.js"]
   expectedError: missing required argument 'TARGET_BUCKET_URL'
 
 - name: restore-help
   command: node
-  args:
-  - apps/postgresql/dist/apps/postgresql/src/bin/restore.js
-  - --help
+  args: ["apps/postgresql/dist/apps/postgresql/src/bin/restore.js", "--help"]
 - name: restore-no-arg
   command: node
-  args:
-  - apps/postgresql/dist/apps/postgresql/src/bin/restore.js
+  args: ["apps/postgresql/dist/apps/postgresql/src/bin/restore.js"]
   expectedError: missing required argument 'TARGET_BUCKET_URL'
