@@ -1,17 +1,30 @@
+const path = require('path');
 const rewire = require('rewire');
 
-let providerConfigFactory = rewire('../../src/factories/provider-config-factory');
+let providerConfigFactory = require('../../src/factories/provider-config-factory');
+
+afterEach(() => {
+  jest.resetModules();
+  jest.dontMock('../../src/factories/provider-config-factory');
+  jest.dontMock('fs');
+  providerConfigFactory = require(path.join(__dirname, '../../src/factories/provider-config-factory'));
+  require('fs');
+});
 
 describe('configExistS3', () => {
+  beforeEach(() => {
+    providerConfigFactory = rewire(path.join(__dirname, '../../src/factories/provider-config-factory'));
+    providerConfigFactory.__set__(
+      'configPathsS3',
+      jest.fn().mockReturnValue({
+        configurationPath: '/path/to/config',
+        credentialPath: '/path/to/credential',
+      }),
+    );
+  });
+
   describe('in case of config file exists', () => {
     beforeEach(() => {
-      providerConfigFactory.__set__(
-        'configPathsS3',
-        jest.fn().mockReturnValue({
-          configurationPath: '/path/to/config',
-          credentialPath: '/path/to/credential',
-        }),
-      );
       providerConfigFactory.__set__(
         'fileExists',
         jest.fn().mockReturnValue(true),
@@ -24,48 +37,43 @@ describe('configExistS3', () => {
   });
 
   describe("in case of config file dosn't exists", () => {
-    test('it return false', () => {
-      providerConfigFactory.__set__(
-        'configPathsS3',
-        jest.fn().mockReturnValue({
-          configurationPath: '/path/to/config',
-          credentialPath: '/path/to/credential',
-        }),
-      );
+    beforeEach(() => {
       providerConfigFactory.__set__(
         'fileExists',
         jest.fn().mockReturnValue(false),
       );
+    });
 
+    test('it return false', () => {
       expect(providerConfigFactory.configExistS3()).toBe(false);
     });
   });
 });
 
 describe('unlinkConfigS3', () => {
+  const fs = require('fs');
+  const unlinkSyncMock = jest.spyOn(fs, 'unlinkSync').mockReturnValue(undefined);
+
+  beforeEach(() => {
+    providerConfigFactory = rewire(path.join(__dirname, '../../src/factories/provider-config-factory'));
+    providerConfigFactory.__set__(
+      'configPathsS3',
+      jest.fn().mockReturnValue({
+        configurationPath: '/path/to/config',
+        credentialPath: '/path/to/credential',
+      }),
+    );
+  });
+
   describe('in case of config file exists', () => {
     beforeEach(() => {
-      providerConfigFactory.__set__(
-        'configPathsS3',
-        jest.fn().mockReturnValue({
-          configurationPath: '/path/to/config',
-          credentialPath: '/path/to/credential',
-        }),
-      );
       providerConfigFactory.__set__(
         'fileExists',
         jest.fn().mockReturnValue(true),
       );
     });
 
-    afterEach(() => {
-      providerConfigFactory = require('../../src/factories/provider-config-factory');
-    });
-
     test('it return undefined, and call "unlinkSync" method', () => {
-      const fs = require('fs');
-      const unlinkSyncMock = jest.spyOn(fs, 'unlinkSync');
-      providerConfigFactory = rewire('../../src/factories/provider-config-factory');
       expect(providerConfigFactory.unlinkConfigS3()).toBe(undefined);
       expect(unlinkSyncMock).toBeCalled();
     });
@@ -73,31 +81,29 @@ describe('unlinkConfigS3', () => {
 });
 
 describe('createConfigS3', () => {
+  const configPathObject = {
+    configurationPath: '/path/to/config',
+    credentialPath: '/path/to/credential',
+  };
+  const fs = require('fs');
+  const writeFileSyncMock = jest.spyOn(fs, 'writeFileSync').mockReturnValue(undefined);
+
+  beforeEach(() => {
+    providerConfigFactory = rewire(path.join(__dirname, '../../src/factories/provider-config-factory'));
+    providerConfigFactory.__set__(
+      'configPathsS3',
+      jest.fn().mockReturnValue(configPathObject),
+    );
+  });
+
   describe('in case of required options are specified', () => {
-    const configPathObject = {
-      configurationPath: '/path/to/config',
-      credentialPath: '/path/to/credential',
+    const options = {
+      awsRegion: 'region',
+      awsAccessKeyId: 'accessKeyId',
+      awsSecretAccessKey: 'secretAccessKey',
     };
 
-    afterEach(() => {
-      jest.resetModules();
-      providerConfigFactory = require('../../src/factories/provider-config-factory');
-    });
-
     test('it return object which have "configurationPath" and "credentialPath", and call "writeFileSync" method with config data from option', () => {
-      const options = {
-        awsRegion: 'region',
-        awsAccessKeyId: 'accessKeyId',
-        awsSecretAccessKey: 'secretAccessKey',
-      };
-      const fs = require('fs');
-      const writeFileSyncMock = jest.spyOn(fs, 'writeFileSync').mockReturnValue(undefined);
-      providerConfigFactory = rewire('../../src/factories/provider-config-factory');
-      providerConfigFactory.__set__(
-        'configPathsS3',
-        jest.fn().mockReturnValue(configPathObject),
-      );
-
       expect(providerConfigFactory.createConfigS3(options)).toEqual(configPathObject);
       expect(writeFileSyncMock).toHaveBeenNthCalledWith(
         1,
