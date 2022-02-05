@@ -10,16 +10,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Install dependencies
-        run: sudo apt-get install graphviz nkf
       - uses: actions/setup-node@v2
         with:
           node-version: "16"
           cache: "yarn"
-      - name: Yarn install
-        run: yarn install
-      - name: Yarn test
-        run: yarn test
+      - run: yarn install
+      - run: yarn test
       - name: Archive coverage
         uses: actions/upload-artifact@v2
         with:
