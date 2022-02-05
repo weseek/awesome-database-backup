@@ -1,14 +1,14 @@
 schemaVersion: 2.0.0
 commandTests:
-  - name: mongodb-backup
-    command: sh
-    args: ["-c", "node apps/mongodb/dist/apps/mongodb/src/bin/backup.js --help"]
-  - name: mongodb-list
-    command: sh
-    args: ["-c", "node apps/mongodb/dist/apps/mongodb/src/bin//list.js --help"]
-  - name: mongodb-prune
-    command: sh
-    args: ["-c", "node apps/mongodb/dist/apps/mongodb/src/bin//prune.js --help"]
-  - name: mongodb-restore
-    command: sh
-    args: ["-c", "node apps/mongodb/dist/apps/mongodb/src/bin//restore.js --help"]
+- name: mongodb-backup
+  command: node
+  args: apps/mongodb/dist/apps/mongodb/src/bin/backup.js
+- name: mongodb-list
+  command: node
+  args: apps/mongodb/dist/apps/mongodb/src/bin//list.js
+- name: mongodb-prune
+  command: node
+  args: apps/mongodb/dist/apps/mongodb/src/bin//prune.js
+- name: mongodb-restore
+  command: node
+  args: apps/mongodb/dist/apps/mongodb/src/bin//restore.js
