@@ -1,20 +1,21 @@
-let list = require('../../src/bin/list');
+const { ListCommand } = require('../../src/bin/list');
 
 describe('ListCommand', () => {
   describe('list', () => {
+    const targetBucketUrl = new URL('gs://sample.com/bucket');
+    const storageServiceClientMock = {
+      listFiles: jest.fn().mockReturnValue(['']),
+    };
+
     it('return undefined', async() => {
-      const listCommand = new list.ListCommand();
-      const storageServiceClientMock = {
-        listFiles: jest.fn().mockReturnValue(['']),
-      };
-      const targetBucketUrl = new URL('gs://sample.com/bucket');
+      const listCommand = new ListCommand();
       await expect(listCommand.list(storageServiceClientMock, targetBucketUrl)).resolves.toBe(undefined);
     });
-});
+  });
 
   describe('setListArgument', () => {
     it('call argument()', () => {
-      const listCommand = new list.ListCommand();
+      const listCommand = new ListCommand();
       const argumentMock = jest.fn().mockReturnValue(listCommand);
       listCommand.argument = argumentMock;
       listCommand.setListArgument();
@@ -24,7 +25,7 @@ describe('ListCommand', () => {
 
   describe('addListOptions', () => {
     it('call option()', () => {
-      const listCommand = new list.ListCommand();
+      const listCommand = new ListCommand();
       const optionMock = jest.fn().mockReturnValue(listCommand);
       listCommand.option = optionMock;
       listCommand.addListOptions();
@@ -34,7 +35,7 @@ describe('ListCommand', () => {
 
   describe('setListAction', () => {
     it('call action()', () => {
-      const listCommand = new list.ListCommand();
+      const listCommand = new ListCommand();
       const actionMock = jest.fn().mockReturnValue(listCommand);
       listCommand.action = actionMock;
       listCommand.setListAction();
