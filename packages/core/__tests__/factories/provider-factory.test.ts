@@ -4,8 +4,6 @@ afterEach(() => {
   jest.resetModules();
   jest.dontMock('../../src/factories/provider-factory');
   jest.dontMock('../../src/factories/provider-config-factory');
-  providerFactory = require('../../src/factories/provider-factory');
-  require('../../src/factories/provider-config-factory');
 });
 
 describe('storageProviderType()', () => {
@@ -27,8 +25,11 @@ describe('storageProviderType()', () => {
 describe('generateS3ServiceClient()', () => {
   describe('when config file exists', () => {
     beforeEach(() => {
-      const providerConfigFactory = require('../../src/factories/provider-config-factory');
-      jest.spyOn(providerConfigFactory, 'configExistS3').mockReturnValue(true);
+      jest.doMock('../../src/factories/provider-config-factory', () => {
+        const mock = jest.requireActual('../../src/factories/provider-config-factory');
+        mock.configExistS3 = jest.fn().mockReturnValue(true);
+        return mock;
+      });
       providerFactory = require('../../src/factories/provider-factory');
     });
 
@@ -41,9 +42,12 @@ describe('generateS3ServiceClient()', () => {
     const createConfigS3Mock = jest.fn();
 
     beforeEach(() => {
-      const providerConfigFactory = require('../../src/factories/provider-config-factory');
-      jest.spyOn(providerConfigFactory, 'configExistS3').mockReturnValue(false);
-      jest.spyOn(providerConfigFactory, 'createConfigS3').mockImplementation(createConfigS3Mock);
+      jest.doMock('../../src/factories/provider-config-factory', () => {
+        const mock = jest.requireActual('../../src/factories/provider-config-factory');
+        mock.configExistS3 = jest.fn().mockReturnValue(false);
+        mock.createConfigS3 = jest.fn().mockImplementation(createConfigS3Mock);
+        return mock;
+      });
       providerFactory = require('../../src/factories/provider-factory');
     });
 
@@ -54,7 +58,7 @@ describe('generateS3ServiceClient()', () => {
         awsSecretAccessKey: 'secretAccessKey',
       };
 
-      it('return  instance of S3ServiceClient, and call "createConfigS3" method', () => {
+      it('return instance of S3ServiceClient, and call "createConfigS3" method', () => {
         expect(providerFactory.generateS3ServiceClient(options).constructor.name).toBe('S3ServiceClient');
         expect(createConfigS3Mock).toHaveBeenCalled();
       });
