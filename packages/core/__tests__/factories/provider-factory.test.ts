@@ -1,104 +1,108 @@
 let providerFactory = require('../../src/factories/provider-factory');
 
+afterEach(() => {
+  jest.resetModules();
+  jest.dontMock('../../src/factories/provider-factory');
+  jest.dontMock('../../src/factories/provider-config-factory');
+  providerFactory = require('../../src/factories/provider-factory');
+  require('../../src/factories/provider-config-factory');
+});
+
 describe('storageProviderType()', () => {
   describe('in case of URL startWith "s3"', () => {
     const url = new URL('s3://bucket-name/object-name');
-    test('it return S3', () => {
+    it('return S3', () => {
       expect(providerFactory.storageProviderType(url)).toBe('S3');
     });
   });
 
   describe('in case of URL startWith "gcs"', () => {
     const url = new URL('gs://bucket-name/object-name');
-    test('it return GCS', () => {
+    it('return GCS', () => {
       expect(providerFactory.storageProviderType(url)).toBe('GCS');
     });
   });
 });
 
 describe('generateS3ServiceClient()', () => {
-  beforeEach(() => {
-    jest.resetAllMocks();
-    jest.dontMock('../../src/factories/provider-factory');
-    providerFactory = require('../../src/factories/provider-factory');
-  });
-
   describe('when config file exists', () => {
     beforeEach(() => {
       const providerConfigFactory = require('../../src/factories/provider-config-factory');
       jest.spyOn(providerConfigFactory, 'configExistS3').mockReturnValue(true);
+      providerFactory = require('../../src/factories/provider-factory');
     });
 
-    test("it return S3ServiceClient's instance", () => {
+    it('return instance of S3ServiceClient', () => {
       expect(providerFactory.generateS3ServiceClient({}).constructor.name).toBe('S3ServiceClient');
     });
   });
 
   describe('when config file does not exists', () => {
+    const createConfigS3Mock = jest.fn();
+
     beforeEach(() => {
       const providerConfigFactory = require('../../src/factories/provider-config-factory');
       jest.spyOn(providerConfigFactory, 'configExistS3').mockReturnValue(false);
+      jest.spyOn(providerConfigFactory, 'createConfigS3').mockImplementation(createConfigS3Mock);
+      providerFactory = require('../../src/factories/provider-factory');
     });
 
     describe('in case of required options are specified', () => {
-      test('it throw error', () => {
-        const providerConfigFactory = require('../../src/factories/provider-config-factory');
-        const spy = jest.spyOn(providerConfigFactory, 'createConfigS3');
-        const options = {
-          awsRegion: 'region',
-          awsAccessKeyId: 'accessKeyId',
-          awsSecretAccessKey: 'secretAccessKey',
-        };
+      const options = {
+        awsRegion: 'region',
+        awsAccessKeyId: 'accessKeyId',
+        awsSecretAccessKey: 'secretAccessKey',
+      };
 
+      it('return  instance of S3ServiceClient, and call "createConfigS3" method', () => {
         expect(providerFactory.generateS3ServiceClient(options).constructor.name).toBe('S3ServiceClient');
-        expect(spy).toHaveBeenCalled();
+        expect(createConfigS3Mock).toHaveBeenCalled();
       });
     });
 
     describe('in case of required options are not specified', () => {
-      test('it throw error', () => {
-        expect(() => { providerFactory.generateS3ServiceClient({}) }).toThrowError();
+      const options = {};
+
+      it('throw error', () => {
+        expect(() => { providerFactory.generateS3ServiceClient(options) }).toThrowError();
       });
     });
   });
 });
 
 describe('generateGCSServiceClient()', () => {
-  beforeEach(() => {
-    jest.resetAllMocks();
-    jest.dontMock('../../src/factories/provider-factory');
-    providerFactory = require('../../src/factories/provider-factory');
-  });
-
   describe('in case of "gcpServiceAccountKeyJsonPath" is specified', () => {
-    test("it return GCSServiceClient's instance", () => {
-      const options = {
-        gcpServiceAccountKeyJsonPath: '/path/to/file',
-      };
+    const options = {
+      gcpServiceAccountKeyJsonPath: '/path/to/file',
+    };
+
+    it('return instance of GCSServiceClient', () => {
       expect(providerFactory.generateGCSServiceClient(options).constructor.name).toBe('GCSServiceClient');
     });
   });
 
   describe('in case of "gcpServiceAccountKeyJsonPath" is not specified, and "projectId", "clientEmail", "privateKey" are specified', () => {
-    test("it return GCSServiceClient's instance", () => {
-      const options = {
-        gcpServiceAccountKeyJsonPath: null,
-        gcpProjectId: 'projectId',
-        gcpClientEmail: 'clientEmail',
-        gcpPrivateKey: 'privateKey',
-      };
+    const options = {
+      gcpServiceAccountKeyJsonPath: undefined,
+      gcpProjectId: 'projectId',
+      gcpClientEmail: 'clientEmail',
+      gcpPrivateKey: 'privateKey',
+    };
+
+    it('return instance of GCSServiceClient', () => {
       expect(providerFactory.generateGCSServiceClient(options).constructor.name).toBe('GCSServiceClient');
     });
   });
 
   describe('in case of required options are specified', () => {
-    test("it return GCSServiceClient's instance", () => {
-      const options = {
-        gcpServiceAccountKeyJsonPath: null,
-        gcpProjectId: null,
-        gcpClientEmail: null,
-        gcpPrivateKey: null,
-      };
+    const options = {
+      gcpServiceAccountKeyJsonPath: undefined,
+      gcpProjectId: undefined,
+      gcpClientEmail: undefined,
+      gcpPrivateKey: undefined,
+    };
+
+    it('throw error', () => {
       expect(() => { providerFactory.generateGCSServiceClient(options) }).toThrowError();
     });
   });

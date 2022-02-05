@@ -31,7 +31,7 @@ describe('configExistS3', () => {
       );
     });
 
-    test('it return true', () => {
+    it('return true', () => {
       expect(providerConfigFactory.configExistS3()).toBe(true);
     });
   });
@@ -44,7 +44,7 @@ describe('configExistS3', () => {
       );
     });
 
-    test('it return false', () => {
+    it('return false', () => {
       expect(providerConfigFactory.configExistS3()).toBe(false);
     });
   });
@@ -73,7 +73,7 @@ describe('unlinkConfigS3', () => {
       );
     });
 
-    test('it return undefined, and call "unlinkSync" method', () => {
+    it('return undefined, and call "unlinkSync" method', () => {
       expect(providerConfigFactory.unlinkConfigS3()).toBe(undefined);
       expect(unlinkSyncMock).toBeCalled();
     });
@@ -103,7 +103,7 @@ describe('createConfigS3', () => {
       awsSecretAccessKey: 'secretAccessKey',
     };
 
-    test('it return object which have "configurationPath" and "credentialPath", and call "writeFileSync" method with config data from option', () => {
+    it('return object which have "configurationPath" and "credentialPath", and call "writeFileSync" method with config data from option', () => {
       expect(providerConfigFactory.createConfigS3(options)).toEqual(configPathObject);
       expect(writeFileSyncMock).toHaveBeenNthCalledWith(
         1,
