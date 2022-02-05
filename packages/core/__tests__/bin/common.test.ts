@@ -1,9 +1,9 @@
-import { Command } from "commander";
+import { Command } from 'commander';
 import { IStorageServiceClient } from '../../src/interfaces/storage-service-client';
 import {
   addStorageServiceClientOptions,
   addStorageServiceClientGenerateHook,
-} from "../../src/bin/common";
+} from '../../src/bin/common';
 
 describe('addStorageServiceClientOptions', () => {
   it('return undefined and call option()', () => {
