@@ -6,7 +6,7 @@ commandTests:
 - name: backup-no-arg
   command: node
   args: ["apps/postgresql/dist/apps/postgresql/src/bin/backup.js"]
-  expectedError: missing required argument 'TARGET_BUCKET_URL'
+  expectedError: [".*missing required argument 'TARGET_BUCKET_URL'.*"]
 
 - name: list-help
   command: node
@@ -14,7 +14,7 @@ commandTests:
 - name: list-no-arg
   command: node
   args: ["apps/postgresql/dist/apps/postgresql/src/bin/list.js"]
-  expectedError: missing required argument 'TARGET_BUCKET_URL'
+  expectedError: [".*missing required argument 'TARGET_BUCKET_URL'.*"]
 
 - name: prune-help
   command: node
@@ -22,7 +22,7 @@ commandTests:
 - name: prune-no-arg
   command: node
   args: ["apps/postgresql/dist/apps/postgresql/src/bin/prune.js"]
-  expectedError: missing required argument 'TARGET_BUCKET_URL'
+  expectedError: [".*missing required argument 'TARGET_BUCKET_URL'.*"]
 
 - name: restore-help
   command: node
@@ -30,4 +30,4 @@ commandTests:
 - name: restore-no-arg
   command: node
   args: ["apps/postgresql/dist/apps/postgresql/src/bin/restore.js"]
-  expectedError: missing required argument 'TARGET_BUCKET_URL'
+  expectedError: [".*missing required argument 'TARGET_BUCKET_URL'.*"]
