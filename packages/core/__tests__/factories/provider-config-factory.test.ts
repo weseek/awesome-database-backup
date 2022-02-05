@@ -7,8 +7,6 @@ afterEach(() => {
   jest.resetModules();
   jest.dontMock('../../src/factories/provider-config-factory');
   jest.dontMock('fs');
-  providerConfigFactory = require(path.join(__dirname, '../../src/factories/provider-config-factory'));
-  require('fs');
 });
 
 describe('configExistS3', () => {

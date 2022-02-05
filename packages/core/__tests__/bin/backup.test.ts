@@ -1,17 +1,26 @@
-import { IBackupCLIOption } from '../../src/bin/backup';
+import { BackupCommand, IBackupCLIOption } from '../../src/bin/backup';
+import { IStorageServiceClient } from './../../src/interfaces/storage-service-client';
 
 let backup = require('../../src/bin/backup');
 
 describe('BackupCommand', () => {
+  const targetBucketUrl = new URL('gs://sample.com/bucket');
+  const dumpDatabaseFuncMock = jest.fn().mockReturnValue({ stdout: '', stderr: '' });
+  const storageServiceClientMock: IStorageServiceClient = {
+    copyFile: jest.fn(),
+    name: '',
+    exists: jest.fn(),
+    listFiles: jest.fn(),
+    deleteFile: jest.fn(),
+  };
+
   describe('backupOnce', () => {
     beforeEach(() => {
       jest.resetModules();
       jest.doMock('../../src/utils/tar', () => {
-        const actual = jest.requireActual('../../src/utils/tar');
-        return {
-          ...actual,
-          compress: jest.fn().mockReturnValue(''),
-        };
+        const mock = jest.requireActual('../../src/utils/tar');
+        mock.compress = jest.fn().mockReturnValue('');
+        return mock;
       });
       backup = require('../../src/bin/backup');
     });
@@ -20,32 +29,31 @@ describe('BackupCommand', () => {
     });
 
     describe('when healthchecksUrl is empty', () => {
+      const options: IBackupCLIOption = {
+        backupfilePrefix: 'backup',
+      };
+
       it('return undefined and call dumpDatabaseFunc()', async() => {
         const backupCommand = new backup.BackupCommand();
-        const storageServiceClientMock = {
-          copyFile: jest.fn(),
-        };
-        const dumpDatabaseFuncMock = jest.fn().mockReturnValue({ stdout: "", stderr: "" });
-        const targetBucketUrl = new URL('gs://sample.com/bucket');
-        const options: IBackupCLIOption = {
-          backupfilePrefix: 'backup',
-        };
         await expect(backupCommand.backupOnce(storageServiceClientMock, dumpDatabaseFuncMock, targetBucketUrl, options)).resolves.toBe(undefined);
         expect(dumpDatabaseFuncMock).toBeCalled();
       });
     });
 
     describe('when healthcheckUrl is not empty', () => {
+      const options: IBackupCLIOption = {
+        backupfilePrefix: 'backup',
+        healthchecksUrl: 'http://example.com/',
+      };
+
       const axiosGetMock = jest.fn().mockReturnValue(Promise.resolve());
 
       beforeEach(() => {
         jest.resetModules();
         jest.doMock('axios', () => {
-          const actual = jest.requireActual('axios');
-          return {
-            ...actual,
-            get: axiosGetMock,
-          };
+          const mock = jest.requireActual('axios');
+          mock.get = axiosGetMock;
+          return mock;
         });
         backup = require('../../src/bin/backup');
       });
@@ -55,15 +63,6 @@ describe('BackupCommand', () => {
 
       it('return undefined and call axios with "healthcheckUrl"', async() => {
         const backupCommand = new backup.BackupCommand();
-        const storageServiceClientMock = {
-          copyFile: jest.fn()
-        };
-        const dumpDatabaseFuncMock = jest.fn().mockReturnValue({ stdout: "", stderr: "" });
-        const targetBucketUrl = new URL('gs://sample.com/bucket');
-        const options: IBackupCLIOption = {
-          backupfilePrefix: 'backup',
-          healthchecksUrl: 'http://example.com/',
-        };
         await expect(backupCommand.backupOnce(storageServiceClientMock, dumpDatabaseFuncMock, targetBucketUrl, options)).resolves.toBe(undefined);
         expect(axiosGetMock).toBeCalledWith(options.healthchecksUrl?.toString());
       });
@@ -71,29 +70,25 @@ describe('BackupCommand', () => {
   });
 
   describe('backupCronMode', () => {
+    const options: IBackupCLIOption = {
+      backupfilePrefix: 'backup',
+      cronExpression: '* * * * *',
+    };
+    const backupOnceMock = jest.fn();
+
+    let backupCommand: BackupCommand;
+
     beforeEach(() => {
       jest.useFakeTimers();
+      backupCommand = new backup.BackupCommand();
+      backupCommand.backupOnce = backupOnceMock;
     });
-    afterEach(() => {
-      jest.useRealTimers();
-    });
+    afterEach(() => jest.useRealTimers());
 
     it('call backupOnce() at specified time', () => {
-      const backupCommand = new backup.BackupCommand();
-      const storageServiceClientMock = {
-        copyFile: jest.fn()
-      };
-      const dumpDatabaseFuncMock = jest.fn().mockReturnValue({ stdout: "", stderr: "" });
-      const targetBucketUrl = new URL('gs://sample.com/bucket');
-      const options: IBackupCLIOption = {
-        backupfilePrefix: 'backup',
-        cronExpression: '* * * * *',
-      };
-      const backupOnceMock = jest.fn();
-      backupCommand.backupOnce = backupOnceMock;
       backupCommand.backupCronMode(storageServiceClientMock, dumpDatabaseFuncMock, targetBucketUrl, options);
-      expect(backupOnceMock).toHaveBeenCalledTimes(0);
 
+      expect(backupOnceMock).toHaveBeenCalledTimes(0);
       jest.advanceTimersByTime(1000 * 60);
       expect(backupOnceMock).toHaveBeenCalledTimes(1);
     });
