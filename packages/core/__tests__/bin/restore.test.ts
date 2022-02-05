@@ -2,14 +2,24 @@ let restore = require('../../src/bin/restore');
 
 describe('RestoreCommand', () => {
   describe('restore', () => {
+    const targetBucketUrl = new URL('gs://sample.com/bucket');
+    const options = {
+      backupfilePrefix: 'backup',
+      deleteDivide: 1,
+      deleteTargetDaysLeft: 1,
+    };
+
+    const storageServiceClientMock = {
+      copyFile: jest.fn().mockReturnValue(['']),
+    };
+    const restoreDatabaseFuncMock = jest.fn().mockReturnValue({ stdout: '', stderr: '' });
+
     beforeEach(() => {
       jest.resetModules();
       jest.doMock('../../src/utils/tar', () => {
-        const actual = jest.requireActual('../../src/utils/tar');
-        return {
-          ...actual,
-          expand: jest.fn().mockReturnValue(''),
-        };
+        const mock = jest.requireActual('../../src/utils/tar');
+        mock.expand = jest.fn().mockReturnValue('');
+        return mock;
       });
       restore = require('../../src/bin/restore');
     });
@@ -19,16 +29,6 @@ describe('RestoreCommand', () => {
 
     it('return undefined', async() => {
       const restoreCommand = new restore.RestoreCommand();
-      const storageServiceClientMock = {
-        copyFile: jest.fn().mockReturnValue(['']),
-      };
-      const restoreDatabaseFuncMock = jest.fn().mockReturnValue({ stdout: "", stderr: "" });
-      const targetBucketUrl = new URL('gs://sample.com/bucket');
-      const options = {
-        backupfilePrefix: 'backup',
-        deleteDivide: 1,
-        deleteTargetDaysLeft: 1,
-      };
       await expect(restoreCommand.restore(storageServiceClientMock, restoreDatabaseFuncMock, targetBucketUrl, options)).resolves.toBe(undefined);
     });
   });
