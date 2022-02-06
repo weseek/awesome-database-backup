@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: install libs
-        run: apt-get -y install zstd
+        run: sudo apt-get -y install zstd
       - uses: actions/setup-node@v2
         with:
           node-version: "16.13.1"
