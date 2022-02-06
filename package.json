@@ -6,7 +6,6 @@
     "apps/*",
     "packages/*"
   ],
-  "scripts": {},
   "dependencies": {},
   "devDependencies": {
     "@types/jest": "^27.0.3",
@@ -43,7 +42,7 @@
         "outputs": ["dist/**"]
       },
       "test": {
-        "dependsOn": ["build"],
+        "dependsOn": ["^build"],
         "outputs": ["coverage/**"]
       },
       "lint": {
