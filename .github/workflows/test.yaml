@@ -6,7 +6,7 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
 
     steps:
       - uses: actions/checkout@v2
@@ -14,7 +14,6 @@ jobs:
         with:
           node-version: "16.13.1"
           cache: "yarn"
-      - run: yarn clean
       - run: yarn install
       - run: yarn test
       # - name: Archive coverage
