@@ -23,7 +23,7 @@
   "scripts": {
     "build": "tsc && tsc-alias",
     "// see: https://github.com/kulshekhar/ts-jest/issues/1029#issuecomment-610284927": "",
-    "test": "cross-env NODE_ENV=test ts-node ../../node_modules/jest/bin/jest.js",
+    "test": "cross-env NODE_ENV=test ts-node -O '{\"module\":\"commonjs\"}' ../../node_modules/jest/bin/jest.js",
     "lint": "eslint src --ext .ts",
     "lint:fix": "eslint src --ext .ts --fix"
   },

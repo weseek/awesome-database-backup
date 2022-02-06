@@ -9,8 +9,8 @@ import {
   ListObjectsCommand, ListObjectsCommandInput,
 } from '@aws-sdk/client-s3';
 import { pipeline } from 'stream/promises';
+import * as internal from 'stream';
 import { IStorageServiceClient, listFilesOptions } from '../interfaces/storage-service-client';
-import internal = require('stream');
 
 export declare interface S3URI {
   bucket: string,

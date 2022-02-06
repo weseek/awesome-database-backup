@@ -32,7 +32,7 @@
   "scripts": {
     "build": "turbo run build",
     "test": "turbo run test",
-    "clean": "rm -rf node_modules && rm -rf packages/*/{dist,coverage,node_modules} && rm -rf apps/*/{dist,coverage,node_modules}"
+    "clean": "rm -rf node_modules; rm -rf .turbo; rm -rf */*/dist; rm -rf */*/coverage; rm -rf */*/node_modules; rm -rf */*/.turbo"
   },
   "packageManager": "yarn@1.22.15",
   "turbo": {
