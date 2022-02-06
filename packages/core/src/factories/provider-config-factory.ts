@@ -2,16 +2,11 @@ import { statSync, writeFileSync, unlinkSync } from 'fs';
 import { join } from 'path';
 
 function fileExists(path: string): boolean {
-  try {
-    const stat = statSync(path);
-    return stat.isFile();
+  const stat = statSync(path, { throwIfNoEntry: false });
+  if (stat === undefined) {
+    return false;
   }
-  catch (error: any) {
-    if (error.code === 'ENOENT') {
-      return false;
-    }
-    throw error;
-  }
+  return stat.isFile();
 }
 
 function configPathsS3(): Record<string, string> {
