@@ -22,7 +22,7 @@ function _parseFilePath(path: string): GCSURI | null {
       const [, bucket, filepath] = match;
       return { bucket, filepath };
     }
-    catch (e) {
+    catch (e: any) {
       return null;
     }
   }
@@ -46,9 +46,7 @@ export class GCSServiceClient implements IStorageServiceClient {
         .then((lists) => {
           resolve(lists.length > 0);
         })
-        .catch((e) => {
-          reject(e);
-        });
+        .catch(e => reject(e));
     });
   }
 

@@ -2,6 +2,7 @@ import { format } from 'date-fns';
 import { basename, join } from 'path';
 import { Command } from 'commander';
 
+import axios, { AxiosError } from 'axios';
 import { compress } from '../utils/tar';
 import { IStorageServiceClient } from '../interfaces/storage-service-client';
 import {
@@ -12,7 +13,6 @@ import {
 
 const schedule = require('node-schedule');
 const tmp = require('tmp');
-const axios = require('axios');
 const axiosRetry = require('axios-retry');
 const EventEmitter = require('events');
 
@@ -44,7 +44,7 @@ export class BackupCommand extends Command {
         axiosRetry(axios, { retries: 3 });
         await axios
           .get(healthchecksUrl.toString())
-          .catch((e: any) => {
+          .catch((e: AxiosError) => {
             console.log(`Cannot GET ${healthchecksUrl.toString()}: ${e.toString()}`);
           });
       };

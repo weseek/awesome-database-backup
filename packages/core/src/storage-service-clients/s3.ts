@@ -8,7 +8,6 @@ import {
   DeleteObjectCommand, DeleteObjectCommandInput,
   ListObjectsCommand, ListObjectsCommandInput,
 } from '@aws-sdk/client-s3';
-import { pipeline } from 'stream/promises';
 import * as internal from 'stream';
 import { IStorageServiceClient, listFilesOptions } from '../interfaces/storage-service-client';
 
@@ -32,7 +31,7 @@ function _parseFilePath(path: string): S3URI | null {
       const [, bucket, key] = match;
       return { bucket, key };
     }
-    catch (e) {
+    catch (e: any) {
       return null;
     }
   }
@@ -202,7 +201,7 @@ export class S3ServiceClient implements IStorageServiceClient {
         .then((response) => {
           if (response == null) return reject(new Error('GetObjectCommand return null'));
 
-          pipeline(response.Body as internal.Readable, createWriteStream(destinationFilePath))
+          internal.promises.pipeline(response.Body as internal.Readable, createWriteStream(destinationFilePath))
             .then(() => {
               resolve();
             })
