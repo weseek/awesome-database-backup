@@ -1,4 +1,4 @@
-name: Application test
+name: Application test 2
 
 on:
   push:
