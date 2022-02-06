@@ -43,7 +43,7 @@
         "outputs": ["dist/**"]
       },
       "test": {
-        "dependsOn": ["^build"],
+        "dependsOn": [],
         "outputs": []
       },
       "lint": {
