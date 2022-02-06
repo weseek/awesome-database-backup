@@ -189,6 +189,7 @@ export default {
 
   // Indicates whether each individual test should be reported during the run
   // verbose: undefined,
+  verbose: true,
 
   // An array of regexp patterns that are matched against all source file paths before re-running tests in watch mode
   // watchPathIgnorePatterns: [],
