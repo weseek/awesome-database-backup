@@ -31,9 +31,9 @@
     "typescript": "^4.5.4"
   },
   "scripts": {
-    "build": "turbo run dev --parallel --no-cache",
+    "build": "turbo run build",
     "test": "turbo run test",
-    "build": "turbo run build"
+    "clean": "rm -rf node_modules && rm -rf packages/*/{dist,coverage,node_modules} && rm -rf apps/*/{dist,coverage,node_modules}"
   },
   "packageManager": "yarn@1.22.15",
   "turbo": {

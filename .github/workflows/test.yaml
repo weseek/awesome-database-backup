@@ -1,4 +1,4 @@
-name: Test
+name: Application test
 
 on:
   push:
@@ -14,6 +14,7 @@ jobs:
         with:
           node-version: "16"
           cache: "yarn"
+          cache-dependency-path: yarn.lock
       - run: yarn install
       - run: yarn test
       - name: Archive coverage
