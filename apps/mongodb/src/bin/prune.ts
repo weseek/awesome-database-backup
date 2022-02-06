@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import {
   PruneCommand,
 } from '@awesome-backup/core';

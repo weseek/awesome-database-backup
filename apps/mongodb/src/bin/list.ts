@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import {
   ListCommand,
 } from '@awesome-backup/core';
