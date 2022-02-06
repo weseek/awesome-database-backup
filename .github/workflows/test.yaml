@@ -15,7 +15,7 @@ jobs:
           node-version: "16.13.1"
           cache: "yarn"
       - run: yarn install
-      - run: yarn test --force --parallel
+      - run: yarn test --force
       # - name: Archive coverage
       #   uses: actions/upload-artifact@v2
       #   with:
