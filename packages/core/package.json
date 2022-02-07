@@ -24,7 +24,7 @@
     "build": "tsc && tsc-alias",
     "// see: https://github.com/kulshekhar/ts-jest/issues/1029#issuecomment-610284927": "",
     "//test": "NODE_OPTIONS='--max-old-space-size=256' ts-node -O '{\"module\":\"commonjs\"}' ../../node_modules/jest-cli/bin/jest.js",
-    "test": "jest",
+    "test": "NODE_OPTIONS='--max-old-space-size=256' jest",
     "lint": "eslint src --ext .ts",
     "lint:fix": "eslint src --ext .ts --fix"
   },
