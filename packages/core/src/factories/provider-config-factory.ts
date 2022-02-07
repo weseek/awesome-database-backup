@@ -36,8 +36,8 @@ export function createConfigS3({ awsRegion, awsAccessKeyId, awsSecretAccessKey }
   const { configurationPath, credentialPath } = configPathsS3();
 
   /* Automatically remove config files */
-  process.addListener('exit', unlinkConfigS3);
-  process.addListener('SIGINT', unlinkConfigS3);
+  // process.addListener('exit', unlinkConfigS3);
+  // process.addListener('SIGINT', unlinkConfigS3);
 
   const configData = `
       [default]
