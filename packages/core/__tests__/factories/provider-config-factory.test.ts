@@ -11,7 +11,7 @@ afterEach(() => {
 
 describe('configExistS3', () => {
   beforeEach(() => {
-    providerConfigFactory = rewire(path.join(__dirname, '../../src/factories/provider-config-factory'));
+    providerConfigFactory = rewire(path.join(__dirname, '../../dist/factories/provider-config-factory'));
     providerConfigFactory.__set__(
       'configPathsS3',
       jest.fn().mockReturnValue({
@@ -53,7 +53,7 @@ describe('unlinkConfigS3', () => {
   const unlinkSyncMock = jest.spyOn(fs, 'unlinkSync').mockReturnValue(undefined);
 
   beforeEach(() => {
-    providerConfigFactory = rewire(path.join(__dirname, '../../src/factories/provider-config-factory'));
+    providerConfigFactory = rewire(path.join(__dirname, '../../dist/factories/provider-config-factory'));
     providerConfigFactory.__set__(
       'configPathsS3',
       jest.fn().mockReturnValue({
@@ -87,7 +87,7 @@ describe('createConfigS3', () => {
   const writeFileSyncMock = jest.spyOn(fs, 'writeFileSync').mockReturnValue(undefined);
 
   beforeEach(() => {
-    providerConfigFactory = rewire(path.join(__dirname, '../../src/factories/provider-config-factory'));
+    providerConfigFactory = rewire(path.join(__dirname, '../../dist/factories/provider-config-factory'));
     providerConfigFactory.__set__(
       'configPathsS3',
       jest.fn().mockReturnValue(configPathObject),
