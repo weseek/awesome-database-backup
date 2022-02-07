@@ -24,7 +24,7 @@
     "build": "tsc && tsc-alias",
     "// see: https://github.com/kulshekhar/ts-jest/issues/1029#issuecomment-610284927": "",
     "//test": "cross-env NODE_ENV=test ts-node --log-error -O '{\"module\":\"commonjs\"}' ../../node_modules/jest/bin/jest.js",
-    "test": "ts-node --log-error -O '{\"module\":\"commonjs\"}' ../../node_modules/jest-cli/bin/jest.js",
+    "test": "NODE_OPTIONS='--max-old-space-size=256' ts-node -O '{\"module\":\"commonjs\"}' ../../node_modules/jest-cli/bin/jest.js",
     "lint": "eslint src --ext .ts",
     "lint:fix": "eslint src --ext .ts --fix"
   },
