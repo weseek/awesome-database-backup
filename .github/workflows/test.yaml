@@ -16,8 +16,4 @@ jobs:
           cache: "yarn"
       - run: yarn install
       - run: yarn test
-      # - name: Archive coverage
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: coverage-report
-      #     path: tmp/coverage
+      # [TODO] Coverage report

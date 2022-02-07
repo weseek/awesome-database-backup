@@ -22,8 +22,7 @@
   ],
   "scripts": {
     "build": "tsc && tsc-alias",
-    "// see: https://github.com/kulshekhar/ts-jest/issues/1029#issuecomment-610284927": "",
-    "//test": "NODE_OPTIONS='--max-old-space-size=256' ts-node -O '{\"module\":\"commonjs\"}' ../../node_modules/jest-cli/bin/jest.js",
+    "// Since the risk of memory leaks increases when a few workers, we chose to use many workers even though the processing speed would be lower.": "",
     "test": "jest --maxWorkers 4 --ci --logHeapUsage",
     "lint": "eslint src --ext .ts",
     "lint:fix": "eslint src --ext .ts --fix"
