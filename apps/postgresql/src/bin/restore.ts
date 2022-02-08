@@ -4,14 +4,17 @@ import {
   execute,
   RestoreCommand,
 } from '@awesome-backup/core';
+import loggerFactory from '../services/logger';
 import { PACKAGE_VERSION } from '../config/version';
+
+const logger = loggerFactory('mongodb-awesome-backup');
 
 async function restorePostgreSQL(sourcePath: string, psqlRequiredOptions?: string): Promise<{ stdout: string, stderr: string }> {
   const restoreCommand = 'psql';
   const inputOption = `--file ${sourcePath}`;
   const psqlArgs = '';
   const psqlOptions = [psqlRequiredOptions, inputOption].join(' ');
-  console.log('restore PostgreSQL...');
+  logger.info('restore PostgreSQL...');
   return execute(restoreCommand, psqlArgs, psqlOptions);
 }
 

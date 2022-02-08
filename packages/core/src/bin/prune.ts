@@ -7,6 +7,9 @@ import {
   addStorageServiceClientGenerateHook,
   ICommonCLIOption,
 } from './common';
+import loggerFactory from '../services/logger';
+
+const logger = loggerFactory('mongodb-awesome-backup');
 
 /* Prune command option types */
 export declare interface IPruneCLIOption extends ICommonCLIOption {
@@ -35,7 +38,7 @@ export class PruneCommand extends Command {
     for (const targetBackup of targetBackupFiles) {
       const targetBackupUrl = new URL(targetBackup, targetBucketUrl);
       storageServiceClient.deleteFile(targetBackupUrl.toString());
-      console.log(`DELETED past backuped file on ${storageServiceClient.name}: ${targetBackupUrl}`);
+      logger.info(`DELETED past backuped file on ${storageServiceClient.name}: ${targetBackupUrl}`);
     }
   }
 
@@ -71,7 +74,7 @@ export class PruneCommand extends Command {
         );
       }
       catch (e: any) {
-        console.error(e);
+        logger.error(e);
       }
     };
 

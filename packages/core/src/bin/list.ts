@@ -6,6 +6,9 @@ import {
   addStorageServiceClientOptions,
   addStorageServiceClientGenerateHook,
 } from './common';
+import loggerFactory from '../services/logger';
+
+const logger = loggerFactory('mongodb-awesome-core');
 
 export class ListCommand extends Command {
 
@@ -13,9 +16,9 @@ export class ListCommand extends Command {
       storageServiceClient: IStorageServiceClient,
       targetBucketUrl: URL,
   ): Promise<void> {
-    console.log('There are files below in bucket:');
+    logger.info('There are files below in bucket:');
     const files = await storageServiceClient.listFiles(targetBucketUrl.toString());
-    console.log(files.join(EOL));
+    logger.info(files.join(EOL));
   }
 
   setListArgument(): ListCommand {
@@ -46,7 +49,7 @@ export class ListCommand extends Command {
         );
       }
       catch (e: any) {
-        console.error(e);
+        logger.error(e);
       }
     };
 

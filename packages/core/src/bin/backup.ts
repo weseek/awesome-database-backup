@@ -10,12 +10,14 @@ import {
   addStorageServiceClientGenerateHook,
   ICommonCLIOption,
 } from './common';
+import loggerFactory from '../services/logger';
 
 const schedule = require('node-schedule');
 const tmp = require('tmp');
 const axiosRetry = require('axios-retry');
 const EventEmitter = require('events');
 
+const logger = loggerFactory('mongodb-awesome-backup');
 const backupEventEmitter = new EventEmitter();
 const _EXIT_BACKUP = 'AWSOME_BACKUP_EXIT_BACKUP';
 
@@ -36,7 +38,7 @@ export class BackupCommand extends Command {
       targetBucketUrl: URL,
       options: IBackupCLIOption,
   ): Promise<void> {
-    console.log(`=== ${basename(__filename)} started at ${format(Date.now(), 'yyyy/MM/dd HH:mm:ss')} ===`);
+    logger.info(`=== ${basename(__filename)} started at ${format(Date.now(), 'yyyy/MM/dd HH:mm:ss')} ===`);
 
     if (options.healthchecksUrl != null && backupEventEmitter.listenerCount(_EXIT_BACKUP) === 0) {
       const healthChecker = async() => {
@@ -45,7 +47,7 @@ export class BackupCommand extends Command {
         await axios
           .get(healthchecksUrl.toString())
           .catch((e: AxiosError) => {
-            console.log(`Cannot GET ${healthchecksUrl.toString()}: ${e.toString()}`);
+            logger.info(`Cannot GET ${healthchecksUrl.toString()}: ${e.toString()}`);
           });
       };
       backupEventEmitter.addListener(_EXIT_BACKUP, healthChecker);
@@ -55,10 +57,10 @@ export class BackupCommand extends Command {
     const tmpdir = tmp.dirSync({ unsafeCleanup: true });
     const backupFilePath = join(tmpdir.name, `${options.backupfilePrefix}-${format(Date.now(), 'yyyyMMddHHmmss')}`);
 
-    console.log(`backup ${backupFilePath}...`);
+    logger.info(`backup ${backupFilePath}...`);
     const { stdout, stderr } = await dumpDatabaseFunc(backupFilePath, options.backupToolOptions);
-    if (stdout) console.log(stdout);
-    if (stderr) console.warn(stderr);
+    if (stdout) logger.info(stdout);
+    if (stderr) logger.warn(stderr);
 
     const { compressedFilePath } = await compress(backupFilePath);
     await storageServiceClient.copyFile(compressedFilePath, targetBucketUrl.toString());
@@ -72,7 +74,7 @@ export class BackupCommand extends Command {
       targetBucketUrl: URL,
       options: IBackupCLIOption,
   ): Promise<void> {
-    console.log(`=== started in cron mode ${format(Date.now(), 'yyyy/MM/dd HH:mm:ss')} ===`);
+    logger.info(`=== started in cron mode ${format(Date.now(), 'yyyy/MM/dd HH:mm:ss')} ===`);
     await schedule.scheduleJob(
       options.cronExpression,
       async() => {
@@ -108,7 +110,7 @@ export class BackupCommand extends Command {
     const action = async(targetBucketUrlString: string, options: IBackupCLIOption) => {
       try {
         if (options.cronmode && options.cronExpression == null) {
-          console.error('The option "--cron-expression" must be specified in cron mode.');
+          logger.error('The option "--cron-expression" must be specified in cron mode.');
           return;
         }
         if (storageServiceClientHolder.storageServiceClient == null) throw new Error('URL scheme is not that of a supported provider.');
@@ -123,7 +125,7 @@ export class BackupCommand extends Command {
         );
       }
       catch (e: any) {
-        console.error(e);
+        logger.error(e);
       }
     };
 

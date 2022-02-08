@@ -9,7 +9,9 @@ import {
   addStorageServiceClientGenerateHook,
   ICommonCLIOption,
 } from './common';
+import loggerFactory from '../services/logger';
 
+const logger = loggerFactory('mongodb-awesome-backup');
 const tmp = require('tmp');
 
 /* Restore command option types */
@@ -25,18 +27,18 @@ export class RestoreCommand extends Command {
       targetBucketUrl: URL,
       options: IRestoreCLIOption,
   ): Promise<void> {
-    console.log(`=== ${basename(__filename)} started at ${format(Date.now(), 'yyyy/MM/dd HH:mm:ss')} ===`);
+    logger.info(`=== ${basename(__filename)} started at ${format(Date.now(), 'yyyy/MM/dd HH:mm:ss')} ===`);
 
     tmp.setGracefulCleanup();
     const tmpdir = tmp.dirSync({ unsafeCleanup: true });
     const backupFilePath = join(tmpdir.name, basename(targetBucketUrl.pathname));
     await storageServiceClient.copyFile(targetBucketUrl.toString(), backupFilePath);
 
-    console.log(`expands ${backupFilePath}...`);
+    logger.info(`expands ${backupFilePath}...`);
     const { expandedPath } = await expand(backupFilePath);
     const { stdout, stderr } = await restoreDatabaseFunc(expandedPath, options.restoreToolOptions);
-    if (stdout) console.log(stdout);
-    if (stderr) console.warn(stderr);
+    if (stdout) logger.info(stdout);
+    if (stderr) logger.warn(stderr);
   }
 
   setRestoreArgument(): RestoreCommand {
@@ -71,7 +73,7 @@ export class RestoreCommand extends Command {
         );
       }
       catch (e: any) {
-        console.error(e);
+        logger.error(e);
       }
     };
 
