@@ -42,13 +42,15 @@ export class BackupCommand extends Command {
 
     if (options.healthchecksUrl != null && backupEventEmitter.listenerCount(_EXIT_BACKUP) === 0) {
       const healthChecker = async() => {
-        const healthchecksUrl = new URL(options.healthchecksUrl as string);
-        axiosRetry(axios, { retries: 3 });
-        await axios
-          .get(healthchecksUrl.toString())
-          .catch((e: AxiosError) => {
-            logger.info(`Cannot GET ${healthchecksUrl.toString()}: ${e.toString()}`);
-          });
+        try {
+          const healthchecksUrl = new URL(options.healthchecksUrl as string);
+          axiosRetry(axios, { retries: 3 });
+          await axios
+            .get(healthchecksUrl.toString());
+        }
+        catch (e: any) {
+          logger.info(`Cannot access to URL for health check. ${e.toString()}`);
+        }
       };
       backupEventEmitter.addListener(_EXIT_BACKUP, healthChecker);
     }
