@@ -1,12 +1,14 @@
 #!/usr/bin/env node
-
+/**
+ * An executable file that stores backups for Postgresql to a storage service.
+ * Execute with --help to see usage instructions.
+ */
 import { exec } from 'child_process';
-
 import { BackupCommand } from '@awesome-backup/core';
 import loggerFactory from '../services/logger';
 import { PACKAGE_VERSION } from '../config/version';
 
-const logger = loggerFactory('mongodb-awesome-backup');
+const logger = loggerFactory('postgresql-awesome-backup');
 
 async function dumpPostgreSQL(destinationPath: string, userSpecifiedOption?: string): Promise<{ stdout: string, stderr: string }> {
   logger.info('dump PostgreSQL...');

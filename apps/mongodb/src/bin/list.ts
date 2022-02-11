@@ -1,5 +1,8 @@
 #!/usr/bin/env node
-
+/**
+ * An executable file that list files in a storage service.
+ * Execute with --help to see usage instructions.
+ */
 import { ListCommand } from '@awesome-backup/core';
 import { PACKAGE_VERSION } from '../config/version';
 

@@ -1,12 +1,14 @@
 #!/usr/bin/env node
-
+/**
+ * An executable file that restore for PostgreSQL from a backup in a storage service.
+ * Execute with --help to see usage instructions.
+ */
 import { exec } from 'child_process';
-
 import { RestoreCommand } from '@awesome-backup/core';
 import loggerFactory from '../services/logger';
 import { PACKAGE_VERSION } from '../config/version';
 
-const logger = loggerFactory('mongodb-awesome-backup');
+const logger = loggerFactory('postgresql-awesome-backup');
 
 async function restorePostgreSQL(sourcePath: string, userSpecifiedOption?: string): Promise<{ stdout: string, stderr: string }> {
   logger.info('restore PostgreSQL...');
