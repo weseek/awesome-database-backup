@@ -1,7 +1,6 @@
-
 import { exec } from 'child_process';
 
-export async function execute(
+export function execute(
     command: string,
     args?: string,
     options?: string,
