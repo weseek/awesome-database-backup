@@ -1,4 +1,4 @@
-let restore = require('../../src/bin/restore');
+let restore = require('../../src/commands/restore');
 
 describe('RestoreCommand', () => {
   describe('restore', () => {
@@ -21,7 +21,7 @@ describe('RestoreCommand', () => {
         mock.expandBZIP2 = jest.fn().mockReturnValue('');
         return mock;
       });
-      restore = require('../../src/bin/restore');
+      restore = require('../../src/commands/restore');
     });
     afterEach(() => {
       jest.dontMock('../../src/utils/tar');

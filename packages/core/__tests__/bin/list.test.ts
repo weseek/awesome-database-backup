@@ -1,4 +1,4 @@
-const { ListCommand } = require('../../src/bin/list');
+const { ListCommand } = require('../../src/commands/list');
 
 describe('ListCommand', () => {
   describe('list', () => {

@@ -1,7 +1,7 @@
-import { BackupCommand, IBackupCLIOption } from '../../src/bin/backup';
+import { BackupCommand, IBackupCLIOption } from '../../src/commands/backup';
 import { IStorageServiceClient } from '../../src/interfaces/storage-service-client';
 
-let backup = require('../../src/bin/backup');
+let backup = require('../../src/commands/backup');
 
 describe('BackupCommand', () => {
   const targetBucketUrl = new URL('gs://sample.com/bucket');
@@ -22,7 +22,7 @@ describe('BackupCommand', () => {
         mock.compressBZIP2 = jest.fn().mockReturnValue('');
         return mock;
       });
-      backup = require('../../src/bin/backup');
+      backup = require('../../src/commands/backup');
     });
     afterEach(() => {
       jest.dontMock('../../src/utils/tar');
@@ -55,7 +55,7 @@ describe('BackupCommand', () => {
           mock.get = axiosGetMock;
           return mock;
         });
-        backup = require('../../src/bin/backup');
+        backup = require('../../src/commands/backup');
       });
       afterEach(() => {
         jest.dontMock('axios');

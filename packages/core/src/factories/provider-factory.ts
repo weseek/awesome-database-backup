@@ -1,5 +1,5 @@
 import { StorageProviderType, IStorageServiceClient } from '../interfaces/storage-service-client';
-import { ICommonCLIOption } from '../bin/common';
+import { ICommonCLIOption } from '../commands/common';
 import {
   configExistS3, createConfigS3,
 } from './provider-config-factory';

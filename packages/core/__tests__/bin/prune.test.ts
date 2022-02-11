@@ -1,4 +1,4 @@
-const { PruneCommand } = require('../../src/bin/prune');
+const { PruneCommand } = require('../../src/commands/prune');
 
 describe('PruneCommand', () => {
   describe('prune', () => {

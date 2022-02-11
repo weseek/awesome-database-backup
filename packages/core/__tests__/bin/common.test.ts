@@ -3,7 +3,7 @@ import { IStorageServiceClient } from '../../src/interfaces/storage-service-clie
 import {
   addStorageServiceClientOptions,
   addStorageServiceClientGenerateHook,
-} from '../../src/bin/common';
+} from '../../src/commands/common';
 
 describe('addStorageServiceClientOptions', () => {
   it('return undefined and call option()', () => {
