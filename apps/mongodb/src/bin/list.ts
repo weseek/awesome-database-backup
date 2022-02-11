@@ -1,8 +1,6 @@
 #!/usr/bin/env node
 
-import {
-  ListCommand,
-} from '@awesome-backup/core';
+import { ListCommand } from '@awesome-backup/core';
 import { PACKAGE_VERSION } from '../config/version';
 
 const listCommand = new ListCommand();
@@ -13,4 +11,4 @@ listCommand
   .addListOptions()
   .setListAction();
 
-listCommand.parse(process.argv);
+listCommand.parse(process.argv); // execute list command

@@ -39,4 +39,4 @@ backupCommand
       `.replace(/^ {4}/mg, ''))
   .setBackupAction(dumpPostgreSQL);
 
-backupCommand.parse(process.argv);
+backupCommand.parse(process.argv); // execute backup command

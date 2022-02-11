@@ -39,4 +39,4 @@ restoreCommand
       `.replace(/^ {4}/mg, ''))
   .setRestoreAction(restorePostgreSQL);
 
-restoreCommand.parse(process.argv);
+restoreCommand.parse(process.argv); // execute restore command

@@ -1,8 +1,6 @@
 #!/usr/bin/env node
 
-import {
-  PruneCommand,
-} from '@awesome-backup/core';
+import { PruneCommand } from '@awesome-backup/core';
 import { PACKAGE_VERSION } from '../config/version';
 
 const pruneCommand = new PruneCommand();
@@ -13,4 +11,4 @@ pruneCommand
   .addPruneOptions()
   .setPruneAction();
 
-pruneCommand.parse(process.argv);
+pruneCommand.parse(process.argv); // execute prune command

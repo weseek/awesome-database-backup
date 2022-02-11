@@ -35,4 +35,4 @@ backupCommand
       `.replace(/^ {4}/mg, ''))
   .setBackupAction(dumpMongoDB);
 
-backupCommand.parse(process.argv);
+backupCommand.parse(process.argv); // execute backup command

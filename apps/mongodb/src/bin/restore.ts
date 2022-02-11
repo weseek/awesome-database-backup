@@ -31,4 +31,4 @@ restoreCommand
       `.replace(/^ {4}/mg, ''))
   .setRestoreAction(restoreMongoDB);
 
-restoreCommand.parse(process.argv);
+restoreCommand.parse(process.argv); // execute restore command
