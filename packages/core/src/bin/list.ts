@@ -1,6 +1,5 @@
 import { EOL } from 'os';
 import { Command } from 'commander';
-
 import { IStorageServiceClient } from '../interfaces/storage-service-client';
 import {
   addStorageServiceClientOptions,
@@ -10,6 +9,13 @@ import loggerFactory from '../services/logger';
 
 const logger = loggerFactory('mongodb-awesome-core');
 
+/**
+ * Define actions, options, and arguments that are commonly required for list command from the CLI, regardless of the database type.
+ *
+ * Call setListAction(), addListOptions() and setListArgument().
+ *
+ * If necessary, you can customize it by using the Command's methods, such as adding options by using option() and help messages by using addHelpText().
+ */
 export class ListCommand extends Command {
 
   async list(

@@ -1,8 +1,12 @@
+/**
+ * Define common processing for "backup", "restore", "list", and "prune" commands.
+ */
+
 import { Command } from 'commander';
 import { IStorageServiceClient } from '../interfaces/storage-service-client';
 import { storageProviderType, generateStorageServiceClient } from '../factories/provider-factory';
 
-/* List command option types */
+/* Common command option types */
 export declare interface ICommonCLIOption {
   awsRegion?: string
   awsAccessKeyId?: string,

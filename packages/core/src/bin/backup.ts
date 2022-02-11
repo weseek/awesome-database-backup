@@ -1,8 +1,9 @@
 import { format } from 'date-fns';
 import { basename, join } from 'path';
 import { Command } from 'commander';
-
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
+import axiosRetry from 'axios-retry';
+import { EventEmitter } from 'events';
 import { compressBZIP2 } from '../utils/tar';
 import { IStorageServiceClient } from '../interfaces/storage-service-client';
 import {
@@ -14,12 +15,10 @@ import loggerFactory from '../services/logger';
 
 const schedule = require('node-schedule');
 const tmp = require('tmp');
-const axiosRetry = require('axios-retry');
-const EventEmitter = require('events');
 
 const logger = loggerFactory('mongodb-awesome-backup');
 const backupEventEmitter = new EventEmitter();
-const _EXIT_BACKUP = 'AWSOME_BACKUP_EXIT_BACKUP';
+const AWSOME_BACKUP_EXIT_BACKUP = 'AWSOME_BACKUP_EXIT_BACKUP';
 
 /* Backup command option types */
 export declare interface IBackupCLIOption extends ICommonCLIOption {
@@ -30,6 +29,14 @@ export declare interface IBackupCLIOption extends ICommonCLIOption {
   backupToolOptions?: string,
 }
 
+/**
+ * Define actions, options, and arguments that are commonly required for backup command from the CLI, regardless of the database type.
+ *
+ * Call setBackupAction() with the function to dump data for each database (ex. execute `psdump_all` for PostgreSQL).
+ * Also call addBackupOptions() and setBackupArgument().
+ *
+ * If necessary, you can customize it by using the Command's methods, such as adding options by using option() and help messages by using addHelpText().
+ */
 export class BackupCommand extends Command {
 
   async backupOnce(
@@ -40,19 +47,8 @@ export class BackupCommand extends Command {
   ): Promise<void> {
     logger.info(`=== ${basename(__filename)} started at ${format(Date.now(), 'yyyy/MM/dd HH:mm:ss')} ===`);
 
-    if (options.healthchecksUrl != null && backupEventEmitter.listenerCount(_EXIT_BACKUP) === 0) {
-      const healthChecker = async() => {
-        try {
-          const healthchecksUrl = new URL(options.healthchecksUrl as string);
-          axiosRetry(axios, { retries: 3 });
-          await axios
-            .get(healthchecksUrl.toString());
-        }
-        catch (e: any) {
-          logger.info(`Cannot access to URL for health check. ${e.toString()}`);
-        }
-      };
-      backupEventEmitter.addListener(_EXIT_BACKUP, healthChecker);
+    if (backupEventEmitter.listenerCount(AWSOME_BACKUP_EXIT_BACKUP) === 0) {
+      backupEventEmitter.addListener(AWSOME_BACKUP_EXIT_BACKUP, this.processAfterBackup);
     }
 
     tmp.setGracefulCleanup();
@@ -67,7 +63,7 @@ export class BackupCommand extends Command {
     const { compressedFilePath } = await compressBZIP2(backupFilePath);
     await storageServiceClient.copyFile(compressedFilePath, targetBucketUrl.toString());
 
-    backupEventEmitter.emit(_EXIT_BACKUP);
+    backupEventEmitter.emit(AWSOME_BACKUP_EXIT_BACKUP, options);
   }
 
   async backupCronMode(
@@ -83,6 +79,19 @@ export class BackupCommand extends Command {
         await this.backupOnce(storageServiceClient, dumpDatabaseFunc, targetBucketUrl, options);
       },
     );
+  }
+
+  async processAfterBackup(options: IBackupCLIOption): Promise<void> {
+    if (options.healthchecksUrl == null) return;
+
+    try {
+      const healthchecksUrl = new URL(options.healthchecksUrl as string);
+      axiosRetry(axios, { retries: 3 });
+      await axios.get(healthchecksUrl.toString());
+    }
+    catch (e: any) {
+      logger.warn(`Cannot access to URL for health check. ${e.toString()}`);
+    }
   }
 
   setBackupArgument(): BackupCommand {

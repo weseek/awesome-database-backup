@@ -19,6 +19,14 @@ export declare interface IRestoreCLIOption extends ICommonCLIOption {
   restoreToolOptions: string,
 }
 
+/**
+ * Define actions, options, and arguments that are commonly required for restore command from the CLI, regardless of the database type.
+ *
+ * Call setRestoreAction() with the function to restore data for each database (ex. execute `psql` for PostgreSQL).
+ * Also call addRestoreOptions() and setRestoreArgument().
+ *
+ * If necessary, you can customize it by using the Command's methods, such as adding options by using option() and help messages by using addHelpText().
+ */
 export class RestoreCommand extends Command {
 
   async restore(

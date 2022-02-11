@@ -38,6 +38,9 @@ function _parseFilePath(path: string): S3URI | null {
   return null;
 }
 
+/**
+ * Client to manipulate S3 buckets
+ */
 export class S3ServiceClient implements IStorageServiceClient {
 
   name: string;

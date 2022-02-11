@@ -18,6 +18,13 @@ export declare interface IPruneCLIOption extends ICommonCLIOption {
   deleteTargetDaysLeft: number,
 }
 
+/**
+ * Define actions, options, and arguments that are commonly required for prune command from the CLI, regardless of the database type.
+ *
+ * Call setPruneAction(), addPruneOptions() and setPruneArgument().
+ *
+ * If necessary, you can customize it by using the Command's methods, such as adding options by using option() and help messages by using addHelpText().
+ */
 export class PruneCommand extends Command {
 
   async prune(
