@@ -19,7 +19,7 @@ describe('BackupCommand', () => {
       jest.resetModules();
       jest.doMock('../../src/utils/tar', () => {
         const mock = jest.requireActual('../../src/utils/tar');
-        mock.compress = jest.fn().mockReturnValue('');
+        mock.compressBZIP2 = jest.fn().mockReturnValue('');
         return mock;
       });
       backup = require('../../src/bin/backup');

@@ -1,51 +1,43 @@
 let tar = require('../../src/utils/tar');
 
-describe('compress', () => {
-  test('it call tar command with arguments and options', async() => {
+const execMock = jest.fn().mockImplementation((command, callback) => {
+  callback(null, 'stdout', 'stderr');
+});
+
+beforeEach(() => {
+  jest.resetModules();
+  jest.doMock('child_process', () => {
+    const actual = jest.requireActual('child_process');
+    return {
+      ...actual,
+      exec: execMock,
+    };
+  });
+  tar = require('../../src/utils/tar');
+});
+
+describe('compressBZIP2', () => {
+  it('call `tar` command with arguments and options', async() => {
     const compressTargetPath = '/path/to/file';
-    const result = {
+
+    await expect(tar.compressBZIP2(compressTargetPath)).resolves.toStrictEqual({
+      compressedFilePath: '/path/to/file.tar.bz2',
       stdout: 'stdout',
       stderr: 'stderr',
-    };
-    const executeMock = jest.fn().mockResolvedValue(result);
-    jest.resetModules();
-    jest.doMock('../../src/utils/cli', () => {
-      const actual = jest.requireActual('../../src/utils/cli');
-      return {
-        ...actual,
-        execute: executeMock,
-      };
     });
-    tar = require('../../src/utils/tar');
-
-    await expect(tar.compress(compressTargetPath)).resolves.toStrictEqual({
-      compressedFilePath: '/path/to/file.tar.bz2',
-    });
-    expect(executeMock).toBeCalledWith('tar', 'file', '-jcv -f /path/to/file.tar.bz2 -C /path/to');
+    expect(execMock).toBeCalledWith('tar -jcv -f /path/to/file.tar.bz2 -C /path/to file', expect.anything());
   });
 });
 
-describe('expand', () => {
-  test('it call tar command with arguments and options', async() => {
+describe('expandBZIP2', () => {
+  it('call tar command with arguments and options', async() => {
     const expandTargetPath = '/path/to/file.tar.bz2';
-    const result = {
+
+    await expect(tar.expandBZIP2(expandTargetPath)).resolves.toStrictEqual({
+      expandedPath: '/path/to/file',
       stdout: 'stdout',
       stderr: 'stderr',
-    };
-    const executeMock = jest.fn().mockResolvedValue(result);
-    jest.resetModules();
-    jest.doMock('../../src/utils/cli', () => {
-      const actual = jest.requireActual('../../src/utils/cli');
-      return {
-        ...actual,
-        execute: executeMock,
-      };
     });
-    tar = require('../../src/utils/tar');
-
-    await expect(tar.expand(expandTargetPath)).resolves.toStrictEqual({
-      expandedPath: '/path/to/file',
-    });
-    expect(executeMock).toBeCalledWith('tar', '', '-jxv -f /path/to/file.tar.bz2 -C /path/to');
+    expect(execMock).toBeCalledWith('tar -jxv -f /path/to/file.tar.bz2 -C /path/to', expect.anything());
   });
 });

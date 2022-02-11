@@ -18,7 +18,7 @@ describe('RestoreCommand', () => {
       jest.resetModules();
       jest.doMock('../../src/utils/tar', () => {
         const mock = jest.requireActual('../../src/utils/tar');
-        mock.expand = jest.fn().mockReturnValue('');
+        mock.expandBZIP2 = jest.fn().mockReturnValue('');
         return mock;
       });
       restore = require('../../src/bin/restore');

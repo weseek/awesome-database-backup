@@ -1,21 +1,26 @@
 #!/usr/bin/env node
 
-import {
-  execute,
-  BackupCommand,
-} from '@awesome-backup/core';
+import { exec } from 'child_process';
+
+import { BackupCommand } from '@awesome-backup/core';
 import loggerFactory from '../services/logger';
 import { PACKAGE_VERSION } from '../config/version';
 
 const logger = loggerFactory('mongodb-awesome-backup');
 
-async function dumpPostgreSQL(destinationPath: string, pgdumpRequiredOptions?: string): Promise<{ stdout: string, stderr: string }> {
-  const backupCommand = 'pg_dumpall';
-  const pgdumpArgs = '';
-  const pgdumpOutputOption = `--file ${destinationPath}`;
-  const pdgumpOptions = [pgdumpRequiredOptions, pgdumpOutputOption].join(' ');
+async function dumpPostgreSQL(destinationPath: string, userSpecifiedOption?: string): Promise<{ stdout: string, stderr: string }> {
   logger.info('dump PostgreSQL...');
-  return execute(backupCommand, pgdumpArgs, pdgumpOptions);
+  return new Promise((resolve, reject) => {
+    exec(
+      `pg_dumpall --file ${destinationPath} ${userSpecifiedOption}`,
+      (error, stdout, stderr) => {
+        if (error) {
+          reject(error);
+        }
+        resolve({ stdout, stderr });
+      },
+    );
+  });
 }
 
 const backupCommand = new BackupCommand();

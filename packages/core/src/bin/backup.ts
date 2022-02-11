@@ -3,7 +3,7 @@ import { basename, join } from 'path';
 import { Command } from 'commander';
 
 import axios, { AxiosError } from 'axios';
-import { compress } from '../utils/tar';
+import { compressBZIP2 } from '../utils/tar';
 import { IStorageServiceClient } from '../interfaces/storage-service-client';
 import {
   addStorageServiceClientOptions,
@@ -64,7 +64,7 @@ export class BackupCommand extends Command {
     if (stdout) logger.info(stdout);
     if (stderr) logger.warn(stderr);
 
-    const { compressedFilePath } = await compress(backupFilePath);
+    const { compressedFilePath } = await compressBZIP2(backupFilePath);
     await storageServiceClient.copyFile(compressedFilePath, targetBucketUrl.toString());
 
     backupEventEmitter.emit(_EXIT_BACKUP);

@@ -1,15 +1,22 @@
 #!/usr/bin/env node
 
-import {
-  execute,
-  RestoreCommand,
-} from '@awesome-backup/core';
+import { exec } from 'child_process';
+
+import { RestoreCommand } from '@awesome-backup/core';
 import { PACKAGE_VERSION } from '../config/version';
 
-async function restoreMongoDB(sourcePath: string, mongorestoreRequiredOptions?: string): Promise<{ stdout: string, stderr: string }> {
-  const restoreCommand = 'mongorestore';
-  const mongorestoreArgs = sourcePath;
-  return execute(restoreCommand, mongorestoreArgs, mongorestoreRequiredOptions);
+async function restoreMongoDB(sourcePath: string, userSpecifiedOption?: string): Promise<{ stdout: string, stderr: string }> {
+  return new Promise((resolve, reject) => {
+    exec(
+      `mongorestore ${sourcePath} ${userSpecifiedOption}`,
+      (error, stdout, stderr) => {
+        if (error) {
+          reject(error);
+        }
+        resolve({ stdout, stderr });
+      },
+    );
+  });
 }
 
 const restoreCommand = new RestoreCommand();

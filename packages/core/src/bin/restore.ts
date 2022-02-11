@@ -2,7 +2,7 @@ import { format } from 'date-fns';
 import { basename, join } from 'path';
 import { Command } from 'commander';
 
-import { expand } from '../utils/tar';
+import { expandBZIP2 } from '../utils/tar';
 import { IStorageServiceClient } from '../interfaces/storage-service-client';
 import {
   addStorageServiceClientOptions,
@@ -35,7 +35,7 @@ export class RestoreCommand extends Command {
     await storageServiceClient.copyFile(targetBucketUrl.toString(), backupFilePath);
 
     logger.info(`expands ${backupFilePath}...`);
-    const { expandedPath } = await expand(backupFilePath);
+    const { expandedPath } = await expandBZIP2(backupFilePath);
     const { stdout, stderr } = await restoreDatabaseFunc(expandedPath, options.restoreToolOptions);
     if (stdout) logger.info(stdout);
     if (stderr) logger.warn(stderr);
