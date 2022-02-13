@@ -9,7 +9,7 @@ import {
   ListObjectsCommand, ListObjectsCommandInput,
 } from '@aws-sdk/client-s3';
 import * as internal from 'stream';
-import { IStorageServiceClient, listFilesOptions } from '../interfaces/storage-service-client';
+import { IStorageServiceClient, listS3FilesOptions } from '../interfaces/storage-service-client';
 
 export declare interface S3URI {
   bucket: string,
@@ -77,11 +77,11 @@ export class S3ServiceClient implements IStorageServiceClient {
    * You can get an object name like file name by setting the "absolutePath" option to false.
    * (If the url is "s3://bucket-name/directory", it will look like ["object-name1", "object-name2"])
    */
-  listFiles(url: string, optionsRequired?: listFilesOptions): Promise<string[]> {
+  listFiles(url: string, optionsRequired?: listS3FilesOptions): Promise<string[]> {
     const parseResult = _parseFilePath(url);
     if (parseResult == null) return Promise.reject(new Error(`URI ${url} is not correct S3's`));
 
-    const defaultOption: listFilesOptions = {
+    const defaultOption: listS3FilesOptions = {
       includeFolderInList: false,
       absolutePath: true,
       exactMatch: true,

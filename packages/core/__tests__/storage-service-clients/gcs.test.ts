@@ -30,42 +30,141 @@ describe('GCSServiceClient', () => {
     describe("when request URI is valid GCS's", () => {
       const url = 'gs://bucket-name/object-name';
 
-      describe('when Bucket#getFiles response files', () => {
-        beforeEach(() => {
-          const bucketMock = {
-            getFiles: jest.fn().mockResolvedValue([[{ name: 'file1' }]]),
-          };
-          gcsServiceClient.client.bucket = jest.fn().mockReturnValue(bucketMock);
+      describe('when options are not specified', () => {
+        describe('when Bucket#getFiles response exact matched files', () => {
+          beforeEach(() => {
+            const bucketMock = {
+              getFiles: jest.fn().mockResolvedValue([[{ name: 'object-name' }]]),
+            };
+            gcsServiceClient.client.bucket = jest.fn().mockReturnValue(bucketMock);
+          });
+
+          it('return matched files', async() => {
+            await expect(gcsServiceClient.listFiles(url)).resolves.toStrictEqual(['object-name']);
+          });
         });
 
-        it('return files', async() => {
-          await expect(gcsServiceClient.listFiles(url)).resolves.toStrictEqual(['file1']);
+        describe('when Bucket#getFiles response not exact matched files', () => {
+          beforeEach(() => {
+            const bucketMock = {
+              getFiles: jest.fn().mockResolvedValue([[{ name: 'unmatched-object-name' }]]),
+            };
+            gcsServiceClient.client.bucket = jest.fn().mockReturnValue(bucketMock);
+          });
+
+          it('return empty files', async() => {
+            await expect(gcsServiceClient.listFiles(url)).resolves.toStrictEqual([]);
+          });
+        });
+
+        describe('when Bucket#getFiles response prefix matched files', () => {
+          beforeEach(() => {
+            const bucketMock = {
+              getFiles: jest.fn().mockResolvedValue([[{ name: 'object-name1' }]]),
+            };
+            gcsServiceClient.client.bucket = jest.fn().mockReturnValue(bucketMock);
+          });
+
+          it('return empty files', async() => {
+            await expect(gcsServiceClient.listFiles(url)).resolves.toStrictEqual([]);
+          });
+        });
+
+        describe('when Bucket#getFiles response null', () => {
+          beforeEach(() => {
+            const bucketMock = {
+              getFiles: jest.fn().mockReturnValue(Promise.resolve(null)),
+            };
+            gcsServiceClient.client.bucket = jest.fn().mockReturnValue(bucketMock);
+          });
+
+          it('reject with throw exception', async() => {
+            await expect(gcsServiceClient.listFiles(url)).rejects.toThrowError();
+          });
+        });
+
+        describe('when Bucket#getFiles reject', () => {
+          beforeEach(() => {
+            const bucketMock = {
+              getFiles: jest.fn().mockReturnValue(Promise.resolve(null)),
+            };
+            gcsServiceClient.client.bucket = jest.fn().mockReturnValue(bucketMock);
+          });
+
+          it('reject with throw exception', async() => {
+            await expect(gcsServiceClient.listFiles(url)).rejects.toThrowError();
+          });
         });
       });
 
-      describe('when Bucket#getFiles response null', () => {
-        beforeEach(() => {
-          const bucketMock = {
-            getFiles: jest.fn().mockReturnValue(Promise.resolve(null)),
-          };
-          gcsServiceClient.client.bucket = jest.fn().mockReturnValue(bucketMock);
+      describe('when set exactMatch false', () => {
+        const options = {
+          exactMatch: false,
+        };
+
+        describe('when Bucket#getFiles response exact matched files', () => {
+          beforeEach(() => {
+            const bucketMock = {
+              getFiles: jest.fn().mockResolvedValue([[{ name: 'object-name' }]]),
+            };
+            gcsServiceClient.client.bucket = jest.fn().mockReturnValue(bucketMock);
+          });
+
+          it('return matched files', async() => {
+            await expect(gcsServiceClient.listFiles(url, options)).resolves.toStrictEqual(['object-name']);
+          });
         });
 
-        it('reject with throw exception', async() => {
-          await expect(gcsServiceClient.listFiles(url)).rejects.toThrowError();
-        });
-      });
+        describe('when Bucket#getFiles response not exact matched files', () => {
+          beforeEach(() => {
+            const bucketMock = {
+              getFiles: jest.fn().mockResolvedValue([[{ name: 'unmatched-object-name' }]]),
+            };
+            gcsServiceClient.client.bucket = jest.fn().mockReturnValue(bucketMock);
+          });
 
-      describe('when Bucket#getFiles reject', () => {
-        beforeEach(() => {
-          const bucketMock = {
-            getFiles: jest.fn().mockReturnValue(Promise.resolve(null)),
-          };
-          gcsServiceClient.client.bucket = jest.fn().mockReturnValue(bucketMock);
+          it('return empty files', async() => {
+            await expect(gcsServiceClient.listFiles(url, options)).resolves.toStrictEqual([]);
+          });
         });
 
-        it('reject with throw exception', async() => {
-          await expect(gcsServiceClient.listFiles(url)).rejects.toThrowError();
+        describe('when Bucket#getFiles response prefix matched files', () => {
+          beforeEach(() => {
+            const bucketMock = {
+              getFiles: jest.fn().mockResolvedValue([[{ name: 'object-name1' }]]),
+            };
+            gcsServiceClient.client.bucket = jest.fn().mockReturnValue(bucketMock);
+          });
+
+          it('return prefix matched files', async() => {
+            await expect(gcsServiceClient.listFiles(url, options)).resolves.toStrictEqual(['object-name1']);
+          });
+        });
+
+        describe('when Bucket#getFiles response null', () => {
+          beforeEach(() => {
+            const bucketMock = {
+              getFiles: jest.fn().mockReturnValue(Promise.resolve(null)),
+            };
+            gcsServiceClient.client.bucket = jest.fn().mockReturnValue(bucketMock);
+          });
+
+          it('reject with throw exception', async() => {
+            await expect(gcsServiceClient.listFiles(url, options)).rejects.toThrowError();
+          });
+        });
+
+        describe('when Bucket#getFiles reject', () => {
+          beforeEach(() => {
+            const bucketMock = {
+              getFiles: jest.fn().mockReturnValue(Promise.resolve(null)),
+            };
+            gcsServiceClient.client.bucket = jest.fn().mockReturnValue(bucketMock);
+          });
+
+          it('reject with throw exception', async() => {
+            await expect(gcsServiceClient.listFiles(url, options)).rejects.toThrowError();
+          });
         });
       });
     });

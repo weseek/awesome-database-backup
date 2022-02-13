@@ -1,6 +1,6 @@
 import { Storage, StorageOptions, File } from '@google-cloud/storage';
 import { basename } from 'path';
-import { IStorageServiceClient } from '../interfaces/storage-service-client';
+import { IStorageServiceClient, listGCSFilesOptions } from '../interfaces/storage-service-client';
 
 export declare interface GCSURI {
   bucket: string,
@@ -53,16 +53,27 @@ export class GCSServiceClient implements IStorageServiceClient {
     });
   }
 
-  listFiles(url: string): Promise<string[]> {
-    const gcsUrl = _parseFilePath(url);
-    if (gcsUrl == null) return Promise.reject(new Error(`URI ${url} is not correct GCS's`));
+  listFiles(url: string, optionsRequired?: listGCSFilesOptions): Promise<string[]> {
+    const gcsUri = _parseFilePath(url);
+    if (gcsUri == null) return Promise.reject(new Error(`URI ${url} is not correct GCS's`));
+
+    const defaultOption: listGCSFilesOptions = {
+      exactMatch: true,
+    };
+    const options = optionsRequired ? { ...defaultOption, ...optionsRequired } : defaultOption;
 
     return new Promise((resolve, reject) => {
-      const targetBucket = this.client.bucket(gcsUrl.bucket);
+      const targetBucket = this.client.bucket(gcsUri.bucket);
       targetBucket.getFiles()
-        .then(([files]: File[][]) => {
-          if (files == null) return reject(new Error('Bucket#getFiles return null'));
+        .then(([filesInBucket]: File[][]) => {
+          if (filesInBucket == null) return reject(new Error('Bucket#getFiles return null'));
 
+          let files = filesInBucket;
+          if (!url.endsWith('/')) {
+            const exactFileMatcher = (it: File) => it.name === gcsUri.filepath;
+            const prefixFileMatcher = (it: File) => it.name.startsWith(gcsUri.filepath);
+            files = files.filter(options.exactMatch ? exactFileMatcher : prefixFileMatcher);
+          }
           const filepaths = files.map(file => file.name);
           resolve(filepaths);
         })
@@ -71,11 +82,11 @@ export class GCSServiceClient implements IStorageServiceClient {
   }
 
   deleteFile(url: string): Promise<void> {
-    const gcsUrl = _parseFilePath(url);
-    if (gcsUrl == null) return Promise.reject(new Error(`URI ${url} is not correct GCS's`));
+    const gcsUri = _parseFilePath(url);
+    if (gcsUri == null) return Promise.reject(new Error(`URI ${url} is not correct GCS's`));
 
     return new Promise((resolve, reject) => {
-      const deleteTargetFile = this.client.bucket(gcsUrl.bucket).file(gcsUrl.filepath);
+      const deleteTargetFile = this.client.bucket(gcsUri.bucket).file(gcsUri.filepath);
       deleteTargetFile.delete()
         .then(() => resolve())
         .catch(e => reject(e));
