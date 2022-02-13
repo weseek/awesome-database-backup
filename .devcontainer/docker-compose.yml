@@ -1,0 +1,23 @@
+version: '3'
+services:
+  node:
+    user: node
+    
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    volumes:
+      - ..:/workspace:delegated
+      - node_modules:/workspace/node_modules
+      - node_modules_mongodb:/workspace/apps/mongodb/node_modules
+      - node_modules_postgresql:/workspace/apps/postgresql/node_modules
+      - node_modules_core:/workspace/packages/core/node_modules
+
+    tty: true
+
+volumes:
+  node_modules:
+  node_modules_mongodb:
+  node_modules_postgresql:
+  node_modules_core:
