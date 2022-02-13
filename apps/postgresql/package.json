@@ -12,8 +12,6 @@
   "bugs": {
     "url": "https://github.com/ryu-sato/awesome-backup/issues"
   },
-  "main": "dist/apps/postgresql/src/bin/backup.js",
-  "types": "dist/apps/postgresql/src/bin/backup.d.ts",
   "directories": {
     "test": "__tests__"
   },

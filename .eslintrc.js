@@ -17,7 +17,6 @@ module.exports = {
     'import/prefer-default-export': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/no-var-requires': 'off',
-    'no-console': 'off',
     indent: [
       'error',
       2,
@@ -32,5 +31,19 @@ module.exports = {
       'error',
       { additionalTestBlockFunctions: ['each.test'] },
     ],
+  },
+  settings: {
+    /**
+     * Support paths defined in tsconfig.json
+     * see. https://www.npmjs.com/package/eslint-import-resolver-typescript
+     */
+    'import/resolver': {
+      typescript: {
+        alwaysTryTypes: true,
+        config: [
+          'tsconfig.json',
+        ],
+      },
+    },
   },
 };
