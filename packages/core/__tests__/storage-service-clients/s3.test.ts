@@ -30,67 +30,189 @@ describe('S3ServiceClient', () => {
   });
 
   describe('#listFiles', () => {
-    describe("when request URI is valid S3's bucket", () => {
-      const url = 's3://bucket-name/';
+    let s3ServiceClient: S3ServiceClient;
 
-      let s3ServiceClient: S3ServiceClient;
+    const doMockClientS3AndReloadS3ServiceClient = (clientS3Mock: jest.Mock) => {
+      jest.doMock('@aws-sdk/client-s3', () => {
+        const mock = jest.requireActual('@aws-sdk/client-s3');
+        mock.S3Client.prototype.send = clientS3Mock;
+        return mock;
+      });
+      const { S3ServiceClient } = require('../../src/storage-service-clients/s3');
+      s3ServiceClient = new S3ServiceClient();
+    };
 
-      describe('when S3Client#send response files', () => {
-        beforeEach(() => {
-          jest.doMock('@aws-sdk/client-s3', () => {
-            const mock = jest.requireActual('@aws-sdk/client-s3');
-            mock.S3Client.prototype.send = jest.fn().mockResolvedValue({
-              $metadata: {},
-              Contents: [
-                { Key: 'file1' },
-              ],
+    describe("when request URI is valid S3's", () => {
+      describe('when options are not specified', () => {
+        describe('when request URI is bucket', () => {
+          const url = 's3://bucket-name/';
+
+          describe('when S3Client#send response files', () => {
+            beforeEach(() => {
+              doMockClientS3AndReloadS3ServiceClient(jest.fn().mockResolvedValue({
+                $metadata: {},
+                Contents: [
+                  { Key: 'file1' },
+                ],
+              }));
             });
-            return mock;
+
+            it('return files', async() => {
+              await expect(s3ServiceClient.listFiles(url)).resolves.toStrictEqual(['file1']);
+            });
           });
-          const { S3ServiceClient } = require('../../src/storage-service-clients/s3');
-          s3ServiceClient = new S3ServiceClient();
         });
 
-        it('return files', async() => {
-          await expect(s3ServiceClient.listFiles(url)).resolves.toStrictEqual(['file1']);
+        describe('when request URI is object', () => {
+          const url = 's3://bucket-name/object-name';
+
+          describe('when S3Client#send response exact matched files', () => {
+            beforeEach(() => {
+              doMockClientS3AndReloadS3ServiceClient(jest.fn().mockResolvedValue({
+                $metadata: {},
+                Contents: [
+                  { Key: 'object-name' },
+                ],
+              }));
+            });
+
+            it('return matched files', async() => {
+              await expect(s3ServiceClient.listFiles(url)).resolves.toStrictEqual(['object-name']);
+            });
+          });
+
+          describe('when S3Client#send response not exact matched files', () => {
+            beforeEach(() => {
+              doMockClientS3AndReloadS3ServiceClient(jest.fn().mockResolvedValue({
+                $metadata: {},
+                Contents: [
+                  { Key: 'unmatched-object-name' },
+                ],
+              }));
+            });
+
+            it('reject empty files', async() => {
+              await expect(s3ServiceClient.listFiles(url)).resolves.toStrictEqual([]);
+            });
+          });
+
+          describe('when S3Client#send response prefix matched files', () => {
+            beforeEach(() => {
+              doMockClientS3AndReloadS3ServiceClient(jest.fn().mockResolvedValue({
+                $metadata: {},
+                Contents: [
+                  { Key: 'object-name1' },
+                ],
+              }));
+            });
+
+            it('reject empty files', async() => {
+              await expect(s3ServiceClient.listFiles(url)).resolves.toStrictEqual([]);
+            });
+          });
+
+          describe('when S3Client#send response null', () => {
+            beforeEach(() => {
+              doMockClientS3AndReloadS3ServiceClient(jest.fn().mockResolvedValue(null));
+            });
+
+            it('reject with throw exception', async() => {
+              await expect(s3ServiceClient.listFiles(url)).rejects.toThrowError();
+            });
+          });
+
+          describe('when S3Client#send reject', () => {
+            beforeEach(() => {
+              doMockClientS3AndReloadS3ServiceClient(jest.fn().mockRejectedValue(new Error('some error')));
+            });
+
+            it('reject with throw exception', async() => {
+              await expect(s3ServiceClient.listFiles(url)).rejects.toThrowError();
+            });
+          });
         });
       });
-    });
 
-    describe("when request URI is valid S3's object", () => {
-      const url = 's3://bucket-name/object-name';
+      describe('when set includeFolderInList true', () => {
+        const options = {
+          includeFolderInList: true,
+        };
 
-      let s3ServiceClient: S3ServiceClient;
+        describe('when request URI is bucket', () => {
+          const url = 's3://bucket-name/';
 
-      describe('when S3Client#send response null', () => {
-        beforeEach(() => {
-          jest.doMock('@aws-sdk/client-s3', () => {
-            const mock = jest.requireActual('@aws-sdk/client-s3');
-            mock.S3Client.prototype.send = jest.fn().mockResolvedValue(null);
-            return mock;
+          describe('when S3Client#send response files', () => {
+            beforeEach(() => {
+              doMockClientS3AndReloadS3ServiceClient(jest.fn().mockResolvedValue({
+                $metadata: {},
+                Contents: [
+                  { Key: 'bucket-name' },
+                  { Key: 'bucket-name/file1' },
+                ],
+              }));
+            });
+
+            it('return files', async() => {
+              await expect(s3ServiceClient.listFiles(url, options)).resolves.toStrictEqual([
+                'bucket-name',
+                'bucket-name/file1',
+              ]);
+            });
           });
-          const { S3ServiceClient } = require('../../src/storage-service-clients/s3');
-          s3ServiceClient = new S3ServiceClient();
-        });
-
-        it('reject with throw exception', async() => {
-          await expect(s3ServiceClient.listFiles(url)).rejects.toThrowError();
         });
       });
 
-      describe('when S3Client#send reject', () => {
-        beforeEach(() => {
-          jest.doMock('@aws-sdk/client-s3', () => {
-            const mock = jest.requireActual('@aws-sdk/client-s3');
-            mock.S3Client.prototype.send = jest.fn().mockRejectedValue(new Error('some error'));
-            return mock;
-          });
-          const { S3ServiceClient } = require('../../src/storage-service-clients/s3');
-          s3ServiceClient = new S3ServiceClient();
-        });
+      describe('when set absolutePath false', () => {
+        const options = {
+          absolutePath: false,
+        };
 
-        it('reject with throw exception', async() => {
-          await expect(s3ServiceClient.listFiles(url)).rejects.toThrowError();
+        describe('when request URI is bucket', () => {
+          const url = 's3://bucket-name/';
+
+          describe('when S3Client#send response files', () => {
+            beforeEach(() => {
+              doMockClientS3AndReloadS3ServiceClient(jest.fn().mockResolvedValue({
+                $metadata: {},
+                Contents: [
+                  { Key: 'bucket-name/file1' },
+                ],
+              }));
+            });
+
+            it('return files whose path is relative from bucket path', async() => {
+              await expect(s3ServiceClient.listFiles(url, options)).resolves.toStrictEqual([
+                'file1',
+              ]);
+            });
+          });
+        });
+      });
+
+      describe('when set exactMatch false', () => {
+        const options = {
+          exactMatch: false,
+        };
+
+        describe('when request URI is object', () => {
+          const url = 's3://bucket-name/file';
+
+          describe('when S3Client#send response prefix matched files', () => {
+            beforeEach(() => {
+              doMockClientS3AndReloadS3ServiceClient(jest.fn().mockResolvedValue({
+                $metadata: {},
+                Contents: [
+                  { Key: 'bucket-name/file1' },
+                ],
+              }));
+            });
+
+            it('return prefix matched files', async() => {
+              await expect(s3ServiceClient.listFiles(url, options)).resolves.toStrictEqual([
+                'bucket-name/file1',
+              ]);
+            });
+          });
         });
       });
     });

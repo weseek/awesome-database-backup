@@ -68,13 +68,14 @@ export class S3ServiceClient implements IStorageServiceClient {
    * List objects specified by S3's URI
    *
    * If the URI is not a folder, only objects with an exact match will be returned.
+   * You can get an prefix matched object name by setting the "exactMatch" option to false.
    *
    * If the URI is a folder, it returns a list of objects under the folder. (URL must end with a slash)
    * You can remove a folder from the list by setting the "includeFolderInList" option to false.
    *
    * The returned list will be the absolute path from the bucket.
    * (If the url is "s3://bucket-name/directory", it will look like ["/directory/object-name1", "/directory/object-name2"])
-   * You can get an object name like file name by setting the "absolutePath" option to false.
+   * You can get only object name by setting the "absolutePath" option to false.
    * (If the url is "s3://bucket-name/directory", it will look like ["object-name1", "object-name2"])
    */
   listFiles(url: string, optionsRequired?: listS3FilesOptions): Promise<string[]> {
@@ -98,16 +99,18 @@ export class S3ServiceClient implements IStorageServiceClient {
         .then((response) => {
           if (response == null) return reject(new Error('ListObjectsCommand return null or Contents is null'));
 
-          /* If it is not a folder, only forward matching objects will be returned. */
           let files = response.Contents?.map((content: any) => content.Key) || [];
-          if (url.endsWith('/')) {
-            files = files.filter((key: string) => (options.includeFolderInList ? true : key !== s3Uri.key));
+          if (url.endsWith('/') && !options.includeFolderInList) {
+            const excludeFolderFilter = (filePath: string) => filePath !== s3Uri.key;
+            files = files.filter(excludeFolderFilter);
           }
-          else if (options.exactMatch) {
-            files = files.filter((key: string) => key === s3Uri.key);
+          if (!url.endsWith('/') && options.exactMatch) {
+            const exactMatchFilter = (filePath: string) => filePath === s3Uri.key;
+            files = files.filter(exactMatchFilter);
           }
           if (!options.absolutePath) {
-            files = files.map((key: string) => basename(key));
+            const relativePathChanger = (filePath: string) => basename(filePath);
+            files = files.map(relativePathChanger);
           }
           resolve(files);
         })
