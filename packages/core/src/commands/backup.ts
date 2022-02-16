@@ -116,10 +116,7 @@ export class BackupCommand extends Command {
 
     const action = async(targetBucketUrlString: string, options: IBackupCLIOption) => {
       try {
-        if (options.cronmode && options.cronExpression == null) {
-          logger.error('The option "--cron-expression" must be specified in cron mode.');
-          return;
-        }
+        if (options.cronmode && options.cronExpression == null) throw new Error('The option "--cron-expression" must be specified in cron mode.');
         if (storageServiceClientHolder.storageServiceClient == null) throw new Error('URL scheme is not that of a supported provider.');
 
         const targetBucketUrl = new URL(targetBucketUrlString);
@@ -133,6 +130,7 @@ export class BackupCommand extends Command {
       }
       catch (e: any) {
         logger.error(e);
+        throw e;
       }
     };
 

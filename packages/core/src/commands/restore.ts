@@ -82,6 +82,7 @@ export class RestoreCommand extends Command {
       }
       catch (e: any) {
         logger.error(e);
+        throw e;
       }
     };
 

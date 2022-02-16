@@ -82,6 +82,7 @@ export class PruneCommand extends Command {
       }
       catch (e: any) {
         logger.error(e);
+        throw e;
       }
     };
 

@@ -56,6 +56,7 @@ export class ListCommand extends Command {
       }
       catch (e: any) {
         logger.error(e);
+        throw e;
       }
     };
 
