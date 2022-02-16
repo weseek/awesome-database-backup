@@ -1,36 +1,36 @@
 schemaVersion: 2.0.0
 commandTests:
-- name: backup-help
+- name: when --help is specified, "bin/backup" expect success
   command: node
   args: ["apps/postgresql/dist/apps/postgresql/src/bin/backup.js", "--help"]
-- name: backup-no-arg
+- name: when no argument is specified, "bin/backup" expect fail with error message
   command: node
   args: ["apps/postgresql/dist/apps/postgresql/src/bin/backup.js"]
   expectedError: [".*missing required argument 'TARGET_BUCKET_URL'.*"]
   exitCode: 1
 
-- name: list-help
+- name: when --help is specified, "bin/list" expect success
   command: node
   args: ["apps/postgresql/dist/apps/postgresql/src/bin/list.js", "--help"]
-- name: list-no-arg
+- name: when no argument is specified, "bin/list" expect fail with error message
   command: node
   args: ["apps/postgresql/dist/apps/postgresql/src/bin/list.js"]
   expectedError: [".*missing required argument 'TARGET_BUCKET_URL'.*"]
   exitCode: 1
 
-- name: prune-help
+- name: when --help is specified, "bin/prune" expect success
   command: node
   args: ["apps/postgresql/dist/apps/postgresql/src/bin/prune.js", "--help"]
-- name: prune-no-arg
+- name: when no argument is specified, "bin/prune" expect fail with error message
   command: node
   args: ["apps/postgresql/dist/apps/postgresql/src/bin/prune.js"]
   expectedError: [".*missing required argument 'TARGET_BUCKET_URL'.*"]
   exitCode: 1
 
-- name: restore-help
+- name: when --help is specified, "bin/restore" expect success
   command: node
   args: ["apps/postgresql/dist/apps/postgresql/src/bin/restore.js", "--help"]
-- name: restore-no-arg
+- name: when no argument is specified, "bin/restore" expect fail with error message
   command: node
   args: ["apps/postgresql/dist/apps/postgresql/src/bin/restore.js"]
   expectedError: [".*missing required argument 'TARGET_BUCKET_URL'.*"]
