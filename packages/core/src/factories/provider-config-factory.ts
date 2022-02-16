@@ -9,7 +9,7 @@ function fileExists(path: string): boolean {
   return stat.isFile();
 }
 
-function configPathsS3(): Record<string, string> {
+function configPathsS3(): { configurationPath: string, credentialPath: string } {
   const configDirectory = join(process.env.AWS_CONFIG_FILE || join(process.env.HOME || '/', '.aws'));
   const configurationPath = join(configDirectory, 'config');
   const credentialPath = join(configDirectory, 'credentials');
