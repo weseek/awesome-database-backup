@@ -3,7 +3,6 @@ import { basename, join } from 'path';
 import { Command } from 'commander';
 import axios from 'axios';
 import axiosRetry from 'axios-retry';
-import { EventEmitter } from 'events';
 import { compressBZIP2 } from '../utils/tar';
 import { IStorageServiceClient } from '../interfaces/storage-service-client';
 import {
@@ -17,8 +16,6 @@ const schedule = require('node-schedule');
 const tmp = require('tmp');
 
 const logger = loggerFactory('mongodb-awesome-backup');
-const backupEventEmitter = new EventEmitter();
-const AWSOME_BACKUP_EXIT_BACKUP = 'AWSOME_BACKUP_EXIT_BACKUP';
 
 /* Backup command option types */
 export declare interface IBackupCLIOption extends ICommonCLIOption {
@@ -47,10 +44,6 @@ export class BackupCommand extends Command {
   ): Promise<void> {
     logger.info(`=== ${basename(__filename)} started at ${format(Date.now(), 'yyyy/MM/dd HH:mm:ss')} ===`);
 
-    if (backupEventEmitter.listenerCount(AWSOME_BACKUP_EXIT_BACKUP) === 0) {
-      backupEventEmitter.addListener(AWSOME_BACKUP_EXIT_BACKUP, this.processAfterBackup);
-    }
-
     tmp.setGracefulCleanup();
     const tmpdir = tmp.dirSync({ unsafeCleanup: true });
     const backupFilePath = join(tmpdir.name, `${options.backupfilePrefix}-${format(Date.now(), 'yyyyMMddHHmmss')}`);
@@ -63,7 +56,7 @@ export class BackupCommand extends Command {
     const { compressedFilePath } = await compressBZIP2(backupFilePath);
     await storageServiceClient.copyFile(compressedFilePath, targetBucketUrl.toString());
 
-    backupEventEmitter.emit(AWSOME_BACKUP_EXIT_BACKUP, options);
+    await this.processEndOfBackupOnce(options);
   }
 
   async backupCronMode(
@@ -81,7 +74,10 @@ export class BackupCommand extends Command {
     );
   }
 
-  async processAfterBackup(options: IBackupCLIOption): Promise<void> {
+  /**
+   * Process executed at the end of BackupOnce()
+   */
+  async processEndOfBackupOnce(options: IBackupCLIOption): Promise<void> {
     if (options.healthchecksUrl == null) return;
 
     try {
