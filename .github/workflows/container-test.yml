@@ -36,6 +36,8 @@ jobs:
         load: true
         build-args: |
           packageScope=@awesome-backup/${{ matrix.testingTargetBaseName }}
+          packagePath=apps/${{ matrix.testingTargetBaseName }}
+          dbType=${{ matrix.testingTargetBaseName }}
         cache-from: type=local,src=/tmp/.buildx-cache
         cache-to: type=local,mode=max,dest=/tmp/.buildx-cache-new
         tags: awesome-backup/${{ matrix.testingTargetBaseName }}:latest

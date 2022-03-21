@@ -56,7 +56,7 @@ export function generateGCSServiceClient({
     and it will be deleted when process exit. */
   if (![gcpProjectId, gcpClientEmail, gcpPrivateKey].every(it => it != null)) {
     throw new Error('If you does not set "--gcp-service-account-key-json-path", '
-                      + 'you will need to set all of "--gcp-project-id", "--gcp-access-key-id" and "--gcp-secret-access-key".');
+                      + 'you will need to set all of "--gcp-project-id", "--gcp-client-email" and "--gcp-private-key".');
   }
 
   // [MEMO] Converting escaped characters because newline codes cannot be entered in the commander argument.

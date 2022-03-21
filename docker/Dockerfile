@@ -1,3 +1,5 @@
+ARG dbType
+
 FROM node:16-slim AS base
 
 ##
@@ -49,15 +51,50 @@ RUN yarn run turbo run build --scope="${packageScope}" --include-dependencies --
 
 
 ##
-## release
+## tools
 ##
-FROM base AS release
+FROM base AS tool-common
 
+RUN apt-get update \
+      && apt-get install -y bzip2 \
+      && apt-get clean \
+      && rm -rf /var/lib/apt/lists/*
+
+FROM tool-common AS mongodb
+
+ADD https://fastdl.mongodb.org/tools/db/mongodb-database-tools-debian10-x86_64-100.5.2.deb .
+RUN apt-get update \
+      && apt-get install -y ./mongodb-database-tools-debian10-x86_64-100.5.2.deb \
+      && apt-get clean \
+      && rm -rf /var/lib/apt/lists/*
+
+FROM tool-common AS postgresql
+
+RUN apt-get update \
+      && apt-get install -y postgresql-common --no-install-recommends \
+      && apt-get clean \
+      && rm -rf /var/lib/apt/lists/*
+
+
+##
+## release
+## dbType is "mongodb" or "postgresql"
+##
+FROM ${dbType} AS release
+
+ARG distDir="dist"
 ARG packageScope
+ARG packagePath
 ENV NODE_ENV production
 ENV optDir /opt
 ENV appDir /app
-WORKDIR ${appDir}
+WORKDIR ${appDir}/${packagePath}
 
 COPY --from=builder --chown=node:node \
   ${optDir}/ ${appDir}/
+
+RUN for F in ls ${distDir}/${packagePath}/src/bin/*.js; do \
+      chmod +x $F; \
+      mv $F $(dirname $F)/$(basename -s .js $F); \
+    done
+ENV PATH $PATH:${appDir}/${packagePath}/${distDir}/${packagePath}/src/bin
