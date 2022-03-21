@@ -71,7 +71,7 @@ RUN apt-get update \
 FROM tool-common AS postgresql
 
 RUN apt-get update \
-      && apt-get postgresql-common --no-install-recommends \
+      && apt-get install -y postgresql-common --no-install-recommends \
       && apt-get clean \
       && rm -rf /var/lib/apt/lists/*
 
