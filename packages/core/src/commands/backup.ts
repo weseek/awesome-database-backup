@@ -121,7 +121,7 @@ export class BackupCommand extends Command {
 
         const targetBucketUrl = new URL(targetBucketUrlString);
         const actionImpl = (options.cronmode ? this.backupCronMode : this.backupOnce);
-        await actionImpl(
+        await actionImpl.bind(this)(
           storageServiceClientHolder.storageServiceClient,
           dumpDatabaseFunc,
           targetBucketUrl,
