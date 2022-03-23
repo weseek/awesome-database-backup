@@ -48,36 +48,6 @@ describe('configExistS3', () => {
   });
 });
 
-describe('unlinkConfigS3', () => {
-  const fs = require('fs');
-  const unlinkSyncMock = jest.spyOn(fs, 'unlinkSync').mockReturnValue(undefined);
-
-  beforeEach(() => {
-    providerConfigFactory = rewire(path.join(__dirname, '../../dist/factories/provider-config-factory'));
-    providerConfigFactory.__set__(
-      'configPathsS3',
-      jest.fn().mockReturnValue({
-        configurationPath: '/path/to/config',
-        credentialPath: '/path/to/credential',
-      }),
-    );
-  });
-
-  describe('in case of config file exists', () => {
-    beforeEach(() => {
-      providerConfigFactory.__set__(
-        'fileExists',
-        jest.fn().mockReturnValue(true),
-      );
-    });
-
-    it('return undefined, and call "unlinkSync" method', () => {
-      expect(providerConfigFactory.unlinkConfigS3()).toBe(undefined);
-      expect(unlinkSyncMock).toBeCalled();
-    });
-  });
-});
-
 describe('createConfigS3', () => {
   const configPathObject = {
     configurationPath: '/path/to/config',

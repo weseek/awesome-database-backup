@@ -1,5 +1,5 @@
 import { Storage, StorageOptions, File } from '@google-cloud/storage';
-import { basename } from 'path';
+import { basename, join } from 'path';
 import { IStorageServiceClient, listGCSFilesOptions } from '../interfaces/storage-service-client';
 
 export declare interface GCSURI {
@@ -9,12 +9,13 @@ export declare interface GCSURI {
 
 /**
  * Parse GCS's URI(start with "gs:")
+ * ex. It'll break down "gs://bucket/folder/file" to {"bucket": "bucket", "filepath": "folder/file"}.
  * If it is not GCS's URL, return null.
  */
 function _parseFilePath(path: string): GCSURI | null {
   /* GCS URI */
   if (path.startsWith('gs:')) {
-    // https://regex101.com/r/vDGuGY/1
+    // https://regex101.com/r/QesT48/1
     const regexGCSUri = /^gs:\/\/([^/]+)\/?(.*)$/;
     try {
       const match = path.match(regexGCSUri);
@@ -64,11 +65,12 @@ export class GCSServiceClient implements IStorageServiceClient {
 
     return new Promise((resolve, reject) => {
       const targetBucket = this.client.bucket(gcsUri.bucket);
-      targetBucket.getFiles()
-        .then(([filesInBucket]: File[][]) => {
-          if (filesInBucket == null) return reject(new Error('Bucket#getFiles return null'));
+      targetBucket.getFiles({ prefix: gcsUri.filepath })
+        // getFiles() return like "[[File1],[File2],...]", so removed the outermost array
+        .then(([matchedFiles]: File[][]) => {
+          if (matchedFiles == null) return reject(new Error('Bucket#getFiles return null'));
 
-          let files = filesInBucket;
+          let files = matchedFiles;
           if (!url.endsWith('/')) {
             const exactFileMatcher = (it: File) => it.name === gcsUri.filepath;
             const prefixFileMatcher = (it: File) => it.name.startsWith(gcsUri.filepath);
@@ -119,11 +121,9 @@ export class GCSServiceClient implements IStorageServiceClient {
 
   uploadFile(sourceFilePath: string, destinationGCSUri: GCSURI): Promise<void> {
     return new Promise((resolve, reject) => {
-      const destinationFilePath = (destinationGCSUri.filepath === '' || destinationGCSUri.filepath.endsWith('/'))
-        ? basename(sourceFilePath)
-        : destinationGCSUri.filepath;
       const destinationBucket = this.client.bucket(destinationGCSUri.bucket);
-      destinationBucket.upload(sourceFilePath, { destination: destinationFilePath })
+      const destination = join(destinationGCSUri.filepath, basename(sourceFilePath));
+      destinationBucket.upload(sourceFilePath, { destination })
         .then(() => resolve())
         .catch(e => reject(e));
     });
