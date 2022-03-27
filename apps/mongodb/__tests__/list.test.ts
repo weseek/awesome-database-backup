@@ -45,7 +45,7 @@ describe('list', () => {
       await exec(`${awsCommand} s3 cp __tests__/fixtures/dummy-backup-20180622000000.tar.bz2 ${bucketURI}`);
     });
 
-    it('list backup files', async() => {
+    it('list files in bucket', async() => {
       expect(await exec(commandLine)).toEqual({
         stdout: expect.stringContaining('dummy-backup-20180622000000.tar.bz2'),
         stderr: '',
