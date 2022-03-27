@@ -1,7 +1,9 @@
 import { exec as execOriginal } from 'child_process';
 import { promisify } from 'util';
+import { testS3BucketURI, cleanTestS3Bucket } from './supports/s3rver-cleaner';
 
 const exec = promisify(execOriginal);
+
 const execRestoreCommand = 'yarn run ts-node src/bin/restore';
 
 describe('restore', () => {
@@ -35,6 +37,7 @@ describe('restore', () => {
       --restore-tool-options "--uri mongodb://root:password@mongo/?authSource=admin" \
       ${objectURI}`;
 
+    beforeEach(cleanTestS3Bucket);
     beforeEach(async() => {
       // prepare S3 bucket
       const awsCommand = '\
@@ -43,8 +46,6 @@ describe('restore', () => {
         aws \
         --endpoint-url http://s3.s3rver \
         --region us-east-1';
-      await exec(`${awsCommand} s3 rb ${bucketURI} --force`);
-      await exec(`${awsCommand} s3 mb ${bucketURI}`);
       await exec(`${awsCommand} s3 cp __tests__/fixtures/backup-20220327224212.tar.bz2 ${bucketURI}`);
 
       // prepare mongoDB
