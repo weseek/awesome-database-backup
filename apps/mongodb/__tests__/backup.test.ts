@@ -46,7 +46,6 @@ describe('backup', () => {
         --region us-east-1';
       await exec(`${awsCommand} s3 rb ${bucketURI} --force`);
       await exec(`${awsCommand} s3 mb ${bucketURI}`);
-      await exec(`${awsCommand} s3 cp __tests__/fixtures/dummy-backup-20180622000000.tar.bz2 ${bucketURI}`);
 
       // prepare mongoDB
       tmp.setGracefulCleanup();
