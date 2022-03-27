@@ -4,7 +4,7 @@ import { promisify } from 'util';
 const exec = promisify(execOriginal);
 const execRestoreCommand = 'yarn run ts-node src/bin/restore';
 
-describe('backup', () => {
+describe('restore', () => {
   describe('when option --help is specified', () => {
     const commandLine = `${execRestoreCommand} --help`;
     it('show help messages', async() => {
