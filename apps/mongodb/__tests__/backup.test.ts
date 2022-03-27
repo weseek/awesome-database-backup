@@ -1,6 +1,5 @@
 import { exec as execOriginal } from 'child_process';
 import { promisify } from 'util';
-import { join } from 'path';
 
 const exec = promisify(execOriginal);
 const execBackupCommand = 'yarn run ts-node src/bin/backup';
