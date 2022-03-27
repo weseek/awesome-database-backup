@@ -42,12 +42,12 @@ describe('list', () => {
         --region us-east-1';
       await exec(`${awsCommand} s3 rb ${bucketURI} --force`);
       await exec(`${awsCommand} s3 mb ${bucketURI}`);
-      await exec(`${awsCommand} s3 cp __tests__/fixtures/dummy-backup-20220327000000.tar.bz2 ${bucketURI}`);
+      await exec(`${awsCommand} s3 cp __tests__/fixtures/backup-20220327224212.tar.bz2 ${bucketURI}`);
     });
 
     it('list files in bucket', async() => {
       expect(await exec(commandLine)).toEqual({
-        stdout: expect.stringContaining('dummy-backup-20220327000000.tar.bz2'),
+        stdout: expect.stringContaining('backup-20220327224212.tar.bz2'),
         stderr: '',
       });
     });

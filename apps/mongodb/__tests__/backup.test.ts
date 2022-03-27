@@ -49,7 +49,7 @@ describe('backup', () => {
       // prepare mongoDB
       tmp.setGracefulCleanup();
       const tmpdir = tmp.dirSync({ unsafeCleanup: true });
-      await exec(`tar jxf __tests__/fixtures/dummy-backup-20220327000000.tar.bz2 -C ${tmpdir.name}`);
+      await exec(`tar jxf __tests__/fixtures/backup-20220327224212.tar.bz2 -C ${tmpdir.name}`);
       await exec(`mongorestore -h mongo -u root -p password --authenticationDatabase=admin --drop --dir ${tmpdir.name}`);
     });
 
