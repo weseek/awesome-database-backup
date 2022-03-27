@@ -15,7 +15,7 @@ export async function cleanTestS3Bucket(): Promise<void> {
     await exec(`${awsCommand} s3 rb ${testS3BucketURI} --force`);
   }
   catch (e: any) {
-    // nothing to do
+    // If the bucket does not exist, an error occurs, but the error is caught and nothing is done
   }
   await exec(`${awsCommand} s3 mb ${testS3BucketURI}`);
 }
