@@ -37,6 +37,12 @@ RUN apt-get update \
       && apt-get install -y bzip2 \
       && apt-get clean \
       && rm -rf /var/lib/apt/lists/*
+## mongo shell
+ADD https://downloads.mongodb.com/compass/mongodb-mongosh_1.3.1_amd64.deb .
+RUN apt-get update \
+      && apt-get install -y ./mongodb-mongosh_1.3.1_amd64.deb \
+      && apt-get clean \
+      && rm -rf /var/lib/apt/lists/*
 ## mongo tools
 ADD https://fastdl.mongodb.org/tools/db/mongodb-database-tools-debian10-x86_64-100.5.2.deb .
 RUN apt-get update \
