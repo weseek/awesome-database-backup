@@ -24,7 +24,7 @@ describe('list', () => {
     });
   });
 
-  describe('when valid S3 options is specified', () => {
+  describe('when valid S3 options are specified', () => {
     const bucketURI = 's3://test/';
     const commandLine = `${execListCommand} \
       --aws-endpoint-url http://s3.s3rver \
@@ -51,5 +51,9 @@ describe('list', () => {
         stderr: '',
       });
     });
+  });
+
+  describe('when valid GCS options are specified', () => {
+    // TODO
   });
 });
