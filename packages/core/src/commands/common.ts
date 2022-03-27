@@ -8,6 +8,7 @@ import { storageProviderType, generateStorageServiceClient } from '../factories/
 
 /* Common command option types */
 export declare interface ICommonCLIOption {
+  awsEndpointUrl?: string,
   awsRegion?: string
   awsAccessKeyId?: string,
   awsSecretAccessKey?: string,
@@ -20,6 +21,7 @@ export declare interface ICommonCLIOption {
 export function addStorageServiceClientOptions(command: Command): void {
   command
     /* AWS options */
+    .option('--aws-endpoint-url <AWS_ENDPOINT_URL>', 'URL to send the request to')
     .option('--aws-region <AWS_REGION>', 'AWS Region')
     .addOption(new Option('--aws-access-key-id <AWS_ACCESS_KEY_ID>', 'Your IAM Access Key ID').env('AWS_ACCESS_KEY_ID'))
     .addOption(new Option('--aws-secret-access-key <AWS_SECRET_ACCESS_KEY>', 'Your IAM Secret Access Key').env('AWS_SECRET_ACCESS_KEY'))
