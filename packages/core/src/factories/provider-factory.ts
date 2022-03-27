@@ -1,3 +1,4 @@
+import { S3Client } from '@aws-sdk/client-s3';
 import { StorageProviderType, IStorageServiceClient } from '../interfaces/storage-service-client';
 import { ICommonCLIOption } from '../commands/common';
 import {
@@ -16,10 +17,12 @@ export function storageProviderType(target: URL): StorageProviderType|undefined 
 }
 
 export function generateS3ServiceClient({
+  awsEndpointUrl,
   awsRegion,
   awsAccessKeyId,
   awsSecretAccessKey,
 }: {
+  awsEndpointUrl: string,
   awsRegion?: string,
   awsAccessKeyId?: string,
   awsSecretAccessKey?: string,
@@ -34,7 +37,10 @@ export function generateS3ServiceClient({
     createConfigS3({ awsRegion, awsAccessKeyId, awsSecretAccessKey });
   }
 
-  return new S3ServiceClient({});
+  const s3ClientConfig = awsEndpointUrl
+    ? { endpoint: awsEndpointUrl }
+    : {};
+  return new S3ServiceClient(s3ClientConfig);
 }
 
 export function generateGCSServiceClient({
