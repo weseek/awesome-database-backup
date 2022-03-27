@@ -22,7 +22,8 @@
     "build": "tsc && tsc-alias",
     "// for development": "",
     "ts-node-dev": "cross-env NODE_ENV=development ts-node-dev -r tsconfig-paths/register",
-    "test": "cross-env NODE_ENV=test jest --passWithNoTests",
+    "//// Cannot run in parallel due to shared S3 mock": "",
+    "test": "cross-env NODE_ENV=test jest --passWithNoTests -i",
     "lint": "eslint src --ext .ts",
     "lint:fix": "eslint src --ext .ts --fix"
   },
