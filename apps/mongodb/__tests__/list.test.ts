@@ -1,7 +1,15 @@
 import { exec as execOriginal } from 'child_process';
 import { promisify } from 'util';
-import { testS3BucketURI, cleanTestS3Bucket } from './supports/s3rver-cleaner';
-import { testGCSBucketURI, cleanTestGCSBucket, uploadFixtureToTestBucket } from './supports/fake-gcs-server';
+import {
+  testS3BucketURI,
+  cleanTestS3Bucket,
+  uploadFixtureToTestS3Bucket,
+} from './supports/s3rver';
+import {
+  testGCSBucketURI,
+  cleanTestGCSBucket,
+  uploadFixtureToTestGCSBucket,
+} from './supports/fake-gcs-server';
 
 const exec = promisify(execOriginal);
 
@@ -37,13 +45,7 @@ describe('list', () => {
 
     beforeEach(cleanTestS3Bucket);
     beforeEach(async() => {
-      const awsCommand = '\
-        AWS_ACCESS_KEY_ID="S3RVER" \
-        AWS_SECRET_ACCESS_KEY="S3RVER" \
-        aws \
-        --endpoint-url http://s3.s3rver \
-        --region us-east-1';
-      await exec(`${awsCommand} s3 cp __tests__/fixtures/backup-20220327224212.tar.bz2 ${testS3BucketURI}/`);
+      await uploadFixtureToTestS3Bucket('backup-20220327224212.tar.bz2');
     });
 
     it('list files in bucket', async() => {
@@ -64,7 +66,7 @@ describe('list', () => {
 
     beforeEach(cleanTestGCSBucket);
     beforeEach(async() => {
-      await uploadFixtureToTestBucket('backup-20220327224212.tar.bz2');
+      await uploadFixtureToTestGCSBucket('backup-20220327224212.tar.bz2');
     });
 
     it('list files in bucket', async() => {

@@ -1,10 +1,13 @@
 import { exec as execOriginal } from 'child_process';
 import { promisify } from 'util';
-import { cleanTestS3Bucket } from './supports/s3rver-cleaner';
+import {
+  cleanTestS3Bucket,
+  uploadFixtureToTestS3Bucket,
+} from './supports/s3rver';
 import {
   testGCSBucketURI,
   cleanTestGCSBucket,
-  uploadFixtureToTestBucket,
+  uploadFixtureToTestGCSBucket,
 } from './supports/fake-gcs-server';
 import {
   dropTestMongoDB,
@@ -49,14 +52,7 @@ describe('restore', () => {
     beforeEach(cleanTestS3Bucket);
     beforeEach(dropTestMongoDB);
     beforeEach(async() => {
-      // prepare S3 bucket
-      const awsCommand = '\
-        AWS_ACCESS_KEY_ID="S3RVER" \
-        AWS_SECRET_ACCESS_KEY="S3RVER" \
-        aws \
-        --endpoint-url http://s3.s3rver \
-        --region us-east-1';
-      await exec(`${awsCommand} s3 cp __tests__/fixtures/backup-20220327224212.tar.bz2 ${bucketURI}`); // includes 'dummy' collection
+      await uploadFixtureToTestS3Bucket('backup-20220327224212.tar.bz2'); // includes 'dummy' collection
     });
 
     it('restore mongo in bucket', async() => {
@@ -82,7 +78,7 @@ describe('restore', () => {
     beforeEach(cleanTestGCSBucket);
     beforeEach(dropTestMongoDB);
     beforeEach(async() => {
-      uploadFixtureToTestBucket('backup-20220327224212.tar.bz2'); // includes 'dummy' collection
+      await uploadFixtureToTestGCSBucket('backup-20220327224212.tar.bz2'); // includes 'dummy' collection
     });
 
     it('restore mongo in bucket', async() => {

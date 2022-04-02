@@ -20,13 +20,13 @@ export async function cleanTestGCSBucket(): Promise<void> {
   await storage.createBucket(testGCSBucketName);
 }
 
-export async function uploadFixtureToTestBucket(fixtureName: string, newFixtureName?: string): Promise<void> {
+export async function uploadFixtureToTestGCSBucket(fixtureName: string, newFixtureName?: string): Promise<void> {
   await storage.bucket(testGCSBucketName).upload(fixturePath(fixtureName), {
     destination: newFixtureName || fixtureName,
   });
 }
 
-export async function listFileNamesInTestBucket(): Promise<Array<string>> {
+export async function listFileNamesInTestGCSBucket(): Promise<Array<string>> {
   const files = (await storage.bucket(testGCSBucketName).getFiles())[0];
   return files.map(file => file.name);
 }

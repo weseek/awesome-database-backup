@@ -1,10 +1,13 @@
 import { exec as execOriginal } from 'child_process';
 import { promisify } from 'util';
-import { testS3BucketURI, cleanTestS3Bucket } from './supports/s3rver-cleaner';
+import {
+  testS3BucketURI,
+  cleanTestS3Bucket,
+} from './supports/s3rver';
 import {
   testGCSBucketURI,
   cleanTestGCSBucket,
-  listFileNamesInTestBucket,
+  listFileNamesInTestGCSBucket,
 } from './supports/fake-gcs-server';
 
 const exec = promisify(execOriginal);
@@ -82,12 +85,12 @@ describe('backup', () => {
       });
 
       it('backup mongo in bucket', async() => {
-        expect((await listFileNamesInTestBucket()).length).toBe(0);
+        expect((await listFileNamesInTestGCSBucket()).length).toBe(0);
         expect(await exec(commandLine)).toEqual({
           stdout: expect.stringMatching(/=== backup.js started at .* ===/),
           stderr: '',
         });
-        expect((await listFileNamesInTestBucket()).length).toBe(1);
+        expect((await listFileNamesInTestGCSBucket()).length).toBe(1);
       });
     });
   });

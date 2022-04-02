@@ -1,12 +1,17 @@
 import { exec as execOriginal } from 'child_process';
 import { promisify } from 'util';
 import { format } from 'date-fns';
-import { testS3BucketURI, cleanTestS3Bucket } from './supports/s3rver-cleaner';
+import {
+  testS3BucketURI,
+  cleanTestS3Bucket,
+  uploadFixtureToTestS3Bucket,
+  listFileNamesInTestS3Bucket,
+} from './supports/s3rver';
 import {
   testGCSBucketURI,
   cleanTestGCSBucket,
-  uploadFixtureToTestBucket,
-  listFileNamesInTestBucket
+  uploadFixtureToTestGCSBucket,
+  listFileNamesInTestGCSBucket,
 } from './supports/fake-gcs-server';
 
 const exec = promisify(execOriginal);
@@ -45,31 +50,19 @@ describe('prune', () => {
         --delete-divide 1 \
         --delete-target-days-left 0 \
         ${testS3BucketURI}`;
-      const awsCommand = '\
-        AWS_ACCESS_KEY_ID="S3RVER" \
-        AWS_SECRET_ACCESS_KEY="S3RVER" \
-        aws \
-        --endpoint-url http://s3.s3rver \
-        --region us-east-1';
-      const backupFile = `backup-${format(Date.now(), 'yyyyMMddHHmmss')}.tar.bz2`;
+      const backupFileName = `backup-${format(Date.now(), 'yyyyMMddHHmmss')}.tar.bz2`;
 
       beforeEach(async() => {
-        await exec(`${awsCommand} s3 cp __tests__/fixtures/backup-20220327224212.tar.bz2 ${testS3BucketURI}/${backupFile}`);
+        await uploadFixtureToTestS3Bucket('backup-20220327224212.tar.bz2', backupFileName);
       });
 
       it("prune today's files in bucket", async() => {
-        expect(await exec(`${awsCommand} s3 ls ${testS3BucketURI}`)).toEqual({
-          stdout: expect.stringContaining(backupFile),
-          stderr: '',
-        });
+        expect(await listFileNamesInTestS3Bucket()).toEqual([backupFileName]);
         expect(await exec(commandLine)).toEqual({
           stdout: expect.stringContaining('DELETED past backuped file on S3'),
           stderr: '',
         });
-        expect(await exec(`${awsCommand} s3 ls ${testS3BucketURI}`)).toEqual({
-          stdout: '',
-          stderr: '',
-        });
+        expect(await listFileNamesInTestS3Bucket()).toEqual([]);
       });
     });
   });
@@ -89,18 +82,16 @@ describe('prune', () => {
       const backupFileName = `backup-${format(Date.now(), 'yyyyMMddHHmmss')}.tar.bz2`;
 
       beforeEach(async() => {
-        await uploadFixtureToTestBucket('backup-20220327224212.tar.bz2', backupFileName);
+        await uploadFixtureToTestGCSBucket('backup-20220327224212.tar.bz2', backupFileName);
       });
 
       it("prune today's files in bucket", async() => {
-        expect(await listFileNamesInTestBucket()).toEqual([
-          expect.stringContaining(backupFileName),
-        ]);
+        expect(await listFileNamesInTestGCSBucket()).toEqual([backupFileName]);
         expect(await exec(commandLine)).toEqual({
           stdout: expect.stringContaining('DELETED past backuped file on GCS'),
           stderr: '',
         });
-        expect(await listFileNamesInTestBucket()).toEqual([]);
+        expect(await listFileNamesInTestGCSBucket()).toEqual([]);
       });
     });
   });
