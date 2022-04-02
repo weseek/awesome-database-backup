@@ -19,9 +19,9 @@ export async function cleanTestGCSBucket(): Promise<void> {
   await storage.createBucket(testGCSBucketName);
 }
 
-export async function uploadFixtureToTestBucket(fixtureName: string): Promise<void> {
+export async function uploadFixtureToTestBucket(fixtureName: string, newFixtureName?: string): Promise<void> {
   await storage.bucket(testGCSBucketName).upload(fixturePath(fixtureName), {
-    destination: fixtureName,
+    destination: newFixtureName || fixtureName,
   });
 }
 

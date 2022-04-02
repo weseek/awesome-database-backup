@@ -2,6 +2,12 @@ import { exec as execOriginal } from 'child_process';
 import { promisify } from 'util';
 import { format } from 'date-fns';
 import { testS3BucketURI, cleanTestS3Bucket } from './supports/s3rver-cleaner';
+import {
+  testGCSBucketURI,
+  cleanTestGCSBucket,
+  uploadFixtureToTestBucket,
+  listFileNamesInTestBucket
+} from './supports/fake-gcs-server';
 
 const exec = promisify(execOriginal);
 
@@ -69,6 +75,33 @@ describe('prune', () => {
   });
 
   describe('when valid GCS options are specified', () => {
-    // TODO
+    beforeEach(cleanTestGCSBucket);
+
+    describe('and when prune options show pruning files everyday', () => {
+      const commandLine = `${execPruneCommand} \
+        --gcp-endpoint-url http://fake-gcs-server:4443 \
+        --gcp-project-id valid_project_id \
+        --gcp-client-email valid@example.com \
+        --gcp-private-key valid_private_key \
+        --delete-divide 1 \
+        --delete-target-days-left 0 \
+        ${testGCSBucketURI}/`;
+      const backupFileName = `backup-${format(Date.now(), 'yyyyMMddHHmmss')}.tar.bz2`;
+
+      beforeEach(async() => {
+        await uploadFixtureToTestBucket('backup-20220327224212.tar.bz2', backupFileName);
+      });
+
+      it("prune today's files in bucket", async() => {
+        expect(await listFileNamesInTestBucket()).toEqual([
+          expect.stringContaining(backupFileName),
+        ]);
+        expect(await exec(commandLine)).toEqual({
+          stdout: expect.stringContaining('DELETED past backuped file on GCS'),
+          stderr: '',
+        });
+        expect(await listFileNamesInTestBucket()).toEqual([]);
+      });
+    });
   });
 });
