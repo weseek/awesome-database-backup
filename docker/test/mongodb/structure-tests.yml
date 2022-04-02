@@ -37,6 +37,10 @@ commandTests:
   command: which
   args: ["mongodump"]
 
+- name: expect "which mongorestore" return valid path
+  command: which
+  args: ["mongorestore"]
+
 # ================================================================================
 # Execution
 # ================================================================================
