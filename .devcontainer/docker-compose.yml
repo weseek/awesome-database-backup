@@ -47,6 +47,27 @@ services:
       test:
         ipv4_address: 172.16.2.3
 
+  # GCS Mock for test
+  fake-gcs-server:
+    image: fsouza/fake-gcs-server:1.37.3
+    volumes:
+    - fake-gcs-server:/data
+    command:
+    - --scheme
+    - http
+    - --public-host
+    - fake-gcs-server
+    networks:
+    - test
+
+  # DNS masquerade
+  #
+  # WHY:
+  #   S3 API v2 supports only virtual host format.
+  #   Access to "bucket-name" is assigned to "bucket-name.s3.s3rver",
+  #     but docker-compose "aliases" does not support wildcard, so dnsmasq is used.
+  #   This means that all name resolution results for "*.s3rver" will be the IP address of the "s3rver" container.
+  #
   # ref. https://github.com/docker/compose/issues/7493#issuecomment-922513766
   dnsmasq:
     image: strm/dnsmasq
@@ -69,6 +90,7 @@ volumes:
   mongo_data:
   postgres_data:
   s3rver:
+  fake-gcs-server:
 
 networks:
   test:
