@@ -1,11 +1,15 @@
 import { exec as execOriginal } from 'child_process';
 import { promisify } from 'util';
-import { testS3BucketURI, cleanTestS3Bucket } from './supports/s3rver-cleaner';
+import { cleanTestS3Bucket } from './supports/s3rver-cleaner';
 import {
   testGCSBucketURI,
   cleanTestGCSBucket,
   uploadFixtureToTestBucket,
 } from './supports/fake-gcs-server';
+import {
+  dropTestMongoDB,
+  listCollectionNamesInTestMongoDB,
+} from './supports/mongodb';
 
 const exec = promisify(execOriginal);
 
@@ -43,6 +47,7 @@ describe('restore', () => {
       ${objectURI}`;
 
     beforeEach(cleanTestS3Bucket);
+    beforeEach(dropTestMongoDB);
     beforeEach(async() => {
       // prepare S3 bucket
       const awsCommand = '\
@@ -51,25 +56,16 @@ describe('restore', () => {
         aws \
         --endpoint-url http://s3.s3rver \
         --region us-east-1';
-      await exec(`${awsCommand} s3 cp __tests__/fixtures/backup-20220327224212.tar.bz2 ${bucketURI}`);
-
-      // prepare mongoDB
-      await exec('mongosh mongodb://root:password@mongo/dummy?authSource=admin --eval "db.dropDatabase()"');
+      await exec(`${awsCommand} s3 cp __tests__/fixtures/backup-20220327224212.tar.bz2 ${bucketURI}`); // includes 'dummy' collection
     });
 
     it('restore mongo in bucket', async() => {
-      expect(await exec('mongosh mongodb://root:password@mongo/dummy?authSource=admin --eval "db.getCollectionNames()" --quiet')).toEqual({
-        stdout: expect.stringContaining('[]'),
-        stderr: '',
-      });
+      expect(await listCollectionNamesInTestMongoDB()).toEqual([]);
       expect(await exec(commandLine)).toEqual({
         stdout: expect.stringMatching(/=== restore.js started at .* ===/),
         stderr: '',
       });
-      expect(await exec('mongosh mongodb://root:password@mongo/dummy?authSource=admin --eval "db.getCollectionNames()" --quiet')).toEqual({
-        stdout: expect.stringContaining("'dummy'"),
-        stderr: '',
-      });
+      expect(await listCollectionNamesInTestMongoDB()).toEqual(['dummy']);
     });
   });
 
@@ -84,27 +80,18 @@ describe('restore', () => {
       ${objectURI}`;
 
     beforeEach(cleanTestGCSBucket);
+    beforeEach(dropTestMongoDB);
     beforeEach(async() => {
-      // prepare GCS bucket
-      uploadFixtureToTestBucket('backup-20220327224212.tar.bz2');
-
-      // prepare mongoDB
-      await exec('mongosh mongodb://root:password@mongo/dummy?authSource=admin --eval "db.dropDatabase()"');
+      uploadFixtureToTestBucket('backup-20220327224212.tar.bz2'); // includes 'dummy' collection
     });
 
     it('restore mongo in bucket', async() => {
-      expect(await exec('mongosh mongodb://root:password@mongo/dummy?authSource=admin --eval "db.getCollectionNames()" --quiet')).toEqual({
-        stdout: expect.stringContaining('[]'),
-        stderr: '',
-      });
+      expect(await listCollectionNamesInTestMongoDB()).toEqual([]);
       expect(await exec(commandLine)).toEqual({
         stdout: expect.stringMatching(/=== restore.js started at .* ===/),
         stderr: '',
       });
-      expect(await exec('mongosh mongodb://root:password@mongo/dummy?authSource=admin --eval "db.getCollectionNames()" --quiet')).toEqual({
-        stdout: expect.stringContaining("'dummy'"),
-        stderr: '',
-      });
+      expect(await listCollectionNamesInTestMongoDB()).toEqual(['dummy']);
     });
   });
 });

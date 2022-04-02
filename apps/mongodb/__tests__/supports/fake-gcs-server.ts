@@ -12,6 +12,7 @@ const storage = new Storage({
 
 export const testGCSBucketName = 'test';
 export const testGCSBucketURI = `gs://${testGCSBucketName}`;
+
 export async function cleanTestGCSBucket(): Promise<void> {
   await storage.createBucket(testGCSBucketName);
   await storage.bucket(testGCSBucketName).deleteFiles({ force: true });
