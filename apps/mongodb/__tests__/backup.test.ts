@@ -9,9 +9,9 @@ import {
   cleanTestGCSBucket,
   listFileNamesInTestGCSBucket,
 } from './supports/fake-gcs-server';
+import { prepareTestMongoDB } from './supports/mongodb';
 
 const exec = promisify(execOriginal);
-const tmp = require('tmp');
 
 const execBackupCommand = 'yarn run ts-node src/bin/backup';
 
@@ -37,6 +37,7 @@ describe('backup', () => {
 
   describe('when valid S3 options are specified', () => {
     beforeEach(cleanTestS3Bucket);
+    beforeEach(prepareTestMongoDB);
 
     describe('and when backup tool options are specified', () => {
       const commandLine = `${execBackupCommand} \
@@ -46,14 +47,6 @@ describe('backup', () => {
         --aws-secret-access-key "S3RVER" \
         --backup-tool-options "--uri mongodb://root:password@mongo/dummy?authSource=admin" \
         ${testS3BucketURI}`;
-
-      beforeEach(async() => {
-        // prepare mongoDB
-        tmp.setGracefulCleanup();
-        const tmpdir = tmp.dirSync({ unsafeCleanup: true });
-        await exec(`tar jxf __tests__/fixtures/backup-20220327224212.tar.bz2 -C ${tmpdir.name}`);
-        await exec(`mongorestore -h mongo -u root -p password --authenticationDatabase=admin --drop --dir ${tmpdir.name}`);
-      });
 
       it('backup mongo in bucket', async() => {
         expect(await exec(commandLine)).toEqual({
@@ -66,6 +59,7 @@ describe('backup', () => {
 
   describe('when valid GCS options are specified', () => {
     beforeEach(cleanTestGCSBucket);
+    beforeEach(prepareTestMongoDB);
 
     describe('and when backup tool options are specified', () => {
       const commandLine = `${execBackupCommand} \
@@ -75,14 +69,6 @@ describe('backup', () => {
         --gcp-private-key valid_private_key \
         --backup-tool-options "--uri mongodb://root:password@mongo/dummy?authSource=admin" \
         ${testGCSBucketURI}/`;
-
-      beforeEach(async() => {
-        // prepare mongoDB
-        tmp.setGracefulCleanup();
-        const tmpdir = tmp.dirSync({ unsafeCleanup: true });
-        await exec(`tar jxf __tests__/fixtures/backup-20220327224212.tar.bz2 -C ${tmpdir.name}`);
-        await exec(`mongorestore -h mongo -u root -p password --authenticationDatabase=admin --drop --dir ${tmpdir.name}`);
-      });
 
       it('backup mongo in bucket', async() => {
         expect((await listFileNamesInTestGCSBucket()).length).toBe(0);
