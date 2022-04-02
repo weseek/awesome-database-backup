@@ -1,29 +1,24 @@
-import { exec as execOriginal } from 'child_process';
-import { promisify } from 'util';
-
-const exec = promisify(execOriginal);
+import { MongoClient } from 'mongodb';
 
 export const testMongoDBName = 'dummy';
+const client = new MongoClient('mongodb://root:password@mongo/?authSource=admin');
 
 export async function dropTestMongoDB(): Promise<void> {
-  await exec(`mongosh mongodb://root:password@mongo/${testMongoDBName}?authSource=admin --eval "db.dropDatabase()"`);
+  await client.connect();
+  await client.db(testMongoDBName).dropDatabase();
+  await client.close();
 }
 
 export async function prepareTestMongoDB(): Promise<void> {
-  await dropTestMongoDB();
-  await exec(`mongosh mongodb://root:password@mongo/${testMongoDBName}?authSource=admin --eval "db.dummy.insert({ dummy: 'dummy' })"`);
+  await client.connect();
+  await client.db(testMongoDBName).dropDatabase();
+  await client.db(testMongoDBName).createCollection('dummy');
+  await client.close();
 }
 
 export async function listCollectionNamesInTestMongoDB(): Promise<Array<string>> {
-  const { stdout, stderr } = await exec(`
-      mongosh \
-      mongodb://root:password@mongo/dummy?authSource=admin \
-      --eval "JSON.stringify(db.getCollectionNames())" \
-      --quiet \
-  `);
-  if (stderr) {
-    console.log(stderr);
-  }
-  const collectionNames = JSON.parse(stdout);
-  return collectionNames;
+  await client.connect();
+  const collections = await client.db(testMongoDBName).collections();
+  await client.close();
+  return collections.map(collection => collection.collectionName);
 }
