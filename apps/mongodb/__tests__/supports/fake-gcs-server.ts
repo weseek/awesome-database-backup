@@ -24,3 +24,8 @@ export async function uploadFixtureToTestBucket(fixtureName: string): Promise<vo
     destination: fixtureName,
   });
 }
+
+export async function listFileNamesInTestBucket(): Promise<Array<string>> {
+  const files = (await storage.bucket(testGCSBucketName).getFiles())[0];
+  return files.map(file => file.name);
+}

@@ -1,6 +1,11 @@
 import { exec as execOriginal } from 'child_process';
 import { promisify } from 'util';
 import { testS3BucketURI, cleanTestS3Bucket } from './supports/s3rver-cleaner';
+import {
+  testGCSBucketURI,
+  cleanTestGCSBucket,
+  listFileNamesInTestBucket,
+} from './supports/fake-gcs-server';
 
 const exec = promisify(execOriginal);
 const tmp = require('tmp');
@@ -57,6 +62,33 @@ describe('backup', () => {
   });
 
   describe('when valid GCS options are specified', () => {
-    // TODO
+    beforeEach(cleanTestGCSBucket);
+
+    describe('and when backup tool options are specified', () => {
+      const commandLine = `${execBackupCommand} \
+        --gcp-endpoint-url http://fake-gcs-server:4443 \
+        --gcp-project-id valid_project_id \
+        --gcp-client-email valid@example.com \
+        --gcp-private-key valid_private_key \
+        --backup-tool-options "--uri mongodb://root:password@mongo/dummy?authSource=admin" \
+        ${testGCSBucketURI}/`;
+
+      beforeEach(async() => {
+        // prepare mongoDB
+        tmp.setGracefulCleanup();
+        const tmpdir = tmp.dirSync({ unsafeCleanup: true });
+        await exec(`tar jxf __tests__/fixtures/backup-20220327224212.tar.bz2 -C ${tmpdir.name}`);
+        await exec(`mongorestore -h mongo -u root -p password --authenticationDatabase=admin --drop --dir ${tmpdir.name}`);
+      });
+
+      it('backup mongo in bucket', async() => {
+        expect((await listFileNamesInTestBucket()).length).toBe(0);
+        expect(await exec(commandLine)).toEqual({
+          stdout: expect.stringMatching(/=== backup.js started at .* ===/),
+          stderr: '',
+        });
+        expect((await listFileNamesInTestBucket()).length).toBe(1);
+      });
+    });
   });
 });
