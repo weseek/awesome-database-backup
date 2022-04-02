@@ -1,6 +1,11 @@
 import { exec as execOriginal } from 'child_process';
 import { promisify } from 'util';
 import { testS3BucketURI, cleanTestS3Bucket } from './supports/s3rver-cleaner';
+import {
+  testGCSBucketURI,
+  cleanTestGCSBucket,
+  uploadFixtureToTestBucket,
+} from './supports/fake-gcs-server';
 
 const exec = promisify(execOriginal);
 
@@ -69,6 +74,37 @@ describe('restore', () => {
   });
 
   describe('when valid GCS options are specified', () => {
-    // TODO
+    const objectURI = `${testGCSBucketURI}/backup-20220327224212.tar.bz2`;
+    const commandLine = `${execRestoreCommand} \
+      --gcp-endpoint-url http://fake-gcs-server:4443 \
+      --gcp-project-id valid_project_id \
+      --gcp-client-email valid@example.com \
+      --gcp-private-key valid_private_key \
+      --restore-tool-options "--uri mongodb://root:password@mongo/?authSource=admin" \
+      ${objectURI}`;
+
+    beforeEach(cleanTestGCSBucket);
+    beforeEach(async() => {
+      // prepare GCS bucket
+      uploadFixtureToTestBucket('backup-20220327224212.tar.bz2');
+
+      // prepare mongoDB
+      await exec('mongosh mongodb://root:password@mongo/dummy?authSource=admin --eval "db.dropDatabase()"');
+    });
+
+    it('restore mongo in bucket', async() => {
+      expect(await exec('mongosh mongodb://root:password@mongo/dummy?authSource=admin --eval "db.getCollectionNames()" --quiet')).toEqual({
+        stdout: expect.stringContaining('[]'),
+        stderr: '',
+      });
+      expect(await exec(commandLine)).toEqual({
+        stdout: expect.stringMatching(/=== restore.js started at .* ===/),
+        stderr: '',
+      });
+      expect(await exec('mongosh mongodb://root:password@mongo/dummy?authSource=admin --eval "db.getCollectionNames()" --quiet')).toEqual({
+        stdout: expect.stringContaining("'dummy'"),
+        stderr: '',
+      });
+    });
   });
 });
