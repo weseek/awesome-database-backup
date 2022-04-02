@@ -1,6 +1,7 @@
 import { exec as execOriginal } from 'child_process';
 import { promisify } from 'util';
 import { testS3BucketURI, cleanTestS3Bucket } from './supports/s3rver-cleaner';
+import { testGCSBucketURI, cleanTestGCSBucket, uploadFixtureToTestBucket } from './supports/fake-gcs-server';
 
 const exec = promisify(execOriginal);
 
@@ -54,6 +55,23 @@ describe('list', () => {
   });
 
   describe('when valid GCS options are specified', () => {
-    // TODO
+    const commandLine = `${execListCommand} \
+      --gcp-endpoint-url http://fake-gcs-server:4443 \
+      --gcp-project-id valid_project_id \
+      --gcp-client-email valid@example.com \
+      --gcp-private-key valid_private_key \
+      ${testGCSBucketURI}/`;
+
+    beforeEach(cleanTestGCSBucket);
+    beforeEach(async() => {
+      await uploadFixtureToTestBucket('backup-20220327224212.tar.bz2');
+    });
+
+    it('list files in bucket', async() => {
+      expect(await exec(commandLine)).toEqual({
+        stdout: expect.stringContaining('backup-20220327224212.tar.bz2'),
+        stderr: '',
+      });
+    });
   });
 });
