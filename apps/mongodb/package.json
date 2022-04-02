@@ -40,7 +40,8 @@
   },
   "devDependencies": {
     "tsconfig-paths": "^3.12.0",
-    "@types/bunyan": "^1.8.8"
+    "@types/bunyan": "^1.8.8",
+    "@google-cloud/storage": "^5.16.1"
   },
   "engines": {
     "node": ">= 16.13.1 < 17",
