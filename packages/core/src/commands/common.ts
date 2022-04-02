@@ -12,6 +12,7 @@ export declare interface ICommonCLIOption {
   awsRegion?: string
   awsAccessKeyId?: string,
   awsSecretAccessKey?: string,
+  gcpEndpointUrl?: string,
   gcpProjectId?: string,
   gcpClientEmail?: string,
   gcpPrivateKey?: string,
@@ -26,6 +27,7 @@ export function addStorageServiceClientOptions(command: Command): void {
     .addOption(new Option('--aws-access-key-id <AWS_ACCESS_KEY_ID>', 'Your IAM Access Key ID').env('AWS_ACCESS_KEY_ID'))
     .addOption(new Option('--aws-secret-access-key <AWS_SECRET_ACCESS_KEY>', 'Your IAM Secret Access Key').env('AWS_SECRET_ACCESS_KEY'))
     /* GCS options */
+    .option('--gcp-endpoint-url <GCP_ENDPOINT_URL>', 'URL to send the request to')
     .addOption(new Option('--gcp-project-id <GCP_PROJECT_ID>', 'GCP Project ID').env('GCLOUD_PROJECT'))
     .option('--gcp-private-key <GCP_PRIVATE_KEY>', 'GCP Private Key')
     .option('--gcp-client-email <GCP_CLIENT_EMAIL>', 'GCP Client Email')

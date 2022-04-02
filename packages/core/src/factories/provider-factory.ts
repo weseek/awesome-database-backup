@@ -44,11 +44,13 @@ export function generateS3ServiceClient({
 }
 
 export function generateGCSServiceClient({
+  gcpEndpointUrl,
   gcpServiceAccountKeyJsonPath,
   gcpProjectId,
   gcpClientEmail,
   gcpPrivateKey,
 }: {
+  gcpEndpointUrl?: string,
   gcpServiceAccountKeyJsonPath?: string,
   gcpProjectId?: string,
   gcpClientEmail?: string,
@@ -67,12 +69,16 @@ export function generateGCSServiceClient({
 
   // [MEMO] Converting escaped characters because newline codes cannot be entered in the commander argument.
   const privateKey = gcpPrivateKey?.replace(/\\n/g, '\n');
+  const gcpAdditionalOption = gcpEndpointUrl
+    ? { apiEndpoint: gcpEndpointUrl }
+    : {};
   return new GCSServiceClient({
     projectId: gcpProjectId,
     credentials: {
       client_email: gcpClientEmail,
       private_key: privateKey,
     },
+    ...gcpAdditionalOption,
   });
 }
 
