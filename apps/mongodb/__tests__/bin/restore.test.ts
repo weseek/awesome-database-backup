@@ -3,16 +3,16 @@ import { promisify } from 'util';
 import {
   cleanTestS3Bucket,
   uploadFixtureToTestS3Bucket,
-} from './supports/s3rver';
+} from '../supports/s3rver';
 import {
   testGCSBucketURI,
   cleanTestGCSBucket,
   uploadFixtureToTestGCSBucket,
-} from './supports/fake-gcs-server';
+} from '../supports/fake-gcs-server';
 import {
   dropTestMongoDB,
   listCollectionNamesInTestMongoDB,
-} from './supports/mongodb';
+} from '../supports/mongodb';
 
 const exec = promisify(execOriginal);
 

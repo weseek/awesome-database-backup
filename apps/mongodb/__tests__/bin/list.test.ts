@@ -4,12 +4,12 @@ import {
   testS3BucketURI,
   cleanTestS3Bucket,
   uploadFixtureToTestS3Bucket,
-} from './supports/s3rver';
+} from '../supports/s3rver';
 import {
   testGCSBucketURI,
   cleanTestGCSBucket,
   uploadFixtureToTestGCSBucket,
-} from './supports/fake-gcs-server';
+} from '../supports/fake-gcs-server';
 
 const exec = promisify(execOriginal);
 
