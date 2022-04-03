@@ -45,7 +45,7 @@
       },
       "test": {
         "// Test depends on build because 'rewire' read transpiled file.": "",
-        "dependsOn": ["build"],
+        "dependsOn": ["^build"],
         "outputs": ["coverage/**"]
       },
       "lint": {
