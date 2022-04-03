@@ -1,0 +1,6 @@
+FROM node
+
+RUN npm install -g s3rver@3.7.1
+
+ENTRYPOINT ["s3rver"]
+CMD ["-d", "/tmp/s3rver", "-a", "0.0.0.0", "-p", "80", "--service-endpoint", "s3rver"]

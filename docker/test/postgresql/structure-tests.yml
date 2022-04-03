@@ -35,6 +35,10 @@ commandTests:
 
 - name: expect "which psql" success
   command: which
+  args: ["pg_dumpall"]
+
+- name: expect "which psql" success
+  command: which
   args: ["psql"]
 
 # ================================================================================

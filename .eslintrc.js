@@ -31,6 +31,7 @@ module.exports = {
       'error',
       { additionalTestBlockFunctions: ['each.test'] },
     ],
+    'no-multi-str': 'off',
   },
   settings: {
     /**

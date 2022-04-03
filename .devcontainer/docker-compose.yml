@@ -2,22 +2,98 @@ version: '3'
 services:
   node:
     user: node
-    
     build:
       context: .
       dockerfile: Dockerfile
-
     volumes:
-      - ..:/workspace:delegated
-      - node_modules:/workspace/node_modules
-      - node_modules_mongodb:/workspace/apps/mongodb/node_modules
-      - node_modules_postgresql:/workspace/apps/postgresql/node_modules
-      - node_modules_core:/workspace/packages/core/node_modules
-
+    - ..:/workspace:delegated
+    - node_modules:/workspace/node_modules
+    - node_modules_mongodb:/workspace/apps/mongodb/node_modules
+    - node_modules_postgresql:/workspace/apps/postgresql/node_modules
+    - node_modules_core:/workspace/packages/core/node_modules
     tty: true
+    environment:
+      TZ: Asia/Tokyo
+    networks:
+    - default
+    - test
+    dns:
+    - 172.16.2.2 # dnsmasq container
+
+  mongo:
+    image: mongo:5.0.6
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${DB_ADMIN_USERNAME:-root}
+      MONGO_INITDB_ROOT_PASSWORD: ${DB_ADMIN_PASSWORD:-password}
+    volumes:
+    - /data/db
+
+  postgres:
+    image: postgres:14.2
+    environment:
+      POSTGRES_DB: ${DB_NAME:-test}
+      POSTGRES_PASSWORD: ${DB_ADMIN_PASSWORD:-password}
+    volumes:
+    - postgres_data:/var/lib/postgresql/data
+
+  # S3 Mock for test
+  s3rver:
+    build:
+      context: .
+      dockerfile: Dockerfile.s3rver
+    volumes:
+    - s3rver:/tmp/s3rver
+    networks:
+      test:
+        ipv4_address: 172.16.2.3
+
+  # GCS Mock for test
+  fake-gcs-server:
+    image: fsouza/fake-gcs-server:1.37.3
+    volumes:
+    - fake-gcs-server:/data
+    command:
+    - --scheme
+    - http
+    - --public-host
+    - fake-gcs-server
+    networks:
+    - test
+
+  # DNS masquerade
+  #
+  # WHY:
+  #   S3 API v2 supports only virtual host format.
+  #   Access to "bucket-name" is assigned to "bucket-name.s3.s3rver",
+  #     but docker-compose "aliases" does not support wildcard, so dnsmasq is used.
+  #   This means that all name resolution results for "*.s3rver" will be the IP address of the "s3rver" container.
+  #
+  # ref. https://github.com/docker/compose/issues/7493#issuecomment-922513766
+  dnsmasq:
+    image: strm/dnsmasq
+    volumes:
+    - ./dnsmasq.conf:/etc/dnsmasq.conf
+    ports:
+    - 53:53/udp
+    cap_add:
+    - NET_ADMIN
+    # dnsmasq container config above is taken verbatim from https://hub.docker.com/r/strm/dnsmasq
+    networks:
+      test:
+        ipv4_address: 172.16.2.2 # Static IP here makes it possible to point other containers' dns here.
 
 volumes:
   node_modules:
   node_modules_mongodb:
   node_modules_postgresql:
   node_modules_core:
+  mongo_data:
+  postgres_data:
+  s3rver:
+  fake-gcs-server:
+
+networks:
+  test:
+    ipam:
+      config:
+      - subnet: 172.16.2.0/24

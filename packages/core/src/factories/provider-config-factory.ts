@@ -44,6 +44,7 @@ export function createConfigS3({ awsRegion, awsAccessKeyId, awsSecretAccessKey }
   process.env.AWS_CONFIG_FILE = configurationPath;
   process.env.AWS_SHARED_CREDENTIALS_FILE = credentialPath;
 
+  // see. https://docs.aws.amazon.com/ja_jp/cli/latest/userguide/cli-configure-files.html
   const configData = `
       [default]
       region=${awsRegion}
