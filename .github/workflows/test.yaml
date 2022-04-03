@@ -14,6 +14,14 @@ jobs:
         with:
           node-version: "16.13.1"
           cache: "yarn"
+      - name: Set and restore cache of Turborepo
+        uses: actions/cache@v2
+        with:
+          path: node_modules/.cache/turbo
+          key: |
+            turbo-${{ github.job }}-${{ github.sha }}
+          restore-keys: |
+            turbo-${{ github.job }}-
       - run: yarn install
       - run: yarn test:ci
       # [TODO] Coverage report
