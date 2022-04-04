@@ -50,9 +50,6 @@
       },
       "lint": {
         "outputs": []
-      },
-      "dev": {
-        "cache": false
       }
     }
   }
