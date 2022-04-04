@@ -3,5 +3,8 @@ node_modules
 /packages/*/coverage
 /apps/*/dist
 /apps/*/coverage
+yarn-error.log
 
+# Turborepo
 .turbo
+*-profile.json
