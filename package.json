@@ -31,7 +31,7 @@
   },
   "scripts": {
     "build": "turbo run build",
-    "test": "turbo run test",
+    "test": "turbo run test --concurrency=1",
     "//[TODO] prepare CI environment to exec E2E test of @awesome-backup/mongodb and @awesome-backup/postgresql": "",
     "test:ci": "turbo run test --scope='@awesome-backup/core' --no-deps",
     "clean": "rm -rf node_modules; rm -rf .turbo; rm -rf */*/dist; rm -rf */*/coverage; rm -rf */*/node_modules; rm -rf */*/.turbo"
