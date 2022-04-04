@@ -4,7 +4,8 @@
 
 import { Command, Option } from 'commander';
 import { IStorageServiceClient } from '../interfaces/storage-service-client';
-import { storageProviderType, generateStorageServiceClient } from '../factories/provider-factory';
+import { storageProviderType } from '../factories/storage-service-client-type';
+import { generateStorageServiceClient } from '../factories/provider-factory';
 
 /* Common command option types */
 export declare interface ICommonCLIOption {
