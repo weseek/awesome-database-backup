@@ -7,6 +7,14 @@ export declare interface GCSURI {
   filepath: string
 }
 
+interface GCSStorageServiceClientConfig {
+  gcpEndpointUrl?: string,
+  gcpServiceAccountKeyJsonPath?: string,
+  gcpProjectId?: string,
+  gcpClientEmail?: string,
+  gcpPrivateKey?: string,
+}
+
 /**
  * Parse GCS's URI(start with "gs:")
  * ex. It'll break down "gs://bucket/folder/file" to {"bucket": "bucket", "filepath": "folder/file"}.
@@ -33,15 +41,42 @@ function _parseFilePath(path: string): GCSURI | null {
 /**
  * Client to manipulate GCS buckets
  */
-export class GCSServiceClient implements IStorageServiceClient {
+export class GCSStorageServiceClient implements IStorageServiceClient {
 
   name: string;
 
   client: Storage;
 
-  constructor(config: StorageOptions) {
+  constructor(config: GCSStorageServiceClientConfig) {
+    /* If the configuration file does not exist, it is created temporarily from the config,
+      and it will be deleted when process exit. */
+    if (config.gcpProjectId == null || config.gcpClientEmail == null || config.gcpPrivateKey == null) {
+      throw new Error('If you does not set "--gcp-service-account-key-json-path", '
+                        + 'you will need to set all of "--gcp-project-id", "--gcp-client-email" and "--gcp-private-key".');
+    }
+
+    let storageconfig: StorageOptions;
+    if (config.gcpServiceAccountKeyJsonPath) {
+      storageconfig = {
+        keyFilename: config.gcpServiceAccountKeyJsonPath,
+      };
+    }
+    else {
+      storageconfig = {
+        projectId: config.gcpProjectId,
+        credentials: {
+          client_email: config.gcpClientEmail,
+          // [MEMO] Converting escaped characters because newline codes cannot be entered in the commander argument.
+          private_key: config.gcpPrivateKey?.replace(/\\n/g, '\n'),
+        },
+      };
+      if (config.gcpEndpointUrl) {
+        storageconfig.apiEndpoint = config.gcpEndpointUrl;
+      }
+    }
+
     this.name = 'GCS';
-    this.client = new Storage(config);
+    this.client = new Storage(storageconfig);
   }
 
   exists(url: string): Promise<boolean> {

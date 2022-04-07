@@ -2,21 +2,16 @@ import { ICommonCLIOption } from '../../src/commands/common';
 
 afterEach(() => {
   jest.resetModules();
-  jest.dontMock('../../src/factories/s3-storage-service-client-generator');
-  jest.dontMock('../../src/factories/gcs-storage-service-client-generator');
+  jest.dontMock('@aws-sdk/client-s3');
+  jest.dontMock('@google-cloud/storage');
 });
 
 describe('generateStorageServiceClient()', () => {
   describe('when "StorageProviderType" is "S3"', () => {
     const storageProviderType = 'S3';
-    const mockGenerateS3ServiceClient = jest.fn().mockResolvedValue({});
 
     beforeEach(() => {
-      jest.doMock('../../src/factories/s3-storage-service-client-generator', () => {
-        const mock = jest.requireActual('../../src/factories/s3-storage-service-client-generator');
-        mock.generateS3ServiceClient = mockGenerateS3ServiceClient;
-        return mock;
-      });
+      jest.dontMock('@aws-sdk/client-s3');
     });
 
     describe('when valid S3 options are specified', () => {
@@ -26,24 +21,18 @@ describe('generateStorageServiceClient()', () => {
         awsSecretAccessKey: 'valid-key',
       };
 
-      it('call generateS3ServiceClient', () => {
+      it('return S3StorageServiceClient calss', () => {
         const { generateStorageServiceClient } = require('../../src/factories/provider-factory');
-        generateStorageServiceClient(storageProviderType, options);
-        expect(mockGenerateS3ServiceClient).toBeCalled();
+        expect(generateStorageServiceClient(storageProviderType, options).constructor.name).toBe('S3StorageServiceClient');
       });
     });
   });
 
   describe('when "StorageProviderType" is "GCS"', () => {
     const storageProviderType = 'GCS';
-    const mockGenerateGCSServiceClient = jest.fn().mockResolvedValue({});
 
     beforeEach(() => {
-      jest.doMock('../../src/factories/gcs-storage-service-client-generator', () => {
-        const mock = jest.requireActual('../../src/factories/gcs-storage-service-client-generator');
-        mock.generateGCSServiceClient = mockGenerateGCSServiceClient;
-        return mock;
-      });
+      jest.doMock('@google-cloud/storage');
     });
 
     describe('when valid GCS options are specified', () => {
@@ -55,8 +44,7 @@ describe('generateStorageServiceClient()', () => {
 
       it('call generateS3ServiceClient', () => {
         const { generateStorageServiceClient } = require('../../src/factories/provider-factory');
-        generateStorageServiceClient(storageProviderType, options);
-        expect(mockGenerateGCSServiceClient).toBeCalled();
+        expect(generateStorageServiceClient(storageProviderType, options).constructor.name).toBe('GCSStorageServiceClient');
       });
     });
   });

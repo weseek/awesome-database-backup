@@ -1,10 +1,14 @@
-import { GCSServiceClient, GCSURI } from '../../src/storage-service-clients/gcs';
+import { GCSStorageServiceClient, GCSURI } from '../../src/storage-service-clients/gcs';
 
-describe('GCSServiceClient', () => {
-  let gcsServiceClient: GCSServiceClient;
+describe('GCSStorageServiceClient', () => {
+  let gcsServiceClient: GCSStorageServiceClient;
 
   beforeEach(() => {
-    gcsServiceClient = new GCSServiceClient({});
+    gcsServiceClient = new GCSStorageServiceClient({
+      gcpProjectId: 'validProjectId',
+      gcpClientEmail: 'validClientEmail',
+      gcpPrivateKey: 'validPrivateKey',
+    });
   });
 
   describe('#exists', () => {
@@ -21,10 +25,14 @@ describe('GCSServiceClient', () => {
   });
 
   describe('#listFiles', () => {
-    let gcsServiceClient: GCSServiceClient;
+    let gcsServiceClient: GCSStorageServiceClient;
 
     beforeEach(() => {
-      gcsServiceClient = new GCSServiceClient({});
+      gcsServiceClient = new GCSStorageServiceClient({
+        gcpProjectId: 'validProjectId',
+        gcpClientEmail: 'validClientEmail',
+        gcpPrivateKey: 'validPrivateKey',
+      });
     });
 
     describe("when request URI is valid GCS's", () => {
@@ -179,10 +187,14 @@ describe('GCSServiceClient', () => {
   });
 
   describe('#deleteFile', () => {
-    let gcsServiceClient: GCSServiceClient;
+    let gcsServiceClient: GCSStorageServiceClient;
 
     beforeEach(() => {
-      gcsServiceClient = new GCSServiceClient({});
+      gcsServiceClient = new GCSStorageServiceClient({
+        gcpProjectId: 'validProjectId',
+        gcpClientEmail: 'validClientEmail',
+        gcpPrivateKey: 'validPrivateKey',
+      });
     });
 
     describe("when request URI is valid GCS's", () => {
@@ -232,10 +244,14 @@ describe('GCSServiceClient', () => {
   });
 
   describe('#copyFile', () => {
-    let gcsServiceClient: GCSServiceClient;
+    let gcsServiceClient: GCSStorageServiceClient;
 
     beforeEach(() => {
-      gcsServiceClient = new GCSServiceClient({});
+      gcsServiceClient = new GCSStorageServiceClient({
+        gcpProjectId: 'validProjectId',
+        gcpClientEmail: 'validClientEmail',
+        gcpPrivateKey: 'validPrivateKey',
+      });
     });
 
     describe("when copySource is local file path and copyDestination is GCS's URI", () => {
@@ -285,7 +301,11 @@ describe('GCSServiceClient', () => {
 
     describe('when copySource and copyDestination are invalid', () => {
       it('reject and throw Error', async() => {
-        const gcsServiceClient = new GCSServiceClient({});
+        const gcsServiceClient = new GCSStorageServiceClient({
+          gcpProjectId: 'validProjectId',
+          gcpClientEmail: 'validClientEmail',
+          gcpPrivateKey: 'validPrivateKey',
+        });
         await expect(gcsServiceClient.copyFile('s3://bucket-name/object-name1', 's3://bucket-name/object-name2')).rejects.toThrowError();
       });
     });
@@ -295,10 +315,14 @@ describe('GCSServiceClient', () => {
     const uploadSource = '/path/to/file';
     const uploadDestination: GCSURI = { bucket: 'bucket-name', filepath: 'object-name' };
 
-    let gcsServiceClient: GCSServiceClient;
+    let gcsServiceClient: GCSStorageServiceClient;
 
     beforeEach(() => {
-      gcsServiceClient = new GCSServiceClient({});
+      gcsServiceClient = new GCSStorageServiceClient({
+        gcpProjectId: 'validProjectId',
+        gcpClientEmail: 'validClientEmail',
+        gcpPrivateKey: 'validPrivateKey',
+      });
     });
 
     describe('when File#upload resolve', () => {
@@ -332,10 +356,14 @@ describe('GCSServiceClient', () => {
     const downloadSource: GCSURI = { bucket: 'bucket-name', filepath: 'object-name' };
     const downloadDestination = '/path/to/file';
 
-    let gcsServiceClient: GCSServiceClient;
+    let gcsServiceClient: GCSStorageServiceClient;
 
     beforeEach(() => {
-      gcsServiceClient = new GCSServiceClient({});
+      gcsServiceClient = new GCSStorageServiceClient({
+        gcpProjectId: 'validProjectId',
+        gcpClientEmail: 'validClientEmail',
+        gcpPrivateKey: 'validPrivateKey',
+      });
     });
 
     describe('when File#download resolve', () => {
@@ -354,7 +382,7 @@ describe('GCSServiceClient', () => {
       });
     });
 
-    describe('when GCSServiceClient#send reject', () => {
+    describe('when GCSStorageServiceClient#send reject', () => {
       beforeEach(() => {
         const fileMock = {
           download: jest.fn().mockReturnValue(Promise.reject(new Error('some error'))),
@@ -375,10 +403,14 @@ describe('GCSServiceClient', () => {
     const copySource: GCSURI = { bucket: 'bucket-name', filepath: 'object-name1' };
     const copyDestination: GCSURI = { bucket: 'bucket-name', filepath: 'object-name2' };
 
-    let gcsServiceClient: GCSServiceClient;
+    let gcsServiceClient: GCSStorageServiceClient;
 
     beforeEach(() => {
-      gcsServiceClient = new GCSServiceClient({});
+      gcsServiceClient = new GCSStorageServiceClient({
+        gcpProjectId: 'validProjectId',
+        gcpClientEmail: 'validClientEmail',
+        gcpPrivateKey: 'validPrivateKey',
+      });
     });
 
     describe('when File#copy resolve', () => {

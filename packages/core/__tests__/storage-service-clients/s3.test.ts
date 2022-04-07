@@ -1,5 +1,5 @@
 import { PassThrough, Readable } from 'stream';
-import { S3ServiceClient, S3URI } from '../../src/storage-service-clients/s3';
+import { S3StorageServiceClient, S3URI } from '../../src/storage-service-clients/s3';
 
 afterEach(() => {
   jest.resetModules();
@@ -8,11 +8,15 @@ afterEach(() => {
   jest.dontMock('fs');
 });
 
-describe('S3ServiceClient', () => {
-  let s3ServiceClient: S3ServiceClient;
+describe('S3StorageServiceClient', () => {
+  let s3ServiceClient: S3StorageServiceClient;
 
   beforeEach(() => {
-    s3ServiceClient = new S3ServiceClient({});
+    s3ServiceClient = new S3StorageServiceClient({
+      awsRegion: 'validRegion',
+      awsAccessKeyId: 'validAccessKeyId',
+      awsSecretAccessKey: 'validSecretAccessKey',
+    });
   });
 
   describe('#exists', () => {
@@ -30,7 +34,7 @@ describe('S3ServiceClient', () => {
   });
 
   describe('#listFiles', () => {
-    let s3ServiceClient: S3ServiceClient;
+    let s3ServiceClient: S3StorageServiceClient;
 
     const doMockClientS3AndReloadS3ServiceClient = (clientS3Mock: jest.Mock) => {
       jest.doMock('@aws-sdk/client-s3', () => {
@@ -38,8 +42,12 @@ describe('S3ServiceClient', () => {
         mock.S3Client.prototype.send = clientS3Mock;
         return mock;
       });
-      const { S3ServiceClient } = require('../../src/storage-service-clients/s3');
-      s3ServiceClient = new S3ServiceClient();
+      const { S3StorageServiceClient } = require('../../src/storage-service-clients/s3');
+      s3ServiceClient = new S3StorageServiceClient({
+        awsRegion: 'validRegion',
+        awsAccessKeyId: 'validAccessKeyId',
+        awsSecretAccessKey: 'validSecretAccessKey',
+      });
     };
 
     describe("when request URI is valid S3's", () => {
@@ -221,8 +229,12 @@ describe('S3ServiceClient', () => {
       const url = 'http://hostname/';
 
       it('reject with throw exception', async() => {
-        const { S3ServiceClient } = require('../../src/storage-service-clients/s3');
-        const s3ServiceClient = new S3ServiceClient({});
+        const { S3StorageServiceClient } = require('../../src/storage-service-clients/s3');
+        const s3ServiceClient = new S3StorageServiceClient({
+          awsRegion: 'validRegion',
+          awsAccessKeyId: 'validAccessKeyId',
+          awsSecretAccessKey: 'validSecretAccessKey',
+        });
         await expect(s3ServiceClient.listFiles(url)).rejects.toThrowError();
       });
     });
@@ -231,7 +243,7 @@ describe('S3ServiceClient', () => {
   describe('#deleteFile', () => {
     describe("when request URI is valid S3's", () => {
       describe('when S3Client#send success', () => {
-        let s3ServiceClient: S3ServiceClient;
+        let s3ServiceClient: S3StorageServiceClient;
 
         beforeEach(() => {
           jest.doMock('@aws-sdk/client-s3', () => {
@@ -239,8 +251,12 @@ describe('S3ServiceClient', () => {
             mock.S3Client.prototype.send = jest.fn().mockResolvedValue(null);
             return mock;
           });
-          const { S3ServiceClient } = require('../../src/storage-service-clients/s3');
-          s3ServiceClient = new S3ServiceClient();
+          const { S3StorageServiceClient } = require('../../src/storage-service-clients/s3');
+          s3ServiceClient = new S3StorageServiceClient({
+            awsRegion: 'validRegion',
+            awsAccessKeyId: 'validAccessKeyId',
+            awsSecretAccessKey: 'validSecretAccessKey',
+          });
         });
 
         it('resolve with undfined', async() => {
@@ -250,7 +266,7 @@ describe('S3ServiceClient', () => {
       });
 
       describe('when S3Client#send fail', () => {
-        let s3ServiceClient: S3ServiceClient;
+        let s3ServiceClient: S3StorageServiceClient;
 
         beforeEach(() => {
           jest.doMock('@aws-sdk/client-s3', () => {
@@ -258,8 +274,12 @@ describe('S3ServiceClient', () => {
             mock.S3Client.prototype.send = jest.fn().mockRejectedValue(new Error('some error occur'));
             return mock;
           });
-          const { S3ServiceClient } = require('../../src/storage-service-clients/s3');
-          s3ServiceClient = new S3ServiceClient();
+          const { S3StorageServiceClient } = require('../../src/storage-service-clients/s3');
+          s3ServiceClient = new S3StorageServiceClient({
+            awsRegion: 'validRegion',
+            awsAccessKeyId: 'validAccessKeyId',
+            awsSecretAccessKey: 'validSecretAccessKey',
+          });
         });
 
         it('reject and throw Error', async() => {
@@ -271,8 +291,12 @@ describe('S3ServiceClient', () => {
 
     describe('when request URI is not S3\'s', () => {
       it('reject and throw Error', async() => {
-        const { S3ServiceClient } = require('../../src/storage-service-clients/s3');
-        const s3ServiceClient = new S3ServiceClient({});
+        const { S3StorageServiceClient } = require('../../src/storage-service-clients/s3');
+        const s3ServiceClient = new S3StorageServiceClient({
+          awsRegion: 'validRegion',
+          awsAccessKeyId: 'validAccessKeyId',
+          awsSecretAccessKey: 'validSecretAccessKey',
+        });
         const url = 'http://hostname/';
         await expect(s3ServiceClient.deleteFile(url)).rejects.toThrowError();
       });
@@ -280,10 +304,14 @@ describe('S3ServiceClient', () => {
   });
 
   describe('#copyFile', () => {
-    let s3ServiceClient: S3ServiceClient;
+    let s3ServiceClient: S3StorageServiceClient;
 
     beforeEach(() => {
-      s3ServiceClient = new S3ServiceClient({});
+      s3ServiceClient = new S3StorageServiceClient({
+        awsRegion: 'validRegion',
+        awsAccessKeyId: 'validAccessKeyId',
+        awsSecretAccessKey: 'validSecretAccessKey',
+      });
     });
 
     describe("when copySource is local file path and copyDestination is S3's URI", () => {
@@ -346,7 +374,7 @@ describe('S3ServiceClient', () => {
     const uploadDestination: S3URI = { bucket: 'bucket-name', key: 'object-name' };
 
     describe('when S3Client#send resolve', () => {
-      let s3ServiceClient: S3ServiceClient;
+      let s3ServiceClient: S3StorageServiceClient;
 
       beforeEach(async() => {
         jest.doMock('@aws-sdk/client-s3', () => {
@@ -359,8 +387,12 @@ describe('S3ServiceClient', () => {
           mock.readFileSync = jest.fn().mockReturnValue('some body');
           return mock;
         });
-        const { S3ServiceClient } = require('../../src/storage-service-clients/s3');
-        s3ServiceClient = new S3ServiceClient({});
+        const { S3StorageServiceClient } = require('../../src/storage-service-clients/s3');
+        s3ServiceClient = new S3StorageServiceClient({
+          awsRegion: 'validRegion',
+          awsAccessKeyId: 'validAccessKeyId',
+          awsSecretAccessKey: 'validSecretAccessKey',
+        });
       });
 
       it('resolve with undfined', async() => {
@@ -369,7 +401,7 @@ describe('S3ServiceClient', () => {
     });
 
     describe('when S3Client#send reject', () => {
-      let s3ServiceClient: S3ServiceClient;
+      let s3ServiceClient: S3StorageServiceClient;
 
       beforeEach(async() => {
         jest.doMock('@aws-sdk/client-s3', () => {
@@ -382,8 +414,12 @@ describe('S3ServiceClient', () => {
           mock.readFileSync = jest.fn().mockReturnValue('some body');
           return mock;
         });
-        const { S3ServiceClient } = require('../../src/storage-service-clients/s3');
-        s3ServiceClient = new S3ServiceClient({});
+        const { S3StorageServiceClient } = require('../../src/storage-service-clients/s3');
+        s3ServiceClient = new S3StorageServiceClient({
+          awsRegion: 'validRegion',
+          awsAccessKeyId: 'validAccessKeyId',
+          awsSecretAccessKey: 'validSecretAccessKey',
+        });
       });
 
       it('reject and throw Error', async() => {
@@ -415,8 +451,12 @@ describe('S3ServiceClient', () => {
           mock.createWriteStream = jest.fn().mockReturnValue(new PassThrough());
           return mock;
         });
-        const { S3ServiceClient } = require('../../src/storage-service-clients/s3');
-        s3ServiceClient = new S3ServiceClient();
+        const { S3StorageServiceClient } = require('../../src/storage-service-clients/s3');
+        s3ServiceClient = new S3StorageServiceClient({
+          awsRegion: 'validRegion',
+          awsAccessKeyId: 'validAccessKeyId',
+          awsSecretAccessKey: 'validSecretAccessKey',
+        });
       });
 
       it('resolve with undefined', async() => {
@@ -431,8 +471,12 @@ describe('S3ServiceClient', () => {
           mock.S3Client.prototype.send = jest.fn().mockRejectedValue(new Error('some error'));
           return mock;
         });
-        const { S3ServiceClient } = require('../../src/storage-service-clients/s3');
-        s3ServiceClient = new S3ServiceClient();
+        const { S3StorageServiceClient } = require('../../src/storage-service-clients/s3');
+        s3ServiceClient = new S3StorageServiceClient({
+          awsRegion: 'validRegion',
+          awsAccessKeyId: 'validAccessKeyId',
+          awsSecretAccessKey: 'validSecretAccessKey',
+        });
       });
 
       it('reject and throw Error', async() => {
@@ -452,8 +496,12 @@ describe('S3ServiceClient', () => {
           mock.S3Client.prototype.send = jest.fn().mockResolvedValue(null);
           return mock;
         });
-        const { S3ServiceClient } = require('../../src/storage-service-clients/s3');
-        s3ServiceClient = new S3ServiceClient();
+        const { S3StorageServiceClient } = require('../../src/storage-service-clients/s3');
+        s3ServiceClient = new S3StorageServiceClient({
+          awsRegion: 'validRegion',
+          awsAccessKeyId: 'validAccessKeyId',
+          awsSecretAccessKey: 'validSecretAccessKey',
+        });
       });
 
       it('resolve with undfined', async() => {
@@ -468,8 +516,12 @@ describe('S3ServiceClient', () => {
           mock.S3Client.prototype.send = jest.fn().mockRejectedValue(new Error('some error'));
           return mock;
         });
-        const { S3ServiceClient } = require('../../src/storage-service-clients/s3');
-        s3ServiceClient = new S3ServiceClient();
+        const { S3StorageServiceClient } = require('../../src/storage-service-clients/s3');
+        s3ServiceClient = new S3StorageServiceClient({
+          awsRegion: 'validRegion',
+          awsAccessKeyId: 'validAccessKeyId',
+          awsSecretAccessKey: 'validSecretAccessKey',
+        });
       });
 
       it('reject and throw Error', async() => {

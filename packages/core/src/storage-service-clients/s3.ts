@@ -10,10 +10,18 @@ import {
 } from '@aws-sdk/client-s3';
 import * as internal from 'stream';
 import { IStorageServiceClient, listS3FilesOptions } from '../interfaces/storage-service-client';
+import { configExistS3 } from '../factories/s3-storage-service-client-config';
 
 export declare interface S3URI {
   bucket: string,
   key: string
+}
+
+interface S3StorageServiceClientConfig {
+  awsEndpointUrl?: string,
+  awsRegion?: string,
+  awsAccessKeyId?: string,
+  awsSecretAccessKey?: string,
 }
 
 /**
@@ -41,15 +49,33 @@ function _parseFilePath(path: string): S3URI | null {
 /**
  * Client to manipulate S3 buckets
  */
-export class S3ServiceClient implements IStorageServiceClient {
+export class S3StorageServiceClient implements IStorageServiceClient {
 
   name: string;
 
   client: S3Client;
 
-  constructor(config: S3ClientConfig) {
+  constructor(config: S3StorageServiceClientConfig) {
+    let s3ClientConfig: S3ClientConfig = {};
+    if (!configExistS3()) {
+      if (config.awsRegion == null || config.awsAccessKeyId == null || config.awsSecretAccessKey == null) {
+        throw new Error('If the configuration file does not exist, '
+                          + 'you will need to set "--aws-region", "--aws-access-key-id", and "--aws-secret-access-key".');
+      }
+      s3ClientConfig = {
+        region: config.awsRegion,
+        credentials: {
+          accessKeyId: config.awsAccessKeyId,
+          secretAccessKey: config.awsSecretAccessKey,
+        },
+      };
+    }
+    if (config.awsEndpointUrl != null) {
+      s3ClientConfig.endpoint = config.awsEndpointUrl;
+    }
+
     this.name = 'S3';
-    this.client = new S3Client(config);
+    this.client = new S3Client(s3ClientConfig);
   }
 
   exists(url: string): Promise<boolean> {
