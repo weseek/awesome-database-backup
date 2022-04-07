@@ -10,7 +10,7 @@ import {
 } from '@aws-sdk/client-s3';
 import * as internal from 'stream';
 import { IStorageServiceClient, listS3FilesOptions } from '../interfaces/storage-service-client';
-import { configExistS3 } from '../factories/s3-storage-service-client-config';
+import { configExistS3 } from './s3-config';
 
 export declare interface S3URI {
   bucket: string,
