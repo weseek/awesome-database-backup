@@ -18,7 +18,7 @@ const tmp = require('tmp');
 const logger = loggerFactory('mongodb-awesome-backup');
 
 /* Backup command option types */
-export declare interface IBackupCLIOption extends ICommonCLIOption {
+export interface IBackupCLIOption extends ICommonCLIOption {
   backupfilePrefix: string,
   cronmode?: boolean,
   cronExpression?: string,

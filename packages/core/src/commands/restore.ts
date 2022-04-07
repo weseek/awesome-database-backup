@@ -15,7 +15,7 @@ const logger = loggerFactory('mongodb-awesome-backup');
 const tmp = require('tmp');
 
 /* Restore command option types */
-export declare interface IRestoreCLIOption extends ICommonCLIOption {
+export interface IRestoreCLIOption extends ICommonCLIOption {
   restoreToolOptions: string,
 }
 

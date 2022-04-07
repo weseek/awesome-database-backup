@@ -12,7 +12,7 @@ import loggerFactory from '../logger/factory';
 const logger = loggerFactory('mongodb-awesome-backup');
 
 /* Prune command option types */
-export declare interface IPruneCLIOption extends ICommonCLIOption {
+export interface IPruneCLIOption extends ICommonCLIOption {
   backupfilePrefix: string,
   deleteDivide: number,
   deleteTargetDaysLeft: number,

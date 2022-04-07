@@ -3,23 +3,16 @@
  */
 
 import { Command, Option } from 'commander';
-import { IStorageServiceClient } from '../storage-service-clients/interfaces';
+import {
+  IStorageServiceClient,
+  S3StorageServiceClientConfig,
+  GCSStorageServiceClientConfig,
+} from '../storage-service-clients/interfaces';
 import { getStorageServiceClientType } from '../storage-service-clients/types';
-
-import { storageServiceClientFactory } from '../storage-service-clients/factory';
+import storageServiceClientFactory from '../storage-service-clients/factory';
 
 /* Common command option types */
-export declare interface ICommonCLIOption {
-  awsEndpointUrl?: string,
-  awsRegion?: string
-  awsAccessKeyId?: string,
-  awsSecretAccessKey?: string,
-  gcpEndpointUrl?: string,
-  gcpProjectId?: string,
-  gcpClientEmail?: string,
-  gcpPrivateKey?: string,
-  gcpServiceAccountKeyJsonPath?: string,
-}
+export type ICommonCLIOption = S3StorageServiceClientConfig & GCSStorageServiceClientConfig;
 
 export function addStorageServiceClientOptions(command: Command): void {
   command
