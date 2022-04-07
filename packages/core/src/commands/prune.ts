@@ -2,7 +2,7 @@ import { format, subDays } from 'date-fns';
 import { Command } from 'commander';
 
 import { IStorageServiceClient } from '../storage-service-clients/interfaces';
-import { IPruneCLIOption } from './interfaces';
+import { IPruneCommandOption } from './interfaces';
 import {
   addStorageServiceClientOptions,
   addStorageServiceClientGenerateHook,
@@ -23,7 +23,7 @@ export class PruneCommand extends Command {
   async prune(
       storageServiceClient: IStorageServiceClient,
       targetBucketUrl: URL,
-      options: IPruneCLIOption,
+      options: IPruneCommandOption,
   ): Promise<void> {
     const secondsPerDay = 60 * 60 * 24;
     const targetBackupDay = subDays(Date.now(), options.deleteTargetDaysLeft);
@@ -62,7 +62,7 @@ export class PruneCommand extends Command {
     };
     addStorageServiceClientGenerateHook(this, storageServiceClientHolder);
 
-    const action = async(targetBucketUrlString: string, otions: IPruneCLIOption) => {
+    const action = async(targetBucketUrlString: string, otions: IPruneCommandOption) => {
       try {
         if (storageServiceClientHolder.storageServiceClient == null) throw new Error('URL scheme is not that of a supported provider.');
 
@@ -84,5 +84,5 @@ export class PruneCommand extends Command {
 
 }
 
-export { IPruneCLIOption } from './interfaces';
+export { IPruneCommandOption } from './interfaces';
 export default PruneCommand;

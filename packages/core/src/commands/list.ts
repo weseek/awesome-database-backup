@@ -65,5 +65,5 @@ export class ListCommand extends Command {
 
 }
 
-export { IListCLIOption } from './interfaces';
+export { IListCommandOption } from './interfaces';
 export default ListCommand;

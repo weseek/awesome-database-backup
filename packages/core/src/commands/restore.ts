@@ -4,7 +4,7 @@ import { Command } from 'commander';
 
 import { expandBZIP2 } from '../utils/tar';
 import { IStorageServiceClient } from '../storage-service-clients/interfaces';
-import { IRestoreCLIOption } from './interfaces';
+import { IRestoreCommandOption } from './interfaces';
 import {
   addStorageServiceClientOptions,
   addStorageServiceClientGenerateHook,
@@ -28,7 +28,7 @@ export class RestoreCommand extends Command {
       storageServiceClient: IStorageServiceClient,
       restoreDatabaseFunc: (sourcePath: string, restoreToolOptions?: string) => Promise<{ stdout: string, stderr: string }>,
       targetBucketUrl: URL,
-      options: IRestoreCLIOption,
+      options: IRestoreCommandOption,
   ): Promise<void> {
     logger.info(`=== ${basename(__filename)} started at ${format(Date.now(), 'yyyy/MM/dd HH:mm:ss')} ===`);
 
@@ -63,7 +63,7 @@ export class RestoreCommand extends Command {
     };
     addStorageServiceClientGenerateHook(this, storageServiceClientHolder);
 
-    const action = async(targetBucketUrlString: string, otions: IRestoreCLIOption) => {
+    const action = async(targetBucketUrlString: string, otions: IRestoreCommandOption) => {
       try {
         if (storageServiceClientHolder.storageServiceClient == null) throw new Error('URL scheme is not that of a supported provider.');
 
@@ -86,5 +86,5 @@ export class RestoreCommand extends Command {
 
 }
 
-export { IRestoreCLIOption } from './interfaces';
+export { IRestoreCommandOption } from './interfaces';
 export default RestoreCommand;

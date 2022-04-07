@@ -5,7 +5,7 @@ import axios from 'axios';
 import axiosRetry from 'axios-retry';
 import { compressBZIP2 } from '../utils/tar';
 import { IStorageServiceClient } from '../storage-service-clients/interfaces';
-import { IBackupCLIOption } from './interfaces';
+import { IBackupCommandOption } from './interfaces';
 import {
   addStorageServiceClientOptions,
   addStorageServiceClientGenerateHook,
@@ -31,7 +31,7 @@ export class BackupCommand extends Command {
       storageServiceClient: IStorageServiceClient,
       dumpDatabaseFunc: (backupFilePath: string, backupToolOptions?: string) => Promise<{ stdout: string, stderr: string }>,
       targetBucketUrl: URL,
-      options: IBackupCLIOption,
+      options: IBackupCommandOption,
   ): Promise<void> {
     logger.info(`=== ${basename(__filename)} started at ${format(Date.now(), 'yyyy/MM/dd HH:mm:ss')} ===`);
 
@@ -54,7 +54,7 @@ export class BackupCommand extends Command {
       storageServiceClient: IStorageServiceClient,
       dumpDatabaseFunc: (backupFilePath: string, backupToolOptions?: string) => Promise<{ stdout: string, stderr: string }>,
       targetBucketUrl: URL,
-      options: IBackupCLIOption,
+      options: IBackupCommandOption,
   ): Promise<void> {
     logger.info(`=== started in cron mode ${format(Date.now(), 'yyyy/MM/dd HH:mm:ss')} ===`);
     await schedule.scheduleJob(
@@ -68,7 +68,7 @@ export class BackupCommand extends Command {
   /**
    * Process executed at the end of BackupOnce()
    */
-  async processEndOfBackupOnce(options: IBackupCLIOption): Promise<void> {
+  async processEndOfBackupOnce(options: IBackupCommandOption): Promise<void> {
     if (options.healthchecksUrl == null) return;
 
     try {
@@ -105,7 +105,7 @@ export class BackupCommand extends Command {
     };
     addStorageServiceClientGenerateHook(this, storageServiceClientHolder);
 
-    const action = async(targetBucketUrlString: string, options: IBackupCLIOption) => {
+    const action = async(targetBucketUrlString: string, options: IBackupCommandOption) => {
       try {
         if (options.cronmode && options.cronExpression == null) throw new Error('The option "--cron-expression" must be specified in cron mode.');
         if (storageServiceClientHolder.storageServiceClient == null) throw new Error('URL scheme is not that of a supported provider.');
@@ -130,5 +130,5 @@ export class BackupCommand extends Command {
 
 }
 
-export { IBackupCLIOption } from './interfaces';
+export { IBackupCommandOption } from './interfaces';
 export default BackupCommand;

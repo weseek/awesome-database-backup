@@ -4,10 +4,10 @@ import {
 } from '../../storage-service-clients/interfaces';
 
 /* Common command option types */
-export type ICommonCLIOption = S3StorageServiceClientConfig & GCSStorageServiceClientConfig;
+export type ICommonCommandOption = S3StorageServiceClientConfig & GCSStorageServiceClientConfig;
 
 /* Backup command option types */
-export interface IBackupCLIOption extends ICommonCLIOption {
+export interface IBackupCommandOption extends ICommonCommandOption {
   backupfilePrefix: string,
   cronmode?: boolean,
   cronExpression?: string,
@@ -16,15 +16,15 @@ export interface IBackupCLIOption extends ICommonCLIOption {
 }
 
 /* Restore command option types */
-export interface IRestoreCLIOption extends ICommonCLIOption {
+export interface IRestoreCommandOption extends ICommonCommandOption {
   restoreToolOptions: string,
 }
 
 /* Prune command option types */
-export type IListCLIOption = ICommonCLIOption
+export type IListCommandOption = ICommonCommandOption
 
 /* Prune command option types */
-export interface IPruneCLIOption extends ICommonCLIOption {
+export interface IPruneCommandOption extends ICommonCommandOption {
   backupfilePrefix: string,
   deleteDivide: number,
   deleteTargetDaysLeft: number,

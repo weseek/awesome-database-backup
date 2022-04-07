@@ -1,4 +1,4 @@
-import { BackupCommand, IBackupCLIOption } from '../../src/commands/backup';
+import { BackupCommand, IBackupCommandOption } from '../../src/commands/backup';
 import { IStorageServiceClient } from '../../src/storage-service-clients/interfaces';
 
 let backup = require('../../src/commands/backup');
@@ -29,7 +29,7 @@ describe('BackupCommand', () => {
     });
 
     describe('when healthchecksUrl is empty', () => {
-      const options: IBackupCLIOption = {
+      const options: IBackupCommandOption = {
         backupfilePrefix: 'backup',
       };
 
@@ -41,7 +41,7 @@ describe('BackupCommand', () => {
     });
 
     describe('when healthcheckUrl is not empty', () => {
-      const options: IBackupCLIOption = {
+      const options: IBackupCommandOption = {
         backupfilePrefix: 'backup',
         healthchecksUrl: 'http://example.com/',
       };
@@ -70,7 +70,7 @@ describe('BackupCommand', () => {
   });
 
   describe('backupCronMode', () => {
-    const options: IBackupCLIOption = {
+    const options: IBackupCommandOption = {
       backupfilePrefix: 'backup',
       cronExpression: '* * * * *',
     };

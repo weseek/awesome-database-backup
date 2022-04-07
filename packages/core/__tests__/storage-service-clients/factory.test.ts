@@ -1,4 +1,4 @@
-import { ICommonCLIOption } from '../../src/commands/interfaces';
+import { ICommonCommandOption } from '../../src/commands/interfaces';
 
 afterEach(() => {
   jest.resetModules();
@@ -15,7 +15,7 @@ describe('storageServiceClientFactory()', () => {
     });
 
     describe('when valid S3 options are specified', () => {
-      const options: ICommonCLIOption = {
+      const options: ICommonCommandOption = {
         awsRegion: 'valid-region',
         awsAccessKeyId: 'valid-key-id',
         awsSecretAccessKey: 'valid-key',
@@ -36,7 +36,7 @@ describe('storageServiceClientFactory()', () => {
     });
 
     describe('when valid GCS options are specified', () => {
-      const options: ICommonCLIOption = {
+      const options: ICommonCommandOption = {
         gcpProjectId: 'valid-project-id',
         gcpClientEmail: 'valid-mail@example.com',
         gcpPrivateKey: 'valid-key',

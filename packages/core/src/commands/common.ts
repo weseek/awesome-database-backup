@@ -6,7 +6,7 @@ import { Command, Option } from 'commander';
 import { IStorageServiceClient } from '../storage-service-clients/interfaces';
 import { getStorageServiceClientType } from '../storage-service-clients/types';
 import storageServiceClientFactory from '../storage-service-clients/factory';
-import { ICommonCLIOption } from './interfaces';
+import { ICommonCommandOption } from './interfaces';
 
 export function addStorageServiceClientOptions(command: Command): void {
   command
@@ -27,7 +27,7 @@ export function addStorageServiceClientOptions(command: Command): void {
 export function addStorageServiceClientGenerateHook(command: Command, storageServiceClientHolder: { storageServiceClient: IStorageServiceClient|null }): void {
   command
     .hook('preAction', (command: Command) => {
-      const options = command.opts() as ICommonCLIOption;
+      const options = command.opts() as ICommonCommandOption;
       const [targetBucketUrlString] = command.args;
 
       const targetBucketUrl = new URL(targetBucketUrlString);
