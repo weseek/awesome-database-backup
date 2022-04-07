@@ -1,19 +1,11 @@
 import { Storage, StorageOptions, File } from '@google-cloud/storage';
 import { basename, join } from 'path';
-import { IStorageServiceClient, listGCSFilesOptions } from '../interfaces/storage-service-client';
-
-export declare interface GCSURI {
-  bucket: string,
-  filepath: string
-}
-
-interface GCSStorageServiceClientConfig {
-  gcpEndpointUrl?: string,
-  gcpServiceAccountKeyJsonPath?: string,
-  gcpProjectId?: string,
-  gcpClientEmail?: string,
-  gcpPrivateKey?: string,
-}
+import {
+  IStorageServiceClient,
+  listGCSFilesOptions,
+  GCSURI,
+  GCSStorageServiceClientConfig,
+} from '../interfaces/storage-service-client';
 
 /**
  * Parse GCS's URI(start with "gs:")
@@ -187,3 +179,5 @@ export class GCSStorageServiceClient implements IStorageServiceClient {
   }
 
 }
+
+export default GCSStorageServiceClient;

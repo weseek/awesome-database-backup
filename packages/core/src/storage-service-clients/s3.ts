@@ -9,20 +9,13 @@ import {
   ListObjectsCommand, ListObjectsCommandInput,
 } from '@aws-sdk/client-s3';
 import * as internal from 'stream';
-import { IStorageServiceClient, listS3FilesOptions } from '../interfaces/storage-service-client';
+import {
+  IStorageServiceClient,
+  listS3FilesOptions,
+  S3URI,
+  S3StorageServiceClientConfig,
+} from '../interfaces/storage-service-client';
 import { configExistS3 } from './s3-config';
-
-export declare interface S3URI {
-  bucket: string,
-  key: string
-}
-
-interface S3StorageServiceClientConfig {
-  awsEndpointUrl?: string,
-  awsRegion?: string,
-  awsAccessKeyId?: string,
-  awsSecretAccessKey?: string,
-}
 
 /**
  * Parse S3's URI(start with "s3:")
@@ -268,3 +261,5 @@ export class S3StorageServiceClient implements IStorageServiceClient {
   }
 
 }
+
+export default S3StorageServiceClient;

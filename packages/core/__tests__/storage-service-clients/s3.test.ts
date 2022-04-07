@@ -1,5 +1,6 @@
 import { PassThrough, Readable } from 'stream';
-import { S3StorageServiceClient, S3URI } from '../../src/storage-service-clients/s3';
+import { S3URI } from '../../src/interfaces/storage-service-client';
+import S3StorageServiceClient from '../../src/storage-service-clients/s3';
 
 afterEach(() => {
   jest.resetModules();
