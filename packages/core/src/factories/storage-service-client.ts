@@ -4,7 +4,7 @@ import { IStorageServiceClient } from '../interfaces/storage-service-client';
 import { StorageProviderType } from '../storage-service-clients/types';
 import { ICommonCLIOption } from '../commands/common';
 
-export function generateStorageServiceClient(type: StorageProviderType, options: ICommonCLIOption): IStorageServiceClient {
+export function storageServiceClientFactory(type: StorageProviderType, options: ICommonCLIOption): IStorageServiceClient {
   const factoryMap: { type: StorageProviderType, factory: any }[] = [
     { type: 'S3', factory: (options: ICommonCLIOption) => new S3StorageServiceClient(options) },
     { type: 'GCS', factory: (options: ICommonCLIOption) => new GCSStorageServiceClient(options) },
@@ -14,3 +14,5 @@ export function generateStorageServiceClient(type: StorageProviderType, options:
 
   return generator.factory(options);
 }
+
+export default storageServiceClientFactory;

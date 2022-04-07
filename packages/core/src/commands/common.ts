@@ -6,7 +6,7 @@ import { Command, Option } from 'commander';
 import { IStorageServiceClient } from '../interfaces/storage-service-client';
 import { getStorageProviderType } from '../storage-service-clients/types';
 
-import { generateStorageServiceClient } from '../factories/provider-factory';
+import { storageServiceClientFactory } from '../factories/storage-service-client';
 
 /* Common command option types */
 export declare interface ICommonCLIOption {
@@ -47,6 +47,6 @@ export function addStorageServiceClientGenerateHook(command: Command, storageSer
       const type = getStorageProviderType(targetBucketUrl);
       if (type == null) throw new Error(`Unknown storage provider type: ${type}`);
 
-      storageServiceClientHolder.storageServiceClient = generateStorageServiceClient(type, options);
+      storageServiceClientHolder.storageServiceClient = storageServiceClientFactory(type, options);
     });
 }

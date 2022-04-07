@@ -6,7 +6,7 @@ afterEach(() => {
   jest.dontMock('@google-cloud/storage');
 });
 
-describe('generateStorageServiceClient()', () => {
+describe('storageServiceClientFactory()', () => {
   describe('when "StorageProviderType" is "S3"', () => {
     const storageProviderType = 'S3';
 
@@ -22,8 +22,8 @@ describe('generateStorageServiceClient()', () => {
       };
 
       it('return S3StorageServiceClient calss', () => {
-        const { generateStorageServiceClient } = require('../../src/factories/provider-factory');
-        expect(generateStorageServiceClient(storageProviderType, options).constructor.name).toBe('S3StorageServiceClient');
+        const { storageServiceClientFactory } = require('../../src/factories/storage-service-client');
+        expect(storageServiceClientFactory(storageProviderType, options).constructor.name).toBe('S3StorageServiceClient');
       });
     });
   });
@@ -43,8 +43,8 @@ describe('generateStorageServiceClient()', () => {
       };
 
       it('call generateS3ServiceClient', () => {
-        const { generateStorageServiceClient } = require('../../src/factories/provider-factory');
-        expect(generateStorageServiceClient(storageProviderType, options).constructor.name).toBe('GCSStorageServiceClient');
+        const { storageServiceClientFactory } = require('../../src/factories/storage-service-client');
+        expect(storageServiceClientFactory(storageProviderType, options).constructor.name).toBe('GCSStorageServiceClient');
       });
     });
   });
