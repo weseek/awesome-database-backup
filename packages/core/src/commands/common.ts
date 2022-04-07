@@ -4,7 +4,8 @@
 
 import { Command, Option } from 'commander';
 import { IStorageServiceClient } from '../interfaces/storage-service-client';
-import { storageProviderType } from '../factories/storage-service-client-type';
+import { getStorageProviderType } from '../storage-service-clients/types';
+
 import { generateStorageServiceClient } from '../factories/provider-factory';
 
 /* Common command option types */
@@ -43,7 +44,7 @@ export function addStorageServiceClientGenerateHook(command: Command, storageSer
       const [targetBucketUrlString] = command.args;
 
       const targetBucketUrl = new URL(targetBucketUrlString);
-      const type = storageProviderType(targetBucketUrl);
+      const type = getStorageProviderType(targetBucketUrl);
       if (type == null) throw new Error(`Unknown storage provider type: ${type}`);
 
       storageServiceClientHolder.storageServiceClient = generateStorageServiceClient(type, options);

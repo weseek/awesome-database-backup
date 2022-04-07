@@ -1,6 +1,7 @@
 import { S3StorageServiceClient } from '../storage-service-clients/s3';
 import { GCSStorageServiceClient } from '../storage-service-clients/gcs';
-import { StorageProviderType, IStorageServiceClient } from '../interfaces/storage-service-client';
+import { IStorageServiceClient } from '../interfaces/storage-service-client';
+import { StorageProviderType } from '../storage-service-clients/types';
 import { ICommonCLIOption } from '../commands/common';
 
 export function generateStorageServiceClient(type: StorageProviderType, options: ICommonCLIOption): IStorageServiceClient {
