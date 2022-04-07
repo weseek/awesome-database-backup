@@ -5,7 +5,7 @@
  */
 import { exec } from 'child_process';
 import { BackupCommand } from '@awesome-backup/core';
-import loggerFactory from '../factories/logger';
+import loggerFactory from '../logger/factory';
 import { PACKAGE_VERSION } from '../config/version';
 
 const logger = loggerFactory('postgresql-awesome-backup');
