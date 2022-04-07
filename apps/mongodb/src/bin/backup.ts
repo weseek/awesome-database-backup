@@ -5,7 +5,7 @@
  */
 import { exec } from 'child_process';
 import { BackupCommand } from '@awesome-backup/core';
-import loggerFactory from '../services/logger';
+import loggerFactory from '../factories/logger';
 import { PACKAGE_VERSION } from '../config/version';
 
 const logger = loggerFactory('mongodb-awesome-backup');

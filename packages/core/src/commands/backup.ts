@@ -10,7 +10,7 @@ import {
   addStorageServiceClientGenerateHook,
   ICommonCLIOption,
 } from './common';
-import loggerFactory from '../services/logger';
+import loggerFactory from '../factories/logger';
 
 const schedule = require('node-schedule');
 const tmp = require('tmp');

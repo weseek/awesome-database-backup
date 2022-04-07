@@ -9,7 +9,7 @@ import {
   addStorageServiceClientGenerateHook,
   ICommonCLIOption,
 } from './common';
-import loggerFactory from '../services/logger';
+import loggerFactory from '../factories/logger';
 
 const logger = loggerFactory('mongodb-awesome-backup');
 const tmp = require('tmp');

@@ -5,7 +5,7 @@ import {
   addStorageServiceClientOptions,
   addStorageServiceClientGenerateHook,
 } from './common';
-import loggerFactory from '../services/logger';
+import loggerFactory from '../factories/logger';
 
 const logger = loggerFactory('mongodb-awesome-core');
 
