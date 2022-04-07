@@ -7,7 +7,7 @@ afterEach(() => {
 });
 
 describe('storageServiceClientFactory()', () => {
-  describe('when "StorageProviderType" is "S3"', () => {
+  describe('when "StorageServiceClientType" is "S3"', () => {
     const storageProviderType = 'S3';
 
     beforeEach(() => {
@@ -28,7 +28,7 @@ describe('storageServiceClientFactory()', () => {
     });
   });
 
-  describe('when "StorageProviderType" is "GCS"', () => {
+  describe('when "StorageServiceClientType" is "GCS"', () => {
     const storageProviderType = 'GCS';
 
     beforeEach(() => {
