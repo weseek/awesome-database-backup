@@ -22,7 +22,7 @@ describe('storageServiceClientFactory()', () => {
       };
 
       it('return S3StorageServiceClient calss', () => {
-        const { storageServiceClientFactory } = require('../../src/factories/storage-service-client');
+        const { storageServiceClientFactory } = require('../../src/storage-service-clients/factory');
         expect(storageServiceClientFactory(storageProviderType, options).constructor.name).toBe('S3StorageServiceClient');
       });
     });
@@ -43,7 +43,7 @@ describe('storageServiceClientFactory()', () => {
       };
 
       it('call generateS3ServiceClient', () => {
-        const { storageServiceClientFactory } = require('../../src/factories/storage-service-client');
+        const { storageServiceClientFactory } = require('../../src/storage-service-clients/factory');
         expect(storageServiceClientFactory(storageProviderType, options).constructor.name).toBe('GCSStorageServiceClient');
       });
     });

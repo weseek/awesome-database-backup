@@ -1,5 +1,5 @@
 import { BackupCommand, IBackupCLIOption } from '../../src/commands/backup';
-import { IStorageServiceClient } from '../../src/interfaces/storage-service-client';
+import { IStorageServiceClient } from '../../src/storage-service-clients/interfaces';
 
 let backup = require('../../src/commands/backup');
 

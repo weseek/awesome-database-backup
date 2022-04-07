@@ -1,4 +1,4 @@
-import { GCSURI } from '../../src/interfaces/storage-service-client';
+import { GCSURI } from '../../src/storage-service-clients/interfaces';
 import GCSStorageServiceClient from '../../src/storage-service-clients/gcs';
 
 describe('GCSStorageServiceClient', () => {

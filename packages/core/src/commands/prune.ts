@@ -1,13 +1,13 @@
 import { format, subDays } from 'date-fns';
 import { Command } from 'commander';
 
-import { IStorageServiceClient } from '../interfaces/storage-service-client';
+import { IStorageServiceClient } from '../storage-service-clients/interfaces';
 import {
   addStorageServiceClientOptions,
   addStorageServiceClientGenerateHook,
   ICommonCLIOption,
 } from './common';
-import loggerFactory from '../factories/logger';
+import loggerFactory from '../logger/factory';
 
 const logger = loggerFactory('mongodb-awesome-backup');
 

@@ -4,13 +4,13 @@ import { Command } from 'commander';
 import axios from 'axios';
 import axiosRetry from 'axios-retry';
 import { compressBZIP2 } from '../utils/tar';
-import { IStorageServiceClient } from '../interfaces/storage-service-client';
+import { IStorageServiceClient } from '../storage-service-clients/interfaces';
 import {
   addStorageServiceClientOptions,
   addStorageServiceClientGenerateHook,
   ICommonCLIOption,
 } from './common';
-import loggerFactory from '../factories/logger';
+import loggerFactory from '../logger/factory';
 
 const schedule = require('node-schedule');
 const tmp = require('tmp');

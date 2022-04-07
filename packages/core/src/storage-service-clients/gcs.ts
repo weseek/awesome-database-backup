@@ -5,7 +5,7 @@ import {
   listGCSFilesOptions,
   GCSURI,
   GCSStorageServiceClientConfig,
-} from '../interfaces/storage-service-client';
+} from './interfaces';
 
 /**
  * Parse GCS's URI(start with "gs:")

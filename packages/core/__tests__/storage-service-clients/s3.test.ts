@@ -1,5 +1,5 @@
 import { PassThrough, Readable } from 'stream';
-import { S3URI } from '../../src/interfaces/storage-service-client';
+import { S3URI } from '../../src/storage-service-clients/interfaces';
 import S3StorageServiceClient from '../../src/storage-service-clients/s3';
 
 afterEach(() => {

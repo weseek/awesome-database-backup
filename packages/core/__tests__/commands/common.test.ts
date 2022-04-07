@@ -1,5 +1,5 @@
 import { Command } from 'commander';
-import { IStorageServiceClient } from '../../src/interfaces/storage-service-client';
+import { IStorageServiceClient } from '../../src/storage-service-clients/interfaces';
 import {
   addStorageServiceClientOptions,
   addStorageServiceClientGenerateHook,

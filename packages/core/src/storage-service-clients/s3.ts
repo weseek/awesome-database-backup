@@ -14,7 +14,7 @@ import {
   listS3FilesOptions,
   S3URI,
   S3StorageServiceClientConfig,
-} from '../interfaces/storage-service-client';
+} from './interfaces';
 import { configExistS3 } from './s3-config';
 
 /**
