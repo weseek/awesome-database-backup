@@ -3,16 +3,10 @@
  */
 
 import { Command, Option } from 'commander';
-import {
-  IStorageServiceClient,
-  S3StorageServiceClientConfig,
-  GCSStorageServiceClientConfig,
-} from '../storage-service-clients/interfaces';
+import { IStorageServiceClient } from '../storage-service-clients/interfaces';
 import { getStorageServiceClientType } from '../storage-service-clients/types';
 import storageServiceClientFactory from '../storage-service-clients/factory';
-
-/* Common command option types */
-export type ICommonCLIOption = S3StorageServiceClientConfig & GCSStorageServiceClientConfig;
+import { ICommonCLIOption } from './interfaces';
 
 export function addStorageServiceClientOptions(command: Command): void {
   command

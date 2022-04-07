@@ -2,21 +2,14 @@ import { format, subDays } from 'date-fns';
 import { Command } from 'commander';
 
 import { IStorageServiceClient } from '../storage-service-clients/interfaces';
+import { IPruneCLIOption } from './interfaces';
 import {
   addStorageServiceClientOptions,
   addStorageServiceClientGenerateHook,
-  ICommonCLIOption,
 } from './common';
 import loggerFactory from '../logger/factory';
 
 const logger = loggerFactory('mongodb-awesome-backup');
-
-/* Prune command option types */
-export interface IPruneCLIOption extends ICommonCLIOption {
-  backupfilePrefix: string,
-  deleteDivide: number,
-  deleteTargetDaysLeft: number,
-}
 
 /**
  * Define actions, options, and arguments that are commonly required for prune command from the CLI, regardless of the database type.
@@ -90,3 +83,6 @@ export class PruneCommand extends Command {
   }
 
 }
+
+export { IPruneCLIOption } from './interfaces';
+export default PruneCommand;

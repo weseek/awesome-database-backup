@@ -4,20 +4,15 @@ import { Command } from 'commander';
 
 import { expandBZIP2 } from '../utils/tar';
 import { IStorageServiceClient } from '../storage-service-clients/interfaces';
+import { IRestoreCLIOption } from './interfaces';
 import {
   addStorageServiceClientOptions,
   addStorageServiceClientGenerateHook,
-  ICommonCLIOption,
 } from './common';
 import loggerFactory from '../logger/factory';
 
 const logger = loggerFactory('mongodb-awesome-backup');
 const tmp = require('tmp');
-
-/* Restore command option types */
-export interface IRestoreCLIOption extends ICommonCLIOption {
-  restoreToolOptions: string,
-}
 
 /**
  * Define actions, options, and arguments that are commonly required for restore command from the CLI, regardless of the database type.
@@ -90,3 +85,6 @@ export class RestoreCommand extends Command {
   }
 
 }
+
+export { IRestoreCLIOption } from './interfaces';
+export default RestoreCommand;

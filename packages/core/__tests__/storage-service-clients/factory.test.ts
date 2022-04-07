@@ -1,4 +1,4 @@
-import { ICommonCLIOption } from '../../src/commands/common';
+import { ICommonCLIOption } from '../../src/commands/interfaces';
 
 afterEach(() => {
   jest.resetModules();

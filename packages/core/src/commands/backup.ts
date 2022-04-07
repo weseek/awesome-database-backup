@@ -5,10 +5,10 @@ import axios from 'axios';
 import axiosRetry from 'axios-retry';
 import { compressBZIP2 } from '../utils/tar';
 import { IStorageServiceClient } from '../storage-service-clients/interfaces';
+import { IBackupCLIOption } from './interfaces';
 import {
   addStorageServiceClientOptions,
   addStorageServiceClientGenerateHook,
-  ICommonCLIOption,
 } from './common';
 import loggerFactory from '../logger/factory';
 
@@ -16,15 +16,6 @@ const schedule = require('node-schedule');
 const tmp = require('tmp');
 
 const logger = loggerFactory('mongodb-awesome-backup');
-
-/* Backup command option types */
-export interface IBackupCLIOption extends ICommonCLIOption {
-  backupfilePrefix: string,
-  cronmode?: boolean,
-  cronExpression?: string,
-  healthchecksUrl?: string,
-  backupToolOptions?: string,
-}
 
 /**
  * Define actions, options, and arguments that are commonly required for backup command from the CLI, regardless of the database type.
@@ -138,3 +129,6 @@ export class BackupCommand extends Command {
   }
 
 }
+
+export { IBackupCLIOption } from './interfaces';
+export default BackupCommand;
