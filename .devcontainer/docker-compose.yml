@@ -15,8 +15,9 @@ services:
     environment:
       TZ: Asia/Tokyo
     networks:
-    - default
-    - test
+      default:
+      test:
+        ipv4_address: 172.16.2.5
     dns:
     - 172.16.2.2 # dnsmasq container
 
@@ -45,7 +46,7 @@ services:
     - s3rver:/tmp/s3rver
     networks:
       test:
-        ipv4_address: 172.16.2.3
+        ipv4_address: 172.16.2.4
 
   # GCS Mock for test
   fake-gcs-server:
@@ -58,7 +59,8 @@ services:
     - --public-host
     - fake-gcs-server
     networks:
-    - test
+      test:
+        ipv4_address: 172.16.2.3
 
   # DNS masquerade
   #
@@ -72,7 +74,7 @@ services:
   dnsmasq:
     image: strm/dnsmasq
     volumes:
-    - ./dnsmasq.conf:/etc/dnsmasq.conf
+    - ./dnsmasq.conf:/etc/dnsmasq.conf:delegated
     ports:
     - 53:53/udp
     cap_add:
