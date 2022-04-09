@@ -1,5 +1,5 @@
 {
-  "name": "@awesome-backup/mongodb",
+  "name": "@awesome-backup/database-common",
   "version": "0.0.1",
   "description": "Collection of scripts which backup MongoDB databases to Amazon S3 or Google Cloud Storage. You can set a custom S3 endpoint to use S3 based services like DigitalOcean Spaces instead of Amazon S3.",
   "author": "Ryu Sato <ryu@weseek.co.jp>",
@@ -18,6 +18,10 @@
   "files": [
     "dist"
   ],
+  "bin": {
+    "list": "bin/list.js",
+    "prune": "bin/prune.js"
+  },
   "scripts": {
     "build": "tsc && tsc-alias",
     "// for development": "",
@@ -30,7 +34,6 @@
   "dependencies": {
     "@awesome-backup/tsconfig": "^0.0.1",
     "@awesome-backup/core": "^0.0.1",
-    "@awesome-backup/database-common": "^0.0.1",
     "cross-env": "^7.0.3",
     "date-fns": "^2.28.0",
     "node-schedule": "^2.1.0",

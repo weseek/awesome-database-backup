@@ -28,6 +28,9 @@ COPY --from=pruned-package --chown=node:node \
   ${optDir}/out/json/ .
 COPY --from=pruned-package --chown=node:node \
   ${optDir}/out/yarn.lock ./yarn.lock
+### To install "bin/*" of "database-common
+COPY --from=pruned-package --chown=node:node \
+  ${optDir}/out/full/apps/database-common/bin/ ./apps/database-common/bin/
 RUN yarn --frozen-lockfile
 
 
@@ -60,7 +63,7 @@ RUN apt-get update \
       && apt-get clean \
       && rm -rf /var/lib/apt/lists/*
 
-FROM tool-common AS mongodb
+FROM tool-common AS mongodb-tools
 
 ADD https://fastdl.mongodb.org/tools/db/mongodb-database-tools-debian10-x86_64-100.5.2.deb .
 RUN apt-get update \
@@ -68,7 +71,7 @@ RUN apt-get update \
       && apt-get clean \
       && rm -rf /var/lib/apt/lists/*
 
-FROM tool-common AS postgresql
+FROM tool-common AS postgresql-tools
 
 RUN apt-get update \
       && apt-get install -y postgresql-common postgresql-client --no-install-recommends \
@@ -80,7 +83,7 @@ RUN apt-get update \
 ## release
 ## dbType is "mongodb" or "postgresql"
 ##
-FROM ${dbType} AS release
+FROM ${dbType}-tools AS release
 
 ARG distDir="dist"
 ARG packageScope
@@ -97,4 +100,4 @@ RUN for F in ls ${distDir}/${packagePath}/src/bin/*.js; do \
       chmod +x $F; \
       mv $F $(dirname $F)/$(basename -s .js $F); \
     done
-ENV PATH $PATH:${appDir}/${packagePath}/${distDir}/${packagePath}/src/bin
+ENV PATH $PATH:${appDir}/${packagePath}/${distDir}/${packagePath}/src/bin:${appDir}/${packagePath}/node_modules/.bin
