@@ -23,11 +23,7 @@
      */
     "paths": {
       "@awesome-backup/core": ["../../packages/core/src"],
-      "@awesome-backup/core/*": ["../../packages/core/src/*"],
-      "@awesome-backup/mongodb": ["../../apps/mongodb/src"],
-      "@awesome-backup/mongodb/*": ["../../apps/mongodb/src/*"],
-      "@awesome-backup/postgresql": ["../../apps/postgresql/src"],
-      "@awesome-backup/postgresql/*": ["../../apps/postgresql/src/*"]
+      "@awesome-backup/core/*": ["../../packages/core/src/*"]
     }
   }
 }
