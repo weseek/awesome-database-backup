@@ -1,3 +1,3 @@
 #!/usr/bin/env node
 
-require('../dist/apps/postgresql-restore/src/bin/restore');
+require('@awesome-backup/postgresql-restore');

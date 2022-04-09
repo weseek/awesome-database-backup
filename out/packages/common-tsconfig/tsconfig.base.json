@@ -1,0 +1,33 @@
+{
+  "lib": "es2019",
+
+  /* default compiler options */
+  "compilerOptions": {
+    "strict": true,
+    "declaration": true,
+    "noResolve": false,
+    "preserveConstEnums": true,
+    "sourceMap": true,
+    "noEmit": false,
+    "inlineSources": true,
+    "target": "es2019",
+    "module": "commonjs",
+
+    /* Module Resolution Options */
+    "esModuleInterop": true,
+
+    /*
+     * basic aliases
+     *
+     * This is an assumption inherited by "tsconfig.json", which is placed in the top directory of each package.
+     */
+    "paths": {
+      "@awesome-backup/core": ["../../packages/core/src"],
+      "@awesome-backup/core/*": ["../../packages/core/src/*"],
+      "@awesome-backup/mongodb": ["../../apps/mongodb/src"],
+      "@awesome-backup/mongodb/*": ["../../apps/mongodb/src/*"],
+      "@awesome-backup/postgresql": ["../../apps/postgresql/src"],
+      "@awesome-backup/postgresql/*": ["../../apps/postgresql/src/*"]
+    }
+  }
+}

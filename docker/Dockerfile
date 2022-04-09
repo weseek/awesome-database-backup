@@ -13,7 +13,9 @@ WORKDIR ${optDir}
 
 COPY . .
 
-RUN npx turbo prune --scope="${packageScope}" --docker
+### "prune" command does not extract "bin" directory, so copy it
+RUN npx turbo prune --scope="${packageScope}" --docker \
+    && cp --parents */*/bin/* out/json/
 
 
 ##
@@ -28,9 +30,6 @@ COPY --from=pruned-package --chown=node:node \
   ${optDir}/out/json/ .
 COPY --from=pruned-package --chown=node:node \
   ${optDir}/out/yarn.lock ./yarn.lock
-### To install "bin/*" of "database-common
-COPY --from=pruned-package --chown=node:node \
-  ${optDir}/out/full/apps/database-common/bin/ ./apps/database-common/bin/
 RUN yarn --frozen-lockfile
 
 
@@ -96,6 +95,4 @@ WORKDIR ${appDir}/${packagePath}
 COPY --from=builder --chown=node:node \
   ${optDir}/ ${appDir}/
 
-### database-common's bins are placed under "${appDir}/${packagePath}/node_modules/.bin"
-### packageScope's    bins are placed under "${appDir}/${packagePath}/bin"
-ENV PATH $PATH:${appDir}/${packagePath}/node_modules/.bin:${appDir}/${packagePath}/bin
+ENV PATH $PATH:${appDir}/${packagePath}/node_modules/.bin

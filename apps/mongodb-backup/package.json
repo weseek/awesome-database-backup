@@ -18,6 +18,7 @@
   "files": [
     "dist"
   ],
+  "main": "dist/apps/mongodb-backup/src/bin/backup.js",
   "bin": {
     "backup": "bin/backup.js"
   },

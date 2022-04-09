@@ -18,6 +18,7 @@
   "files": [
     "dist"
   ],
+  "main": "dist/apps/postgresql-restore/src/bin/restore.js",
   "bin": {
     "restore": "bin/restore.js"
   },

@@ -18,8 +18,9 @@
   "files": [
     "dist"
   ],
+  "main": "dist/apps/mongodb-restore/src/bin/restore.js",
   "bin": {
-    "resotre": "bin/restore.js"
+    "restore": "bin/restore.js"
   },
   "scripts": {
     "build": "tsc && tsc-alias",

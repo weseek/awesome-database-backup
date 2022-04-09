@@ -1,0 +1,48 @@
+{
+  "name": "@awesome-backup/core",
+  "version": "0.0.1",
+  "description": "core module of awesome-backup",
+  "author": "Ryu Sato <ryu@weseek.co.jp>",
+  "license": "MIT",
+  "homepage": "https://github.com/ryu-sato/awesome-backup#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ryu-sato/awesome-backup.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ryu-sato/awesome-backup/issues"
+  },
+  "main": "dist/index.js",
+  "types": "src/index.ts",
+  "directories": {
+    "test": "__tests__"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc && tsc-alias",
+    "// Since the risk of memory leaks increases when a few workers, we chose to use many workers even though the processing speed would be lower.": "",
+    "test": "cross-env NODE_ENV=test jest --maxWorkers 4 --ci --logHeapUsage",
+    "lint": "eslint src --ext .ts",
+    "lint:fix": "eslint src --ext .ts --fix"
+  },
+  "dependencies": {
+    "@awesome-backup/tsconfig": "^0.0.1",
+    "@aws-sdk/client-s3": "^3.45.0",
+    "@google-cloud/storage": "^5.16.1",
+    "axios": "^0.24.0",
+    "axios-retry": "^3.2.4",
+    "cross-env": "^7.0.3",
+    "bunyan": "^1.8.15",
+    "universal-bunyan": "^0.9.2",
+    "browser-bunyan": "^1.6.3"
+  },
+  "devDependencies": {
+    "@types/bunyan": "^1.8.8"
+  },
+  "engines": {
+    "node": ">= 16.13.1 < 17",
+    "yarn": ">= 1.22.4"
+  }
+}

@@ -1,0 +1,10 @@
+node_modules
+/packages/*/dist
+/packages/*/coverage
+/apps/*/dist
+/apps/*/coverage
+yarn-error.log
+
+# Turborepo
+.turbo
+*-profile.json

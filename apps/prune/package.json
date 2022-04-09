@@ -18,6 +18,7 @@
   "files": [
     "dist"
   ],
+  "main": "dist/apps/prune/src/bin/prune.js",
   "bin": {
     "prune": "bin/prune.js"
   },
