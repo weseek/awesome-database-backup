@@ -19,7 +19,7 @@
     "dist"
   ],
   "bin": {
-    "backup": "bin/backup"
+    "backup": "bin/backup.js"
   },
   "scripts": {
     "build": "tsc && tsc-alias",

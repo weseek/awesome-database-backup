@@ -19,7 +19,7 @@
     "dist"
   ],
   "bin": {
-    "resotre": "bin/restore"
+    "resotre": "bin/restore.js"
   },
   "scripts": {
     "build": "tsc && tsc-alias",

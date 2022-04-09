@@ -1,3 +1,3 @@
 #!/usr/bin/env node
 
-require('../dist/apps/mongodb/src/bin/restore');
+require('../dist/apps/mongodb-restore/src/bin/restore');
