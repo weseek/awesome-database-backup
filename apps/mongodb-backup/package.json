@@ -1,7 +1,7 @@
 {
-  "name": "@awesome-backup/postgresql",
+  "name": "@awesome-backup/mongodb-backup",
   "version": "0.0.1",
-  "description": "Collection of scripts which backup PostgreSQL databases to Amazon S3 or Google Cloud Storage. You can set a custom S3 endpoint to use S3 based services like DigitalOcean Spaces instead of Amazon S3.",
+  "description": "Backup MongoDB database and store to Amazon S3 or Google Cloud Storage. You can set a custom S3 endpoint to use S3 based services like DigitalOcean Spaces instead of Amazon S3.",
   "author": "Ryu Sato <ryu@weseek.co.jp>",
   "license": "MIT",
   "homepage": "https://github.com/ryu-sato/awesome-backup#readme",
@@ -18,6 +18,9 @@
   "files": [
     "dist"
   ],
+  "bin": {
+    "backup": "bin/backup"
+  },
   "scripts": {
     "build": "tsc && tsc-alias",
     "// for development": "",
@@ -30,11 +33,8 @@
   "dependencies": {
     "@awesome-backup/tsconfig": "^0.0.1",
     "@awesome-backup/core": "^0.0.1",
-    "@awesome-backup/list": "^0.0.1",
-    "@awesome-backup/prune": "^0.0.1",
     "cross-env": "^7.0.3",
     "date-fns": "^2.28.0",
-    "kebab-case": "^1.0.1",
     "node-schedule": "^2.1.0",
     "tmp": "^0.2.1",
     "bunyan": "^1.8.15",
@@ -46,8 +46,7 @@
     "@types/bunyan": "^1.8.8",
     "@aws-sdk/client-s3": "^3.45.0",
     "@google-cloud/storage": "^5.16.1",
-    "pg": "^8.7.3",
-    "@types/pg": "^8.6.5"
+    "mongodb": "^4.4.1"
   },
   "engines": {
     "node": ">= 16.13.1 < 17",
