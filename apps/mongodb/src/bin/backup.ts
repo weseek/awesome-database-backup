@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 /**
  * An executable file that stores backups for MongoDB to a storage service.
  * Execute with --help to see usage instructions.

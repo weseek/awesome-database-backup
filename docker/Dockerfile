@@ -96,8 +96,6 @@ WORKDIR ${appDir}/${packagePath}
 COPY --from=builder --chown=node:node \
   ${optDir}/ ${appDir}/
 
-RUN for F in ls ${distDir}/${packagePath}/src/bin/*.js; do \
-      chmod +x $F; \
-      mv $F $(dirname $F)/$(basename -s .js $F); \
-    done
-ENV PATH $PATH:${appDir}/${packagePath}/${distDir}/${packagePath}/src/bin:${appDir}/${packagePath}/node_modules/.bin
+### database-common's bins are placed under "${appDir}/${packagePath}/node_modules/.bin"
+### packageScope's    bins are placed under "${appDir}/${packagePath}/bin"
+ENV PATH $PATH:${appDir}/${packagePath}/node_modules/.bin:${appDir}/${packagePath}/bin
