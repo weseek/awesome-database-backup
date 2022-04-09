@@ -35,8 +35,8 @@ jobs:
         platforms: linux/amd64
         load: true
         build-args: |
-          packageScope=@awesome-backup/${{ matrix.testingTargetBaseName }}
-          packagePath=apps/${{ matrix.testingTargetBaseName }}
+          packageScope=@awesome-backup/${{ matrix.testingTargetBaseName }}-awesome-backup
+          packagePath=apps/${{ matrix.testingTargetBaseName }}-awesome-backup
           dbType=${{ matrix.testingTargetBaseName }}
         cache-from: type=local,src=/tmp/.buildx-cache
         cache-to: type=local,mode=max,dest=/tmp/.buildx-cache-new
