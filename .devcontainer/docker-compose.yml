@@ -6,8 +6,8 @@ services:
       context: .
       dockerfile: Dockerfile
     volumes:
-    - ..:/workspace:delegated
-    - node_modules:/workspace/node_modules
+    - ..:/awesome-backup:delegated
+    - node_modules:/awesome-backup/node_modules
     tty: true
     environment:
       TZ: Asia/Tokyo
