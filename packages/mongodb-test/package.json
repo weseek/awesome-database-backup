@@ -17,5 +17,6 @@
   "dependencies": {
   },
   "devDependencies": {
+    "mongodb": "^4.4.1"
   }
 }

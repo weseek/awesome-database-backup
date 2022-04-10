@@ -28,7 +28,6 @@
     "lint:fix": "eslint src --ext .ts --fix"
   },
   "dependencies": {
-    "@awesome-backup/tsconfig": "^0.0.1",
     "@aws-sdk/client-s3": "^3.45.0",
     "@google-cloud/storage": "^5.16.1",
     "axios": "^0.24.0",
@@ -36,9 +35,13 @@
     "cross-env": "^7.0.3",
     "bunyan": "^1.8.15",
     "universal-bunyan": "^0.9.2",
-    "browser-bunyan": "^1.6.3"
+    "browser-bunyan": "^1.6.3",
+    "date-fns": "^2.28.0",
+    "node-schedule": "^2.1.0",
+    "tmp": "^0.2.1"
   },
   "devDependencies": {
+    "@awesome-backup/tsconfig": "^0.0.1",
     "@types/bunyan": "^1.8.8"
   },
   "engines": {
