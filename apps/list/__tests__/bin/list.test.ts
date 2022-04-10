@@ -35,10 +35,10 @@ describe('list', () => {
 
   describe('when valid S3 options are specified', () => {
     const commandLine = `${execListCommand} \
-      --aws-endpoint-url http://s3.s3rver \
+      --aws-endpoint-url http://s3.minio:9000 \
       --aws-region us-east-1 \
-      --aws-access-key-id "S3RVER" \
-      --aws-secret-access-key "S3RVER" \
+      --aws-access-key-id "minioadmin" \
+      --aws-secret-access-key "minioadmin" \
       ${testS3BucketURI}/`;
 
     beforeEach(cleanTestS3Bucket);

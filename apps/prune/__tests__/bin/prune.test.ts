@@ -41,10 +41,10 @@ describe('prune', () => {
 
     describe('and when prune options show pruning files everyday', () => {
       const commandLine = `${execPruneCommand} \
-        --aws-endpoint-url http://s3.s3rver \
+        --aws-endpoint-url http://s3.minio:9000 \
         --aws-region us-east-1 \
-        --aws-access-key-id "S3RVER" \
-        --aws-secret-access-key "S3RVER" \
+        --aws-access-key-id "minioadmin" \
+        --aws-secret-access-key "minioadmin" \
         --delete-divide 1 \
         --delete-target-days-left 0 \
         ${testS3BucketURI}`;

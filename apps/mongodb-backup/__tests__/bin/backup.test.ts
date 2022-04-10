@@ -39,10 +39,10 @@ describe('backup', () => {
 
     describe('and when backup tool options are specified', () => {
       const commandLine = `${execBackupCommand} \
-        --aws-endpoint-url http://s3.s3rver \
+        --aws-endpoint-url http://s3.minio:9000 \
         --aws-region us-east-1 \
-        --aws-access-key-id "S3RVER" \
-        --aws-secret-access-key "S3RVER" \
+        --aws-access-key-id "minioadmin" \
+        --aws-secret-access-key "minioadmin" \
         --backup-tool-options "--uri mongodb://root:password@mongo/dummy?authSource=admin" \
         ${testS3BucketURI}`;
 

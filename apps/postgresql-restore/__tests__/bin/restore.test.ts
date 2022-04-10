@@ -41,10 +41,10 @@ describe('restore', () => {
     const objectURI = `${bucketURI}backup-20220402000000.tar.bz2`;
     const commandLine = `PGPASSWORD="password" \
       ${execRestoreCommand} \
-      --aws-endpoint-url http://s3.s3rver \
+      --aws-endpoint-url http://s3.minio:9000 \
       --aws-region us-east-1 \
-      --aws-access-key-id "S3RVER" \
-      --aws-secret-access-key "S3RVER" \
+      --aws-access-key-id "minioadmin" \
+      --aws-secret-access-key "minioadmin" \
       --restore-tool-options "--host postgres --username postgres" \
       ${objectURI}`;
 
