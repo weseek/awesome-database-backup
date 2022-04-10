@@ -27,14 +27,16 @@
     "ts-node-dev": "^1.1.8",
     "tsc-alias": "^1.5.0",
     "turbo": "^1.0.28",
-    "typescript": "^4.5.4"
+    "typescript": "^4.5.4",
+    "rimraf": "^3.0.2"
   },
   "scripts": {
     "build": "turbo run build",
     "test": "turbo run test --concurrency=1",
     "//[TODO] prepare CI environment to exec E2E test of @awesome-backup/mongodb and @awesome-backup/postgresql": "",
     "test:ci": "turbo run test --scope='@awesome-backup/core' --no-deps",
-    "clean": "rm -rf node_modules; rm -rf .turbo; rm -rf */*/dist; rm -rf */*/coverage; rm -rf */*/node_modules; rm -rf */*/.turbo"
+    "rimraf": "rimraf",
+    "clean": "npm run rimraf node_modules/.cache .turbo apps/*/dist packages/*/dist */*/coverage */*/.turbo"
   },
   "packageManager": "yarn@1.22.15",
   "turbo": {
