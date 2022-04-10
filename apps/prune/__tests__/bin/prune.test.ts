@@ -6,13 +6,11 @@ import {
   cleanTestS3Bucket,
   uploadFixtureToTestS3Bucket,
   listFileNamesInTestS3Bucket,
-} from '../supports/s3rver';
-import {
   testGCSBucketURI,
   cleanTestGCSBucket,
   uploadFixtureToTestGCSBucket,
   listFileNamesInTestGCSBucket,
-} from '../supports/fake-gcs-server';
+} from '@awesome-backup/storage-server-mocks';
 
 const exec = promisify(execOriginal);
 

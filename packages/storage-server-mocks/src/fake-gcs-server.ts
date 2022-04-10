@@ -1,5 +1,5 @@
 import { Storage } from '@google-cloud/storage';
-import { fixturePath } from '../fixtures';
+import { fixturePath } from './fixtures';
 
 const storage = new Storage({
   projectId: 'valid_project_id',

@@ -3,16 +3,14 @@ import { promisify } from 'util';
 import {
   cleanTestS3Bucket,
   uploadFixtureToTestS3Bucket,
-} from '../supports/s3rver';
-import {
   testGCSBucketURI,
   cleanTestGCSBucket,
   uploadFixtureToTestGCSBucket,
-} from '../supports/fake-gcs-server';
+} from '@awesome-backup/storage-server-mocks';
 import {
   cleanTestPG,
   listTableNamesInTestPG,
-} from '../supports/postgresql';
+} from '@awesome-backup/postgresql-test';
 
 const exec = promisify(execOriginal);
 

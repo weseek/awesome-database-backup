@@ -8,7 +8,7 @@ import {
   PutObjectCommand,
 } from '@aws-sdk/client-s3';
 import { readFileSync } from 'fs';
-import { fixturePath } from '../fixtures';
+import { fixturePath } from './fixtures';
 
 const s3client = new S3Client({
   endpoint: 'http://s3.s3rver',

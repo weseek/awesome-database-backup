@@ -3,13 +3,11 @@ import { promisify } from 'util';
 import {
   testS3BucketURI,
   cleanTestS3Bucket,
-} from '../supports/s3rver';
-import {
   testGCSBucketURI,
   cleanTestGCSBucket,
   listFileNamesInTestGCSBucket,
-} from '../supports/fake-gcs-server';
-import { prepareTestMongoDB } from '../supports/mongodb';
+} from '@awesome-backup/storage-server-mocks';
+import { prepareTestMongoDB } from '@awesome-backup/mongodb-test';
 
 const exec = promisify(execOriginal);
 
