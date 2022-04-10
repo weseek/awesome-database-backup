@@ -43,7 +43,7 @@
     "browser-bunyan": "^1.6.3"
   },
   "devDependencies": {
-    "@awesome-backup/storage-server-mocks": "^0.0.1",
+    "@awesome-backup/storage-service-test": "^0.0.1",
     "@awesome-backup/mongodb-test": "^0.0.1",
     "tsconfig-paths": "^3.12.0",
     "@types/bunyan": "^1.8.8",

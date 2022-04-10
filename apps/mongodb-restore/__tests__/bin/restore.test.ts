@@ -6,7 +6,7 @@ import {
   testGCSBucketURI,
   cleanTestGCSBucket,
   uploadFixtureToTestGCSBucket,
-} from '@awesome-backup/storage-server-mocks';
+} from '@awesome-backup/storage-service-test';
 import {
   dropTestMongoDB,
   listCollectionNamesInTestMongoDB,

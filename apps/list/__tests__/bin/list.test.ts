@@ -7,7 +7,7 @@ import {
   testGCSBucketURI,
   cleanTestGCSBucket,
   uploadFixtureToTestGCSBucket,
-} from '@awesome-backup/storage-server-mocks';
+} from '@awesome-backup/storage-service-test';
 
 const exec = promisify(execOriginal);
 

@@ -1,5 +1,5 @@
 {
-  "name": "@awesome-backup/storage-server-mocks",
+  "name": "@awesome-backup/storage-service-test",
   "version": "0.0.1",
   "description": "Mock of Amazon S3 or Google Cloud Storage.",
   "author": "Ryu Sato <ryu@weseek.co.jp>",

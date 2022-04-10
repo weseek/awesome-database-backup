@@ -6,7 +6,7 @@ import {
   testGCSBucketURI,
   cleanTestGCSBucket,
   listFileNamesInTestGCSBucket,
-} from '@awesome-backup/storage-server-mocks';
+} from '@awesome-backup/storage-service-test';
 import { prepareTestPG } from '@awesome-backup/postgresql-test';
 
 const exec = promisify(execOriginal);
