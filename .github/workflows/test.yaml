@@ -52,10 +52,10 @@ jobs:
                      -e "MINIO_DOMAIN=s3.localhost"
                      minio/minio:RELEASE.2022-04-09T15-09-52Z server /data
       # Wait on all GCS and S3 server mocks
-      - uses: ifaxity/wait-on-action@v1
-        with:
-          resource: http://localhost:4443
-          timeout: 30000
+      # - uses: ifaxity/wait-on-action@v1
+      #   with:
+      #     resource: http://localhost:4443
+      #     timeout: 30000
       - uses: ifaxity/wait-on-action@v1
         with:
           resource: http://s3.localhost:9000
