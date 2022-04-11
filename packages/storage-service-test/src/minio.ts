@@ -9,18 +9,9 @@ import {
 } from '@aws-sdk/client-s3';
 import { readFileSync } from 'fs';
 import { fixturePath } from './fixtures';
+import { s3ClientConfig, testS3BucketName } from './config/minio';
 
-const s3client = new S3Client({
-  endpoint: 'http://s3.minio:9000',
-  region: 'us-east-1',
-  credentials: Object({
-    accessKeyId: 'minioadmin',
-    secretAccessKey: 'minioadmin',
-  }),
-});
-
-export const testS3BucketName = 'test';
-export const testS3BucketURI = `s3://${testS3BucketName}`;
+const s3client = new S3Client(s3ClientConfig);
 
 export async function cleanTestS3Bucket(): Promise<void> {
   const buckets = await s3client.send(new ListBucketsCommand({}));

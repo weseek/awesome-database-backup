@@ -1,17 +1,8 @@
 import { Storage } from '@google-cloud/storage';
 import { fixturePath } from './fixtures';
+import { storageConfig, testGCSBucketName } from './config/fake-gcs-server';
 
-const storage = new Storage({
-  projectId: 'valid_project_id',
-  credentials: {
-    client_email: 'valid@example.com',
-    private_key: 'valid_private_key',
-  },
-  apiEndpoint: 'http://fake-gcs-server:4443',
-});
-
-export const testGCSBucketName = 'test';
-export const testGCSBucketURI = `gs://${testGCSBucketName}`;
+const storage = new Storage(storageConfig);
 
 export async function cleanTestGCSBucket(): Promise<void> {
   await storage.createBucket(testGCSBucketName);
