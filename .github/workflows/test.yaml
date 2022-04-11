@@ -8,7 +8,37 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    services:
+      mongo:
+        image: mongo:5.0.6
+        env:
+          MONGO_INITDB_ROOT_USERNAME: root
+          MONGO_INITDB_ROOT_PASSWORD: password
+      postgres:
+        image: postgres:14.2
+        env:
+          POSTGRES_DB: test
+          POSTGRES_PASSWORD: password
+
     steps:
+      # GCS Mock for test
+      - name: Setup fake-gcs-action
+        uses: fsouza/fake-gcs-action@v0.4.1
+        with:
+          version: "1.37.3"
+          public-host: fake-gcs-server
+          scheme: http
+      # S3 Mock for test
+      - name: Setup minio
+        run:
+          docker run -d --name minio
+                     -e "MINIO_ACCESS_KEY=minioadmin"
+                     -e "MINIO_SECRET_KEY=minioadmin"
+                     -e "MINIO_DOMAIN=s3.minio"
+                     --network-alias s3.minio
+                     --network-alias test.s3.minio
+                     minio/minio:RELEASE.2022-04-09T15-09-52Z server /data
+
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
@@ -23,5 +53,5 @@ jobs:
           restore-keys: |
             turbo-${{ github.job }}-
       - run: yarn install
-      - run: yarn test:ci
+      - run: yarn test
       # [TODO] Coverage report

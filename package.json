@@ -33,8 +33,6 @@
   "scripts": {
     "build": "turbo run build",
     "test": "turbo run test --concurrency=1",
-    "//[TODO] prepare CI environment to exec E2E test of @awesome-backup/mongodb and @awesome-backup/postgresql": "",
-    "test:ci": "turbo run test --scope='@awesome-backup/core' --no-deps",
     "rimraf": "rimraf",
     "clean": "npm run rimraf node_modules/.cache .turbo apps/*/dist packages/*/dist */*/coverage */*/.turbo"
   },
