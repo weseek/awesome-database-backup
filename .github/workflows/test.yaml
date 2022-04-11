@@ -38,10 +38,10 @@ jobs:
           docker run -d
                      -p 4443:4443
                      --name fake-gcs-action
-                     --network host
                      fsouza/fake-gcs-server:1.37.3
                      --scheme http
                      --public-host localhost
+                     --backend memory
       # S3 Mock for test
       - name: Setup minio
         run:
@@ -51,13 +51,15 @@ jobs:
                      -e "MINIO_ACCESS_KEY=minioadmin"
                      -e "MINIO_SECRET_KEY=minioadmin"
                      -e "MINIO_DOMAIN=s3.127.0.0.1"
-                     --network host
-                     minio/minio:RELEASE.2022-04-09T15-09-52Z server /data
+                     minio/minio:RELEASE.2022-04-09T15-09-52Z
+                     server
+                     --address 0.0.0.0:9000
+                     /data
       # Wait on all GCS and S3 server mocks
-      # - uses: ifaxity/wait-on-action@v1
-      #   with:
-      #     resource: http://127.0.0.1:4443
-      #     timeout: 30000
+      - uses: ifaxity/wait-on-action@v1
+        with:
+          resource: tcp://127.0.0.1:4443
+          timeout: 30000
       - uses: ifaxity/wait-on-action@v1
         with:
           resource: http://127.0.0.1:9000
