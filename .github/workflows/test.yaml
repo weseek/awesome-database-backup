@@ -70,14 +70,18 @@ jobs:
       #     timeout: 30000
 
       # install tools
+      - uses: awalsh128/cache-apt-pkgs-action@v1
+        with:
+          packages:
+            bzip2
+            postgresql-common
+            postgresql-client
+
       - name: Install backup and restore tools
         run: |
           curl -O https://fastdl.mongodb.org/tools/db/mongodb-database-tools-debian10-x86_64-100.5.2.deb
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
-            bzip2 \
-            postgresql-common \
-            postgresql-client \
             ./mongodb-database-tools-debian10-x86_64-100.5.2.deb
 
       - uses: actions/checkout@v2
