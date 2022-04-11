@@ -26,17 +26,17 @@ jobs:
         uses: fsouza/fake-gcs-action@v0.4.1
         with:
           version: "1.37.3"
-          public-host: fake-gcs-server
+          public-host: localhost:4443
           scheme: http
       # S3 Mock for test
       - name: Setup minio
         run:
-          docker run -d --name minio
+          docker run -d
+                     -p 9000:9000
+                     --name minio
                      -e "MINIO_ACCESS_KEY=minioadmin"
                      -e "MINIO_SECRET_KEY=minioadmin"
-                     -e "MINIO_DOMAIN=s3.minio"
-                     --network-alias s3.minio
-                     --network-alias test.s3.minio
+                     -e "MINIO_DOMAIN=s3.localhost"
                      minio/minio:RELEASE.2022-04-09T15-09-52Z server /data
 
       - uses: actions/checkout@v2
@@ -54,4 +54,7 @@ jobs:
             turbo-${{ github.job }}-
       - run: yarn install
       - run: yarn test
+        env:
+          AWS_ENDPOINT_URL: http://s3.localhsot:9000
+          GCP_ENDPOINT_URL: http://localhost:4443
       # [TODO] Coverage report
