@@ -38,9 +38,9 @@ jobs:
           docker run -d
                      -p 4443:4443
                      --name fake-gcs-action
+                     fsouza/fake-gcs-server:1.37.3
                      --scheme http
                      --public-host localhost
-                     fsouza/fake-gcs-server:1.37.3
       # S3 Mock for test
       - name: Setup minio
         run:
