@@ -9,7 +9,10 @@ import {
   cleanTestGCSBucket,
   listFileNamesInTestGCSBucket,
 } from '@awesome-backup/storage-service-test';
-import { prepareTestPG } from '@awesome-backup/postgresql-test';
+import {
+  prepareTestPG,
+  postgresqlConfig,
+} from '@awesome-backup/postgresql-test';
 
 const exec = promisify(execOriginal);
 
@@ -46,7 +49,7 @@ describe('backup', () => {
         --aws-region ${s3ClientConfig.region} \
         --aws-access-key-id ${s3ClientConfig.credentials.accessKeyId} \
         --aws-secret-access-key ${s3ClientConfig.credentials.secretAccessKey} \
-        --backup-tool-options "--host postgres --username postgres" \
+        --backup-tool-options "--host ${postgresqlConfig.host} --username ${postgresqlConfig.user}" \
         ${testS3BucketURI}`;
 
       it('backup PostgreSQL in bucket', async() => {
@@ -69,7 +72,7 @@ describe('backup', () => {
         --gcp-project-id ${storageConfig.projectId} \
         --gcp-client-email ${storageConfig.credentials.client_email} \
         --gcp-private-key ${storageConfig.credentials.private_key} \
-        --backup-tool-options "--host postgres --username postgres" \
+        --backup-tool-options "--host ${postgresqlConfig.host} --username ${postgresqlConfig.user}" \
         ${testGCSBucketURI}/`;
 
       it('backup PostgreSQL in bucket', async() => {

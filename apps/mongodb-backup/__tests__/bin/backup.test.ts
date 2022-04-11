@@ -9,7 +9,10 @@ import {
   cleanTestGCSBucket,
   listFileNamesInTestGCSBucket,
 } from '@awesome-backup/storage-service-test';
-import { prepareTestMongoDB } from '@awesome-backup/mongodb-test';
+import {
+  prepareTestMongoDB,
+  mongodbURI,
+} from '@awesome-backup/mongodb-test';
 
 const exec = promisify(execOriginal);
 
@@ -45,7 +48,7 @@ describe('backup', () => {
         --aws-region ${s3ClientConfig.region} \
         --aws-access-key-id ${s3ClientConfig.credentials.accessKeyId} \
         --aws-secret-access-key ${s3ClientConfig.credentials.secretAccessKey} \
-        --backup-tool-options "--uri mongodb://root:password@mongo/dummy?authSource=admin" \
+        --backup-tool-options "--uri ${mongodbURI}" \
         ${testS3BucketURI}`;
 
       it('backup mongo in bucket', async() => {
@@ -67,7 +70,7 @@ describe('backup', () => {
         --gcp-project-id ${storageConfig.projectId} \
         --gcp-client-email ${storageConfig.credentials.client_email} \
         --gcp-private-key ${storageConfig.credentials.private_key} \
-        --backup-tool-options "--uri mongodb://root:password@mongo/dummy?authSource=admin" \
+        --backup-tool-options "--uri ${mongodbURI}" \
         ${testGCSBucketURI}/`;
 
       it('backup mongo in bucket', async() => {

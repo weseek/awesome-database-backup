@@ -1,7 +1,8 @@
 import { MongoClient } from 'mongodb';
+import { mongodbURI } from './config/mongodb';
 
 export const testMongoDBName = 'dummy';
-const client = new MongoClient('mongodb://root:password@mongo/?authSource=admin');
+const client = new MongoClient(mongodbURI);
 
 export async function dropTestMongoDB(): Promise<void> {
   await client.connect();

@@ -12,6 +12,7 @@ import {
 import {
   dropTestMongoDB,
   listCollectionNamesInTestMongoDB,
+  mongodbURI,
 } from '@awesome-backup/mongodb-test';
 
 const exec = promisify(execOriginal);
@@ -46,7 +47,7 @@ describe('restore', () => {
       --aws-region ${s3ClientConfig.region} \
       --aws-access-key-id ${s3ClientConfig.credentials.accessKeyId} \
       --aws-secret-access-key ${s3ClientConfig.credentials.secretAccessKey} \
-      --restore-tool-options "--uri mongodb://root:password@mongo/?authSource=admin" \
+      --restore-tool-options "--uri ${mongodbURI}" \
       ${objectURI}`;
 
     beforeEach(cleanTestS3Bucket);
@@ -72,7 +73,7 @@ describe('restore', () => {
       --gcp-project-id ${storageConfig.projectId} \
       --gcp-client-email ${storageConfig.credentials.client_email} \
       --gcp-private-key ${storageConfig.credentials.private_key} \
-      --restore-tool-options "--uri mongodb://root:password@mongo/?authSource=admin" \
+      --restore-tool-options "--uri ${mongodbURI}" \
       ${objectURI}`;
 
     beforeEach(cleanTestGCSBucket);

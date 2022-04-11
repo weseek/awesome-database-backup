@@ -1,11 +1,8 @@
 import { Pool } from 'pg';
+import { postgresqlConfig } from './config/postgresql';
 
 export const testPGName = 'dummy';
-const dbConfig = {
-  user: 'postgres',
-  password: 'password',
-  host: 'postgres',
-};
+const dbConfig = postgresqlConfig;
 
 export async function cleanTestPG(): Promise<void> {
   const pool = new Pool(dbConfig);
