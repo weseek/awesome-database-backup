@@ -34,11 +34,13 @@ jobs:
     steps:
       # GCS Mock for test
       - name: Setup fake-gcs-action
-        uses: fsouza/fake-gcs-action@v0.4.1
-        with:
-          version: "1.37.3"
-          public-host: localhost:4443
-          scheme: http
+        run:
+          docker run -d
+                     -p 4443:4443
+                     --name fake-gcs-action
+                     --scheme http
+                     --public-host localhost
+                     fsouza/fake-gcs-server:1.37.3
       # S3 Mock for test
       - name: Setup minio
         run:
@@ -53,9 +55,11 @@ jobs:
       - uses: ifaxity/wait-on-action@v1
         with:
           resource: http://localhost:4443
+          timeout: 30000
       - uses: ifaxity/wait-on-action@v1
         with:
           resource: http://s3.localhost:9000
+          timeout: 30000
 
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
