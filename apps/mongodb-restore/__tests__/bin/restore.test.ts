@@ -1,8 +1,10 @@
 import { exec as execOriginal } from 'child_process';
 import { promisify } from 'util';
 import {
+  s3ClientConfig,
   cleanTestS3Bucket,
   uploadFixtureToTestS3Bucket,
+  storageConfig,
   testGCSBucketURI,
   cleanTestGCSBucket,
   uploadFixtureToTestGCSBucket,
@@ -40,10 +42,10 @@ describe('restore', () => {
     const bucketURI = 's3://test/';
     const objectURI = `${bucketURI}backup-20220327224212.tar.bz2`;
     const commandLine = `${execRestoreCommand} \
-      --aws-endpoint-url http://s3.minio:9000 \
-      --aws-region us-east-1 \
-      --aws-access-key-id "minioadmin" \
-      --aws-secret-access-key "minioadmin" \
+      --aws-endpoint-url ${s3ClientConfig.endpoint} \
+      --aws-region ${s3ClientConfig.region} \
+      --aws-access-key-id ${s3ClientConfig.credentials.accessKeyId} \
+      --aws-secret-access-key ${s3ClientConfig.credentials.secretAccessKey} \
       --restore-tool-options "--uri mongodb://root:password@mongo/?authSource=admin" \
       ${objectURI}`;
 
@@ -66,10 +68,10 @@ describe('restore', () => {
   describe('when valid GCS options are specified', () => {
     const objectURI = `${testGCSBucketURI}/backup-20220327224212.tar.bz2`;
     const commandLine = `${execRestoreCommand} \
-      --gcp-endpoint-url http://fake-gcs-server:4443 \
-      --gcp-project-id valid_project_id \
-      --gcp-client-email valid@example.com \
-      --gcp-private-key valid_private_key \
+      --gcp-endpoint-url ${storageConfig.apiEndpoint} \
+      --gcp-project-id ${storageConfig.projectId} \
+      --gcp-client-email ${storageConfig.credentials.client_email} \
+      --gcp-private-key ${storageConfig.credentials.private_key} \
       --restore-tool-options "--uri mongodb://root:password@mongo/?authSource=admin" \
       ${objectURI}`;
 

@@ -1,8 +1,10 @@
 import { exec as execOriginal } from 'child_process';
 import { promisify } from 'util';
 import {
+  s3ClientConfig,
   testS3BucketURI,
   cleanTestS3Bucket,
+  storageConfig,
   testGCSBucketURI,
   cleanTestGCSBucket,
   listFileNamesInTestGCSBucket,
@@ -40,10 +42,10 @@ describe('backup', () => {
     describe('and when backup tool options are specified', () => {
       const commandLine = `PGPASSWORD="password" \
         ${execBackupCommand} \
-        --aws-endpoint-url http://s3.minio:9000 \
-        --aws-region us-east-1 \
-        --aws-access-key-id "minioadmin" \
-        --aws-secret-access-key "minioadmin" \
+        --aws-endpoint-url ${s3ClientConfig.endpoint} \
+        --aws-region ${s3ClientConfig.region} \
+        --aws-access-key-id ${s3ClientConfig.credentials.accessKeyId} \
+        --aws-secret-access-key ${s3ClientConfig.credentials.secretAccessKey} \
         --backup-tool-options "--host postgres --username postgres" \
         ${testS3BucketURI}`;
 
@@ -63,10 +65,10 @@ describe('backup', () => {
     describe('and when backup tool options are specified', () => {
       const commandLine = `PGPASSWORD="password" \
         ${execBackupCommand} \
-        --gcp-endpoint-url http://fake-gcs-server:4443 \
-        --gcp-project-id valid_project_id \
-        --gcp-client-email valid@example.com \
-        --gcp-private-key valid_private_key \
+        --gcp-endpoint-url ${storageConfig.apiEndpoint} \
+        --gcp-project-id ${storageConfig.projectId} \
+        --gcp-client-email ${storageConfig.credentials.client_email} \
+        --gcp-private-key ${storageConfig.credentials.private_key} \
         --backup-tool-options "--host postgres --username postgres" \
         ${testGCSBucketURI}/`;
 
