@@ -14,11 +14,22 @@ jobs:
         env:
           MONGO_INITDB_ROOT_USERNAME: root
           MONGO_INITDB_ROOT_PASSWORD: password
+        options: >-
+          --healthcheck-cmd echo 'db.runCommand("ping").ok' | mongo mongo:27017/test --quiet 1
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
       postgres:
         image: postgres:14.2
         env:
           POSTGRES_DB: test
           POSTGRES_PASSWORD: password
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
       # GCS Mock for test
@@ -38,6 +49,13 @@ jobs:
                      -e "MINIO_SECRET_KEY=minioadmin"
                      -e "MINIO_DOMAIN=s3.localhost"
                      minio/minio:RELEASE.2022-04-09T15-09-52Z server /data
+      # Wait on all GCS and S3 server mocks
+      - uses: ifaxity/wait-on-action@v1
+        with:
+          resource: http://localhost:4443
+      - uses: ifaxity/wait-on-action@v1
+        with:
+          resource: http://s3.localhost:9000
 
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
