@@ -38,6 +38,7 @@ jobs:
           docker run -d
                      -p 4443:4443
                      --name fake-gcs-action
+                     --network host
                      fsouza/fake-gcs-server:1.37.3
                      --scheme http
                      --public-host localhost
@@ -50,6 +51,7 @@ jobs:
                      -e "MINIO_ACCESS_KEY=minioadmin"
                      -e "MINIO_SECRET_KEY=minioadmin"
                      -e "MINIO_DOMAIN=s3.127.0.0.1"
+                     --network host
                      minio/minio:RELEASE.2022-04-09T15-09-52Z server /data
       # Wait on all GCS and S3 server mocks
       # - uses: ifaxity/wait-on-action@v1
