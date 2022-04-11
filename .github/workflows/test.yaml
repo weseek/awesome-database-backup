@@ -50,7 +50,7 @@ jobs:
                      --name minio
                      -e "MINIO_ACCESS_KEY=minioadmin"
                      -e "MINIO_SECRET_KEY=minioadmin"
-                     -e "MINIO_DOMAIN=s3.127.0.0.1"
+                     -e "MINIO_DOMAIN=s3.localhost"
                      minio/minio:RELEASE.2022-04-09T15-09-52Z
                      server
                      --address 0.0.0.0:9000
