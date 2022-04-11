@@ -58,7 +58,7 @@ jobs:
       #     timeout: 30000
       - uses: ifaxity/wait-on-action@v1
         with:
-          resource: http://s3.127.0.0.1:9000
+          resource: http://127.0.0.1:9000
           timeout: 30000
 
       - uses: actions/checkout@v2
