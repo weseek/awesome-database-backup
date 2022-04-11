@@ -15,7 +15,7 @@ jobs:
           MONGO_INITDB_ROOT_USERNAME: root
           MONGO_INITDB_ROOT_PASSWORD: password
         options: >-
-          --healthcheck-cmd "echo 'db.runCommand("ping").ok' | mongo mongo:27017/test --quiet 1"
+          --healthcheck-cmd "mongo mongo:27017/test --quiet 1 --eval \"db.runCommand('ping').ok\""
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
