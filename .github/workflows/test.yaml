@@ -17,7 +17,7 @@ jobs:
         ports:
         - 27017:27017
         options: >-
-          --health-cmd "mongo mongo:27017 --quiet --eval 'db.runCommand(\"ping\").ok'"
+          --health-cmd "mongo mongodb://root:password@localhost:27017/?authSource=admin --quiet --eval 'db.runCommand(\"ping\").ok'"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
@@ -68,10 +68,10 @@ jobs:
       #   with:
       #     resource: http://127.0.0.1:9000
       #     timeout: 30000
-      # - uses: iFaxity/wait-on-action@v1
-      #   with:
-      #     resource: tcp://mongo:27017
-      #     timeout: 30000
+      - uses: iFaxity/wait-on-action@v1
+        with:
+          resource: tcp://localhost:27017
+          timeout: 30000
 
       # install tools
       - name: Install backup and restore tools
