@@ -49,16 +49,16 @@ jobs:
                      --name minio
                      -e "MINIO_ACCESS_KEY=minioadmin"
                      -e "MINIO_SECRET_KEY=minioadmin"
-                     -e "MINIO_DOMAIN=s3.localhost"
+                     -e "MINIO_DOMAIN=s3.127.0.0.1"
                      minio/minio:RELEASE.2022-04-09T15-09-52Z server /data
       # Wait on all GCS and S3 server mocks
       # - uses: ifaxity/wait-on-action@v1
       #   with:
-      #     resource: http://localhost:4443
+      #     resource: http://127.0.0.1:4443
       #     timeout: 30000
       - uses: ifaxity/wait-on-action@v1
         with:
-          resource: http://s3.localhost:9000
+          resource: http://s3.127.0.0.1:9000
           timeout: 30000
 
       - uses: actions/checkout@v2
