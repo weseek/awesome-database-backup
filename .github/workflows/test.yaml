@@ -41,7 +41,7 @@ jobs:
     - run: sudo systemctl start postgresql.service
     - run: |
         mkdir -p /tmp/mongo/data
-        mongod --dpath /tmp/mongo/data --fork --logpath /tmp/mongo/log
+        mongod --dbpath /tmp/mongo/data --fork --logpath /tmp/mongo/log
 
     # GCS Mock for test
     - name: Setup fake-gcs-action
