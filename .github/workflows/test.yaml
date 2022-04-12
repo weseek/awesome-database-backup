@@ -102,6 +102,6 @@ jobs:
         env:
           AWS_ENDPOINT_URL: http://s3.localhost:9000
           GCP_ENDPOINT_URL: http://localhost:4443
-          MONGODB_URL: mongodb://root:password@localhost:27017/?authSource=admin
+          MONGODB_URI: mongodb://root:password@localhost:27017/?authSource=admin
           POSTGRESQL_HOST: localhost
       # [TODO] Coverage report
