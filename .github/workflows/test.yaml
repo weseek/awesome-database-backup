@@ -39,14 +39,9 @@ jobs:
     # Start PostgreSQL
     # ref. https://github.com/actions/virtual-environments/blob/main/images/linux/Ubuntu2004-Readme.md#postgresql
     - run: sudo systemctl start postgresql.service
-    # - run: |
-    #     mkdir -p /tmp/mongo/data
-    #     mongod --dbpath /tmp/mongo/data --fork --logpath /tmp/mongo/log
-
-    - name: Start MongoDB
-      uses: supercharge/mongodb-github-action@1.7.0
-      with:
-        mongodb-version: '5.0'
+    - run: |
+        mkdir -p /tmp/mongo/data
+        mongod --dbpath /tmp/mongo/data --fork --logpath /tmp/mongo/log
 
     # GCS Mock for test
     - name: Setup fake-gcs-action
@@ -114,6 +109,6 @@ jobs:
       env:
         AWS_ENDPOINT_URL: http://s3.localhost:9000
         GCP_ENDPOINT_URL: http://localhost:4443
-        MONGODB_URI: mongodb://localhost:27017/?authSource=admin
+        MONGODB_URI: mongodb://localhost:27017/
         POSTGRESQL_HOST: localhost
     # [TODO] Coverage report
