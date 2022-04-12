@@ -8,7 +8,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    # services:
+    services:
     #   mongo:
     #     image: mongo:5.0.6
     #     env:
@@ -22,23 +22,23 @@ jobs:
     #       --health-timeout 5s
     #       --health-retries 5
 
-    #   postgres:
-    #     image: postgres:14.2
-    #     env:
-    #       POSTGRES_DB: test
-    #       POSTGRES_PASSWORD: password
-    #     ports:
-    #     - 5432:5432
-    #     options: >-
-    #       --health-cmd pg_isready
-    #       --health-interval 10s
-    #       --health-timeout 5s
-    #       --health-retries 5
+      postgres:
+        image: postgres:14.2
+        env:
+          POSTGRES_DB: test
+          POSTGRES_PASSWORD: password
+        ports:
+        - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
     # Start PostgreSQL
     # ref. https://github.com/actions/virtual-environments/blob/main/images/linux/Ubuntu2004-Readme.md#postgresql
-    - run: sudo systemctl start postgresql.service
+    # - run: sudo systemctl start postgresql.service
     - run: |
         mkdir -p /tmp/mongo/data
         mongod --dbpath /tmp/mongo/data --fork --logpath /tmp/mongo/log
