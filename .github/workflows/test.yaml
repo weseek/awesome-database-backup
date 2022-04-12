@@ -8,32 +8,32 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    services:
-      # mongo:
-      #   image: mongo:5.0.6
-      #   env:
-      #     MONGO_INITDB_ROOT_USERNAME: root
-      #     MONGO_INITDB_ROOT_PASSWORD: password
-      #   ports:
-      #   - 27017:27017
-      #   options: >-
-      #     --health-cmd "mongo mongodb://root:password@localhost:27017/?authSource=admin --quiet --eval 'db.runCommand(\"ping\").ok'"
-      #     --health-interval 10s
-      #     --health-timeout 5s
-      #     --health-retries 5
+    # services:
+    #   mongo:
+    #     image: mongo:5.0.6
+    #     env:
+    #       MONGO_INITDB_ROOT_USERNAME: root
+    #       MONGO_INITDB_ROOT_PASSWORD: password
+    #     ports:
+    #     - 27017:27017
+    #     options: >-
+    #       --health-cmd "mongo mongodb://root:password@localhost:27017/?authSource=admin --quiet --eval 'db.runCommand(\"ping\").ok'"
+    #       --health-interval 10s
+    #       --health-timeout 5s
+    #       --health-retries 5
 
-      # postgres:
-      #   image: postgres:14.2
-      #   env:
-      #     POSTGRES_DB: test
-      #     POSTGRES_PASSWORD: password
-      #   ports:
-      #   - 5432:5432
-      #   options: >-
-      #     --health-cmd pg_isready
-      #     --health-interval 10s
-      #     --health-timeout 5s
-      #     --health-retries 5
+    #   postgres:
+    #     image: postgres:14.2
+    #     env:
+    #       POSTGRES_DB: test
+    #       POSTGRES_PASSWORD: password
+    #     ports:
+    #     - 5432:5432
+    #     options: >-
+    #       --health-cmd pg_isready
+    #       --health-interval 10s
+    #       --health-timeout 5s
+    #       --health-retries 5
 
     steps:
     # Start PostgreSQL
