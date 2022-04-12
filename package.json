@@ -32,7 +32,7 @@
   },
   "scripts": {
     "build": "turbo run build",
-    "test": "turbo run test --scope='@awesome-backup/list' --scope='@awesome-backup/prune' --concurrency=1",
+    "test": "turbo run test --concurrency=1",
     "rimraf": "rimraf",
     "clean": "npm run rimraf node_modules/.cache .turbo apps/*/dist packages/*/dist */*/coverage */*/.turbo"
   },
