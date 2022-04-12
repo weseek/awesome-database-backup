@@ -39,6 +39,7 @@ jobs:
     # Start PostgreSQL
     # ref. https://github.com/actions/virtual-environments/blob/main/images/linux/Ubuntu2004-Readme.md#postgresql
     - run: sudo systemctl start postgresql.service
+    - run: mongod
 
     # GCS Mock for test
     - name: Setup fake-gcs-action
@@ -74,19 +75,19 @@ jobs:
     #     timeout: 30000
 
     # install tools
-    - uses: awalsh128/cache-apt-pkgs-action@v1
-      with:
-        packages:
-          bzip2
-          postgresql-common
-          postgresql-client
+    # - uses: awalsh128/cache-apt-pkgs-action@v1
+    #   with:
+    #     packages:
+    #       bzip2
+    #       postgresql-common
+    #       postgresql-client
 
-    - name: Install backup and restore tools
-      run: |
-        curl -O https://fastdl.mongodb.org/tools/db/mongodb-database-tools-debian10-x86_64-100.5.2.deb
-        sudo apt-get update
-        sudo apt-get install -y --no-install-recommends \
-          ./mongodb-database-tools-debian10-x86_64-100.5.2.deb
+    # - name: Install backup and restore tools
+    #   run: |
+    #     curl -O https://fastdl.mongodb.org/tools/db/mongodb-database-tools-debian10-x86_64-100.5.2.deb
+    #     sudo apt-get update
+    #     sudo apt-get install -y --no-install-recommends \
+    #       ./mongodb-database-tools-debian10-x86_64-100.5.2.deb
 
     - uses: actions/checkout@v2
     - uses: actions/setup-node@v2
