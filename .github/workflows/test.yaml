@@ -39,7 +39,9 @@ jobs:
     # Start PostgreSQL
     # ref. https://github.com/actions/virtual-environments/blob/main/images/linux/Ubuntu2004-Readme.md#postgresql
     - run: sudo systemctl start postgresql.service
-    - run: mongod
+    - run: |
+        mkdir -p /tmp/mongo/data
+        mongod --dpath /tmp/mongo/data --fork --logpath /tmp/mongo/log
 
     # GCS Mock for test
     - name: Setup fake-gcs-action
