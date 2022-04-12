@@ -111,5 +111,5 @@ jobs:
         GCP_ENDPOINT_URL: http://localhost:4443
         MONGODB_URI: mongodb://localhost:27017/
         POSTGRESQL_HOST: localhost
-        POSTGRESQL_PASSWORD: ''
+        POSTGRESQL_PASSWORD: postgres
     # [TODO] Coverage report
