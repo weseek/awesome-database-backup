@@ -113,5 +113,5 @@ jobs:
         MONGODB_URI: mongodb://localhost:27017/
         POSTGRESQL_HOST: localhost
         POSTGRESQL_PASSWORD: password
-        POSTGRESQL_PORT: ${{ job.services.postgres.ports["5432"] }}
+        POSTGRESQL_PORT: "${{ job.services.postgres.ports[5432] }}"
     # [TODO] Coverage report
