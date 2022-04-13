@@ -9,18 +9,18 @@ jobs:
     runs-on: ubuntu-latest
 
     services:
-    #   mongo:
-    #     image: mongo:5.0.6
-    #     env:
-    #       MONGO_INITDB_ROOT_USERNAME: root
-    #       MONGO_INITDB_ROOT_PASSWORD: password
-    #     ports:
-    #     - 27017:27017
-    #     options: >-
-    #       --health-cmd "mongo mongodb://root:password@localhost:27017/?authSource=admin --quiet --eval 'db.runCommand(\"ping\").ok'"
-    #       --health-interval 10s
-    #       --health-timeout 5s
-    #       --health-retries 5
+      mongo:
+        image: mongo:5.0.6
+        env:
+          MONGO_INITDB_ROOT_USERNAME: root
+          MONGO_INITDB_ROOT_PASSWORD: password
+        ports:
+        - 27017:27017
+        options: >-
+          --health-cmd "mongo mongodb://root:password@localhost:27017/?authSource=admin --quiet --eval 'db.runCommand(\"ping\").ok'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
       postgres:
         image: postgres:14.2
@@ -43,12 +43,12 @@ jobs:
     # - run: |
     #     mkdir -p /tmp/mongo/data
     #     mongod --dbpath /tmp/mongo/data --fork --logpath /tmp/mongo/log
-    - name: Start MongoDB
-      uses: supercharge/mongodb-github-action@1.7.0
-      with:
-        mongodb-version: 5.0.6
-        mongodb-username: root
-        mongodb-password: password
+    # - name: Start MongoDB
+    #   uses: supercharge/mongodb-github-action@1.7.0
+    #   with:
+    #     mongodb-version: 5.0.6
+    #     mongodb-username: root
+    #     mongodb-password: password
 
     # GCS Mock for test
     - name: Setup fake-gcs-action
@@ -112,7 +112,7 @@ jobs:
         restore-keys: |
           turbo-${{ github.job }}-
     - run: yarn install
-    - run: yarn test
+    - run: yarn test --force
       env:
         AWS_ENDPOINT_URL: http://s3.localhost:9000
         GCP_ENDPOINT_URL: http://localhost:4443
