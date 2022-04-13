@@ -27,7 +27,7 @@
     "// for development": "",
     "ts-node-dev": "cross-env NODE_ENV=development ts-node-dev -r tsconfig-paths/register",
     "//// Cannot run in parallel due to shared S3, GCS mock": "",
-    "test": "cross-env NODE_ENV=test jest --passWithNoTests -i",
+    "test": "cross-env NODE_ENV=test jest --testTimeout 10000 --passWithNoTests -i",
     "lint": "eslint src --ext .ts",
     "lint:fix": "eslint src --ext .ts --fix"
   },
