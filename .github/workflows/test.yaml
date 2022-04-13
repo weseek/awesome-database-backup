@@ -116,7 +116,7 @@ jobs:
       env:
         AWS_ENDPOINT_URL: http://s3.localhost:9000
         GCP_ENDPOINT_URL: http://localhost:4443
-        MONGODB_URI: mongodb://localhost:27017/
+        MONGODB_URI: mongodb://root:password@localhost:27017/?authSource=admin
         POSTGRESQL_HOST: localhost
         POSTGRESQL_PASSWORD: password
         POSTGRESQL_PORT: "${{ job.services.postgres.ports[5432] }}"
