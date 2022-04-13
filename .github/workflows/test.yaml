@@ -73,7 +73,7 @@ jobs:
         restore-keys: |
           turbo-${{ github.job }}-
     - run: yarn install
-    - run: yarn test --force
+    - run: yarn test
       env:
         AWS_ENDPOINT_URL: http://s3.localhost:9000
         GCP_ENDPOINT_URL: http://localhost:4443
