@@ -63,12 +63,9 @@ jobs:
     # Wait on all GCS and S3 server mocks
     - uses: iFaxity/wait-on-action@v1
       with:
-        resource: tcp:localhost:4443
-        timeout: 10000
-        verbose: true
-    - uses: iFaxity/wait-on-action@v1
-      with:
-        resource: tcp:localhost:9000
+        resource:
+          tcp:localhost:4443
+          tcp:localhost:9000
         timeout: 10000
         verbose: true
 
