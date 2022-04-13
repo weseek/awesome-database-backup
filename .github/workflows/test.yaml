@@ -22,7 +22,7 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: password
         ports:
-        - 5432/5432
+        - 5432:5432
 
     steps:
     # GCS Mock for test
