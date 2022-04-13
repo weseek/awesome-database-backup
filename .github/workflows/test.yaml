@@ -16,25 +16,13 @@ jobs:
           MONGO_INITDB_ROOT_PASSWORD: password
         ports:
         - 27017:27017
-        options: >-
-          --health-cmd "mongo mongodb://root:password@localhost:27017/?authSource=admin --quiet --eval 'db.runCommand(\"ping\").ok'"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
       postgres:
         image: postgres:14.2
         env:
-          POSTGRES_DB: test
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: password
         ports:
-        - 5432/tcp
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+        - 5432/5432
 
     steps:
     # GCS Mock for test
@@ -60,29 +48,16 @@ jobs:
                     server
                     --address 0.0.0.0:9000
                     /data
-    # Wait on all GCS and S3 server mocks
+    # Wait on all services and GCS and S3 server mocks
     - uses: iFaxity/wait-on-action@v1
       with:
         resource:
+          tcp:localhost:27017
+          tcp:localhost:5432
           tcp:localhost:4443
           tcp:localhost:9000
         timeout: 10000
         verbose: true
-
-    # install tools
-    # - uses: awalsh128/cache-apt-pkgs-action@v1
-    #   with:
-    #     packages:
-    #       bzip2
-    #       postgresql-common
-    #       postgresql-client
-
-    # - name: Install backup and restore tools
-    #   run: |
-    #     curl -O https://fastdl.mongodb.org/tools/db/mongodb-database-tools-debian10-x86_64-100.5.2.deb
-    #     sudo apt-get update
-    #     sudo apt-get install -y --no-install-recommends \
-    #       ./mongodb-database-tools-debian10-x86_64-100.5.2.deb
 
     - uses: actions/checkout@v2
     - uses: actions/setup-node@v2
@@ -104,6 +79,6 @@ jobs:
         GCP_ENDPOINT_URL: http://localhost:4443
         MONGODB_URI: mongodb://root:password@localhost:27017/?authSource=admin
         POSTGRESQL_HOST: localhost
+        POSTGRESQL_USER: postgres
         POSTGRESQL_PASSWORD: password
-        POSTGRESQL_PORT: "${{ job.services.postgres.ports[5432] }}"
     # [TODO] Coverage report
