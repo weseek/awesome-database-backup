@@ -65,10 +65,12 @@ jobs:
       with:
         resource: localhost:4443
         timeout: 10000
+        verbose: true
     - uses: iFaxity/wait-on-action@v1
       with:
         resource: localhost:9000
         timeout: 10000
+        verbose: true
 
     # install tools
     # - uses: awalsh128/cache-apt-pkgs-action@v1
