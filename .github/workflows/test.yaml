@@ -37,19 +37,6 @@ jobs:
           --health-retries 5
 
     steps:
-    # Start PostgreSQL
-    # ref. https://github.com/actions/virtual-environments/blob/main/images/linux/Ubuntu2004-Readme.md#postgresql
-    # - run: sudo systemctl start postgresql.service
-    # - run: |
-    #     mkdir -p /tmp/mongo/data
-    #     mongod --dbpath /tmp/mongo/data --fork --logpath /tmp/mongo/log
-    # - name: Start MongoDB
-    #   uses: supercharge/mongodb-github-action@1.7.0
-    #   with:
-    #     mongodb-version: 5.0.6
-    #     mongodb-username: root
-    #     mongodb-password: password
-
     # GCS Mock for test
     - name: Setup fake-gcs-action
       run:
@@ -74,14 +61,14 @@ jobs:
                     --address 0.0.0.0:9000
                     /data
     # Wait on all GCS and S3 server mocks
-    # - uses: iFaxity/wait-on-action@v1
-    #   with:
-    #     resource: tcp://127.0.0.1:4443
-    #     timeout: 30000
-    # - uses: iFaxity/wait-on-action@v1
-    #   with:
-    #     resource: http://127.0.0.1:9000
-    #     timeout: 30000
+    - uses: iFaxity/wait-on-action@v1
+      with:
+        resource: tcp://127.0.0.1:4443
+        timeout: 10000
+    - uses: iFaxity/wait-on-action@v1
+      with:
+        resource: tcp://127.0.0.1:9000
+        timeout: 10000
 
     # install tools
     # - uses: awalsh128/cache-apt-pkgs-action@v1
