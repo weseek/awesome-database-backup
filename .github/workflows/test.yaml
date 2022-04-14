@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - run: docker-compose -f .devcontainer/docker-compose.yml build --build-arg USER_UID=$(id -u) USER_GID=$(id -g)
+    - run: docker-compose -f .devcontainer/docker-compose.yml build --build-arg USER_UID=$(id -u) --build-arg USER_GID=$(id -g)
     - name: Start all DBs and middle
       run: docker-compose -f .devcontainer/docker-compose.yml up -d
     # [TODO] use healthcheck to wait on
