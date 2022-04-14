@@ -14,5 +14,5 @@ jobs:
       run: docker-compose -f .devcontainer/docker-compose.yml up -d
     # [TODO] use healthcheck to wait on
     - run: sleep 30
-    - run: docker-compose -f .devcontainer/docker-compose.yml exec -- node bash -c 'yarn install && yarn test'
+    - run: docker-compose -f .devcontainer/docker-compose.yml -T exec -- node bash -c 'yarn install && yarn test'
     # [TODO] Coverage report
