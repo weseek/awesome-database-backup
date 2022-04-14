@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - run: mkdir node_modules
+    - run: mkdir node_modules && sudo chown 1000:1000 node_modules
     - name: Start all DBs and middle
       run: docker-compose -f .devcontainer/docker-compose.yml up -d
     # [TODO] use healthcheck to wait on
