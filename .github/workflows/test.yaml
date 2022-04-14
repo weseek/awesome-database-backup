@@ -13,6 +13,7 @@ jobs:
       run: |
         docker-compose -f .devcontainer/docker-compose.yml build --build-arg USER_UID=$(id -u) --build-arg USER_GID=$(id -g)
         docker-compose -f .devcontainer/docker-compose.yml up -d
-    - run:
+    - name: Run test
+      run:
         docker-compose -f .devcontainer/docker-compose.yml exec -T -- node bash -c 'yarn install && yarn test'
     # [TODO] Coverage report
