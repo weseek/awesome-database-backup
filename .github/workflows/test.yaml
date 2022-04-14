@@ -7,78 +7,10 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-
-    services:
-      mongo:
-        image: mongo:5.0.6
-        env:
-          MONGO_INITDB_ROOT_USERNAME: root
-          MONGO_INITDB_ROOT_PASSWORD: password
-        ports:
-        - 27017:27017
-      postgres:
-        image: postgres:14.2
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: password
-        ports:
-        - 5432:5432
-
-    steps:
-    # GCS Mock for test
-    - name: Setup fake-gcs-action
-      run:
-        docker run -d
-                    -p 4443:4443
-                    --name fake-gcs-action
-                    fsouza/fake-gcs-server:1.37.3
-                    --scheme http
-                    --public-host localhost
-                    --backend memory
-    # S3 Mock for test
-    - name: Setup minio
-      run:
-        docker run -d
-                    -p 9000:9000
-                    --name minio
-                    -e "MINIO_ACCESS_KEY=minioadmin"
-                    -e "MINIO_SECRET_KEY=minioadmin"
-                    -e "MINIO_DOMAIN=s3.localhost"
-                    minio/minio:RELEASE.2022-04-09T15-09-52Z
-                    server
-                    --address 0.0.0.0:9000
-                    /data
-    # Wait on all services and GCS and S3 server mocks
-    - uses: iFaxity/wait-on-action@v1
-      with:
-        resource:
-          tcp:localhost:27017
-          tcp:localhost:5432
-          tcp:localhost:4443
-          tcp:localhost:9000
-        timeout: 10000
-        verbose: true
-
     - uses: actions/checkout@v2
-    - uses: actions/setup-node@v2
-      with:
-        node-version: "16.13.1"
-        cache: "yarn"
-    - name: Set and restore cache of Turborepo
-      uses: actions/cache@v2
-      with:
-        path: node_modules/.cache/turbo
-        key: |
-          turbo-${{ github.job }}-${{ github.sha }}
-        restore-keys: |
-          turbo-${{ github.job }}-
-    - run: yarn install
-    - run: yarn test
-      env:
-        AWS_ENDPOINT_URL: http://s3.localhost:9000
-        GCP_ENDPOINT_URL: http://localhost:4443
-        MONGODB_URI: mongodb://root:password@localhost:27017/?authSource=admin
-        POSTGRESQL_HOST: localhost
-        POSTGRESQL_USER: postgres
-        POSTGRESQL_PASSWORD: password
+    - name: Start all DBs and middle
+      run: docker-compose -d -f .devcontainer/docker-compose.yml up
+    # [TODO] use healthcheck to wait on
+    - run: sleep 30
+    - run: docker-compose -f .devcontainer/docker-compose.yml exec -- node bash -c 'yarn install && yarn test'
     # [TODO] Coverage report

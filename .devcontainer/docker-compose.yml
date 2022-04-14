@@ -17,6 +17,7 @@ services:
         ipv4_address: 172.16.2.5
     dns:
     - 172.16.2.2 # dnsmasq container
+    working_dir: /awesome-backup
 
   mongo:
     image: mongo:5.0.6
