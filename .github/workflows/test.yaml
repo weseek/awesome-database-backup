@@ -9,10 +9,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - run: docker-compose -f .devcontainer/docker-compose.yml build --build-arg USER_UID=$(id -u) --build-arg USER_GID=$(id -g)
     - name: Start all DBs and middle
-      run: docker-compose -f .devcontainer/docker-compose.yml up -d
-    # [TODO] use healthcheck to wait on
-    - run: sleep 30
-    - run: docker-compose -f .devcontainer/docker-compose.yml exec -T -- node bash -c 'id; pwd; ls -al; yarn install && yarn test'
+      run: |
+        docker-compose -f .devcontainer/docker-compose.yml build --build-arg USER_UID=$(id -u) --build-arg USER_GID=$(id -g)
+        docker-compose -f .devcontainer/docker-compose.yml up -d
+    - run:
+        docker-compose -f .devcontainer/docker-compose.yml exec -T -- node bash -c 'yarn install && yarn test'
     # [TODO] Coverage report

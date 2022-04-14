@@ -26,6 +26,17 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: ${DB_ADMIN_PASSWORD:-password}
     volumes:
     - /data/db
+    healthcheck:
+      test:
+      - CMD
+      - mongo
+      - mongodb://localhost:27017/?authSource=admin
+      - --quiet
+      - --eval
+      - db.runCommand("ping").ok
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   postgres:
     image: postgres:14.2
@@ -34,6 +45,11 @@ services:
       POSTGRES_PASSWORD: ${DB_ADMIN_PASSWORD:-password}
     volumes:
     - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   # S3 Mock for test
   minio:
