@@ -28,26 +28,26 @@ jobs:
     # GCS Mock
     - name: Setup fake-gcs-server
       run:
-        docker run -d
-                    -p 4443:4443
-                    --name fake-gcs-action
-                    fsouza/fake-gcs-server:1.37.3
-                    --scheme http
-                    --public-host localhost
-                    --backend memory
+        docker run
+          -d
+          -p 4443:4443
+          fsouza/fake-gcs-server:1.37.3
+          --scheme http
+          --public-host localhost
+          --backend memory
     # S3 Mock
     - name: Setup minio
       run:
-        docker run -d
-                    -p 9000:9000
-                    --name minio
-                    -e "MINIO_ACCESS_KEY=minioadmin"
-                    -e "MINIO_SECRET_KEY=minioadmin"
-                    -e "MINIO_DOMAIN=s3.localhost"
-                    minio/minio:RELEASE.2022-04-09T15-09-52Z
-                    server
-                    --address 0.0.0.0:9000
-                    /data
+        docker run
+          -d
+          -p 9000:9000
+          -e "MINIO_ACCESS_KEY=minioadmin"
+          -e "MINIO_SECRET_KEY=minioadmin"
+          -e "MINIO_DOMAIN=s3.localhost"
+          minio/minio:RELEASE.2022-04-09T15-09-52Z
+          server /data
+          --address 0.0.0.0:9000
+                   
     - name: Wait on all services and GCS and S3 server mocks
       uses: iFaxity/wait-on-action@v1
       with:
@@ -73,7 +73,7 @@ jobs:
         restore-keys: |
           turbo-${{ github.job }}-
     - run: yarn install
-    - run: yarn test
+    - run: yarn test --force
       env:
         AWS_ENDPOINT_URL: http://s3.localhost:9000
         GCP_ENDPOINT_URL: http://localhost:4443
