@@ -80,8 +80,6 @@ services:
     image: strm/dnsmasq
     volumes:
     - ./dnsmasq.conf:/etc/dnsmasq.conf:delegated
-    ports:
-    - 53:53/udp
     cap_add:
     - NET_ADMIN
     # dnsmasq container config above is taken verbatim from https://hub.docker.com/r/strm/dnsmasq
