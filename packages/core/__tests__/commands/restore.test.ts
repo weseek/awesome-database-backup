@@ -33,23 +33,13 @@ describe('RestoreCommand', () => {
     });
   });
 
-  describe('setRestoreArgument', () => {
-    it('call argument()', () => {
-      const restoreCommand = new restore.RestoreCommand();
-      const argumentMock = jest.fn().mockReturnValue(restoreCommand);
-      restoreCommand.argument = argumentMock;
-      restoreCommand.setRestoreArgument();
-      expect(argumentMock).toBeCalled();
-    });
-  });
-
   describe('addRestoreOptions', () => {
-    it('call option()', () => {
+    it('call addOption()', () => {
       const restoreCommand = new restore.RestoreCommand();
-      const optionMock = jest.fn().mockReturnValue(restoreCommand);
-      restoreCommand.option = optionMock;
+      const addOptionMock = jest.fn().mockReturnValue(restoreCommand);
+      restoreCommand.addOption = addOptionMock;
       restoreCommand.addRestoreOptions();
-      expect(optionMock).toBeCalled();
+      expect(addOptionMock).toBeCalled();
     });
   });
 

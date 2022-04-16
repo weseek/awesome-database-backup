@@ -6,6 +6,7 @@ import {
   addStorageServiceClientGenerateHook,
 } from './common';
 import loggerFactory from '../logger/factory';
+import { IListCommandOption } from './interfaces';
 
 const logger = loggerFactory('mongodb-awesome-core');
 
@@ -27,10 +28,6 @@ export class ListCommand extends Command {
     logger.info(files.join(EOL));
   }
 
-  setListArgument(): ListCommand {
-    return this.argument('<TARGET_BUCKET_URL>', 'URL of target bucket');
-  }
-
   addListOptions(): ListCommand {
     addStorageServiceClientOptions(this);
     return this;
@@ -44,11 +41,11 @@ export class ListCommand extends Command {
     };
     addStorageServiceClientGenerateHook(this, storageServiceClientHolder);
 
-    const action = async(targetBucketUrlString: string) => {
+    const action = async(options: IListCommandOption) => {
       try {
         if (storageServiceClientHolder.storageServiceClient == null) throw new Error('URL scheme is not that of a supported provider.');
 
-        const targetBucketUrl = new URL(targetBucketUrlString);
+        const targetBucketUrl = new URL(options.targetBucketUrl);
         await this.list(
           storageServiceClientHolder.storageServiceClient,
           targetBucketUrl,

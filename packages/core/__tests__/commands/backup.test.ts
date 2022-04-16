@@ -30,6 +30,7 @@ describe('BackupCommand', () => {
 
     describe('when healthchecksUrl is empty', () => {
       const options: IBackupCommandOption = {
+        targetBucketUrl: 's3://valid-bucket',
         backupfilePrefix: 'backup',
       };
 
@@ -42,6 +43,7 @@ describe('BackupCommand', () => {
 
     describe('when healthcheckUrl is not empty', () => {
       const options: IBackupCommandOption = {
+        targetBucketUrl: 's3://valid-bucket',
         backupfilePrefix: 'backup',
         healthchecksUrl: 'http://example.com/',
       };
@@ -71,6 +73,7 @@ describe('BackupCommand', () => {
 
   describe('backupCronMode', () => {
     const options: IBackupCommandOption = {
+      targetBucketUrl: 's3://valid-bucket',
       backupfilePrefix: 'backup',
       cronExpression: '* * * * *',
     };
@@ -94,23 +97,13 @@ describe('BackupCommand', () => {
     });
   });
 
-  describe('setBackupArgument', () => {
-    it('call argument()', () => {
-      const backupCommand = new backup.BackupCommand();
-      const argumentMock = jest.fn().mockReturnValue(backupCommand);
-      backupCommand.argument = argumentMock;
-      backupCommand.setBackupArgument();
-      expect(argumentMock).toBeCalled();
-    });
-  });
-
   describe('addBackupOptions', () => {
-    it('call option()', () => {
+    it('call addOption()', () => {
       const backupCommand = new backup.BackupCommand();
-      const optionMock = jest.fn().mockReturnValue(backupCommand);
-      backupCommand.option = optionMock;
+      const addOptionMock = jest.fn().mockReturnValue(backupCommand);
+      backupCommand.addOption = addOptionMock;
       backupCommand.addBackupOptions();
-      expect(optionMock).toBeCalled();
+      expect(addOptionMock).toBeCalled();
     });
   });
 

@@ -30,7 +30,7 @@ describe('list', () => {
     const commandLine = `${execListCommand}`;
     it('throw error message', async() => {
       await expect(exec(commandLine)).rejects.toThrowError(
-        /missing required argument 'TARGET_BUCKET_URL'/,
+        /required option '--target-bucket-url <TARGET_BUCKET_URL> \*\*MANDATORY\*\*' not specified/,
       );
     });
   });
@@ -41,7 +41,7 @@ describe('list', () => {
       --aws-region ${s3ClientConfig.region} \
       --aws-access-key-id ${s3ClientConfig.credentials.accessKeyId} \
       --aws-secret-access-key ${s3ClientConfig.credentials.secretAccessKey} \
-      ${testS3BucketURI}/`;
+      --target-bucket-url ${testS3BucketURI}/`;
 
     beforeEach(cleanTestS3Bucket);
     beforeEach(async() => {
@@ -62,7 +62,7 @@ describe('list', () => {
       --gcp-project-id ${storageConfig.projectId} \
       --gcp-client-email ${storageConfig.credentials.client_email} \
       --gcp-private-key ${storageConfig.credentials.private_key} \
-      ${testGCSBucketURI}/`;
+      --target-bucket-url ${testGCSBucketURI}/`;
 
     beforeEach(cleanTestGCSBucket);
     beforeEach(async() => {

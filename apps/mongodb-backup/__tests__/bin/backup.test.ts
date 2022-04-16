@@ -33,7 +33,7 @@ describe('backup', () => {
     const commandLine = `${execBackupCommand}`;
     it('throw error message', async() => {
       await expect(exec(commandLine)).rejects.toThrowError(
-        /missing required argument 'TARGET_BUCKET_URL'/,
+        /required option '--target-bucket-url <TARGET_BUCKET_URL> \*\*MANDATORY\*\*' not specified/,
       );
     });
   });
@@ -49,11 +49,11 @@ describe('backup', () => {
         --aws-access-key-id ${s3ClientConfig.credentials.accessKeyId} \
         --aws-secret-access-key ${s3ClientConfig.credentials.secretAccessKey} \
         --backup-tool-options "--uri ${mongodbURI}" \
-        ${testS3BucketURI}`;
+        --target-bucket-url ${testS3BucketURI}`;
 
       it('backup mongo in bucket', async() => {
         expect(await exec(commandLine)).toEqual({
-          stdout: expect.stringMatching(/=== backup.js started at .* ===/),
+          stdout: expect.stringMatching(/=== backup.ts started at .* ===/),
           stderr: '',
         });
       });
@@ -71,12 +71,12 @@ describe('backup', () => {
         --gcp-client-email ${storageConfig.credentials.client_email} \
         --gcp-private-key ${storageConfig.credentials.private_key} \
         --backup-tool-options "--uri ${mongodbURI}" \
-        ${testGCSBucketURI}/`;
+        --target-bucket-url ${testGCSBucketURI}/`;
 
       it('backup mongo in bucket', async() => {
         expect((await listFileNamesInTestGCSBucket()).length).toBe(0);
         expect(await exec(commandLine)).toEqual({
-          stdout: expect.stringMatching(/=== backup.js started at .* ===/),
+          stdout: expect.stringMatching(/=== backup.ts started at .* ===/),
           stderr: '',
         });
         expect((await listFileNamesInTestGCSBucket()).length).toBe(1);

@@ -28,7 +28,6 @@ const backupCommand = new BackupCommand();
 
 backupCommand
   .version(PACKAGE_VERSION)
-  .setBackupArgument()
   .addBackupOptions()
   .addHelpText('after', `
     NOTICE:

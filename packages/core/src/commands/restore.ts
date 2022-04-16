@@ -1,6 +1,6 @@
 import { format } from 'date-fns';
 import { basename, join } from 'path';
-import { Command } from 'commander';
+import { Command, Option } from 'commander';
 
 import { expandBZIP2 } from '../utils/tar';
 import { IStorageServiceClient } from '../storage-service-clients/interfaces';
@@ -18,7 +18,7 @@ const tmp = require('tmp');
  * Define actions, options, and arguments that are commonly required for restore command from the CLI, regardless of the database type.
  *
  * Call setRestoreAction() with the function to restore data for each database (ex. execute `psql` for PostgreSQL).
- * Also call addRestoreOptions() and setRestoreArgument().
+ * Also call addRestoreOptions().
  *
  * If necessary, you can customize it by using the Command's methods, such as adding options by using option() and help messages by using addHelpText().
  */
@@ -44,13 +44,16 @@ export class RestoreCommand extends Command {
     if (stderr) logger.warn(stderr);
   }
 
-  setRestoreArgument(): RestoreCommand {
-    return this.argument('<TARGET_BUCKET_URL>', 'URL of target bucket');
-  }
-
   addRestoreOptions(): RestoreCommand {
     addStorageServiceClientOptions(this);
-    return this.option('--restore-tool-options <OPTIONS_STRING>', 'pass options to restore tool exec');
+    return this
+      .addOption(
+        new Option(
+          '--restore-tool-options <OPTIONS_STRING>',
+          'pass options to restore tool exec',
+        )
+          .env('RESTORE_TOOL_OPTIONS'),
+      );
   }
 
   setRestoreAction(
@@ -63,16 +66,16 @@ export class RestoreCommand extends Command {
     };
     addStorageServiceClientGenerateHook(this, storageServiceClientHolder);
 
-    const action = async(targetBucketUrlString: string, otions: IRestoreCommandOption) => {
+    const action = async(options: IRestoreCommandOption) => {
       try {
         if (storageServiceClientHolder.storageServiceClient == null) throw new Error('URL scheme is not that of a supported provider.');
 
-        const targetBucketUrl = new URL(targetBucketUrlString);
+        const targetBucketUrl = new URL(options.targetBucketUrl);
         await this.restore(
           storageServiceClientHolder.storageServiceClient,
           restoreDatabaseFunc,
           targetBucketUrl,
-          otions,
+          options,
         );
       }
       catch (e: any) {

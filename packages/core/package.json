@@ -12,8 +12,8 @@
   "bugs": {
     "url": "https://github.com/ryu-sato/awesome-backup/issues"
   },
-  "main": "dist/index.js",
-  "types": "src/index.ts",
+  "// Use Typescript as is, so Typescript must be enabled": "",
+  "main": "src/index.ts",
   "directories": {
     "test": "__tests__"
   },
