@@ -2,7 +2,7 @@
 // https://github.com/microsoft/vscode-dev-containers/tree/v0.217.2/containers/typescript-node
 {
   "name": "Node.js & TypeScript",
-  "dockerComposeFile": "docker-compose.yml",
+  "dockerComposeFile": ["docker-compose.yml", "docker-compose.volume-node-modules.yml"],
   "service": "node",
   "workspaceFolder": "/awesome-backup",
 

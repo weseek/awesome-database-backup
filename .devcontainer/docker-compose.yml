@@ -7,7 +7,6 @@ services:
       dockerfile: Dockerfile
     volumes:
     - ..:/awesome-backup:delegated
-    - node_modules:/awesome-backup/node_modules
     tty: true
     environment:
       TZ: Asia/Tokyo
@@ -104,7 +103,6 @@ services:
         ipv4_address: 172.16.2.2 # Static IP here makes it possible to point other containers' dns here.
 
 volumes:
-  node_modules:
   mongo_data:
   postgres_data:
   minio_data:

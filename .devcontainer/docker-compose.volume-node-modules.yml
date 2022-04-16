@@ -1,0 +1,7 @@
+version: '3'
+services:
+  node:
+    volumes:
+    - node_modules:/awesome-backup/node_modules
+volumes:
+  node_modules:
