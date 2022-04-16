@@ -20,6 +20,18 @@ jobs:
       uses: satackey/action-docker-layer-caching@v0.0.11
       # Ignore the failure of a step and avoid terminating the job.
       continue-on-error: true
+    # This step loads "node_modules" from the cache which contains the cache of Turborepo.
+    # The "node_modules" will be mounted with the source code when docker-compose up is executed.
+    - name: Cache node_modules which includes cahce of Turborepo
+      uses: actions/cache@v3
+      env:
+        cache-name: cache-node-modules
+      with:
+        path: node_modules
+        key:
+          ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-build-${{ env.cache-name }}-
     - name: Start all DBs and middle
       run: |
         docker-compose -f .devcontainer/docker-compose.yml build --build-arg USER_UID=$(id -u) --build-arg USER_GID=$(id -g)
