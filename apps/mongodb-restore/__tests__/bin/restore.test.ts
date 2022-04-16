@@ -34,7 +34,7 @@ describe('restore', () => {
     const commandLine = `${execRestoreCommand}`;
     it('throw error message', async() => {
       await expect(exec(commandLine)).rejects.toThrowError(
-        /missing required argument 'TARGET_BUCKET_URL'/,
+        /required option '--target-bucket-url <TARGET_BUCKET_URL> \*\*MANDATORY\*\*' not specified/,
       );
     });
   });
@@ -48,7 +48,7 @@ describe('restore', () => {
       --aws-access-key-id ${s3ClientConfig.credentials.accessKeyId} \
       --aws-secret-access-key ${s3ClientConfig.credentials.secretAccessKey} \
       --restore-tool-options "--uri ${mongodbURI}" \
-      ${objectURI}`;
+      --target-bucket-url ${objectURI}`;
 
     beforeEach(cleanTestS3Bucket);
     beforeEach(dropTestMongoDB);
@@ -59,7 +59,7 @@ describe('restore', () => {
     it('restore mongo in bucket', async() => {
       expect(await listCollectionNamesInTestMongoDB()).toEqual([]);
       expect(await exec(commandLine)).toEqual({
-        stdout: expect.stringMatching(/=== restore.js started at .* ===/),
+        stdout: expect.stringMatching(/=== restore.ts started at .* ===/),
         stderr: '',
       });
       expect(await listCollectionNamesInTestMongoDB()).toEqual(['dummy']);
@@ -74,7 +74,7 @@ describe('restore', () => {
       --gcp-client-email ${storageConfig.credentials.client_email} \
       --gcp-private-key ${storageConfig.credentials.private_key} \
       --restore-tool-options "--uri ${mongodbURI}" \
-      ${objectURI}`;
+      --target-bucket-url ${objectURI}`;
 
     beforeEach(cleanTestGCSBucket);
     beforeEach(dropTestMongoDB);
@@ -85,7 +85,7 @@ describe('restore', () => {
     it('restore mongo in bucket', async() => {
       expect(await listCollectionNamesInTestMongoDB()).toEqual([]);
       expect(await exec(commandLine)).toEqual({
-        stdout: expect.stringMatching(/=== restore.js started at .* ===/),
+        stdout: expect.stringMatching(/=== restore.ts started at .* ===/),
         stderr: '',
       });
       expect(await listCollectionNamesInTestMongoDB()).toEqual(['dummy']);

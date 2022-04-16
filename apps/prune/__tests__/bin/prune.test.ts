@@ -33,7 +33,7 @@ describe('prune', () => {
     const commandLine = `${execPruneCommand}`;
     it('throw error message', async() => {
       await expect(exec(commandLine)).rejects.toThrowError(
-        /missing required argument 'TARGET_BUCKET_URL'/,
+        /required option '--target-bucket-url <TARGET_BUCKET_URL> \*\*MANDATORY\*\*' not specified/,
       );
     });
   });
@@ -49,7 +49,7 @@ describe('prune', () => {
         --aws-secret-access-key ${s3ClientConfig.credentials.secretAccessKey} \
         --delete-divide 1 \
         --delete-target-days-left 0 \
-        ${testS3BucketURI}`;
+        --target-bucket-url ${testS3BucketURI}`;
       const backupFileName = `backup-${format(Date.now(), 'yyyyMMddHHmmss')}.tar.bz2`;
 
       beforeEach(async() => {
@@ -78,7 +78,7 @@ describe('prune', () => {
         --gcp-private-key ${storageConfig.credentials.private_key} \
         --delete-divide 1 \
         --delete-target-days-left 0 \
-        ${testGCSBucketURI}/`;
+        --target-bucket-url ${testGCSBucketURI}/`;
       const backupFileName = `backup-${format(Date.now(), 'yyyyMMddHHmmss')}.tar.bz2`;
 
       beforeEach(async() => {

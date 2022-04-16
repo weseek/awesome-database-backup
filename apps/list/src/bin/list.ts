@@ -9,7 +9,6 @@ const listCommand = new ListCommand();
 
 listCommand
   .version(PACKAGE_VERSION)
-  .setListArgument()
   .addListOptions()
   .setListAction();
 

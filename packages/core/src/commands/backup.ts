@@ -1,6 +1,6 @@
 import { format } from 'date-fns';
 import { basename, join } from 'path';
-import { Command } from 'commander';
+import { Command, Option } from 'commander';
 import axios from 'axios';
 import axiosRetry from 'axios-retry';
 import { compressBZIP2 } from '../utils/tar';
@@ -81,18 +81,45 @@ export class BackupCommand extends Command {
     }
   }
 
-  setBackupArgument(): BackupCommand {
-    return this.argument('<TARGET_BUCKET_URL>', 'URL of target bucket');
-  }
-
   addBackupOptions(): BackupCommand {
     addStorageServiceClientOptions(this);
     return this
-      .option('--backupfile-prefix <BACKUPFILE_PREFIX>', 'Prefix of backup file.', 'backup')
-      .option('--cronmode', 'Run `backup` as cron mode. In Cron mode, `backup` will be executed periodically.', false)
-      .option('--cron-expression <CRON_EXPRESSION>', 'Cron expression (ex. CRON_EXPRESSION="0 4 * * *" if you want to run at 4:00 every day)')
-      .option('--healthcheck-url <HEALTHCHECK_URL>', 'URL that gets called after a successful backup (eg. https://healthchecks.io)')
-      .option('--backup-tool-options <OPTIONS_STRING>', 'pass options to backup tool exec (ex. "--host db.example.com --username admin")');
+      .addOption(
+        new Option(
+          '--backupfile-prefix <BACKUPFILE_PREFIX>',
+          'Prefix of backup file.',
+        )
+          .default('backup')
+          .env('BACKUPFILE_PREFIX'),
+      )
+      .addOption(
+        new Option(
+          '--cronmode',
+          'Run `backup` as cron mode. In Cron mode, `backup` will be executed periodically.',
+        )
+          .env('CRONMODE'),
+      )
+      .addOption(
+        new Option(
+          '--cron-expression <CRON_EXPRESSION>',
+          'Cron expression (ex. CRON_EXPRESSION="0 4 * * *" if you want to run at 4:00 every day)',
+        )
+          .env('CRON_EXPRESSION'),
+      )
+      .addOption(
+        new Option(
+          '--healthcheck-url <HEALTHCHECK_URL>',
+          'URL that gets called after a successful backup (eg. https://healthchecks.io)',
+        )
+          .env('HEALTHCHECKS_URL'),
+      )
+      .addOption(
+        new Option(
+          '--backup-tool-options <OPTIONS_STRING>',
+          'pass options to backup tool exec (ex. "--host db.example.com --username admin")',
+        )
+          .env('BACKUP_TOOL_OPTIONS'),
+      );
   }
 
   setBackupAction(
@@ -105,12 +132,12 @@ export class BackupCommand extends Command {
     };
     addStorageServiceClientGenerateHook(this, storageServiceClientHolder);
 
-    const action = async(targetBucketUrlString: string, options: IBackupCommandOption) => {
+    const action = async(options: IBackupCommandOption) => {
       try {
         if (options.cronmode && options.cronExpression == null) throw new Error('The option "--cron-expression" must be specified in cron mode.');
         if (storageServiceClientHolder.storageServiceClient == null) throw new Error('URL scheme is not that of a supported provider.');
 
-        const targetBucketUrl = new URL(targetBucketUrlString);
+        const targetBucketUrl = new URL(options.targetBucketUrl);
         const actionImpl = (options.cronmode ? this.backupCronMode : this.backupOnce);
         await actionImpl.bind(this)(
           storageServiceClientHolder.storageServiceClient,

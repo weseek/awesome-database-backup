@@ -8,10 +8,10 @@ import {
 describe('addStorageServiceClientOptions', () => {
   it('return undefined and call option()', () => {
     const command = new Command();
-    const optionMock = jest.fn().mockReturnValue(command);
-    command.option = optionMock;
+    const addOptionMock = jest.fn().mockReturnValue(command);
+    command.addOption = addOptionMock;
     expect(addStorageServiceClientOptions(command)).toBe(undefined);
-    expect(optionMock).toBeCalled();
+    expect(addOptionMock).toBeCalled();
   });
 });
 

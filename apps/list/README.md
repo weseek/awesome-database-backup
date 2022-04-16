@@ -7,13 +7,11 @@ List files from Amazon S3 or Google Cloud Storage. You can set a custom S3 endpo
 ### How to list
 
 ```
-Usage: list [options] <TARGET_BUCKET_URL>
-
-Arguments:
-  TARGET_BUCKET_URL                                                        URL of target bucket
+Usage: list [options]
 
 Options:
   -V, --version                                                            output the version number
+  --target-bucket-url <TARGET_BUCKET_URL> **MANDATORY**                    Target Bucket URL ([s3://...|gs://...]) (env: TARGET_BUCKET_URL)
   --aws-endpoint-url <AWS_ENDPOINT_URL>                                    URL to send the request to (env: AWS_ENDPOINT_URL)
   --aws-region <AWS_REGION>                                                AWS Region (env: AWS_REGION)
   --aws-access-key-id <AWS_ACCESS_KEY_ID>                                  Your IAM Access Key ID (env: AWS_ACCESS_KEY_ID)

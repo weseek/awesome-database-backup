@@ -13,23 +13,13 @@ describe('ListCommand', () => {
     });
   });
 
-  describe('setListArgument', () => {
-    it('call argument()', () => {
-      const listCommand = new ListCommand();
-      const argumentMock = jest.fn().mockReturnValue(listCommand);
-      listCommand.argument = argumentMock;
-      listCommand.setListArgument();
-      expect(argumentMock).toBeCalled();
-    });
-  });
-
   describe('addListOptions', () => {
-    it('call option()', () => {
+    it('call addOption()', () => {
       const listCommand = new ListCommand();
-      const optionMock = jest.fn().mockReturnValue(listCommand);
-      listCommand.option = optionMock;
+      const addOptionMock = jest.fn().mockReturnValue(listCommand);
+      listCommand.addOption = addOptionMock;
       listCommand.addListOptions();
-      expect(optionMock).toBeCalled();
+      expect(addOptionMock).toBeCalled();
     });
   });
 

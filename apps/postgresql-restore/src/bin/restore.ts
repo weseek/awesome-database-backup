@@ -29,7 +29,6 @@ const restoreCommand = new RestoreCommand();
 
 restoreCommand
   .version(PACKAGE_VERSION)
-  .setRestoreArgument()
   .addRestoreOptions()
   .addHelpText('after', `
     TIPS:

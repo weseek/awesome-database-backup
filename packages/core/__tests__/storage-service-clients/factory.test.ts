@@ -16,6 +16,7 @@ describe('storageServiceClientFactory()', () => {
 
     describe('when valid S3 options are specified', () => {
       const options: ICommonCommandOption = {
+        targetBucketUrl: 's3://valid-bucket',
         awsRegion: 'valid-region',
         awsAccessKeyId: 'valid-key-id',
         awsSecretAccessKey: 'valid-key',
@@ -37,6 +38,7 @@ describe('storageServiceClientFactory()', () => {
 
     describe('when valid GCS options are specified', () => {
       const options: ICommonCommandOption = {
+        targetBucketUrl: 'gs://valid-bucket',
         gcpProjectId: 'valid-project-id',
         gcpClientEmail: 'valid-mail@example.com',
         gcpPrivateKey: 'valid-key',

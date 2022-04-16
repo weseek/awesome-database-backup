@@ -20,23 +20,13 @@ describe('PruneCommand', () => {
     });
   });
 
-  describe('setPruneArgument', () => {
-    it('call argument()', () => {
-      const pruneCommand = new PruneCommand();
-      const argumentMock = jest.fn().mockReturnValue(pruneCommand);
-      pruneCommand.argument = argumentMock;
-      pruneCommand.setPruneArgument();
-      expect(argumentMock).toBeCalled();
-    });
-  });
-
   describe('addPruneOptions', () => {
-    it('call option()', () => {
+    it('call addOption()', () => {
       const pruneCommand = new PruneCommand();
-      const optionMock = jest.fn().mockReturnValue(pruneCommand);
-      pruneCommand.option = optionMock;
+      const addOptionMock = jest.fn().mockReturnValue(pruneCommand);
+      pruneCommand.addOption = addOptionMock;
       pruneCommand.addPruneOptions();
-      expect(optionMock).toBeCalled();
+      expect(addOptionMock).toBeCalled();
     });
   });
 

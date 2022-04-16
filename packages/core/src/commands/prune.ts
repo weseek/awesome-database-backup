@@ -1,5 +1,5 @@
 import { format, subDays } from 'date-fns';
-import { Command } from 'commander';
+import { Command, Option } from 'commander';
 
 import { IStorageServiceClient } from '../storage-service-clients/interfaces';
 import { IPruneCommandOption } from './interfaces';
@@ -42,16 +42,26 @@ export class PruneCommand extends Command {
     }
   }
 
-  setPruneArgument(): PruneCommand {
-    return this.argument('<TARGET_BUCKET_URL>', 'URL of target bucket');
-  }
-
   addPruneOptions(): PruneCommand {
     addStorageServiceClientOptions(this);
     return this
-      .option('--backupfile-prefix <BACKUPFILE_PREFIX>', 'Prefix of backup file.', 'backup')
-      .option('--delete-divide <DELETE_DIVIDE>', 'delete divide', parseInt, 3)
-      .option('--delete-target-days-left <DELETE_TARGET_DAYS_LEFT>', 'How many days ago to be deleted', parseInt, 4);
+      .addOption(
+        new Option('--backupfile-prefix <BACKUPFILE_PREFIX>', 'Prefix of backup file.')
+          .default('backup')
+          .env('BACKUPFILE_PREFIX'),
+      )
+      .addOption(
+        new Option('--delete-divide <DELETE_DIVIDE>', 'delete divide')
+          .argParser(parseInt)
+          .default(3)
+          .env('DELETE_DIVIDE'),
+      )
+      .addOption(
+        new Option('--delete-target-days-left <DELETE_TARGET_DAYS_LEFT>', 'How many days ago to be deleted')
+          .argParser(parseInt)
+          .default(4)
+          .env('DELETE_TARGET_DAYS_LEFT'),
+      );
   }
 
   setPruneAction(): PruneCommand {
@@ -62,15 +72,15 @@ export class PruneCommand extends Command {
     };
     addStorageServiceClientGenerateHook(this, storageServiceClientHolder);
 
-    const action = async(targetBucketUrlString: string, otions: IPruneCommandOption) => {
+    const action = async(options: IPruneCommandOption) => {
       try {
         if (storageServiceClientHolder.storageServiceClient == null) throw new Error('URL scheme is not that of a supported provider.');
 
-        const targetBucketUrl = new URL(targetBucketUrlString);
+        const targetBucketUrl = new URL(options.targetBucketUrl);
         await this.prune(
           storageServiceClientHolder.storageServiceClient,
           targetBucketUrl,
-          otions,
+          options,
         );
       }
       catch (e: any) {
