@@ -11,17 +11,17 @@ import { ICommonCommandOption } from './interfaces';
 export function addStorageServiceClientOptions(command: Command): void {
   command
     /* AWS options */
-    .option('--aws-endpoint-url <AWS_ENDPOINT_URL>', 'URL to send the request to')
-    .option('--aws-region <AWS_REGION>', 'AWS Region')
+    .addOption(new Option('--aws-endpoint-url <AWS_ENDPOINT_URL>', 'URL to send the request to').env('AWS_ENDPOINT_URL'))
+    .addOption(new Option('--aws-region <AWS_REGION>', 'AWS Region').env('AWS_REGION'))
     .addOption(new Option('--aws-access-key-id <AWS_ACCESS_KEY_ID>', 'Your IAM Access Key ID').env('AWS_ACCESS_KEY_ID'))
     .addOption(new Option('--aws-secret-access-key <AWS_SECRET_ACCESS_KEY>', 'Your IAM Secret Access Key').env('AWS_SECRET_ACCESS_KEY'))
     /* GCS options */
-    .option('--gcp-endpoint-url <GCP_ENDPOINT_URL>', 'URL to send the request to')
-    .addOption(new Option('--gcp-project-id <GCP_PROJECT_ID>', 'GCP Project ID').env('GCLOUD_PROJECT'))
-    .option('--gcp-private-key <GCP_PRIVATE_KEY>', 'GCP Private Key')
-    .option('--gcp-client-email <GCP_CLIENT_EMAIL>', 'GCP Client Email')
+    .addOption(new Option('--gcp-endpoint-url <GCP_ENDPOINT_URL>', 'URL to send the request to').env('GCP_ENDPOINT_URL'))
+    .addOption(new Option('--gcp-project-id <GCP_PROJECT_ID>', 'GCP Project ID').env('GCP_PROJECT_ID'))
+    .addOption(new Option('--gcp-private-key <GCP_PRIVATE_KEY>', 'GCP Private Key').env('GCP_PRIVATE_KEY'))
+    .addOption(new Option('--gcp-client-email <GCP_CLIENT_EMAIL>', 'GCP Client Email').env('GCP_CLIENT_EMAIL'))
     .addOption(new Option('--gcp-service-account-key-json-path <GCP_SERVICE_ACCOUNT_KEY_JSON_PATH>',
-      'JSON file path to your GCP Service Account Key').env('GOOGLE_APPLICATION_CREDENTIALS'));
+      'JSON file path to your GCP Service Account Key').env('GCP_SERVICE_ACCOUNT_KEY_JSON_PATH'));
 }
 
 export function addStorageServiceClientGenerateHook(command: Command, storageServiceClientHolder: { storageServiceClient: IStorageServiceClient|null }): void {
