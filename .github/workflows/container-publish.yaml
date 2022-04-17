@@ -26,6 +26,10 @@ jobs:
         echo "::set-output name=package_repository::ryu310/${{ matrix.db_type }}-awesome-backup"
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v1
+    - name: Login to docker.io registry
+      run:
+        echo ${{ secrets. DOCKER_REGISTRY_PASSWORD }} |
+          docker login --username ${{ secrets. DOCKER_REGISTRY_USERNAME }} --password-stdin
     - name: Cache Docker layers
       uses: actions/cache@v2
       with:
