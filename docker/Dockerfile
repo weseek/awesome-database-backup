@@ -96,3 +96,4 @@ COPY --from=builder --chown=node:node \
   ${optDir}/ ${appDir}/
 
 ENV PATH $PATH:${appDir}/${packagePath}/node_modules/.bin
+CMD ["backup", "list", "prune"]
