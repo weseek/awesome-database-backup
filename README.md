@@ -5,9 +5,9 @@
 
 awesome-backup is the collection of scripts which backup databases to Cloud storage services like Amazon S3 or Google Cloud Storage.
 
-# migrate from mongodb-awesome-backup / mariadb-awesome-backup
+## migrate from mongodb-awesome-backup / mariadb-awesome-backup
 
-## change environment variable
+### change environment variable
 
 You must change the following environment variables.
 
