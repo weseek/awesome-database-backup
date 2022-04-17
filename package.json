@@ -1,6 +1,6 @@
 {
   "name": "awesome-backup",
-  "version": "0.0.1-RC",
+  "version": "0.0.1rc1",
   "private": true,
   "workspaces": [
     "apps/*",
