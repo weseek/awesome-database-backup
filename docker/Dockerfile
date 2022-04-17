@@ -94,6 +94,9 @@ WORKDIR ${appDir}/${packagePath}
 
 COPY --from=builder --chown=node:node \
   ${optDir}/ ${appDir}/
+COPY ./docker/entrypoint.sh ${appDir}/
 
 ENV PATH $PATH:${appDir}/${packagePath}/node_modules/.bin
+
+ENTRYPOINT ["${appDir}/entrypoint.sh"]
 CMD ["backup", "list", "prune"]
