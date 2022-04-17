@@ -98,5 +98,5 @@ COPY ./docker/entrypoint.sh ${appDir}/
 
 ENV PATH $PATH:${appDir}/${packagePath}/node_modules/.bin
 
-ENTRYPOINT ["${appDir}/entrypoint.sh"]
+ENTRYPOINT ["/app/entrypoint.sh"]
 CMD ["backup", "list", "prune"]
