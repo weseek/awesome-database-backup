@@ -1,5 +1,5 @@
 [![Test](https://github.com/ryu-sato/awesome-backup/actions/workflows/test.yaml/badge.svg)](https://github.com/ryu-sato/awesome-backup/actions/workflows/test.yaml)
-[![Container test](https://github.com/ryu-sato/awesome-backup/actions/workflows/container-test.yml/badge.svg)](https://github.com/ryu-sato/awesome-backup/actions/workflows/container-test.yml)
+[![Container test](https://github.com/ryu-sato/awesome-backup/actions/workflows/container-test.yaml/badge.svg)](https://github.com/ryu-sato/awesome-backup/actions/workflows/container-test.yaml)
 
 # awesome-backup
 
