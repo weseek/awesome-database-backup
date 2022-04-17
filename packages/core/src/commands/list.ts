@@ -1,10 +1,6 @@
 import { EOL } from 'os';
-import { Command } from 'commander';
 import { IStorageServiceClient } from '../storage-service-clients/interfaces';
-import {
-  addStorageServiceClientOptions,
-  addStorageServiceClientGenerateHook,
-} from './common';
+import { StorageServiceClientCommand } from './common';
 import loggerFactory from '../logger/factory';
 import { IListCommandOption } from './interfaces';
 
@@ -17,7 +13,7 @@ const logger = loggerFactory('mongodb-awesome-core');
  *
  * If necessary, you can customize it by using the Command's methods, such as adding options by using option() and help messages by using addHelpText().
  */
-export class ListCommand extends Command {
+export class ListCommand extends StorageServiceClientCommand {
 
   async list(
       storageServiceClient: IStorageServiceClient,
@@ -30,26 +26,19 @@ export class ListCommand extends Command {
     }
   }
 
-  addListOptions(): ListCommand {
-    addStorageServiceClientOptions(this);
-    return this;
+  addListOptions(): this {
+    return this
+      .addStorageServiceClientOptions();
   }
 
-  setListAction(): ListCommand {
-    const storageServiceClientHolder: {
-      storageServiceClient: IStorageServiceClient | null,
-    } = {
-      storageServiceClient: null,
-    };
-    addStorageServiceClientGenerateHook(this, storageServiceClientHolder);
-
+  setListAction(): this {
     const action = async(options: IListCommandOption) => {
       try {
-        if (storageServiceClientHolder.storageServiceClient == null) throw new Error('URL scheme is not that of a supported provider.');
+        if (this.storageServiceClient == null) throw new Error('URL scheme is not that of a supported provider.');
 
         const targetBucketUrl = new URL(options.targetBucketUrl);
         await this.list(
-          storageServiceClientHolder.storageServiceClient,
+          this.storageServiceClient,
           targetBucketUrl,
         );
       }
@@ -59,7 +48,9 @@ export class ListCommand extends Command {
       }
     };
 
-    return this.action(action);
+    return this
+      .addStorageServiceClientGenerateHook()
+      .action(action);
   }
 
 }

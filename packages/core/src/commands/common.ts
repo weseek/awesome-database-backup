@@ -1,71 +1,81 @@
-/**
- * Define common processing for "backup", "restore", "list", and "prune" commands.
- */
-
 import { Command, Option } from 'commander';
 import { IStorageServiceClient } from '../storage-service-clients/interfaces';
 import { getStorageServiceClientType } from '../storage-service-clients/types';
 import storageServiceClientFactory from '../storage-service-clients/factory';
 import { ICommonCommandOption } from './interfaces';
 
-export function addStorageServiceClientOptions(command: Command): void {
-  command
-    .addOption(
-      // Arguments cannot be set to value from environment variable, so we use the required option
-      new Option('--target-bucket-url <TARGET_BUCKET_URL> **MANDATORY**', 'Target Bucket URL ([s3://...|gs://...])')
-        .makeOptionMandatory()
-        .env('TARGET_BUCKET_URL'),
-    )
-    /* AWS options */
-    .addOption(
-      new Option('--aws-endpoint-url <AWS_ENDPOINT_URL>', 'URL to send the request to')
-        .env('AWS_ENDPOINT_URL'),
-    )
-    .addOption(
-      new Option('--aws-region <AWS_REGION>', 'AWS Region')
-        .env('AWS_REGION'),
-    )
-    .addOption(
-      new Option('--aws-access-key-id <AWS_ACCESS_KEY_ID>', 'Your IAM Access Key ID')
-        .env('AWS_ACCESS_KEY_ID'),
-    )
-    .addOption(
-      new Option('--aws-secret-access-key <AWS_SECRET_ACCESS_KEY>', 'Your IAM Secret Access Key')
-        .env('AWS_SECRET_ACCESS_KEY'),
-    )
-    /* GCS options */
-    .addOption(
-      new Option('--gcp-endpoint-url <GCP_ENDPOINT_URL>', 'URL to send the request to')
-        .env('GCP_ENDPOINT_URL'),
-    )
-    .addOption(
-      new Option('--gcp-project-id <GCP_PROJECT_ID>', 'GCP Project ID')
-        .env('GCP_PROJECT_ID'),
-    )
-    .addOption(
-      new Option('--gcp-private-key <GCP_PRIVATE_KEY>', 'GCP Private Key')
-        .env('GCP_PRIVATE_KEY'),
-    )
-    .addOption(
-      new Option('--gcp-client-email <GCP_CLIENT_EMAIL>', 'GCP Client Email')
-        .env('GCP_CLIENT_EMAIL'),
-    )
-    .addOption(
-      new Option('--gcp-service-account-key-json-path <GCP_SERVICE_ACCOUNT_KEY_JSON_PATH>',
-        'JSON file path to your GCP Service Account Key')
-        .env('GCP_SERVICE_ACCOUNT_KEY_JSON_PATH'),
-    );
-}
+/**
+ * Define common processing for "backup", "restore", "list", and "prune" commands.
+ */
+export class StorageServiceClientCommand extends Command {
 
-export function addStorageServiceClientGenerateHook(command: Command, storageServiceClientHolder: { storageServiceClient: IStorageServiceClient|null }): void {
-  command
-    .hook('preAction', (command: Command) => {
-      const options = command.opts() as ICommonCommandOption;
+  storageServiceClient: IStorageServiceClient | null;
 
-      const targetBucketUrl = new URL(options.targetBucketUrl);
-      const type = getStorageServiceClientType(targetBucketUrl);
-      if (type == null) throw new Error(`Unknown storage provider type: ${type}`);
+  constructor() {
+    super();
+    this.storageServiceClient = null;
+  }
 
-      storageServiceClientHolder.storageServiceClient = storageServiceClientFactory(type, options);
-    });
+  addStorageServiceClientOptions(): this {
+    return this
+      .addOption(
+        // Arguments cannot be set to value from environment variable, so we use the required option
+        new Option('--target-bucket-url <TARGET_BUCKET_URL> **MANDATORY**', 'Target Bucket URL ([s3://...|gs://...])')
+          .makeOptionMandatory()
+          .env('TARGET_BUCKET_URL'),
+      )
+      /* AWS options */
+      .addOption(
+        new Option('--aws-endpoint-url <AWS_ENDPOINT_URL>', 'URL to send the request to')
+          .env('AWS_ENDPOINT_URL'),
+      )
+      .addOption(
+        new Option('--aws-region <AWS_REGION>', 'AWS Region')
+          .env('AWS_REGION'),
+      )
+      .addOption(
+        new Option('--aws-access-key-id <AWS_ACCESS_KEY_ID>', 'Your IAM Access Key ID')
+          .env('AWS_ACCESS_KEY_ID'),
+      )
+      .addOption(
+        new Option('--aws-secret-access-key <AWS_SECRET_ACCESS_KEY>', 'Your IAM Secret Access Key')
+          .env('AWS_SECRET_ACCESS_KEY'),
+      )
+      /* GCS options */
+      .addOption(
+        new Option('--gcp-endpoint-url <GCP_ENDPOINT_URL>', 'URL to send the request to')
+          .env('GCP_ENDPOINT_URL'),
+      )
+      .addOption(
+        new Option('--gcp-project-id <GCP_PROJECT_ID>', 'GCP Project ID')
+          .env('GCP_PROJECT_ID'),
+      )
+      .addOption(
+        new Option('--gcp-private-key <GCP_PRIVATE_KEY>', 'GCP Private Key')
+          .env('GCP_PRIVATE_KEY'),
+      )
+      .addOption(
+        new Option('--gcp-client-email <GCP_CLIENT_EMAIL>', 'GCP Client Email')
+          .env('GCP_CLIENT_EMAIL'),
+      )
+      .addOption(
+        new Option('--gcp-service-account-key-json-path <GCP_SERVICE_ACCOUNT_KEY_JSON_PATH>',
+          'JSON file path to your GCP Service Account Key')
+          .env('GCP_SERVICE_ACCOUNT_KEY_JSON_PATH'),
+      );
+  }
+
+  addStorageServiceClientGenerateHook(): this {
+    return this
+      .hook('preAction', (command: Command) => {
+        const options = command.opts() as ICommonCommandOption;
+
+        const targetBucketUrl = new URL(options.targetBucketUrl);
+        const type = getStorageServiceClientType(targetBucketUrl);
+        if (type == null) throw new Error(`Unknown storage provider type: ${type}`);
+
+        this.storageServiceClient = storageServiceClientFactory(type, options);
+      });
+  }
+
 }

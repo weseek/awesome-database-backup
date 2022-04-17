@@ -1,14 +1,11 @@
 import { format } from 'date-fns';
 import { basename, join } from 'path';
-import { Command, Option } from 'commander';
+import { Option } from 'commander';
 import { EOL } from 'os';
 import { expandBZIP2 } from '../utils/tar';
 import { IStorageServiceClient } from '../storage-service-clients/interfaces';
 import { IRestoreCommandOption } from './interfaces';
-import {
-  addStorageServiceClientOptions,
-  addStorageServiceClientGenerateHook,
-} from './common';
+import { StorageServiceClientCommand } from './common';
 import loggerFactory from '../logger/factory';
 
 const logger = loggerFactory('mongodb-awesome-backup');
@@ -22,7 +19,7 @@ const tmp = require('tmp');
  *
  * If necessary, you can customize it by using the Command's methods, such as adding options by using option() and help messages by using addHelpText().
  */
-export class RestoreCommand extends Command {
+export class RestoreCommand extends StorageServiceClientCommand {
 
   async restore(
       storageServiceClient: IStorageServiceClient,
@@ -44,9 +41,9 @@ export class RestoreCommand extends Command {
     if (stderr) stderr.split(EOL).forEach(line => logger.warn(line));
   }
 
-  addRestoreOptions(): RestoreCommand {
-    addStorageServiceClientOptions(this);
+  addRestoreOptions(): this {
     return this
+      .addStorageServiceClientOptions()
       .addOption(
         new Option(
           '--restore-tool-options <OPTIONS_STRING>',
@@ -59,20 +56,13 @@ export class RestoreCommand extends Command {
   setRestoreAction(
       restoreDatabaseFunc: (sourcePath: string, restoreToolOptions?: string) => Promise<{ stdout: string, stderr: string }>,
   ): RestoreCommand {
-    const storageServiceClientHolder: {
-      storageServiceClient: IStorageServiceClient | null,
-    } = {
-      storageServiceClient: null,
-    };
-    addStorageServiceClientGenerateHook(this, storageServiceClientHolder);
-
     const action = async(options: IRestoreCommandOption) => {
       try {
-        if (storageServiceClientHolder.storageServiceClient == null) throw new Error('URL scheme is not that of a supported provider.');
+        if (this.storageServiceClient == null) throw new Error('URL scheme is not that of a supported provider.');
 
         const targetBucketUrl = new URL(options.targetBucketUrl);
         await this.restore(
-          storageServiceClientHolder.storageServiceClient,
+          this.storageServiceClient,
           restoreDatabaseFunc,
           targetBucketUrl,
           options,
@@ -84,7 +74,9 @@ export class RestoreCommand extends Command {
       }
     };
 
-    return this.action(action);
+    return this
+      .addStorageServiceClientGenerateHook()
+      .action(action);
   }
 
 }

@@ -1,16 +1,13 @@
 import { format } from 'date-fns';
 import { basename, join } from 'path';
-import { Command, Option } from 'commander';
+import { Option } from 'commander';
 import axios from 'axios';
 import axiosRetry from 'axios-retry';
 import { EOL } from 'os';
 import { compressBZIP2 } from '../utils/tar';
 import { IStorageServiceClient } from '../storage-service-clients/interfaces';
 import { IBackupCommandOption } from './interfaces';
-import {
-  addStorageServiceClientOptions,
-  addStorageServiceClientGenerateHook,
-} from './common';
+import { StorageServiceClientCommand } from './common';
 import loggerFactory from '../logger/factory';
 
 const schedule = require('node-schedule');
@@ -26,7 +23,7 @@ const logger = loggerFactory('mongodb-awesome-backup');
  *
  * If necessary, you can customize it by using the Command's methods, such as adding options by using option() and help messages by using addHelpText().
  */
-export class BackupCommand extends Command {
+export class BackupCommand extends StorageServiceClientCommand {
 
   async backupOnce(
       storageServiceClient: IStorageServiceClient,
@@ -82,9 +79,9 @@ export class BackupCommand extends Command {
     }
   }
 
-  addBackupOptions(): BackupCommand {
-    addStorageServiceClientOptions(this);
+  addBackupOptions(): this {
     return this
+      .addStorageServiceClientOptions()
       .addOption(
         new Option(
           '--backupfile-prefix <BACKUPFILE_PREFIX>',
@@ -125,23 +122,16 @@ export class BackupCommand extends Command {
 
   setBackupAction(
       dumpDatabaseFunc: (backupFilePath: string, backupToolOptions?: string) => Promise<{ stdout: string, stderr: string }>,
-  ): BackupCommand {
-    const storageServiceClientHolder: {
-      storageServiceClient: IStorageServiceClient | null,
-    } = {
-      storageServiceClient: null,
-    };
-    addStorageServiceClientGenerateHook(this, storageServiceClientHolder);
-
+  ): this {
     const action = async(options: IBackupCommandOption) => {
       try {
         if (options.cronmode && options.cronExpression == null) throw new Error('The option "--cron-expression" must be specified in cron mode.');
-        if (storageServiceClientHolder.storageServiceClient == null) throw new Error('URL scheme is not that of a supported provider.');
+        if (this.storageServiceClient == null) throw new Error('URL scheme is not that of a supported provider.');
 
         const targetBucketUrl = new URL(options.targetBucketUrl);
         const actionImpl = (options.cronmode ? this.backupCronMode : this.backupOnce);
         await actionImpl.bind(this)(
-          storageServiceClientHolder.storageServiceClient,
+          this.storageServiceClient,
           dumpDatabaseFunc,
           targetBucketUrl,
           options,
@@ -153,7 +143,9 @@ export class BackupCommand extends Command {
       }
     };
 
-    return this.action(action);
+    return this
+      .addStorageServiceClientGenerateHook()
+      .action(action);
   }
 
 }

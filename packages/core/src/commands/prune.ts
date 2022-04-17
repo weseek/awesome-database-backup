@@ -1,12 +1,8 @@
 import { format, subDays } from 'date-fns';
-import { Command, Option } from 'commander';
-
+import { Option } from 'commander';
 import { IStorageServiceClient } from '../storage-service-clients/interfaces';
 import { IPruneCommandOption } from './interfaces';
-import {
-  addStorageServiceClientOptions,
-  addStorageServiceClientGenerateHook,
-} from './common';
+import { StorageServiceClientCommand } from './common';
 import loggerFactory from '../logger/factory';
 
 const logger = loggerFactory('mongodb-awesome-backup');
@@ -18,7 +14,7 @@ const logger = loggerFactory('mongodb-awesome-backup');
  *
  * If necessary, you can customize it by using the Command's methods, such as adding options by using option() and help messages by using addHelpText().
  */
-export class PruneCommand extends Command {
+export class PruneCommand extends StorageServiceClientCommand {
 
   async prune(
       storageServiceClient: IStorageServiceClient,
@@ -42,9 +38,9 @@ export class PruneCommand extends Command {
     }
   }
 
-  addPruneOptions(): PruneCommand {
-    addStorageServiceClientOptions(this);
+  addPruneOptions(): this {
     return this
+      .addStorageServiceClientOptions()
       .addOption(
         new Option('--backupfile-prefix <BACKUPFILE_PREFIX>', 'Prefix of backup file.')
           .default('backup')
@@ -64,21 +60,14 @@ export class PruneCommand extends Command {
       );
   }
 
-  setPruneAction(): PruneCommand {
-    const storageServiceClientHolder: {
-      storageServiceClient: IStorageServiceClient | null,
-    } = {
-      storageServiceClient: null,
-    };
-    addStorageServiceClientGenerateHook(this, storageServiceClientHolder);
-
+  setPruneAction(): this {
     const action = async(options: IPruneCommandOption) => {
       try {
-        if (storageServiceClientHolder.storageServiceClient == null) throw new Error('URL scheme is not that of a supported provider.');
+        if (this.storageServiceClient == null) throw new Error('URL scheme is not that of a supported provider.');
 
         const targetBucketUrl = new URL(options.targetBucketUrl);
         await this.prune(
-          storageServiceClientHolder.storageServiceClient,
+          this.storageServiceClient,
           targetBucketUrl,
           options,
         );
@@ -89,7 +78,9 @@ export class PruneCommand extends Command {
       }
     };
 
-    return this.action(action);
+    return this
+      .addStorageServiceClientGenerateHook()
+      .action(action);
   }
 
 }
