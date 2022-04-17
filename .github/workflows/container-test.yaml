@@ -5,7 +5,7 @@ on:
     branches-ignore: [stable]
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
 
     strategy:
