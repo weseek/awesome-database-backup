@@ -1,0 +1,78 @@
+name: Container build and push
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build-and-push-latest:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        db_type: [
+          "mongodb",
+          "postgresql"
+        ]
+      fail-fast: false
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up metadata
+      id: pkg_meta
+      run: |
+        echo "::set-output name=package_scope::@awesome-backup/${{ matrix.db_type }}-awesome-backup"
+        echo "::set-output name=package_path::apps/${{ matrix.db_type }}-awesome-backup"
+        echo "::set-output name=package_repository::ryu310/${{ matrix.db_type }}-awesome-backup"
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+    - name: Cache Docker layers
+      uses: actions/cache@v2
+      with:
+        path: /tmp/.buildx-cache
+        key:
+          ${{ runner.os }}-buildx-app-${{ matrix.db_type }}-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-buildx-app-${{ matrix.db_type }}-
+          ${{ runner.os }}-buildx-app-
+    - name: Build and push container as "latest"
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        file: ./docker/Dockerfile
+        platforms: linux/amd64
+        load: true
+        push: true
+        build-args: |
+          packageScope=${{ steps.pkg_meta.outputs.package_scope }}
+          packagePath=${{ steps.pkg_meta.outputs.package_path }}
+          dbType=${{ matrix.db_type }}
+        cache-from: type=local,src=/tmp/.buildx-cache
+        cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
+        tags: ${{ steps.pkg_meta.outputs.package_repository }}:latest
+    # ref: https://github.com/docker/build-push-action/blob/master/docs/advanced/cache.md#local-cache
+    # :warning: At the moment caches are copied over the existing cache so it [keeps growing](https://github.com/docker/build-push-action/issues/252).
+    # The `Move cache` step is used as a temporary fix (see https://github.com/moby/buildkit/issues/1896).
+    - name: Move cache
+      run: |
+        rm -rf /tmp/.buildx-cache
+        mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+
+    - name: Update Docker hub's description
+      uses: peter-evans/dockerhub-description@v2.1.0
+      env:
+        DOCKERHUB_USERNAME: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
+        DOCKERHUB_PASSWORD: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
+        DOCKERHUB_REPOSITORY: ${{ steps.pkg_meta.outputs.package_repository }}
+        README_FILEPATH: ${{ steps.pkg_meta.outputs.package_path }}/README.md
+
+    - name: Get SemVer
+      id: semver
+      run: echo "::set-output name=semver::$(git tag | sed -E 's/^v//')"
+    - name: Tagging Docker Image by SemVer and publish
+      uses: weseek/ghaction-docker-tags-by-semver@v1.0.5
+      with:
+        source: ${{ steps.pkg_meta.outputs.package_repository }}
+        target: ${{ steps.pkg_meta.outputs.package_repository }}
+        semver: ${{ steps.semver.outputs.semver }}
+        publish: true
