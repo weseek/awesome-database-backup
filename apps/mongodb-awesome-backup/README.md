@@ -4,4 +4,9 @@ Collection of scripts which backup MongoDB databases to Amazon S3 or Google Clou
 
 ## Usage
 
-See "README.md" each command or run command with "--help" option.
+See "README.md" each command follows or run command with "--help" option.
+
+- [mongodb-backup](https://github.com/ryu-sato/awesome-backup/blob/master/apps/mongodb-backup/README.md)
+- [mongodb-restore](https://github.com/ryu-sato/awesome-backup/blob/master/apps/mongodb-restore/README.md)
+- [list](https://github.com/ryu-sato/awesome-backup/blob/master/apps/list/README.md)
+- [prune](https://github.com/ryu-sato/awesome-backup/blob/master/apps/prune/README.md)

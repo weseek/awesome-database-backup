@@ -1,4 +1,4 @@
-# mongodb
+# mongodb-backup
 
 Backup MongoDB database and store to Amazon S3 or Google Cloud Storage. You can set a custom S3 endpoint to use S3 based services like DigitalOcean Spaces instead of Amazon S3.
 
