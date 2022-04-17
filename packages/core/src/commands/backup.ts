@@ -5,7 +5,6 @@ import axios from 'axios';
 import axiosRetry from 'axios-retry';
 import { EOL } from 'os';
 import { compressBZIP2 } from '../utils/tar';
-import { IStorageServiceClient } from '../storage-service-clients/interfaces';
 import { IBackupCommandOption } from './interfaces';
 import { StorageServiceClientCommand } from './common';
 import loggerFactory from '../logger/factory';
@@ -29,11 +28,9 @@ export class BackupCommand extends StorageServiceClientCommand {
     throw new Error('Method not implemented.');
   }
 
-  async backupOnce(
-      storageServiceClient: IStorageServiceClient,
-      targetBucketUrl: URL,
-      options: IBackupCommandOption,
-  ): Promise<void> {
+  async backupOnce(targetBucketUrl: URL, options: IBackupCommandOption): Promise<void> {
+    if (this.storageServiceClient == null) throw new Error('URL scheme is not that of a supported provider.');
+
     logger.info(`=== ${basename(__filename)} started at ${format(Date.now(), 'yyyy/MM/dd HH:mm:ss')} ===`);
 
     tmp.setGracefulCleanup();
@@ -46,21 +43,17 @@ export class BackupCommand extends StorageServiceClientCommand {
     if (stderr) stderr.split(EOL).forEach(line => logger.warn(line));
 
     const { compressedFilePath } = await compressBZIP2(backupFilePath);
-    await storageServiceClient.copyFile(compressedFilePath, targetBucketUrl.toString());
+    await this.storageServiceClient.copyFile(compressedFilePath, targetBucketUrl.toString());
 
     await this.processEndOfBackupOnce(options);
   }
 
-  async backupCronMode(
-      storageServiceClient: IStorageServiceClient,
-      targetBucketUrl: URL,
-      options: IBackupCommandOption,
-  ): Promise<void> {
+  async backupCronMode(targetBucketUrl: URL, options: IBackupCommandOption): Promise<void> {
     logger.info(`=== started in cron mode ${format(Date.now(), 'yyyy/MM/dd HH:mm:ss')} ===`);
     await schedule.scheduleJob(
       options.cronExpression,
       async() => {
-        await this.backupOnce(storageServiceClient, targetBucketUrl, options);
+        await this.backupOnce(targetBucketUrl, options);
       },
     );
   }
@@ -126,11 +119,10 @@ export class BackupCommand extends StorageServiceClientCommand {
     const action = async(options: IBackupCommandOption) => {
       try {
         if (options.cronmode && options.cronExpression == null) throw new Error('The option "--cron-expression" must be specified in cron mode.');
-        if (this.storageServiceClient == null) throw new Error('URL scheme is not that of a supported provider.');
 
         const targetBucketUrl = new URL(options.targetBucketUrl);
-        const actionImpl = (options.cronmode ? this.backupCronMode : this.backupOnce);
-        await actionImpl.bind(this)(this.storageServiceClient, targetBucketUrl, options);
+        const backup = (options.cronmode ? this.backupCronMode.bind(this) : this.backupOnce.bind(this));
+        await backup(targetBucketUrl, options);
       }
       catch (e: any) {
         logger.error(e);

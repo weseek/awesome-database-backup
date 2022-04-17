@@ -9,7 +9,8 @@ describe('ListCommand', () => {
 
     it('return undefined', async() => {
       const listCommand = new ListCommand();
-      await expect(listCommand.list(storageServiceClientMock, targetBucketUrl)).resolves.toBe(undefined);
+      listCommand.storageServiceClient = storageServiceClientMock;
+      await expect(listCommand.list(targetBucketUrl)).resolves.toBe(undefined);
     });
   });
 

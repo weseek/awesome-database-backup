@@ -30,7 +30,8 @@ describe('RestoreCommand', () => {
     it('return undefined', async() => {
       const restoreCommand = new restore.RestoreCommand();
       restoreCommand.restoreDB = restoreDBFuncMock;
-      await expect(restoreCommand.restore(storageServiceClientMock, targetBucketUrl, options)).resolves.toBe(undefined);
+      restoreCommand.storageServiceClient = storageServiceClientMock;
+      await expect(restoreCommand.restore(targetBucketUrl, options)).resolves.toBe(undefined);
     });
   });
 

@@ -1,5 +1,4 @@
 import { EOL } from 'os';
-import { IStorageServiceClient } from '../storage-service-clients/interfaces';
 import { StorageServiceClientCommand } from './common';
 import loggerFactory from '../logger/factory';
 import { IListCommandOption } from './interfaces';
@@ -15,11 +14,10 @@ const logger = loggerFactory('mongodb-awesome-core');
  */
 export class ListCommand extends StorageServiceClientCommand {
 
-  async list(
-      storageServiceClient: IStorageServiceClient,
-      targetBucketUrl: URL,
-  ): Promise<void> {
-    const files = await storageServiceClient.listFiles(targetBucketUrl.toString());
+  async list(targetBucketUrl: URL): Promise<void> {
+    if (this.storageServiceClient == null) throw new Error('URL scheme is not that of a supported provider.');
+
+    const files = await this.storageServiceClient.listFiles(targetBucketUrl.toString());
     if (files.length > 0) {
       logger.info('There are files below in bucket:');
       logger.info(files.join(EOL));
@@ -34,13 +32,8 @@ export class ListCommand extends StorageServiceClientCommand {
   setListAction(): this {
     const action = async(options: IListCommandOption) => {
       try {
-        if (this.storageServiceClient == null) throw new Error('URL scheme is not that of a supported provider.');
-
         const targetBucketUrl = new URL(options.targetBucketUrl);
-        await this.list(
-          this.storageServiceClient,
-          targetBucketUrl,
-        );
+        await this.list(targetBucketUrl);
       }
       catch (e: any) {
         logger.error(e);

@@ -37,7 +37,8 @@ describe('BackupCommand', () => {
       it('return undefined and call dumpDBFunc()', async() => {
         const backupCommand = new backup.BackupCommand();
         backupCommand.dumpDB = dumpDBFuncMock;
-        await expect(backupCommand.backupOnce(storageServiceClientMock, targetBucketUrl, options)).resolves.toBe(undefined);
+        backupCommand.storageServiceClient = storageServiceClientMock;
+        await expect(backupCommand.backupOnce(targetBucketUrl, options)).resolves.toBe(undefined);
         expect(dumpDBFuncMock).toBeCalled();
       });
     });
@@ -67,7 +68,8 @@ describe('BackupCommand', () => {
       it('return undefined and call axios with "healthcheckUrl"', async() => {
         const backupCommand = new backup.BackupCommand();
         backupCommand.dumpDB = dumpDBFuncMock;
-        await expect(backupCommand.backupOnce(storageServiceClientMock, targetBucketUrl, options)).resolves.toBe(undefined);
+        backupCommand.storageServiceClient = storageServiceClientMock;
+        await expect(backupCommand.backupOnce(targetBucketUrl, options)).resolves.toBe(undefined);
         expect(axiosGetMock).toBeCalledWith(options.healthchecksUrl?.toString());
       });
     });
@@ -92,7 +94,8 @@ describe('BackupCommand', () => {
 
     it('call backupOnce() at specified time', () => {
       backupCommand.dumpDB = dumpDBFuncMock;
-      backupCommand.backupCronMode(storageServiceClientMock, targetBucketUrl, options);
+      backupCommand.storageServiceClient = storageServiceClientMock;
+      backupCommand.backupCronMode(targetBucketUrl, options);
 
       expect(backupOnceMock).toHaveBeenCalledTimes(0);
       jest.advanceTimersByTime(1000 * 60);

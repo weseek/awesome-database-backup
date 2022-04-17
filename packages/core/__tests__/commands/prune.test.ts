@@ -16,7 +16,8 @@ describe('PruneCommand', () => {
 
     it('return undefined', async() => {
       const pruneCommand = new PruneCommand();
-      await expect(pruneCommand.prune(storageServiceClientMock, targetBucketUrl, options)).resolves.toBe(undefined);
+      pruneCommand.storageServiceClient = storageServiceClientMock;
+      await expect(pruneCommand.prune(targetBucketUrl, options)).resolves.toBe(undefined);
     });
   });
 

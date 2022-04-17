@@ -3,7 +3,6 @@ import { basename, join } from 'path';
 import { Option } from 'commander';
 import { EOL } from 'os';
 import { expandBZIP2 } from '../utils/tar';
-import { IStorageServiceClient } from '../storage-service-clients/interfaces';
 import { IRestoreCommandOption } from './interfaces';
 import { StorageServiceClientCommand } from './common';
 import loggerFactory from '../logger/factory';
@@ -25,17 +24,15 @@ export class RestoreCommand extends StorageServiceClientCommand {
     throw new Error('Method not implemented.');
   }
 
-  async restore(
-      storageServiceClient: IStorageServiceClient,
-      targetBucketUrl: URL,
-      options: IRestoreCommandOption,
-  ): Promise<void> {
+  async restore(targetBucketUrl: URL, options: IRestoreCommandOption): Promise<void> {
+    if (this.storageServiceClient == null) throw new Error('URL scheme is not that of a supported provider.');
+
     logger.info(`=== ${basename(__filename)} started at ${format(Date.now(), 'yyyy/MM/dd HH:mm:ss')} ===`);
 
     tmp.setGracefulCleanup();
     const tmpdir = tmp.dirSync({ unsafeCleanup: true });
     const backupFilePath = join(tmpdir.name, basename(targetBucketUrl.pathname));
-    await storageServiceClient.copyFile(targetBucketUrl.toString(), backupFilePath);
+    await this.storageServiceClient.copyFile(targetBucketUrl.toString(), backupFilePath);
 
     logger.info(`expands ${backupFilePath}...`);
     const { expandedPath } = await expandBZIP2(backupFilePath);
@@ -59,10 +56,8 @@ export class RestoreCommand extends StorageServiceClientCommand {
   setRestoreAction(): RestoreCommand {
     const action = async(options: IRestoreCommandOption) => {
       try {
-        if (this.storageServiceClient == null) throw new Error('URL scheme is not that of a supported provider.');
-
         const targetBucketUrl = new URL(options.targetBucketUrl);
-        await this.restore(this.storageServiceClient, targetBucketUrl, options);
+        await this.restore(targetBucketUrl, options);
       }
       catch (e: any) {
         logger.error(e);

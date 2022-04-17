@@ -1,6 +1,5 @@
 import { format, subDays } from 'date-fns';
 import { Option } from 'commander';
-import { IStorageServiceClient } from '../storage-service-clients/interfaces';
 import { IPruneCommandOption } from './interfaces';
 import { StorageServiceClientCommand } from './common';
 import loggerFactory from '../logger/factory';
@@ -16,11 +15,9 @@ const logger = loggerFactory('mongodb-awesome-backup');
  */
 export class PruneCommand extends StorageServiceClientCommand {
 
-  async prune(
-      storageServiceClient: IStorageServiceClient,
-      targetBucketUrl: URL,
-      options: IPruneCommandOption,
-  ): Promise<void> {
+  async prune(targetBucketUrl: URL, options: IPruneCommandOption): Promise<void> {
+    if (this.storageServiceClient == null) throw new Error('URL scheme is not that of a supported provider.');
+
     const secondsPerDay = 60 * 60 * 24;
     const targetBackupDay = subDays(Date.now(), options.deleteTargetDaysLeft);
     const isDeleteBackupDay = (Math.trunc(targetBackupDay.getTime() / 1000 / secondsPerDay) % options.deleteDivide === 0);
@@ -30,11 +27,11 @@ export class PruneCommand extends StorageServiceClientCommand {
     }
 
     const targetBackupUrlPrefix = new URL(`${options.backupfilePrefix}-${format(targetBackupDay, 'yyyyMMdd')}`, targetBucketUrl).toString();
-    const targetBackupFiles = await storageServiceClient.listFiles(targetBackupUrlPrefix, { exactMatch: false, absolutePath: false });
+    const targetBackupFiles = await this.storageServiceClient.listFiles(targetBackupUrlPrefix, { exactMatch: false, absolutePath: false });
     for (const targetBackup of targetBackupFiles) {
       const targetBackupUrl = new URL(targetBackup, targetBucketUrl);
-      storageServiceClient.deleteFile(targetBackupUrl.toString());
-      logger.info(`DELETED past backuped file on ${storageServiceClient.name}: ${targetBackupUrl}`);
+      this.storageServiceClient.deleteFile(targetBackupUrl.toString());
+      logger.info(`DELETED past backuped file on ${this.storageServiceClient.name}: ${targetBackupUrl}`);
     }
   }
 
@@ -63,14 +60,8 @@ export class PruneCommand extends StorageServiceClientCommand {
   setPruneAction(): this {
     const action = async(options: IPruneCommandOption) => {
       try {
-        if (this.storageServiceClient == null) throw new Error('URL scheme is not that of a supported provider.');
-
         const targetBucketUrl = new URL(options.targetBucketUrl);
-        await this.prune(
-          this.storageServiceClient,
-          targetBucketUrl,
-          options,
-        );
+        await this.prune(targetBucketUrl, options);
       }
       catch (e: any) {
         logger.error(e);
