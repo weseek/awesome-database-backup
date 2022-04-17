@@ -41,7 +41,6 @@ jobs:
         context: .
         file: ./docker/Dockerfile
         platforms: linux/amd64
-        load: true
         push: true
         build-args: |
           packageScope=${{ steps.pkg_meta.outputs.package_scope }}
