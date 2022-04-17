@@ -9,22 +9,26 @@ import { PACKAGE_VERSION } from '../config/version';
 
 const logger = loggerFactory('postgresql-awesome-backup');
 
-async function restorePostgreSQL(sourcePath: string, userSpecifiedOption?: string): Promise<{ stdout: string, stderr: string }> {
-  logger.info('restore PostgreSQL...');
-  return new Promise((resolve, reject) => {
-    exec(
-      `psql --file ${sourcePath} ${userSpecifiedOption}`,
-      (error, stdout, stderr) => {
-        if (error) {
-          reject(error);
-        }
-        resolve({ stdout, stderr });
-      },
-    );
-  });
+class PostgreSQLRestoreCommand extends RestoreCommand {
+
+  async restoreDB(sourcePath: string, userSpecifiedOption?: string): Promise<{ stdout: string, stderr: string }> {
+    logger.info('restore PostgreSQL...');
+    return new Promise((resolve, reject) => {
+      exec(
+        `psql --file ${sourcePath} ${userSpecifiedOption}`,
+        (error, stdout, stderr) => {
+          if (error) {
+            reject(error);
+          }
+          resolve({ stdout, stderr });
+        },
+      );
+    });
+  }
+
 }
 
-const restoreCommand = new RestoreCommand();
+const restoreCommand = new PostgreSQLRestoreCommand();
 
 restoreCommand
   .version(PACKAGE_VERSION)
@@ -37,6 +41,6 @@ restoreCommand
     NOTICE:
       You can pass PostgreSQL options by set "--restore-tool-options". (ex. "--host db.example.com --username postgres")
       `.replace(/^ {4}/mg, ''))
-  .setRestoreAction(restorePostgreSQL);
+  .setRestoreAction();
 
 restoreCommand.parse(process.argv); // execute restore command

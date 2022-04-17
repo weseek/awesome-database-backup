@@ -21,9 +21,12 @@ const tmp = require('tmp');
  */
 export class RestoreCommand extends StorageServiceClientCommand {
 
+  async restoreDB(sourcePath: string, userSpecifiedOption?: string): Promise<{ stdout: string, stderr: string }> {
+    throw new Error('Method not implemented.');
+  }
+
   async restore(
       storageServiceClient: IStorageServiceClient,
-      restoreDatabaseFunc: (sourcePath: string, restoreToolOptions?: string) => Promise<{ stdout: string, stderr: string }>,
       targetBucketUrl: URL,
       options: IRestoreCommandOption,
   ): Promise<void> {
@@ -36,7 +39,7 @@ export class RestoreCommand extends StorageServiceClientCommand {
 
     logger.info(`expands ${backupFilePath}...`);
     const { expandedPath } = await expandBZIP2(backupFilePath);
-    const { stdout, stderr } = await restoreDatabaseFunc(expandedPath, options.restoreToolOptions);
+    const { stdout, stderr } = await this.restoreDB(expandedPath, options.restoreToolOptions);
     if (stdout) stdout.split(EOL).forEach(line => logger.info(line));
     if (stderr) stderr.split(EOL).forEach(line => logger.warn(line));
   }
@@ -53,20 +56,13 @@ export class RestoreCommand extends StorageServiceClientCommand {
       );
   }
 
-  setRestoreAction(
-      restoreDatabaseFunc: (sourcePath: string, restoreToolOptions?: string) => Promise<{ stdout: string, stderr: string }>,
-  ): RestoreCommand {
+  setRestoreAction(): RestoreCommand {
     const action = async(options: IRestoreCommandOption) => {
       try {
         if (this.storageServiceClient == null) throw new Error('URL scheme is not that of a supported provider.');
 
         const targetBucketUrl = new URL(options.targetBucketUrl);
-        await this.restore(
-          this.storageServiceClient,
-          restoreDatabaseFunc,
-          targetBucketUrl,
-          options,
-        );
+        await this.restore(this.storageServiceClient, targetBucketUrl, options);
       }
       catch (e: any) {
         logger.error(e);

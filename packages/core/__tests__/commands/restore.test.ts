@@ -12,7 +12,7 @@ describe('RestoreCommand', () => {
     const storageServiceClientMock = {
       copyFile: jest.fn().mockReturnValue(['']),
     };
-    const restoreDatabaseFuncMock = jest.fn().mockReturnValue({ stdout: '', stderr: '' });
+    const restoreDBFuncMock = jest.fn().mockReturnValue({ stdout: '', stderr: '' });
 
     beforeEach(() => {
       jest.resetModules();
@@ -29,7 +29,8 @@ describe('RestoreCommand', () => {
 
     it('return undefined', async() => {
       const restoreCommand = new restore.RestoreCommand();
-      await expect(restoreCommand.restore(storageServiceClientMock, restoreDatabaseFuncMock, targetBucketUrl, options)).resolves.toBe(undefined);
+      restoreCommand.restoreDB = restoreDBFuncMock;
+      await expect(restoreCommand.restore(storageServiceClientMock, targetBucketUrl, options)).resolves.toBe(undefined);
     });
   });
 

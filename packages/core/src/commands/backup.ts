@@ -25,9 +25,12 @@ const logger = loggerFactory('mongodb-awesome-backup');
  */
 export class BackupCommand extends StorageServiceClientCommand {
 
+  async dumpDB(destinationPath: string, userSpecifiedOption?: string): Promise<{ stdout: string, stderr: string }> {
+    throw new Error('Method not implemented.');
+  }
+
   async backupOnce(
       storageServiceClient: IStorageServiceClient,
-      dumpDatabaseFunc: (backupFilePath: string, backupToolOptions?: string) => Promise<{ stdout: string, stderr: string }>,
       targetBucketUrl: URL,
       options: IBackupCommandOption,
   ): Promise<void> {
@@ -38,7 +41,7 @@ export class BackupCommand extends StorageServiceClientCommand {
     const backupFilePath = join(tmpdir.name, `${options.backupfilePrefix}-${format(Date.now(), 'yyyyMMddHHmmss')}`);
 
     logger.info(`backup ${backupFilePath}...`);
-    const { stdout, stderr } = await dumpDatabaseFunc(backupFilePath, options.backupToolOptions);
+    const { stdout, stderr } = await this.dumpDB(backupFilePath, options.backupToolOptions);
     if (stdout) stdout.split(EOL).forEach(line => logger.info(line));
     if (stderr) stderr.split(EOL).forEach(line => logger.warn(line));
 
@@ -50,7 +53,6 @@ export class BackupCommand extends StorageServiceClientCommand {
 
   async backupCronMode(
       storageServiceClient: IStorageServiceClient,
-      dumpDatabaseFunc: (backupFilePath: string, backupToolOptions?: string) => Promise<{ stdout: string, stderr: string }>,
       targetBucketUrl: URL,
       options: IBackupCommandOption,
   ): Promise<void> {
@@ -58,7 +60,7 @@ export class BackupCommand extends StorageServiceClientCommand {
     await schedule.scheduleJob(
       options.cronExpression,
       async() => {
-        await this.backupOnce(storageServiceClient, dumpDatabaseFunc, targetBucketUrl, options);
+        await this.backupOnce(storageServiceClient, targetBucketUrl, options);
       },
     );
   }
@@ -120,9 +122,7 @@ export class BackupCommand extends StorageServiceClientCommand {
       );
   }
 
-  setBackupAction(
-      dumpDatabaseFunc: (backupFilePath: string, backupToolOptions?: string) => Promise<{ stdout: string, stderr: string }>,
-  ): this {
+  setBackupAction(): this {
     const action = async(options: IBackupCommandOption) => {
       try {
         if (options.cronmode && options.cronExpression == null) throw new Error('The option "--cron-expression" must be specified in cron mode.');
@@ -130,12 +130,7 @@ export class BackupCommand extends StorageServiceClientCommand {
 
         const targetBucketUrl = new URL(options.targetBucketUrl);
         const actionImpl = (options.cronmode ? this.backupCronMode : this.backupOnce);
-        await actionImpl.bind(this)(
-          this.storageServiceClient,
-          dumpDatabaseFunc,
-          targetBucketUrl,
-          options,
-        );
+        await actionImpl.bind(this)(this.storageServiceClient, targetBucketUrl, options);
       }
       catch (e: any) {
         logger.error(e);

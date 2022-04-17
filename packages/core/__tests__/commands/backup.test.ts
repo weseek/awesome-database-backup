@@ -5,7 +5,7 @@ let backup = require('../../src/commands/backup');
 
 describe('BackupCommand', () => {
   const targetBucketUrl = new URL('gs://sample.com/bucket');
-  const dumpDatabaseFuncMock = jest.fn().mockReturnValue({ stdout: '', stderr: '' });
+  const dumpDBFuncMock = jest.fn().mockReturnValue({ stdout: '', stderr: '' });
   const storageServiceClientMock: IStorageServiceClient = {
     copyFile: jest.fn(),
     name: '',
@@ -34,10 +34,11 @@ describe('BackupCommand', () => {
         backupfilePrefix: 'backup',
       };
 
-      it('return undefined and call dumpDatabaseFunc()', async() => {
+      it('return undefined and call dumpDBFunc()', async() => {
         const backupCommand = new backup.BackupCommand();
-        await expect(backupCommand.backupOnce(storageServiceClientMock, dumpDatabaseFuncMock, targetBucketUrl, options)).resolves.toBe(undefined);
-        expect(dumpDatabaseFuncMock).toBeCalled();
+        backupCommand.dumpDB = dumpDBFuncMock;
+        await expect(backupCommand.backupOnce(storageServiceClientMock, targetBucketUrl, options)).resolves.toBe(undefined);
+        expect(dumpDBFuncMock).toBeCalled();
       });
     });
 
@@ -65,7 +66,8 @@ describe('BackupCommand', () => {
 
       it('return undefined and call axios with "healthcheckUrl"', async() => {
         const backupCommand = new backup.BackupCommand();
-        await expect(backupCommand.backupOnce(storageServiceClientMock, dumpDatabaseFuncMock, targetBucketUrl, options)).resolves.toBe(undefined);
+        backupCommand.dumpDB = dumpDBFuncMock;
+        await expect(backupCommand.backupOnce(storageServiceClientMock, targetBucketUrl, options)).resolves.toBe(undefined);
         expect(axiosGetMock).toBeCalledWith(options.healthchecksUrl?.toString());
       });
     });
@@ -89,7 +91,8 @@ describe('BackupCommand', () => {
     afterEach(() => jest.useRealTimers());
 
     it('call backupOnce() at specified time', () => {
-      backupCommand.backupCronMode(storageServiceClientMock, dumpDatabaseFuncMock, targetBucketUrl, options);
+      backupCommand.dumpDB = dumpDBFuncMock;
+      backupCommand.backupCronMode(storageServiceClientMock, targetBucketUrl, options);
 
       expect(backupOnceMock).toHaveBeenCalledTimes(0);
       jest.advanceTimersByTime(1000 * 60);
