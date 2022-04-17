@@ -3,6 +3,7 @@ import { basename, join } from 'path';
 import { Command, Option } from 'commander';
 import axios from 'axios';
 import axiosRetry from 'axios-retry';
+import { EOL } from 'os';
 import { compressBZIP2 } from '../utils/tar';
 import { IStorageServiceClient } from '../storage-service-clients/interfaces';
 import { IBackupCommandOption } from './interfaces';
@@ -41,8 +42,8 @@ export class BackupCommand extends Command {
 
     logger.info(`backup ${backupFilePath}...`);
     const { stdout, stderr } = await dumpDatabaseFunc(backupFilePath, options.backupToolOptions);
-    if (stdout) logger.info(stdout);
-    if (stderr) logger.warn(stderr);
+    if (stdout) stdout.split(EOL).forEach(line => logger.info(line));
+    if (stderr) stderr.split(EOL).forEach(line => logger.warn(line));
 
     const { compressedFilePath } = await compressBZIP2(backupFilePath);
     await storageServiceClient.copyFile(compressedFilePath, targetBucketUrl.toString());

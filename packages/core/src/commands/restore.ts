@@ -1,7 +1,7 @@
 import { format } from 'date-fns';
 import { basename, join } from 'path';
 import { Command, Option } from 'commander';
-
+import { EOL } from 'os';
 import { expandBZIP2 } from '../utils/tar';
 import { IStorageServiceClient } from '../storage-service-clients/interfaces';
 import { IRestoreCommandOption } from './interfaces';
@@ -40,8 +40,8 @@ export class RestoreCommand extends Command {
     logger.info(`expands ${backupFilePath}...`);
     const { expandedPath } = await expandBZIP2(backupFilePath);
     const { stdout, stderr } = await restoreDatabaseFunc(expandedPath, options.restoreToolOptions);
-    if (stdout) logger.info(stdout);
-    if (stderr) logger.warn(stderr);
+    if (stdout) stdout.split(EOL).forEach(line => logger.info(line));
+    if (stderr) stderr.split(EOL).forEach(line => logger.warn(line));
   }
 
   addRestoreOptions(): RestoreCommand {
