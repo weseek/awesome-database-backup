@@ -10,22 +10,29 @@ jobs:
 
     strategy:
       matrix:
-        testingTargetBaseName: [
+        db_type: [
           "mongodb",
           "postgresql"
         ]
 
     steps:
     - uses: actions/checkout@v3
+    - name: Set up metadata
+      id: pkg_meta
+      run: |
+        echo "::set-output name=package_scope::@awesome-backup/${{ matrix.db_type }}-awesome-backup"
+        echo "::set-output name=package_path::apps/${{ matrix.db_type }}-awesome-backup"
+        echo "::set-output name=package_image_name::ryu310/${{ matrix.db_type }}-awesome-backup"
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v1
     - name: Cache Docker layers
       uses: actions/cache@v2
       with:
         path: /tmp/.buildx-cache
-        key: ${{ runner.os }}-buildx-app-${{ matrix.testingTargetBaseName }}-${{ github.sha }}
+        key:
+          ${{ runner.os }}-buildx-app-${{ matrix.db_type }}-${{ github.sha }}
         restore-keys: |
-          ${{ runner.os }}-buildx-app-${{ matrix.testingTargetBaseName }}-
+          ${{ runner.os }}-buildx-app-${{ matrix.db_type }}-
           ${{ runner.os }}-buildx-app-
     - name: Build
       uses: docker/build-push-action@v2
@@ -35,17 +42,21 @@ jobs:
         platforms: linux/amd64
         load: true
         build-args: |
-          packageScope=@awesome-backup/${{ matrix.testingTargetBaseName }}-awesome-backup
-          packagePath=apps/${{ matrix.testingTargetBaseName }}-awesome-backup
-          dbType=${{ matrix.testingTargetBaseName }}
+          packageScope=${{ steps.pkg_meta.outputs.package_scope }}
+          packagePath=${{ steps.pkg_meta.outputs.package_path }}
+          dbType=${{ matrix.db_type }}
         cache-from: type=local,src=/tmp/.buildx-cache
-        cache-to: type=local,mode=max,dest=/tmp/.buildx-cache-new
-        tags: awesome-backup/${{ matrix.testingTargetBaseName }}:latest
+        cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
+        tags: ${{ steps.pkg_meta.outputs.package_image_name }}:latest
     - name: Move cache
       run: |
         rm -rf /tmp/.buildx-cache
         mv /tmp/.buildx-cache-new /tmp/.buildx-cache
-    - uses: brpaz/structure-tests-action@v1.1.2
+    # ref: https://github.com/docker/build-push-action/blob/master/docs/advanced/cache.md#local-cache
+    # :warning: At the moment caches are copied over the existing cache so it [keeps growing](https://github.com/docker/build-push-action/issues/252).
+    # The `Move cache` step is used as a temporary fix (see https://github.com/moby/buildkit/issues/1896).
+    - name: Run structure tests
+      uses: brpaz/structure-tests-action@v1.1.2
       with:
-        image: awesome-backup/${{ matrix.testingTargetBaseName }}:latest
-        configFile: ./docker/test/${{ matrix.testingTargetBaseName }}/structure-tests.yml
+        image: ${{ steps.pkg_meta.outputs.package_image_name }}:latest
+        configFile: ./docker/test/${{ matrix.db_type }}/structure-tests.yml
