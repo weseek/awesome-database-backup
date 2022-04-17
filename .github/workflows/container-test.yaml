@@ -34,7 +34,7 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-buildx-app-${{ matrix.db_type }}-
           ${{ runner.os }}-buildx-app-
-    - name: Build
+    - name: Build container (No push)
       uses: docker/build-push-action@v2
       with:
         context: .
@@ -48,13 +48,13 @@ jobs:
         cache-from: type=local,src=/tmp/.buildx-cache
         cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
         tags: ${{ steps.pkg_meta.outputs.package_image_name }}:latest
+    # ref: https://github.com/docker/build-push-action/blob/master/docs/advanced/cache.md#local-cache
+    # :warning: At the moment caches are copied over the existing cache so it [keeps growing](https://github.com/docker/build-push-action/issues/252).
+    # The `Move cache` step is used as a temporary fix (see https://github.com/moby/buildkit/issues/1896).
     - name: Move cache
       run: |
         rm -rf /tmp/.buildx-cache
         mv /tmp/.buildx-cache-new /tmp/.buildx-cache
-    # ref: https://github.com/docker/build-push-action/blob/master/docs/advanced/cache.md#local-cache
-    # :warning: At the moment caches are copied over the existing cache so it [keeps growing](https://github.com/docker/build-push-action/issues/252).
-    # The `Move cache` step is used as a temporary fix (see https://github.com/moby/buildkit/issues/1896).
     - name: Run structure tests
       uses: brpaz/structure-tests-action@v1.1.2
       with:
