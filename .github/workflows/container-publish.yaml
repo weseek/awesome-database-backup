@@ -39,6 +39,19 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-buildx-app-${{ matrix.db_type }}-
           ${{ runner.os }}-buildx-app-
+    - name: Retrieve information from package.json
+      uses: myrotvorets/info-from-package-json-action@1.0.0
+      id: ver
+    - name: Set up Docker meta
+      id: meta
+      uses: docker/metadata-action@v3
+      with:
+        images: ${{ steps.pkg_meta.outputs.package_repository }}
+        tags: |
+          type=raw,value=latest
+          type=semver,value=${{ steps.ver.outputs.packageVersion }},pattern={{major}}
+          type=semver,value=${{ steps.ver.outputs.packageVersion }},pattern={{major}}.{{minor}}
+          type=semver,value=${{ steps.ver.outputs.packageVersion }},pattern={{major}}.{{minor}}.{{patch}}
     - name: Build and push container as "latest"
       uses: docker/build-push-action@v2
       with:
@@ -52,7 +65,7 @@ jobs:
           dbType=${{ matrix.db_type }}
         cache-from: type=local,src=/tmp/.buildx-cache
         cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
-        tags: ${{ steps.pkg_meta.outputs.package_repository }}:latest
+        tags: ${{ steps.meta.outputs.tags }}
     # ref: https://github.com/docker/build-push-action/blob/master/docs/advanced/cache.md#local-cache
     # :warning: At the moment caches are copied over the existing cache so it [keeps growing](https://github.com/docker/build-push-action/issues/252).
     # The `Move cache` step is used as a temporary fix (see https://github.com/moby/buildkit/issues/1896).
@@ -68,14 +81,3 @@ jobs:
         DOCKERHUB_PASSWORD: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
         DOCKERHUB_REPOSITORY: ${{ steps.pkg_meta.outputs.package_repository }}
         README_FILEPATH: ${{ steps.pkg_meta.outputs.package_path }}/README.md
-
-    - name: Get SemVer
-      id: semver
-      run: echo "::set-output name=semver::$(git tag | sed -E 's/^v//')"
-    - name: Tagging Docker Image by SemVer and publish
-      uses: weseek/ghaction-docker-tags-by-semver@v1.0.5
-      with:
-        source: ${{ steps.pkg_meta.outputs.package_repository }}
-        target: ${{ steps.pkg_meta.outputs.package_repository }}
-        semver: ${{ steps.semver.outputs.semver }}
-        publish: true
