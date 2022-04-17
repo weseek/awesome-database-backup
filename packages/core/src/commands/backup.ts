@@ -81,7 +81,7 @@ export class BackupCommand extends StorageServiceClientCommand {
 
   addBackupOptions(): this {
     return this
-      .addStorageServiceClientOptions()
+      .addStorageOptions()
       .addOption(
         new Option(
           '--backupfile-prefix <BACKUPFILE_PREFIX>',
@@ -144,7 +144,7 @@ export class BackupCommand extends StorageServiceClientCommand {
     };
 
     return this
-      .addStorageServiceClientGenerateHook()
+      .saveStorageClientInAdvance()
       .action(action);
   }
 

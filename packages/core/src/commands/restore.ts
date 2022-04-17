@@ -43,7 +43,7 @@ export class RestoreCommand extends StorageServiceClientCommand {
 
   addRestoreOptions(): this {
     return this
-      .addStorageServiceClientOptions()
+      .addStorageOptions()
       .addOption(
         new Option(
           '--restore-tool-options <OPTIONS_STRING>',
@@ -75,7 +75,7 @@ export class RestoreCommand extends StorageServiceClientCommand {
     };
 
     return this
-      .addStorageServiceClientGenerateHook()
+      .saveStorageClientInAdvance()
       .action(action);
   }
 

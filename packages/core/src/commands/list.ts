@@ -28,7 +28,7 @@ export class ListCommand extends StorageServiceClientCommand {
 
   addListOptions(): this {
     return this
-      .addStorageServiceClientOptions();
+      .addStorageOptions();
   }
 
   setListAction(): this {
@@ -49,7 +49,7 @@ export class ListCommand extends StorageServiceClientCommand {
     };
 
     return this
-      .addStorageServiceClientGenerateHook()
+      .saveStorageClientInAdvance()
       .action(action);
   }
 

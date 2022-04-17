@@ -16,7 +16,7 @@ export class StorageServiceClientCommand extends Command {
     this.storageServiceClient = null;
   }
 
-  addStorageServiceClientOptions(): this {
+  addStorageOptions(): this {
     return this
       .addOption(
         // Arguments cannot be set to value from environment variable, so we use the required option
@@ -65,7 +65,7 @@ export class StorageServiceClientCommand extends Command {
       );
   }
 
-  addStorageServiceClientGenerateHook(): this {
+  saveStorageClientInAdvance(): this {
     return this
       .hook('preAction', (command: Command) => {
         const options = command.opts() as ICommonCommandOption;

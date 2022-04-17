@@ -40,7 +40,7 @@ export class PruneCommand extends StorageServiceClientCommand {
 
   addPruneOptions(): this {
     return this
-      .addStorageServiceClientOptions()
+      .addStorageOptions()
       .addOption(
         new Option('--backupfile-prefix <BACKUPFILE_PREFIX>', 'Prefix of backup file.')
           .default('backup')
@@ -79,7 +79,7 @@ export class PruneCommand extends StorageServiceClientCommand {
     };
 
     return this
-      .addStorageServiceClientGenerateHook()
+      .saveStorageClientInAdvance()
       .action(action);
   }
 
