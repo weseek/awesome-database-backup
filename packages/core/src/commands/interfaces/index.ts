@@ -11,8 +11,7 @@ export type ICommonCommandOption = S3StorageServiceClientConfig & GCSStorageServ
 /* Backup command option types */
 export interface IBackupCommandOption extends ICommonCommandOption {
   backupfilePrefix: string,
-  cronmode?: boolean,
-  cronExpression?: string,
+  cronmode?: string,
   healthchecksUrl?: string,
   backupToolOptions?: string,
 }

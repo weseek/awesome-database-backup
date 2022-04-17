@@ -79,7 +79,7 @@ describe('BackupCommand', () => {
     const options: IBackupCommandOption = {
       targetBucketUrl: 's3://valid-bucket',
       backupfilePrefix: 'backup',
-      cronExpression: '* * * * *',
+      cronmode: '* * * * *',
     };
     const backupOnceMock = jest.fn();
 

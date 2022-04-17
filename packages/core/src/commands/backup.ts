@@ -51,7 +51,7 @@ export class BackupCommand extends StorageServiceClientCommand {
   async backupCronMode(targetBucketUrl: URL, options: IBackupCommandOption): Promise<void> {
     logger.info(`=== started in cron mode ${format(Date.now(), 'yyyy/MM/dd HH:mm:ss')} ===`);
     await schedule.scheduleJob(
-      options.cronExpression,
+      options.cronmode,
       async() => {
         await this.backupOnce(targetBucketUrl, options);
       },
@@ -87,15 +87,9 @@ export class BackupCommand extends StorageServiceClientCommand {
       )
       .addOption(
         new Option(
-          '--cronmode',
-          'Run `backup` as cron mode. In Cron mode, `backup` will be executed periodically.',
-        )
-          .env('CRONMODE'),
-      )
-      .addOption(
-        new Option(
-          '--cron-expression <CRON_EXPRESSION>',
-          'Cron expression (ex. CRON_EXPRESSION="0 4 * * *" if you want to run at 4:00 every day)',
+          '--cronmode <CRON_EXPRESSION>',
+          'Run `backup` as cron mode. In Cron mode, `backup` will be executed periodically.'
+          + '(ex. CRON_EXPRESSION="0 4 * * *" if you want to run at 4:00 every day)',
         )
           .env('CRON_EXPRESSION'),
       )
@@ -118,8 +112,6 @@ export class BackupCommand extends StorageServiceClientCommand {
   setBackupAction(): this {
     const action = async(options: IBackupCommandOption) => {
       try {
-        if (options.cronmode && options.cronExpression == null) throw new Error('The option "--cron-expression" must be specified in cron mode.');
-
         const targetBucketUrl = new URL(options.targetBucketUrl);
         const backup = (options.cronmode ? this.backupCronMode.bind(this) : this.backupOnce.bind(this));
         await backup(targetBucketUrl, options);
