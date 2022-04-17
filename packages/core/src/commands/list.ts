@@ -23,9 +23,11 @@ export class ListCommand extends Command {
       storageServiceClient: IStorageServiceClient,
       targetBucketUrl: URL,
   ): Promise<void> {
-    logger.info('There are files below in bucket:');
     const files = await storageServiceClient.listFiles(targetBucketUrl.toString());
-    logger.info(files.join(EOL));
+    if (files.length > 0) {
+      logger.info('There are files below in bucket:');
+      logger.info(files.join(EOL));
+    }
   }
 
   addListOptions(): ListCommand {
