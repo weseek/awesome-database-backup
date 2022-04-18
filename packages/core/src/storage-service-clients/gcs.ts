@@ -1,4 +1,4 @@
-import { Storage, StorageOptions, File } from '@google-cloud/storage';
+import { Storage, File } from '@google-cloud/storage';
 import { basename, join } from 'path';
 import {
   IStorageServiceClient,
@@ -6,29 +6,6 @@ import {
   GCSURI,
   GCSStorageServiceClientConfig,
 } from './interfaces';
-
-/**
- * Parse GCS's URI(start with "gs:")
- * ex. It'll break down "gs://bucket/folder/file" to {"bucket": "bucket", "filepath": "folder/file"}.
- * If it is not GCS's URL, return null.
- */
-function _parseFilePath(path: string): GCSURI | null {
-  /* GCS URI */
-  if (path.startsWith('gs:')) {
-    // https://regex101.com/r/QesT48/1
-    const regexGCSUri = /^gs:\/\/([^/]+)\/?(.*)$/;
-    try {
-      const match = path.match(regexGCSUri);
-      if (!match) return null;
-      const [, bucket, filepath] = match;
-      return { bucket, filepath };
-    }
-    catch (e: any) {
-      return null;
-    }
-  }
-  return null;
-}
 
 /**
  * Client to manipulate GCS buckets
@@ -40,32 +17,33 @@ export class GCSStorageServiceClient implements IStorageServiceClient {
   client: Storage;
 
   constructor(config: GCSStorageServiceClientConfig) {
-    /* If the configuration file does not exist, it is created temporarily from the config,
-      and it will be deleted when process exit. */
-    if (config.gcpProjectId == null || config.gcpClientEmail == null || config.gcpPrivateKey == null) {
+    if (config.gcpProjectId == null) {
+      throw new Error('You will need to set "--gcp-project-id".');
+    }
+    if (config.gcpServiceAccountKeyJsonPath == null && (config.gcpClientEmail == null || config.gcpPrivateKey == null)) {
       throw new Error('If you does not set "--gcp-service-account-key-json-path", '
-                        + 'you will need to set all of "--gcp-project-id", "--gcp-client-email" and "--gcp-private-key".');
+                        + 'you will need to set all of "--gcp-client-email" and "--gcp-private-key".');
     }
 
-    let storageconfig: StorageOptions;
-    if (config.gcpServiceAccountKeyJsonPath) {
-      storageconfig = {
-        keyFilename: config.gcpServiceAccountKeyJsonPath,
-      };
-    }
-    else {
-      storageconfig = {
-        projectId: config.gcpProjectId,
-        credentials: {
-          client_email: config.gcpClientEmail,
-          // [MEMO] Converting escaped characters because newline codes cannot be entered in the commander argument.
-          private_key: config.gcpPrivateKey?.replace(/\\n/g, '\n'),
+    const storageconfig = Object.assign(
+      config.gcpServiceAccountKeyJsonPath
+        ? {
+          keyFilename: config.gcpServiceAccountKeyJsonPath,
+        }
+        : {
+          projectId: config.gcpProjectId,
+          credentials: {
+            client_email: config.gcpClientEmail,
+            // [MEMO] Converting escaped characters because newline codes cannot be entered in the commander argument.
+            private_key: config.gcpPrivateKey?.replace(/\\n/g, '\n'),
+          },
         },
-      };
-      if (config.gcpEndpointUrl) {
-        storageconfig.apiEndpoint = config.gcpEndpointUrl.toString();
-      }
-    }
+      config.gcpEndpointUrl
+        ? {
+          apiEndpoint: config.gcpEndpointUrl.toString(),
+        }
+        : {},
+    );
 
     this.name = 'GCS';
     this.client = new Storage(storageconfig);
@@ -82,7 +60,7 @@ export class GCSStorageServiceClient implements IStorageServiceClient {
   }
 
   listFiles(url: string, optionsRequired?: listGCSFilesOptions): Promise<string[]> {
-    const gcsUri = _parseFilePath(url);
+    const gcsUri = this._parseFilePath(url);
     if (gcsUri == null) return Promise.reject(new Error(`URI ${url} is not correct GCS's`));
 
     const defaultOption: listGCSFilesOptions = {
@@ -111,7 +89,7 @@ export class GCSStorageServiceClient implements IStorageServiceClient {
   }
 
   deleteFile(url: string): Promise<void> {
-    const gcsUri = _parseFilePath(url);
+    const gcsUri = this._parseFilePath(url);
     if (gcsUri == null) return Promise.reject(new Error(`URI ${url} is not correct GCS's`));
 
     return new Promise((resolve, reject) => {
@@ -123,8 +101,8 @@ export class GCSStorageServiceClient implements IStorageServiceClient {
   }
 
   copyFile(copySource: string, copyDestination: string): Promise<void> {
-    const parseSourceResult = _parseFilePath(copySource);
-    const parseDestinationResult = _parseFilePath(copyDestination);
+    const parseSourceResult = this._parseFilePath(copySource);
+    const parseDestinationResult = this._parseFilePath(copyDestination);
 
     /* Upload local file to GCS */
     if (parseSourceResult == null && parseDestinationResult != null) {
@@ -176,6 +154,25 @@ export class GCSStorageServiceClient implements IStorageServiceClient {
         .then(() => resolve())
         .catch(e => reject(e));
     });
+  }
+
+  /**
+   * Parse GCS's URI(start with "gs:")
+   * ex. It'll break down "gs://bucket/folder/file" to {"bucket": "bucket", "filepath": "folder/file"}.
+   * If it is not GCS's URL, return null.
+   */
+  _parseFilePath(path: string): GCSURI | null {
+    /* GCS URI */
+    if (path.startsWith('gs:')) {
+      // https://regex101.com/r/QesT48/1
+      const regexGCSUri = /^gs:\/\/([^/]+)\/?(.*)$/;
+
+      const match = path.match(regexGCSUri);
+      if (!match) return null;
+      const [, bucket, filepath] = match;
+      return { bucket, filepath };
+    }
+    return null;
   }
 
 }

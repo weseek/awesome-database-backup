@@ -1,8 +1,92 @@
-import { GCSURI } from '../../src/storage-service-clients/interfaces';
+import { GCSURI, GCSStorageServiceClientConfig } from '../../src/storage-service-clients/interfaces';
 import GCSStorageServiceClient from '../../src/storage-service-clients/gcs';
 
 describe('GCSStorageServiceClient', () => {
   let gcsServiceClient: GCSStorageServiceClient;
+
+  describe('constructor', () => {
+    describe('when config is empty', () => {
+      const config: GCSStorageServiceClientConfig = {};
+
+      it('throw error', () => {
+        expect(() => new GCSStorageServiceClient(config))
+          .toThrowError(new Error('You will need to set "--gcp-project-id".'));
+      });
+    });
+
+    describe('when config is only set validProjectId', () => {
+      const config: GCSStorageServiceClientConfig = {
+        gcpProjectId: 'validProjectId',
+      };
+
+      it('throw error', () => {
+        expect(() => new GCSStorageServiceClient(config))
+          .toThrowError(new Error(
+            'If you does not set "--gcp-service-account-key-json-path", '
+            + 'you will need to set all of "--gcp-client-email" and "--gcp-private-key".',
+          ));
+      });
+    });
+
+    describe('when config is valid with "gcpServiceAccountKeyJsonPath" is set', () => {
+      const StorageMock = jest.fn();
+      const config = {
+        gcpProjectId: 'validProjectId',
+        gcpServiceAccountKeyJsonPath: '/path/to/file',
+      };
+
+      beforeEach(() => {
+        jest.resetModules();
+        jest.doMock('@google-cloud/storage', () => ({
+          Storage: StorageMock,
+        }));
+        const gcs = require('../../src/storage-service-clients/gcs');
+        gcsServiceClient = new gcs.GCSStorageServiceClient(config);
+      });
+      afterEach(() => {
+        jest.dontMock('@google-cloud/storage');
+      });
+
+      it('call constructor of Storage class with args', () => {
+        expect(StorageMock).toBeCalledWith({
+          keyFilename: '/path/to/file',
+        });
+      });
+    });
+
+    describe('when config is valid with "gcpEndpointUrl" is set', () => {
+      const StorageMock = jest.fn();
+      const config = {
+        gcpProjectId: 'validProjectId',
+        gcpClientEmail: 'validClientEmail',
+        gcpPrivateKey: 'validPrivateKey',
+        gcpEndpointUrl: 'http://example.com/',
+      };
+
+      beforeEach(() => {
+        jest.resetModules();
+        jest.doMock('@google-cloud/storage', () => ({
+          Storage: StorageMock,
+        }));
+        const gcs = require('../../src/storage-service-clients/gcs');
+        gcsServiceClient = new gcs.GCSStorageServiceClient(config);
+      });
+      afterEach(() => {
+        jest.dontMock('@google-cloud/storage');
+      });
+
+      it('call constructor of Storage class with args', () => {
+        expect(StorageMock).toBeCalledWith({
+          credentials: Object({
+            client_email: 'validClientEmail',
+            private_key: 'validPrivateKey',
+          }),
+          projectId: 'validProjectId',
+          apiEndpoint: 'http://example.com/',
+        });
+      });
+    });
+  });
 
   beforeEach(() => {
     gcsServiceClient = new GCSStorageServiceClient({
@@ -13,29 +97,30 @@ describe('GCSStorageServiceClient', () => {
   });
 
   describe('#exists', () => {
+    const url = 'gs://bucket-name/object-name';
+
     describe('when listFiles() return object key list which include target object', () => {
       beforeEach(() => {
         gcsServiceClient.listFiles = jest.fn().mockResolvedValueOnce(['object-name']);
       });
 
       it('return true', async() => {
-        const url = 'gs://bucket-name/object-name';
         await expect(gcsServiceClient.exists(url)).resolves.toBe(true);
+      });
+    });
+
+    describe('when listFiles() reject', () => {
+      beforeEach(() => {
+        gcsServiceClient.listFiles = jest.fn().mockRejectedValue(undefined);
+      });
+
+      it('reject', async() => {
+        await expect(gcsServiceClient.exists(url)).rejects.toBe(undefined);
       });
     });
   });
 
   describe('#listFiles', () => {
-    let gcsServiceClient: GCSStorageServiceClient;
-
-    beforeEach(() => {
-      gcsServiceClient = new GCSStorageServiceClient({
-        gcpProjectId: 'validProjectId',
-        gcpClientEmail: 'validClientEmail',
-        gcpPrivateKey: 'validPrivateKey',
-      });
-    });
-
     describe("when request URI is valid GCS's", () => {
       const url = 'gs://bucket-name/object-name';
 
@@ -79,16 +164,16 @@ describe('GCSStorageServiceClient', () => {
           });
         });
 
-        describe('when Bucket#getFiles response null', () => {
+        describe('when Bucket#getFiles response [null]', () => {
           beforeEach(() => {
             const bucketMock = {
-              getFiles: jest.fn().mockReturnValue(Promise.resolve(null)),
+              getFiles: jest.fn().mockReturnValue(Promise.resolve([null])),
             };
             gcsServiceClient.client.bucket = jest.fn().mockReturnValue(bucketMock);
           });
 
           it('reject with throw exception', async() => {
-            await expect(gcsServiceClient.listFiles(url)).rejects.toThrowError();
+            await expect(gcsServiceClient.listFiles(url)).rejects.toThrowError('Bucket#getFiles return null');
           });
         });
 
@@ -188,16 +273,6 @@ describe('GCSStorageServiceClient', () => {
   });
 
   describe('#deleteFile', () => {
-    let gcsServiceClient: GCSStorageServiceClient;
-
-    beforeEach(() => {
-      gcsServiceClient = new GCSStorageServiceClient({
-        gcpProjectId: 'validProjectId',
-        gcpClientEmail: 'validClientEmail',
-        gcpPrivateKey: 'validPrivateKey',
-      });
-    });
-
     describe("when request URI is valid GCS's", () => {
       const url = 'gs://bucket-name/object-name';
 
@@ -245,16 +320,6 @@ describe('GCSStorageServiceClient', () => {
   });
 
   describe('#copyFile', () => {
-    let gcsServiceClient: GCSStorageServiceClient;
-
-    beforeEach(() => {
-      gcsServiceClient = new GCSStorageServiceClient({
-        gcpProjectId: 'validProjectId',
-        gcpClientEmail: 'validClientEmail',
-        gcpPrivateKey: 'validPrivateKey',
-      });
-    });
-
     describe("when copySource is local file path and copyDestination is GCS's URI", () => {
       const copySource = '/path/to/file';
       const copyDestination = 'gs://bucket-name/object-name';
@@ -316,16 +381,6 @@ describe('GCSStorageServiceClient', () => {
     const uploadSource = '/path/to/file';
     const uploadDestination: GCSURI = { bucket: 'bucket-name', filepath: 'object-name' };
 
-    let gcsServiceClient: GCSStorageServiceClient;
-
-    beforeEach(() => {
-      gcsServiceClient = new GCSStorageServiceClient({
-        gcpProjectId: 'validProjectId',
-        gcpClientEmail: 'validClientEmail',
-        gcpPrivateKey: 'validPrivateKey',
-      });
-    });
-
     describe('when File#upload resolve', () => {
       beforeEach(() => {
         const bucketMock = {
@@ -356,16 +411,6 @@ describe('GCSStorageServiceClient', () => {
   describe('#downloadFile', () => {
     const downloadSource: GCSURI = { bucket: 'bucket-name', filepath: 'object-name' };
     const downloadDestination = '/path/to/file';
-
-    let gcsServiceClient: GCSStorageServiceClient;
-
-    beforeEach(() => {
-      gcsServiceClient = new GCSStorageServiceClient({
-        gcpProjectId: 'validProjectId',
-        gcpClientEmail: 'validClientEmail',
-        gcpPrivateKey: 'validPrivateKey',
-      });
-    });
 
     describe('when File#download resolve', () => {
       beforeEach(() => {
@@ -404,16 +449,6 @@ describe('GCSStorageServiceClient', () => {
     const copySource: GCSURI = { bucket: 'bucket-name', filepath: 'object-name1' };
     const copyDestination: GCSURI = { bucket: 'bucket-name', filepath: 'object-name2' };
 
-    let gcsServiceClient: GCSStorageServiceClient;
-
-    beforeEach(() => {
-      gcsServiceClient = new GCSStorageServiceClient({
-        gcpProjectId: 'validProjectId',
-        gcpClientEmail: 'validClientEmail',
-        gcpPrivateKey: 'validPrivateKey',
-      });
-    });
-
     describe('when File#copy resolve', () => {
       beforeEach(() => {
         const fileMock = {
@@ -443,6 +478,39 @@ describe('GCSStorageServiceClient', () => {
 
       it('reject and throw Error', async() => {
         await expect(gcsServiceClient.copyFileOnRemote(copySource, copyDestination)).rejects.toThrowError();
+      });
+    });
+  });
+
+  describe('_parseFilePath', () => {
+    describe('when path start with "gs:"', () => {
+      const path = 'gs://bucket/file';
+
+      describe('and when match() succeed', () => {
+        it('return GCSURI', () => {
+          expect(gcsServiceClient._parseFilePath(path)).toStrictEqual({ bucket: 'bucket', filepath: 'file' });
+        });
+      });
+
+      describe('and when match() return null', () => {
+        beforeEach(() => {
+          jest.spyOn(String.prototype, 'match').mockReturnValue(null);
+        });
+        afterEach(() => {
+          jest.restoreAllMocks();
+        });
+
+        it('return null', () => {
+          expect(gcsServiceClient._parseFilePath(path)).toBe(null);
+        });
+      });
+    });
+
+    describe('when path does not start with "gs:"', () => {
+      const path = '/path/to/file';
+
+      it('return null', () => {
+        expect(gcsServiceClient._parseFilePath(path)).toBe(null);
       });
     });
   });
