@@ -18,28 +18,6 @@ import {
 import { configExistS3 } from './s3-config';
 
 /**
- * Parse S3's URI(start with "s3:")
- * If it is not S3's URL, return null.
- */
-function _parseFilePath(path: string): S3URI | null {
-  /* S3 URI */
-  if (path.startsWith('s3:')) {
-    // https://regex101.com/r/vDGuGY/1
-    const regexS3Uri = /^s3:\/\/([^/]+)\/?(.*)$/;
-    try {
-      const match = path.match(regexS3Uri);
-      if (!match) return null;
-      const [, bucket, key] = match;
-      return { bucket, key };
-    }
-    catch (e: any) {
-      return null;
-    }
-  }
-  return null;
-}
-
-/**
  * Client to manipulate S3 buckets
  */
 export class S3StorageServiceClient implements IStorageServiceClient {
@@ -55,16 +33,24 @@ export class S3StorageServiceClient implements IStorageServiceClient {
         throw new Error('If the configuration file does not exist, '
                           + 'you will need to set "--aws-region", "--aws-access-key-id", and "--aws-secret-access-key".');
       }
-      s3ClientConfig = {
-        region: config.awsRegion,
-        credentials: {
-          accessKeyId: config.awsAccessKeyId,
-          secretAccessKey: config.awsSecretAccessKey,
-        },
-      };
-    }
-    if (config.awsEndpointUrl != null) {
-      s3ClientConfig.endpoint = config.awsEndpointUrl.toString();
+      s3ClientConfig = Object.assign({
+        ...(
+          {
+            region: config.awsRegion,
+            credentials: {
+              accessKeyId: config.awsAccessKeyId,
+              secretAccessKey: config.awsSecretAccessKey,
+            },
+          }
+        ),
+        ...(
+          config.awsEndpointUrl != null
+            ? {
+              endpoint: config.awsEndpointUrl.toString(),
+            }
+            : {}
+        ),
+      });
     }
 
     this.name = 'S3';
@@ -74,12 +60,8 @@ export class S3StorageServiceClient implements IStorageServiceClient {
   exists(url: string): Promise<boolean> {
     return new Promise((resolve, reject) => {
       this.listFiles(url)
-        .then((lists) => {
-          resolve(lists.length > 0);
-        })
-        .catch((e) => {
-          reject(e);
-        });
+        .then(lists => resolve(lists.length > 0))
+        .catch(e => reject(e));
     });
   }
 
@@ -98,7 +80,7 @@ export class S3StorageServiceClient implements IStorageServiceClient {
    * (If the url is "s3://bucket-name/directory", it will look like ["object-name1", "object-name2"])
    */
   listFiles(url: string, optionsRequired?: listS3FilesOptions): Promise<string[]> {
-    const parseResult = _parseFilePath(url);
+    const parseResult = this._parseFilePath(url);
     if (parseResult == null) return Promise.reject(new Error(`URI ${url} is not correct S3's`));
 
     const defaultOption: listS3FilesOptions = {
@@ -131,11 +113,9 @@ export class S3StorageServiceClient implements IStorageServiceClient {
             const relativePathChanger = (filePath: string) => basename(filePath);
             files = files.map(relativePathChanger);
           }
-          resolve(files);
+          return resolve(files);
         })
-        .catch((e: any) => {
-          reject(e);
-        });
+        .catch(e => reject(e));
     });
   }
 
@@ -146,7 +126,7 @@ export class S3StorageServiceClient implements IStorageServiceClient {
    * Also, when removing a directory, the URL must end with a slash. (ex. 's3://bucket-name/directory/')
    */
   deleteFile(url: string): Promise<void> {
-    const parseResult = _parseFilePath(url);
+    const parseResult = this._parseFilePath(url);
     if (parseResult == null) return Promise.reject(new Error(`URI ${url} is not correct S3's`));
 
     const s3Uri = parseResult as S3URI;
@@ -157,12 +137,8 @@ export class S3StorageServiceClient implements IStorageServiceClient {
     const command = new DeleteObjectCommand(params);
     return new Promise((resolve, reject) => {
       this.client.send(command)
-        .then(() => {
-          resolve();
-        })
-        .catch((e: any) => {
-          reject(e);
-        });
+        .then(() => resolve())
+        .catch(e => reject(e));
     });
   }
 
@@ -174,8 +150,8 @@ export class S3StorageServiceClient implements IStorageServiceClient {
    * If the source and destination are S3 URIs, the S3 object will be copied directly.
    */
   copyFile(copySource: string, copyDestination: string): Promise<void> {
-    const parseSourceResult = _parseFilePath(copySource);
-    const parseDestinationResult = _parseFilePath(copyDestination);
+    const parseSourceResult = this._parseFilePath(copySource);
+    const parseDestinationResult = this._parseFilePath(copyDestination);
 
     /* Upload local file to S3 */
     if (parseSourceResult == null && parseDestinationResult != null) {
@@ -208,12 +184,8 @@ export class S3StorageServiceClient implements IStorageServiceClient {
     const command = new PutObjectCommand(params);
     return new Promise((resolve, reject) => {
       this.client.send(command)
-        .then((response) => {
-          resolve();
-        })
-        .catch((e: any) => {
-          reject(e);
-        });
+        .then(() => resolve())
+        .catch(e => reject(e));
     });
   }
 
@@ -229,16 +201,10 @@ export class S3StorageServiceClient implements IStorageServiceClient {
           if (response == null) return reject(new Error('GetObjectCommand return null'));
 
           internal.promises.pipeline(response.Body as internal.Readable, createWriteStream(destinationFilePath))
-            .then(() => {
-              resolve();
-            })
-            .catch((e: any) => {
-              reject(e);
-            });
+            .then(() => resolve())
+            .catch(e => reject(e));
         })
-        .catch((e: any) => {
-          reject(e);
-        });
+        .catch(e => reject(e));
     });
   }
 
@@ -251,13 +217,31 @@ export class S3StorageServiceClient implements IStorageServiceClient {
     const command = new CopyObjectCommand(params);
     return new Promise((resolve, reject) => {
       this.client.send(command)
-        .then(() => {
-          resolve();
-        })
-        .catch((e: any) => {
-          reject(e);
-        });
+        .then(() => resolve())
+        .catch(e => reject(e));
     });
+  }
+
+  /**
+   * Parse S3's URI(start with "s3:")
+   * If it is not S3's URL, return null.
+   */
+  private _parseFilePath(path: string): S3URI | null {
+    /* S3 URI */
+    if (path.startsWith('s3:')) {
+      // https://regex101.com/r/vDGuGY/1
+      const regexS3Uri = /^s3:\/\/([^/]+)\/?(.*)$/;
+      try {
+        const match = path.match(regexS3Uri);
+        if (!match) return null;
+        const [, bucket, key] = match;
+        return { bucket, key };
+      }
+      catch (e: any) {
+        return null;
+      }
+    }
+    return null;
   }
 
 }
