@@ -2,24 +2,21 @@ import { StorageServiceClientCommand } from '../../src/commands/common';
 
 describe('StorageServiceClientCommand', () => {
   describe('addStorageOptions', () => {
-    it('return undefined and call option()', () => {
+    it('return own instance and call option()', () => {
       const command = new StorageServiceClientCommand();
-      const addOptionMock = jest.fn().mockReturnValue(command);
-      command.addOption = addOptionMock;
+      jest.spyOn(command, 'addOption');
       expect(command.addStorageOptions()).toBe(command);
-      expect(addOptionMock).toBeCalled();
+      expect(command.addOption).toBeCalled();
     });
   });
 
   describe('saveStorageClientInAdvance', () => {
 
-    it('return undefined and call hook()', () => {
+    it('return own instance and call hook()', () => {
       const command = new StorageServiceClientCommand();
-      const hookMock = jest.fn().mockReturnValue(command);
-      command.hook = hookMock;
+      jest.spyOn(command, 'hook');
       expect(command.saveStorageClientInAdvance()).toBe(command);
-      expect(hookMock).toBeCalled();
-      expect(command.storageServiceClient).not.toBe(undefined);
+      expect(command.hook).toBeCalled();
     });
   });
 });
