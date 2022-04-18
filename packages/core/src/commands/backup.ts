@@ -17,8 +17,8 @@ const logger = loggerFactory('mongodb-awesome-backup');
 /**
  * Define actions, options, and arguments that are commonly required for backup command from the CLI, regardless of the database type.
  *
- * Call setBackupAction() with the function to dump data for each database (ex. execute `psdump_all` for PostgreSQL).
- * Also call addBackupOptions() and setBackupArgument().
+ * Implement dumpDB() to dump data for each database (ex. execute `psdump_all` for PostgreSQL).
+ * Also call setBackupAction() and addBackupOptions().
  *
  * If necessary, you can customize it by using the Command's methods, such as adding options by using option() and help messages by using addHelpText().
  */
