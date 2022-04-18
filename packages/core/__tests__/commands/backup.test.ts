@@ -13,6 +13,16 @@ describe('BackupCommand', () => {
   // Default mock of axios
   // You can overridden in "beforeAll" before test execution.
   let axiosGetMock = jest.fn().mockResolvedValue(undefined);
+  // Default mock of dumpDB
+  const dumpDBFuncMock = jest.fn().mockReturnValue({ stdout: '', stderr: '' });
+  // Default mock of storageServiceClient
+  const storageServiceClientMock: IStorageServiceClient = {
+    name: '',
+    exists: jest.fn(),
+    listFiles: jest.fn().mockResolvedValue([]),
+    copyFile: jest.fn(),
+    deleteFile: jest.fn(),
+  };
 
   beforeEach(() => {
     jest.resetModules();
@@ -50,14 +60,6 @@ describe('BackupCommand', () => {
     jest.dontMock('../../src/utils/tar');
   });
 
-  const dumpDBFuncMock = jest.fn().mockReturnValue({ stdout: '', stderr: '' });
-  const storageServiceClientMock: IStorageServiceClient = {
-    copyFile: jest.fn(),
-    name: '',
-    exists: jest.fn(),
-    listFiles: jest.fn(),
-    deleteFile: jest.fn(),
-  };
   const s3BareMinimumOptions: IBackupCommandOption = {
     targetBucketUrl: new URL('s3://valid-bucket'),
     backupfilePrefix: 'backup',
@@ -100,19 +102,6 @@ describe('BackupCommand', () => {
       it('call backupCronMode()', async() => {
         await expect(command.execBackupAction(options)).resolves.toBe(undefined);
         expect(command.backupCronMode).toBeCalled();
-      });
-    });
-
-    describe('when some error occured', () => {
-      const options = s3BareMinimumOptions;
-
-      beforeEach(() => {
-        command.backupOnce = jest.fn().mockRejectedValue(new Error('some error'));
-      });
-
-      it('reject with error and logging this error', async() => {
-        await expect(command.execBackupAction(options)).rejects.toThrowError('some error');
-        expect(loggerMock.error).toBeCalledWith('Error: some error');
       });
     });
   });
