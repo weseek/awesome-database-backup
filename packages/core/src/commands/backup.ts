@@ -28,6 +28,19 @@ export class BackupCommand extends StorageServiceClientCommand {
     throw new Error('Method not implemented.');
   }
 
+  async backup(options: IBackupCommandOption): Promise<void> {
+    try {
+      const backupOnceOrCronMode = options.cronmode
+        ? this.backupCronMode.bind(this)
+        : this.backupOnce.bind(this);
+      await backupOnceOrCronMode(options);
+    }
+    catch (e: any) {
+      logger.error(e.toString());
+      throw e;
+    }
+  }
+
   async backupOnce(options: IBackupCommandOption): Promise<void> {
     if (this.storageServiceClient == null) throw new Error('URL scheme is not that of a supported provider.');
 
@@ -110,22 +123,9 @@ export class BackupCommand extends StorageServiceClientCommand {
   }
 
   setBackupAction(): this {
-    const action = async(options: IBackupCommandOption) => {
-      try {
-        const backup = options.cronmode
-          ? this.backupCronMode.bind(this)
-          : this.backupOnce.bind(this);
-        await backup(options);
-      }
-      catch (e: any) {
-        logger.error(e);
-        throw e;
-      }
-    };
-
     return this
       .saveStorageClientInAdvance()
-      .action(action);
+      .action(options => this.backup(options));
   }
 
 }
