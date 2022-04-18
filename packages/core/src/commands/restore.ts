@@ -14,7 +14,7 @@ const tmp = require('tmp');
  * Define actions, options, and arguments that are commonly required for restore command from the CLI, regardless of the database type.
  *
  * Implement restoreDB() to restore data for each database (ex. execute `psql` for PostgreSQL).
- * Also call addRestoreOptions().
+ * Also call setRestoreAction() and addRestoreOptions().
  *
  * If necessary, you can customize it by using the Command's methods, such as adding options by using option() and help messages by using addHelpText().
  */
