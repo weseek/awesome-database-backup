@@ -28,7 +28,7 @@ export class BackupCommand extends StorageServiceClientCommand {
     throw new Error('Method not implemented.');
   }
 
-  async backup(options: IBackupCommandOption): Promise<void> {
+  async execBackupAction(options: IBackupCommandOption): Promise<void> {
     try {
       const backupOnceOrCronMode = options.cronmode
         ? this.backupCronMode.bind(this)
@@ -125,7 +125,7 @@ export class BackupCommand extends StorageServiceClientCommand {
   setBackupAction(): this {
     return this
       .saveStorageClientInAdvance()
-      .action(options => this.backup(options));
+      .action(this.execBackupAction);
   }
 
 }

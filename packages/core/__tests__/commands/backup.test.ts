@@ -37,7 +37,7 @@ describe('BackupCommand', () => {
       });
 
       it('call backupOnce()', async() => {
-        await expect(command.backup(options)).resolves.toBe(undefined);
+        await expect(command.execBackupAction(options)).resolves.toBe(undefined);
         expect(command.backupOnce).toBeCalled();
       });
     });
@@ -55,7 +55,7 @@ describe('BackupCommand', () => {
       });
 
       it('call backupOnce()', async() => {
-        await expect(command.backup(options)).resolves.toBe(undefined);
+        await expect(command.execBackupAction(options)).resolves.toBe(undefined);
         expect(command.backupCronMode).toBeCalled();
       });
     });
@@ -90,7 +90,7 @@ describe('BackupCommand', () => {
       });
 
       it('reject with error and logging error', async() => {
-        await expect(command.backup(options)).rejects.toThrowError('some error');
+        await expect(command.execBackupAction(options)).rejects.toThrowError('some error');
         expect(loggerMock).toBeCalledWith('Error: some error');
       });
     });
