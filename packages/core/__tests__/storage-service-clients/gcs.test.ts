@@ -488,7 +488,7 @@ describe('GCSStorageServiceClient', () => {
 
       describe('and when match() succeed', () => {
         it('return GCSURI', () => {
-          expect(gcsServiceClient._parseFilePath(path)).toStrictEqual({ bucket: 'bucket', filepath: 'file' });
+          expect(Object.getPrototypeOf(gcsServiceClient)._parseFilePath(path)).toStrictEqual({ bucket: 'bucket', filepath: 'file' });
         });
       });
 
@@ -501,7 +501,7 @@ describe('GCSStorageServiceClient', () => {
         });
 
         it('return null', () => {
-          expect(gcsServiceClient._parseFilePath(path)).toBe(null);
+          expect(Object.getPrototypeOf(gcsServiceClient)._parseFilePath(path)).toBe(null);
         });
       });
     });
@@ -510,7 +510,7 @@ describe('GCSStorageServiceClient', () => {
       const path = '/path/to/file';
 
       it('return null', () => {
-        expect(gcsServiceClient._parseFilePath(path)).toBe(null);
+        expect(Object.getPrototypeOf(gcsServiceClient)._parseFilePath(path)).toBe(null);
       });
     });
   });
