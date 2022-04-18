@@ -34,7 +34,6 @@ describe('ListCommand', () => {
   });
   afterEach(() => {
     jest.dontMock('universal-bunyan');
-    jest.resetAllMocks();
   });
 
   describe('list', () => {

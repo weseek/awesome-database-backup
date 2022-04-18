@@ -18,7 +18,7 @@ export interface IBackupCommandOption extends ICommonCommandOption {
 
 /* Restore command option types */
 export interface IRestoreCommandOption extends ICommonCommandOption {
-  restoreToolOptions: string,
+  restoreToolOptions?: string,
 }
 
 /* Prune command option types */

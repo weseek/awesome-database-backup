@@ -35,7 +35,6 @@ describe('PruneCommand', () => {
   });
   afterEach(() => {
     jest.dontMock('universal-bunyan');
-    jest.resetAllMocks();
   });
 
   const gcsBareMinumumOptions: IPruneCommandOption = {
@@ -82,7 +81,7 @@ describe('PruneCommand', () => {
         it('return undefined and call storageServiceClient.deleteFile() and logging these file names', async() => {
           await expect(command.prune(options)).resolves.toBe(undefined);
           expect(command.storageServiceClient?.deleteFile).toBeCalled();
-          expect(loggerMock.info).toHaveBeenNthCalledWith(1, 'DELETED past backuped file on GCS: gs://sample.com/bucket/file1');
+          expect(loggerMock.info).toHaveBeenNthCalledWith(1, 'DELETED past backuped file on GCS: gs://example.com/bucket/file1');
         });
       });
 

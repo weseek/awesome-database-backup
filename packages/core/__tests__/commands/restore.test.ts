@@ -1,57 +1,120 @@
-let restore = require('../../src/commands/restore');
+import { RestoreCommand, IRestoreCommandOption } from '../../src/commands/restore';
+import { IStorageServiceClient } from '../../src/storage-service-clients/interfaces';
 
 describe('RestoreCommand', () => {
+  let command: RestoreCommand;
+
+  // Default mock of logger
+  const loggerMock = {
+    info: jest.fn(),
+    warn: jest.fn(),
+    error: jest.fn(),
+  };
+  // Default mock of StorageServiceClient
+  const gcsClientMock: IStorageServiceClient = {
+    name: 'GCS',
+    exists: jest.fn(),
+    listFiles: jest.fn().mockResolvedValue([]),
+    copyFile: jest.fn(),
+    deleteFile: jest.fn(),
+  };
+  // Default mock of restoreDB
+  const restoreDBFuncMock = jest.fn().mockReturnValue({ stdout: '', stderr: '' });
+
+  beforeEach(() => {
+    jest.resetModules();
+
+    // Mock Logger
+    jest.doMock('universal-bunyan', () => {
+      return {
+        ...(jest.requireActual('universal-bunyan') as any),
+        createLogger: () => loggerMock,
+      };
+    });
+
+    // Mock tar
+    jest.doMock('../../src/utils/tar', () => {
+      return {
+        ...(jest.requireActual('../../src/utils/tar') as any),
+        expandBZIP2: jest.fn().mockReturnValue(''),
+      };
+    });
+
+    const restore = require('../../src/commands/restore');
+    command = new restore.RestoreCommand();
+  });
+  afterEach(() => {
+    jest.dontMock('universal-bunyan');
+    jest.dontMock('../../src/utils/tar');
+  });
+
+  const gcsBareMinumumOptions: IRestoreCommandOption = {
+    targetBucketUrl: new URL('gs://example.com/bucket/'),
+  };
+
+  describe('restoreDB', () => {
+    const sourcePath = 'test-path';
+
+    it('reject with error', async() => {
+      await expect(command.restoreDB(sourcePath))
+        .rejects
+        .toThrowError('Method not implemented.');
+    });
+  });
+
   describe('restore', () => {
-    const options = {
-      targetBucketUrl: new URL('gs://sample.com/bucket'),
-      backupfilePrefix: 'backup',
-      deleteDivide: 1,
-      deleteTargetDaysLeft: 1,
-    };
-
-    const storageServiceClientMock = {
-      copyFile: jest.fn().mockReturnValue(['']),
-    };
-    const restoreDBFuncMock = jest.fn().mockReturnValue({ stdout: '', stderr: '' });
-
     beforeEach(() => {
-      jest.resetModules();
-      jest.doMock('../../src/utils/tar', () => {
-        const mock = jest.requireActual('../../src/utils/tar');
-        mock.expandBZIP2 = jest.fn().mockReturnValue('');
-        return mock;
-      });
-      restore = require('../../src/commands/restore');
-    });
-    afterEach(() => {
-      jest.dontMock('../../src/utils/tar');
+      command.restoreDB = restoreDBFuncMock;
     });
 
-    it('return undefined', async() => {
-      const restoreCommand = new restore.RestoreCommand();
-      restoreCommand.restoreDB = restoreDBFuncMock;
-      restoreCommand.storageServiceClient = storageServiceClientMock;
-      await expect(restoreCommand.restore(options)).resolves.toBe(undefined);
+    describe('when options are valid, but "storageServiceClient" is not set in advance', () => {
+      const options = gcsBareMinumumOptions;
+
+      beforeEach(() => {
+        command.storageServiceClient = null;
+      });
+
+      it('reject with error', async() => {
+        await expect(command.restore(options))
+          .rejects
+          .toThrowError('URL scheme is not that of a supported provider.');
+      });
+    });
+
+    describe('when options are valid and "storageServiceClient" is set in advance', () => {
+      const options = gcsBareMinumumOptions;
+
+      beforeEach(() => {
+        command.storageServiceClient = gcsClientMock;
+      });
+
+      it('return undefined', async() => {
+        await expect(command.restore(options)).resolves.toBe(undefined);
+      });
     });
   });
 
   describe('addRestoreOptions', () => {
+    beforeEach(() => {
+      jest.spyOn(command, 'addOption');
+    });
+
     it('call addOption()', () => {
-      const restoreCommand = new restore.RestoreCommand();
-      const addOptionMock = jest.fn().mockReturnValue(restoreCommand);
-      restoreCommand.addOption = addOptionMock;
-      restoreCommand.addRestoreOptions();
-      expect(addOptionMock).toBeCalled();
+      command.addRestoreOptions();
+      expect(command.addOption).toBeCalled();
     });
   });
 
   describe('setRestoreAction', () => {
+    beforeEach(() => {
+      jest.spyOn(command, 'saveStorageClientInAdvance');
+      jest.spyOn(command, 'action');
+    });
+
     it('call action()', () => {
-      const restoreCommand = new restore.RestoreCommand();
-      const actionMock = jest.fn().mockReturnValue(restoreCommand);
-      restoreCommand.action = actionMock;
-      restoreCommand.setRestoreAction();
-      expect(actionMock).toBeCalled();
+      command.setRestoreAction();
+      expect(command.saveStorageClientInAdvance).toBeCalled();
+      expect(command.action).toBeCalled();
     });
   });
 });

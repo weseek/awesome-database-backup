@@ -54,19 +54,9 @@ export class RestoreCommand extends StorageServiceClientCommand {
   }
 
   setRestoreAction(): RestoreCommand {
-    const action = async(options: IRestoreCommandOption) => {
-      try {
-        await this.restore(options);
-      }
-      catch (e: any) {
-        logger.error(e);
-        throw e;
-      }
-    };
-
     return this
       .saveStorageClientInAdvance()
-      .action(action);
+      .action(this.restore);
   }
 
 }
