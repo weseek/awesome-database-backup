@@ -9,13 +9,13 @@ const logger = loggerFactory('mongodb-awesome-backup');
 /**
  * Define actions, options, and arguments that are commonly required for prune command from the CLI, regardless of the database type.
  *
- * Call setPruneAction(), addPruneOptions() and setPruneArgument().
+ * Call setPruneAction() and addPruneOptions().
  *
  * If necessary, you can customize it by using the Command's methods, such as adding options by using option() and help messages by using addHelpText().
  */
 export class PruneCommand extends StorageServiceClientCommand {
 
-  async prune(targetBucketUrl: URL, options: IPruneCommandOption): Promise<void> {
+  async prune(options: IPruneCommandOption): Promise<void> {
     if (this.storageServiceClient == null) throw new Error('URL scheme is not that of a supported provider.');
 
     const secondsPerDay = 60 * 60 * 24;
@@ -26,10 +26,10 @@ export class PruneCommand extends StorageServiceClientCommand {
       return;
     }
 
-    const targetBackupUrlPrefix = new URL(`${options.backupfilePrefix}-${format(targetBackupDay, 'yyyyMMdd')}`, targetBucketUrl).toString();
+    const targetBackupUrlPrefix = new URL(`${options.backupfilePrefix}-${format(targetBackupDay, 'yyyyMMdd')}`, options.targetBucketUrl).toString();
     const targetBackupFiles = await this.storageServiceClient.listFiles(targetBackupUrlPrefix, { exactMatch: false, absolutePath: false });
     for (const targetBackup of targetBackupFiles) {
-      const targetBackupUrl = new URL(targetBackup, targetBucketUrl);
+      const targetBackupUrl = new URL(targetBackup, options.targetBucketUrl);
       this.storageServiceClient.deleteFile(targetBackupUrl.toString());
       logger.info(`DELETED past backuped file on ${this.storageServiceClient.name}: ${targetBackupUrl}`);
     }
@@ -60,8 +60,7 @@ export class PruneCommand extends StorageServiceClientCommand {
   setPruneAction(): this {
     const action = async(options: IPruneCommandOption) => {
       try {
-        const targetBucketUrl = new URL(options.targetBucketUrl);
-        await this.prune(targetBucketUrl, options);
+        await this.prune(options);
       }
       catch (e: any) {
         logger.error(e);

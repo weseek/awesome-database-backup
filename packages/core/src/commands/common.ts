@@ -22,11 +22,13 @@ export class StorageServiceClientCommand extends Command {
         // Arguments cannot be set to value from environment variable, so we use the required option
         new Option('--target-bucket-url <TARGET_BUCKET_URL> **MANDATORY**', 'Target Bucket URL ([s3://...|gs://...])')
           .makeOptionMandatory()
+          .argParser(value => new URL(value))
           .env('TARGET_BUCKET_URL'),
       )
       /* AWS options */
       .addOption(
         new Option('--aws-endpoint-url <AWS_ENDPOINT_URL>', 'URL to send the request to')
+          .argParser(value => new URL(value))
           .env('AWS_ENDPOINT_URL'),
       )
       .addOption(
@@ -44,6 +46,7 @@ export class StorageServiceClientCommand extends Command {
       /* GCS options */
       .addOption(
         new Option('--gcp-endpoint-url <GCP_ENDPOINT_URL>', 'URL to send the request to')
+          .argParser(value => new URL(value))
           .env('GCP_ENDPOINT_URL'),
       )
       .addOption(
@@ -70,8 +73,7 @@ export class StorageServiceClientCommand extends Command {
       .hook('preAction', (command: Command) => {
         const options = command.opts() as ICommonCommandOption;
 
-        const targetBucketUrl = new URL(options.targetBucketUrl);
-        const type = getStorageServiceClientType(targetBucketUrl);
+        const type = getStorageServiceClientType(options.targetBucketUrl);
         if (type == null) throw new Error(`Unknown storage provider type: ${type}`);
 
         this.storageServiceClient = storageServiceClientFactory(type, options);

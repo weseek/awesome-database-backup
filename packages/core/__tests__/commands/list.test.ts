@@ -2,7 +2,9 @@ const { ListCommand } = require('../../src/commands/list');
 
 describe('ListCommand', () => {
   describe('list', () => {
-    const targetBucketUrl = new URL('gs://sample.com/bucket');
+    const options = {
+      targetBucketUrl: new URL('gs://sample.com/bucket'),
+    };
     const storageServiceClientMock = {
       listFiles: jest.fn().mockReturnValue(['']),
     };
@@ -10,7 +12,7 @@ describe('ListCommand', () => {
     it('return undefined', async() => {
       const listCommand = new ListCommand();
       listCommand.storageServiceClient = storageServiceClientMock;
-      await expect(listCommand.list(targetBucketUrl)).resolves.toBe(undefined);
+      await expect(listCommand.list(options)).resolves.toBe(undefined);
     });
   });
 

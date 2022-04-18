@@ -24,15 +24,15 @@ export class RestoreCommand extends StorageServiceClientCommand {
     throw new Error('Method not implemented.');
   }
 
-  async restore(targetBucketUrl: URL, options: IRestoreCommandOption): Promise<void> {
+  async restore(options: IRestoreCommandOption): Promise<void> {
     if (this.storageServiceClient == null) throw new Error('URL scheme is not that of a supported provider.');
 
     logger.info(`=== ${basename(__filename)} started at ${format(Date.now(), 'yyyy/MM/dd HH:mm:ss')} ===`);
 
     tmp.setGracefulCleanup();
     const tmpdir = tmp.dirSync({ unsafeCleanup: true });
-    const backupFilePath = join(tmpdir.name, basename(targetBucketUrl.pathname));
-    await this.storageServiceClient.copyFile(targetBucketUrl.toString(), backupFilePath);
+    const backupFilePath = join(tmpdir.name, basename(options.targetBucketUrl.pathname));
+    await this.storageServiceClient.copyFile(options.targetBucketUrl.toString(), backupFilePath);
 
     logger.info(`expands ${backupFilePath}...`);
     const { expandedPath } = await expandBZIP2(backupFilePath);
@@ -56,8 +56,7 @@ export class RestoreCommand extends StorageServiceClientCommand {
   setRestoreAction(): RestoreCommand {
     const action = async(options: IRestoreCommandOption) => {
       try {
-        const targetBucketUrl = new URL(options.targetBucketUrl);
-        await this.restore(targetBucketUrl, options);
+        await this.restore(options);
       }
       catch (e: any) {
         logger.error(e);

@@ -64,7 +64,7 @@ export class S3StorageServiceClient implements IStorageServiceClient {
       };
     }
     if (config.awsEndpointUrl != null) {
-      s3ClientConfig.endpoint = config.awsEndpointUrl;
+      s3ClientConfig.endpoint = config.awsEndpointUrl.toString();
     }
 
     this.name = 'S3';

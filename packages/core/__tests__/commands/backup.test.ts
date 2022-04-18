@@ -4,7 +4,6 @@ import { IStorageServiceClient } from '../../src/storage-service-clients/interfa
 let backup = require('../../src/commands/backup');
 
 describe('BackupCommand', () => {
-  const targetBucketUrl = new URL('gs://sample.com/bucket');
   const dumpDBFuncMock = jest.fn().mockReturnValue({ stdout: '', stderr: '' });
   const storageServiceClientMock: IStorageServiceClient = {
     copyFile: jest.fn(),
@@ -30,7 +29,7 @@ describe('BackupCommand', () => {
 
     describe('when healthchecksUrl is empty', () => {
       const options: IBackupCommandOption = {
-        targetBucketUrl: 's3://valid-bucket',
+        targetBucketUrl: new URL('s3://valid-bucket'),
         backupfilePrefix: 'backup',
       };
 
@@ -38,16 +37,16 @@ describe('BackupCommand', () => {
         const backupCommand = new backup.BackupCommand();
         backupCommand.dumpDB = dumpDBFuncMock;
         backupCommand.storageServiceClient = storageServiceClientMock;
-        await expect(backupCommand.backupOnce(targetBucketUrl, options)).resolves.toBe(undefined);
+        await expect(backupCommand.backupOnce(options)).resolves.toBe(undefined);
         expect(dumpDBFuncMock).toBeCalled();
       });
     });
 
     describe('when healthcheckUrl is not empty', () => {
       const options: IBackupCommandOption = {
-        targetBucketUrl: 's3://valid-bucket',
+        targetBucketUrl: new URL('s3://valid-bucket'),
         backupfilePrefix: 'backup',
-        healthchecksUrl: 'http://example.com/',
+        healthchecksUrl: new URL('http://example.com/'),
       };
 
       const axiosGetMock = jest.fn().mockReturnValue(Promise.resolve());
@@ -69,7 +68,7 @@ describe('BackupCommand', () => {
         const backupCommand = new backup.BackupCommand();
         backupCommand.dumpDB = dumpDBFuncMock;
         backupCommand.storageServiceClient = storageServiceClientMock;
-        await expect(backupCommand.backupOnce(targetBucketUrl, options)).resolves.toBe(undefined);
+        await expect(backupCommand.backupOnce(options)).resolves.toBe(undefined);
         expect(axiosGetMock).toBeCalledWith(options.healthchecksUrl?.toString());
       });
     });
@@ -77,7 +76,7 @@ describe('BackupCommand', () => {
 
   describe('backupCronMode', () => {
     const options: IBackupCommandOption = {
-      targetBucketUrl: 's3://valid-bucket',
+      targetBucketUrl: new URL('s3://valid-bucket'),
       backupfilePrefix: 'backup',
       cronmode: '* * * * *',
     };
@@ -95,7 +94,7 @@ describe('BackupCommand', () => {
     it('call backupOnce() at specified time', () => {
       backupCommand.dumpDB = dumpDBFuncMock;
       backupCommand.storageServiceClient = storageServiceClientMock;
-      backupCommand.backupCronMode(targetBucketUrl, options);
+      backupCommand.backupCronMode(options);
 
       expect(backupOnceMock).toHaveBeenCalledTimes(0);
       jest.advanceTimersByTime(1000 * 60);

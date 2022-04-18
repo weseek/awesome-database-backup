@@ -1,5 +1,5 @@
 export interface GCSStorageServiceClientConfig {
-  gcpEndpointUrl?: string,
+  gcpEndpointUrl?: URL,
   gcpServiceAccountKeyJsonPath?: string,
   gcpProjectId?: string,
   gcpClientEmail?: string,

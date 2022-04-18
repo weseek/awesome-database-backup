@@ -2,8 +2,8 @@ let restore = require('../../src/commands/restore');
 
 describe('RestoreCommand', () => {
   describe('restore', () => {
-    const targetBucketUrl = new URL('gs://sample.com/bucket');
     const options = {
+      targetBucketUrl: new URL('gs://sample.com/bucket'),
       backupfilePrefix: 'backup',
       deleteDivide: 1,
       deleteTargetDaysLeft: 1,
@@ -31,7 +31,7 @@ describe('RestoreCommand', () => {
       const restoreCommand = new restore.RestoreCommand();
       restoreCommand.restoreDB = restoreDBFuncMock;
       restoreCommand.storageServiceClient = storageServiceClientMock;
-      await expect(restoreCommand.restore(targetBucketUrl, options)).resolves.toBe(undefined);
+      await expect(restoreCommand.restore(options)).resolves.toBe(undefined);
     });
   });
 

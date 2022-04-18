@@ -5,14 +5,14 @@ import {
 
 /* Common command option types */
 export type ICommonCommandOption = S3StorageServiceClientConfig & GCSStorageServiceClientConfig & {
-  targetBucketUrl: string,
+  targetBucketUrl: URL,
 };
 
 /* Backup command option types */
 export interface IBackupCommandOption extends ICommonCommandOption {
   backupfilePrefix: string,
   cronmode?: string,
-  healthchecksUrl?: string,
+  healthchecksUrl?: URL,
   backupToolOptions?: string,
 }
 

@@ -28,7 +28,7 @@ export class BackupCommand extends StorageServiceClientCommand {
     throw new Error('Method not implemented.');
   }
 
-  async backupOnce(targetBucketUrl: URL, options: IBackupCommandOption): Promise<void> {
+  async backupOnce(options: IBackupCommandOption): Promise<void> {
     if (this.storageServiceClient == null) throw new Error('URL scheme is not that of a supported provider.');
 
     logger.info(`=== ${basename(__filename)} started at ${format(Date.now(), 'yyyy/MM/dd HH:mm:ss')} ===`);
@@ -43,17 +43,17 @@ export class BackupCommand extends StorageServiceClientCommand {
     if (stderr) stderr.split(EOL).forEach(line => logger.warn(line));
 
     const { compressedFilePath } = await compressBZIP2(backupFilePath);
-    await this.storageServiceClient.copyFile(compressedFilePath, targetBucketUrl.toString());
+    await this.storageServiceClient.copyFile(compressedFilePath, options.targetBucketUrl.toString());
 
     await this.processEndOfBackupOnce(options);
   }
 
-  async backupCronMode(targetBucketUrl: URL, options: IBackupCommandOption): Promise<void> {
+  async backupCronMode(options: IBackupCommandOption): Promise<void> {
     logger.info(`=== started in cron mode ${format(Date.now(), 'yyyy/MM/dd HH:mm:ss')} ===`);
     await schedule.scheduleJob(
       options.cronmode,
       async() => {
-        await this.backupOnce(targetBucketUrl, options);
+        await this.backupOnce(options);
       },
     );
   }
@@ -65,9 +65,8 @@ export class BackupCommand extends StorageServiceClientCommand {
     if (options.healthchecksUrl == null) return;
 
     try {
-      const healthchecksUrl = new URL(options.healthchecksUrl as string);
       axiosRetry(axios, { retries: 3 });
-      await axios.get(healthchecksUrl.toString());
+      await axios.get(options.healthchecksUrl.toString());
     }
     catch (e: any) {
       logger.warn(`Cannot access to URL for health check. ${e.toString()}`);
@@ -98,6 +97,7 @@ export class BackupCommand extends StorageServiceClientCommand {
           '--healthcheck-url <HEALTHCHECK_URL>',
           'URL that gets called after a successful backup (eg. https://healthchecks.io)',
         )
+          .argParser(value => new URL(value))
           .env('HEALTHCHECKS_URL'),
       )
       .addOption(
@@ -112,9 +112,10 @@ export class BackupCommand extends StorageServiceClientCommand {
   setBackupAction(): this {
     const action = async(options: IBackupCommandOption) => {
       try {
-        const targetBucketUrl = new URL(options.targetBucketUrl);
-        const backup = (options.cronmode ? this.backupCronMode.bind(this) : this.backupOnce.bind(this));
-        await backup(targetBucketUrl, options);
+        const backup = options.cronmode
+          ? this.backupCronMode.bind(this)
+          : this.backupOnce.bind(this);
+        await backup(options);
       }
       catch (e: any) {
         logger.error(e);

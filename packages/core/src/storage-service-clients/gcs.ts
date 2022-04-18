@@ -63,7 +63,7 @@ export class GCSStorageServiceClient implements IStorageServiceClient {
         },
       };
       if (config.gcpEndpointUrl) {
-        storageconfig.apiEndpoint = config.gcpEndpointUrl;
+        storageconfig.apiEndpoint = config.gcpEndpointUrl.toString();
       }
     }
 

@@ -1,5 +1,5 @@
 export interface S3StorageServiceClientConfig {
-  awsEndpointUrl?: string,
+  awsEndpointUrl?: URL,
   awsRegion?: string,
   awsAccessKeyId?: string,
   awsSecretAccessKey?: string,
