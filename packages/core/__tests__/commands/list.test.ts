@@ -38,7 +38,6 @@ describe('ListCommand', () => {
   });
 
   describe('list', () => {
-
     describe('when options are valid, but "storageServiceClient" is not set in advance', () => {
       const options = {
         targetBucketUrl: new URL('gs://sample.com/bucket'),

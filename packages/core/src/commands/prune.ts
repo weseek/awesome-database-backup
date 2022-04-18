@@ -26,7 +26,7 @@ export class PruneCommand extends StorageServiceClientCommand {
       return;
     }
 
-    const targetBackupUrlPrefix = new URL(`${options.backupfilePrefix}-${format(targetBackupDay, 'yyyyMMdd')}`, options.targetBucketUrl).toString();
+    const targetBackupUrlPrefix = new URL(`${options.backupfilePrefix}-${format(targetBackupDay, 'yyyyMMdd')}`, options.targetBucketUrl.toString()).toString();
     const targetBackupFiles = await this.storageServiceClient.listFiles(targetBackupUrlPrefix, { exactMatch: false, absolutePath: false });
     for (const targetBackup of targetBackupFiles) {
       const targetBackupUrl = new URL(targetBackup, options.targetBucketUrl);
