@@ -58,19 +58,9 @@ export class PruneCommand extends StorageServiceClientCommand {
   }
 
   setPruneAction(): this {
-    const action = async(options: IPruneCommandOption) => {
-      try {
-        await this.prune(options);
-      }
-      catch (e: any) {
-        logger.error(e);
-        throw e;
-      }
-    };
-
     return this
       .saveStorageClientInAdvance()
-      .action(action);
+      .action(this.prune);
   }
 
 }
