@@ -30,19 +30,9 @@ export class ListCommand extends StorageServiceClientCommand {
   }
 
   setListAction(): this {
-    const action = async(options: IListCommandOption) => {
-      try {
-        await this.list(options);
-      }
-      catch (e: any) {
-        logger.error(e);
-        throw e;
-      }
-    };
-
     return this
       .saveStorageClientInAdvance()
-      .action(action);
+      .action(this.list);
   }
 
 }
