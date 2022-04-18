@@ -29,16 +29,10 @@ export class BackupCommand extends StorageServiceClientCommand {
   }
 
   async execBackupAction(options: IBackupCommandOption): Promise<void> {
-    try {
-      const backupOnceOrCronMode = options.cronmode
-        ? this.backupCronMode.bind(this)
-        : this.backupOnce.bind(this);
-      await backupOnceOrCronMode(options);
-    }
-    catch (e: any) {
-      logger.error(e.toString());
-      throw e;
-    }
+    const backupOnceOrCronMode = options.cronmode
+      ? this.backupCronMode.bind(this)
+      : this.backupOnce.bind(this);
+    await backupOnceOrCronMode(options);
   }
 
   async backupOnce(options: IBackupCommandOption): Promise<void> {
@@ -83,6 +77,8 @@ export class BackupCommand extends StorageServiceClientCommand {
     }
     catch (e: any) {
       logger.warn(`Cannot access to URL for health check. ${e.toString()}`);
+      // Cases where the health check URL cannot be accessed do not essentially affect the backup process.
+      // Therefore, the exception is not re-thrown.
     }
   }
 
