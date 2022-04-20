@@ -52,10 +52,7 @@ export class GCSStorageServiceClient implements IStorageServiceClient {
   exists(url: string): Promise<boolean> {
     return new Promise((resolve, reject) => {
       this.listFiles(url)
-        .then((lists) => {
-          resolve(lists.length > 0);
-        })
-        .catch(e => reject(e));
+        .then(lists => resolve(lists.length > 0), error => reject(error));
     });
   }
 
@@ -82,9 +79,8 @@ export class GCSStorageServiceClient implements IStorageServiceClient {
             files = files.filter(options.exactMatch ? exactFileMatcher : prefixFileMatcher);
           }
           const filepaths = files.map(file => file.name);
-          resolve(filepaths);
-        })
-        .catch(e => reject(e));
+          return resolve(filepaths);
+        }, error => reject(error));
     });
   }
 
@@ -95,8 +91,7 @@ export class GCSStorageServiceClient implements IStorageServiceClient {
     return new Promise((resolve, reject) => {
       const deleteTargetFile = this.client.bucket(gcsUri.bucket).file(gcsUri.filepath);
       deleteTargetFile.delete()
-        .then(() => resolve())
-        .catch(e => reject(e));
+        .then(() => resolve(), error => reject(error));
     });
   }
 
@@ -129,8 +124,7 @@ export class GCSStorageServiceClient implements IStorageServiceClient {
       const destinationBucket = this.client.bucket(destinationGCSUri.bucket);
       const destination = join(destinationGCSUri.filepath, basename(sourceFilePath));
       destinationBucket.upload(sourceFilePath, { destination })
-        .then(() => resolve())
-        .catch(e => reject(e));
+        .then(() => resolve(), error => reject(error));
     });
   }
 
@@ -141,8 +135,7 @@ export class GCSStorageServiceClient implements IStorageServiceClient {
         destination: destinationFilePath,
       };
       sourceFile.download(options)
-        .then(() => resolve())
-        .catch(e => reject(e));
+        .then(() => resolve(), error => reject(error));
     });
   }
 
@@ -151,8 +144,7 @@ export class GCSStorageServiceClient implements IStorageServiceClient {
       const sourceFile = this.client.bucket(sourceGCSUri.bucket).file(sourceGCSUri.filepath);
       const destinationFile = this.client.bucket(destinationGCSUri.bucket).file(destinationGCSUri.filepath);
       sourceFile.copy(destinationFile)
-        .then(() => resolve())
-        .catch(e => reject(e));
+        .then(() => resolve(), error => reject(error));
     });
   }
 
@@ -161,7 +153,7 @@ export class GCSStorageServiceClient implements IStorageServiceClient {
    * ex. It'll break down "gs://bucket/folder/file" to {"bucket": "bucket", "filepath": "folder/file"}.
    * If it is not GCS's URL, return null.
    */
-  _parseFilePath(path: string): GCSURI | null {
+  private _parseFilePath(path: string): GCSURI | null {
     /* GCS URI */
     if (path.startsWith('gs:')) {
       // https://regex101.com/r/QesT48/1

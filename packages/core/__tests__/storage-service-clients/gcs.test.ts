@@ -167,7 +167,7 @@ describe('GCSStorageServiceClient', () => {
         describe('when Bucket#getFiles response [null]', () => {
           beforeEach(() => {
             const bucketMock = {
-              getFiles: jest.fn().mockReturnValue(Promise.resolve([null])),
+              getFiles: jest.fn().mockResolvedValue([null]),
             };
             gcsServiceClient.client.bucket = jest.fn().mockReturnValue(bucketMock);
           });
@@ -180,7 +180,7 @@ describe('GCSStorageServiceClient', () => {
         describe('when Bucket#getFiles reject', () => {
           beforeEach(() => {
             const bucketMock = {
-              getFiles: jest.fn().mockReturnValue(Promise.resolve(null)),
+              getFiles: jest.fn().mockRejectedValue(new Error('some error')),
             };
             gcsServiceClient.client.bucket = jest.fn().mockReturnValue(bucketMock);
           });
@@ -235,10 +235,10 @@ describe('GCSStorageServiceClient', () => {
           });
         });
 
-        describe('when Bucket#getFiles response null', () => {
+        describe('when Bucket#getFiles response [null]', () => {
           beforeEach(() => {
             const bucketMock = {
-              getFiles: jest.fn().mockReturnValue(Promise.resolve(null)),
+              getFiles: jest.fn().mockResolvedValue([null]),
             };
             gcsServiceClient.client.bucket = jest.fn().mockReturnValue(bucketMock);
           });
@@ -251,7 +251,7 @@ describe('GCSStorageServiceClient', () => {
         describe('when Bucket#getFiles reject', () => {
           beforeEach(() => {
             const bucketMock = {
-              getFiles: jest.fn().mockReturnValue(Promise.resolve(null)),
+              getFiles: jest.fn().mockRejectedValue(new Error('some error')),
             };
             gcsServiceClient.client.bucket = jest.fn().mockReturnValue(bucketMock);
           });
@@ -295,7 +295,7 @@ describe('GCSStorageServiceClient', () => {
       describe('when File#delete fail', () => {
         beforeEach(() => {
           const fileMock = {
-            delete: jest.fn().mockReturnValue(Promise.reject(new Error('some error'))),
+            delete: jest.fn().mockRejectedValue(new Error('some error')),
           };
           const bucketMock = {
             file: jest.fn().mockReturnValue(fileMock),
@@ -431,7 +431,7 @@ describe('GCSStorageServiceClient', () => {
     describe('when GCSStorageServiceClient#send reject', () => {
       beforeEach(() => {
         const fileMock = {
-          download: jest.fn().mockReturnValue(Promise.reject(new Error('some error'))),
+          download: jest.fn().mockRejectedValue(new Error('some error')),
         };
         const bucketMock = {
           file: jest.fn().mockReturnValue(fileMock),
@@ -468,7 +468,7 @@ describe('GCSStorageServiceClient', () => {
     describe('when File#copy reject', () => {
       beforeEach(() => {
         const fileMock = {
-          copy: jest.fn().mockReturnValue(Promise.reject(new Error('some error'))),
+          copy: jest.fn().mockRejectedValue(new Error('some error')),
         };
         const bucketMock = {
           file: jest.fn().mockReturnValue(fileMock),
