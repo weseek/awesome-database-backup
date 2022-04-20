@@ -60,8 +60,7 @@ export class S3StorageServiceClient implements IStorageServiceClient {
   exists(url: string): Promise<boolean> {
     return new Promise((resolve, reject) => {
       this.listFiles(url)
-        .then(lists => resolve(lists.length > 0))
-        .catch(e => reject(e));
+        .then(lists => resolve(lists.length > 0), error => reject(error));
     });
   }
 
@@ -114,8 +113,7 @@ export class S3StorageServiceClient implements IStorageServiceClient {
             files = files.map(relativePathChanger);
           }
           return resolve(files);
-        })
-        .catch(e => reject(e));
+        }, error => reject(error));
     });
   }
 
@@ -137,8 +135,7 @@ export class S3StorageServiceClient implements IStorageServiceClient {
     const command = new DeleteObjectCommand(params);
     return new Promise((resolve, reject) => {
       this.client.send(command)
-        .then(() => resolve())
-        .catch(e => reject(e));
+        .then(() => resolve(), error => reject(error));
     });
   }
 
@@ -184,8 +181,7 @@ export class S3StorageServiceClient implements IStorageServiceClient {
     const command = new PutObjectCommand(params);
     return new Promise((resolve, reject) => {
       this.client.send(command)
-        .then(() => resolve())
-        .catch(e => reject(e));
+        .then(() => resolve(), error => reject(error));
     });
   }
 
@@ -201,10 +197,8 @@ export class S3StorageServiceClient implements IStorageServiceClient {
           if (response == null) return reject(new Error('GetObjectCommand return null'));
 
           internal.promises.pipeline(response.Body as internal.Readable, createWriteStream(destinationFilePath))
-            .then(() => resolve())
-            .catch(e => reject(e));
-        })
-        .catch(e => reject(e));
+            .then(() => resolve(), error => reject(error));
+        }, error => reject(error));
     });
   }
 
@@ -217,8 +211,7 @@ export class S3StorageServiceClient implements IStorageServiceClient {
     const command = new CopyObjectCommand(params);
     return new Promise((resolve, reject) => {
       this.client.send(command)
-        .then(() => resolve())
-        .catch(e => reject(e));
+        .then(() => resolve(), error => reject(error));
     });
   }
 
