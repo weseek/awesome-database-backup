@@ -12,6 +12,11 @@ afterEach(() => {
 
 describe('S3StorageServiceClient', () => {
   let s3ServiceClient: S3StorageServiceClient;
+  const s3BareMinimumConfig = {
+    awsRegion: 'validRegion',
+    awsAccessKeyId: 'validAccessKeyId',
+    awsSecretAccessKey: 'validSecretAccessKey',
+  };
 
   describe('constructor', () => {
     describe('when config file exists', () => {
@@ -69,11 +74,7 @@ describe('S3StorageServiceClient', () => {
 
       describe('when config is valid without "awsEndpointUrl"', () => {
         beforeAll(() => {
-          config = {
-            awsRegion: 'validRegion',
-            awsAccessKeyId: 'validAccessKeyId',
-            awsSecretAccessKey: 'validSecretAccessKey',
-          };
+          config = s3BareMinimumConfig;
         });
 
         it('throw error', () => {
@@ -91,11 +92,7 @@ describe('S3StorageServiceClient', () => {
 
       describe('when config is valid with "awsEndpointUrl"', () => {
         beforeAll(() => {
-          config = {
-            awsRegion: 'validRegion',
-            awsAccessKeyId: 'validAccessKeyId',
-            awsSecretAccessKey: 'validSecretAccessKey',
-          };
+          config = s3BareMinimumConfig;
         });
 
         it('call constructor of Storage class with args', () => {
@@ -114,11 +111,7 @@ describe('S3StorageServiceClient', () => {
   });
 
   beforeEach(() => {
-    s3ServiceClient = new S3StorageServiceClient({
-      awsRegion: 'validRegion',
-      awsAccessKeyId: 'validAccessKeyId',
-      awsSecretAccessKey: 'validSecretAccessKey',
-    });
+    s3ServiceClient = new S3StorageServiceClient(s3BareMinimumConfig);
   });
 
   describe('#exists', () => {
@@ -156,11 +149,7 @@ describe('S3StorageServiceClient', () => {
         return mock;
       });
       const { S3StorageServiceClient } = require('../../src/storage-service-clients/s3');
-      s3ServiceClient = new S3StorageServiceClient({
-        awsRegion: 'validRegion',
-        awsAccessKeyId: 'validAccessKeyId',
-        awsSecretAccessKey: 'validSecretAccessKey',
-      });
+      s3ServiceClient = new S3StorageServiceClient(s3BareMinimumConfig);
     };
 
     describe("when request URI is valid S3's", () => {
@@ -343,11 +332,7 @@ describe('S3StorageServiceClient', () => {
 
       it('reject with throw exception', async() => {
         const { S3StorageServiceClient } = require('../../src/storage-service-clients/s3');
-        const s3ServiceClient = new S3StorageServiceClient({
-          awsRegion: 'validRegion',
-          awsAccessKeyId: 'validAccessKeyId',
-          awsSecretAccessKey: 'validSecretAccessKey',
-        });
+        const s3ServiceClient = new S3StorageServiceClient(s3BareMinimumConfig);
         await expect(s3ServiceClient.listFiles(url)).rejects.toThrowError();
       });
     });
@@ -365,11 +350,7 @@ describe('S3StorageServiceClient', () => {
             return mock;
           });
           const { S3StorageServiceClient } = require('../../src/storage-service-clients/s3');
-          s3ServiceClient = new S3StorageServiceClient({
-            awsRegion: 'validRegion',
-            awsAccessKeyId: 'validAccessKeyId',
-            awsSecretAccessKey: 'validSecretAccessKey',
-          });
+          s3ServiceClient = new S3StorageServiceClient(s3BareMinimumConfig);
         });
 
         it('resolve with undfined', async() => {
@@ -388,11 +369,7 @@ describe('S3StorageServiceClient', () => {
             return mock;
           });
           const { S3StorageServiceClient } = require('../../src/storage-service-clients/s3');
-          s3ServiceClient = new S3StorageServiceClient({
-            awsRegion: 'validRegion',
-            awsAccessKeyId: 'validAccessKeyId',
-            awsSecretAccessKey: 'validSecretAccessKey',
-          });
+          s3ServiceClient = new S3StorageServiceClient(s3BareMinimumConfig);
         });
 
         it('reject and throw Error', async() => {
@@ -405,11 +382,7 @@ describe('S3StorageServiceClient', () => {
     describe('when request URI is not S3\'s', () => {
       it('reject and throw Error', async() => {
         const { S3StorageServiceClient } = require('../../src/storage-service-clients/s3');
-        const s3ServiceClient = new S3StorageServiceClient({
-          awsRegion: 'validRegion',
-          awsAccessKeyId: 'validAccessKeyId',
-          awsSecretAccessKey: 'validSecretAccessKey',
-        });
+        const s3ServiceClient = new S3StorageServiceClient(s3BareMinimumConfig);
         const url = 'http://hostname/';
         await expect(s3ServiceClient.deleteFile(url)).rejects.toThrowError();
       });
@@ -420,11 +393,7 @@ describe('S3StorageServiceClient', () => {
     let s3ServiceClient: S3StorageServiceClient;
 
     beforeEach(() => {
-      s3ServiceClient = new S3StorageServiceClient({
-        awsRegion: 'validRegion',
-        awsAccessKeyId: 'validAccessKeyId',
-        awsSecretAccessKey: 'validSecretAccessKey',
-      });
+      s3ServiceClient = new S3StorageServiceClient(s3BareMinimumConfig);
     });
 
     describe("when copySource is local file path and copyDestination is S3's URI", () => {
@@ -501,11 +470,7 @@ describe('S3StorageServiceClient', () => {
           return mock;
         });
         const { S3StorageServiceClient } = require('../../src/storage-service-clients/s3');
-        s3ServiceClient = new S3StorageServiceClient({
-          awsRegion: 'validRegion',
-          awsAccessKeyId: 'validAccessKeyId',
-          awsSecretAccessKey: 'validSecretAccessKey',
-        });
+        s3ServiceClient = new S3StorageServiceClient(s3BareMinimumConfig);
       });
 
       it('resolve with undfined', async() => {
@@ -528,11 +493,7 @@ describe('S3StorageServiceClient', () => {
           return mock;
         });
         const { S3StorageServiceClient } = require('../../src/storage-service-clients/s3');
-        s3ServiceClient = new S3StorageServiceClient({
-          awsRegion: 'validRegion',
-          awsAccessKeyId: 'validAccessKeyId',
-          awsSecretAccessKey: 'validSecretAccessKey',
-        });
+        s3ServiceClient = new S3StorageServiceClient(s3BareMinimumConfig);
       });
 
       it('reject and throw Error', async() => {
@@ -566,11 +527,7 @@ describe('S3StorageServiceClient', () => {
           return mock;
         });
         const { S3StorageServiceClient } = require('../../src/storage-service-clients/s3');
-        s3ServiceClient = new S3StorageServiceClient({
-          awsRegion: 'validRegion',
-          awsAccessKeyId: 'validAccessKeyId',
-          awsSecretAccessKey: 'validSecretAccessKey',
-        });
+        s3ServiceClient = new S3StorageServiceClient(s3BareMinimumConfig);
       });
 
       it('resolve with undefined', async() => {
@@ -586,11 +543,7 @@ describe('S3StorageServiceClient', () => {
           return mock;
         });
         const { S3StorageServiceClient } = require('../../src/storage-service-clients/s3');
-        s3ServiceClient = new S3StorageServiceClient({
-          awsRegion: 'validRegion',
-          awsAccessKeyId: 'validAccessKeyId',
-          awsSecretAccessKey: 'validSecretAccessKey',
-        });
+        s3ServiceClient = new S3StorageServiceClient(s3BareMinimumConfig);
       });
 
       it('reject and throw Error', async() => {
@@ -612,11 +565,7 @@ describe('S3StorageServiceClient', () => {
           },
         }));
         const { S3StorageServiceClient } = require('../../src/storage-service-clients/s3');
-        s3ServiceClient = new S3StorageServiceClient({
-          awsRegion: 'validRegion',
-          awsAccessKeyId: 'validAccessKeyId',
-          awsSecretAccessKey: 'validSecretAccessKey',
-        });
+        s3ServiceClient = new S3StorageServiceClient(s3BareMinimumConfig);
       });
       afterEach(() => {
         jest.dontMock('stream');
@@ -641,11 +590,7 @@ describe('S3StorageServiceClient', () => {
           return mock;
         });
         const { S3StorageServiceClient } = require('../../src/storage-service-clients/s3');
-        s3ServiceClient = new S3StorageServiceClient({
-          awsRegion: 'validRegion',
-          awsAccessKeyId: 'validAccessKeyId',
-          awsSecretAccessKey: 'validSecretAccessKey',
-        });
+        s3ServiceClient = new S3StorageServiceClient(s3BareMinimumConfig);
       });
 
       it('resolve with undfined', async() => {
@@ -661,11 +606,7 @@ describe('S3StorageServiceClient', () => {
           return mock;
         });
         const { S3StorageServiceClient } = require('../../src/storage-service-clients/s3');
-        s3ServiceClient = new S3StorageServiceClient({
-          awsRegion: 'validRegion',
-          awsAccessKeyId: 'validAccessKeyId',
-          awsSecretAccessKey: 'validSecretAccessKey',
-        });
+        s3ServiceClient = new S3StorageServiceClient(s3BareMinimumConfig);
       });
 
       it('reject and throw Error', async() => {
