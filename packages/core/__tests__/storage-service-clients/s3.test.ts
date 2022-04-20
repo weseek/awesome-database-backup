@@ -1,5 +1,5 @@
 import { PassThrough, Readable } from 'stream';
-import { S3URI } from '../../src/storage-service-clients/interfaces';
+import { S3URI, S3StorageServiceClientConfig } from '../../src/storage-service-clients/interfaces';
 import S3StorageServiceClient from '../../src/storage-service-clients/s3';
 
 afterEach(() => {
@@ -7,10 +7,111 @@ afterEach(() => {
   jest.dontMock('@awesome-backup/core');
   jest.dontMock('@aws-sdk/client-s3');
   jest.dontMock('fs');
+  jest.dontMock('stream');
 });
 
 describe('S3StorageServiceClient', () => {
   let s3ServiceClient: S3StorageServiceClient;
+
+  describe('constructor', () => {
+    describe('when config file exists', () => {
+      const config: S3StorageServiceClientConfig = {};
+
+      beforeEach(() => {
+        jest.resetModules();
+        jest.doMock('../../src/storage-service-clients/s3-config', () => ({
+          configExistS3: jest.fn().mockReturnValue(true),
+        }));
+      });
+      afterEach(() => {
+        jest.dontMock('../../src/storage-service-clients/s3-config');
+      });
+
+      it('return undefined', () => {
+        const s3 = require('../../src/storage-service-clients/s3');
+        expect(new s3.S3StorageServiceClient(config).constructor.name).toBe('S3StorageServiceClient');
+      });
+    });
+
+    describe('when config file does not exists', () => {
+      let config: S3StorageServiceClientConfig;
+      const S3ClientMock = jest.fn();
+
+      beforeEach(() => {
+        jest.resetModules();
+        jest.doMock('../../src/storage-service-clients/s3-config', () => ({
+          configExistS3: jest.fn().mockReturnValue(false),
+        }));
+        jest.doMock('@aws-sdk/client-s3', () => ({
+          ...(jest.requireActual('@aws-sdk/client-s3') as any),
+          S3Client: S3ClientMock,
+        }));
+      });
+      afterEach(() => {
+        jest.dontMock('../../src/storage-service-clients/s3-config');
+        jest.dontMock('@aws-sdk/client-s3');
+      });
+
+      describe('when config is empty', () => {
+        beforeAll(() => {
+          config = {};
+        });
+
+        it('throw error', () => {
+          const s3 = require('../../src/storage-service-clients/s3');
+          expect(() => new s3.S3StorageServiceClient(config))
+            .toThrowError(new Error(
+              'If the configuration file does not exist, '
+                + 'you will need to set "--aws-region", "--aws-access-key-id", and "--aws-secret-access-key".',
+            ));
+        });
+      });
+
+      describe('when config is valid without "awsEndpointUrl"', () => {
+        beforeAll(() => {
+          config = {
+            awsRegion: 'validRegion',
+            awsAccessKeyId: 'validAccessKeyId',
+            awsSecretAccessKey: 'validSecretAccessKey',
+          };
+        });
+
+        it('throw error', () => {
+          const s3 = require('../../src/storage-service-clients/s3');
+          expect(new s3.S3StorageServiceClient(config).constructor.name).toBe('S3StorageServiceClient');
+          expect(S3ClientMock).toBeCalledWith({
+            region: 'validRegion',
+            credentials: {
+              accessKeyId: 'validAccessKeyId',
+              secretAccessKey: 'validSecretAccessKey',
+            },
+          });
+        });
+      });
+
+      describe('when config is valid with "awsEndpointUrl"', () => {
+        beforeAll(() => {
+          config = {
+            awsRegion: 'validRegion',
+            awsAccessKeyId: 'validAccessKeyId',
+            awsSecretAccessKey: 'validSecretAccessKey',
+          };
+        });
+
+        it('call constructor of Storage class with args', () => {
+          const s3 = require('../../src/storage-service-clients/s3');
+          expect(new s3.S3StorageServiceClient(config).constructor.name).toBe('S3StorageServiceClient');
+          expect(S3ClientMock).toBeCalledWith({
+            region: 'validRegion',
+            credentials: {
+              accessKeyId: 'validAccessKeyId',
+              secretAccessKey: 'validSecretAccessKey',
+            },
+          });
+        });
+      });
+    });
+  });
 
   beforeEach(() => {
     s3ServiceClient = new S3StorageServiceClient({
@@ -21,16 +122,26 @@ describe('S3StorageServiceClient', () => {
   });
 
   describe('#exists', () => {
+    const url = 's3://bucket-name/object-name';
+
     describe('when listFiles() return object key list which include target object', () => {
       beforeEach(() => {
         s3ServiceClient.listFiles = jest.fn().mockResolvedValue(['object-name']);
       });
 
       it('return true', async() => {
-        const url = 's3://bucket-name/object-name';
         await expect(s3ServiceClient.exists(url)).resolves.toBe(true);
       });
+    });
 
+    describe('when listFiles() reject', () => {
+      beforeEach(() => {
+        s3ServiceClient.listFiles = jest.fn().mockRejectedValue(undefined);
+      });
+
+      it('reject', async() => {
+        await expect(s3ServiceClient.exists(url)).rejects.toBe(undefined);
+      });
     });
   });
 
@@ -38,6 +149,7 @@ describe('S3StorageServiceClient', () => {
     let s3ServiceClient: S3StorageServiceClient;
 
     const doMockClientS3AndReloadS3ServiceClient = (clientS3Mock: jest.Mock) => {
+      jest.resetModules();
       jest.doMock('@aws-sdk/client-s3', () => {
         const mock = jest.requireActual('@aws-sdk/client-s3');
         mock.S3Client.prototype.send = clientS3Mock;
@@ -432,6 +544,7 @@ describe('S3StorageServiceClient', () => {
   describe('#downloadFile', () => {
     const downloadSource: S3URI = { bucket: 'bucket-name', key: 'object-name' };
     const downloadDestination = '/path/to/file';
+    let s3ServiceClient: S3StorageServiceClient;
 
     describe('when S3Client#send resolve', () => {
       beforeEach(() => {
@@ -484,11 +597,41 @@ describe('S3StorageServiceClient', () => {
         await expect(s3ServiceClient.downloadFile(downloadSource, downloadDestination)).rejects.toThrowError();
       });
     });
+
+    describe('when internal.promises#pipeline reject', () => {
+      beforeEach(() => {
+        jest.doMock('@aws-sdk/client-s3', () => {
+          const mock = jest.requireActual('@aws-sdk/client-s3');
+          mock.S3Client.prototype.send = jest.fn().mockResolvedValue(undefined);
+          return mock;
+        });
+        jest.doMock('stream', () => ({
+          ...(jest.requireActual('stream') as any),
+          promises: {
+            pipeline: jest.fn(),
+          },
+        }));
+        const { S3StorageServiceClient } = require('../../src/storage-service-clients/s3');
+        s3ServiceClient = new S3StorageServiceClient({
+          awsRegion: 'validRegion',
+          awsAccessKeyId: 'validAccessKeyId',
+          awsSecretAccessKey: 'validSecretAccessKey',
+        });
+      });
+      afterEach(() => {
+        jest.dontMock('stream');
+      });
+
+      it('reject and throw Error', async() => {
+        await expect(s3ServiceClient.downloadFile(downloadSource, downloadDestination)).rejects.toThrowError();
+      });
+    });
   });
 
   describe('#copyFileOnRemote', () => {
     const copySource: S3URI = { bucket: 'bucket-name', key: 'object-name1' };
     const copyDestination: S3URI = { bucket: 'bucket-name', key: 'object-name2' };
+    let s3ServiceClient: S3StorageServiceClient;
 
     describe('when S3Client#send resolve', () => {
       beforeEach(() => {
@@ -530,5 +673,4 @@ describe('S3StorageServiceClient', () => {
       });
     });
   });
-
 });
