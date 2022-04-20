@@ -11,6 +11,16 @@ afterEach(() => {
   jest.dontMock('../../src/storage-service-clients/s3-config');
 });
 
+// You can call mock functions with "beforeAll" to execute before set "s3ServiceClient" variable.
+const doMockS3Client = (s3ClientMock: jest.Mock) => {
+  jest.resetModules();
+  jest.doMock('@aws-sdk/client-s3', () => {
+    const mock = jest.requireActual('@aws-sdk/client-s3');
+    mock.S3Client.prototype.send = s3ClientMock;
+    return mock;
+  });
+};
+
 describe('S3StorageServiceClient', () => {
   let s3ServiceClient: S3StorageServiceClient;
   const s3BareMinimumConfig = {
@@ -37,7 +47,6 @@ describe('S3StorageServiceClient', () => {
     });
 
     describe('when config file does not exists', () => {
-      let config: S3StorageServiceClientConfig;
       const S3ClientMock = jest.fn();
 
       beforeEach(() => {
@@ -52,9 +61,7 @@ describe('S3StorageServiceClient', () => {
       });
 
       describe('when config is empty', () => {
-        beforeAll(() => {
-          config = {};
-        });
+        const config: S3StorageServiceClientConfig = {};
 
         it('throw error', () => {
           const s3 = require('../../src/storage-service-clients/s3');
@@ -67,9 +74,7 @@ describe('S3StorageServiceClient', () => {
       });
 
       describe('when config is valid without "awsEndpointUrl"', () => {
-        beforeAll(() => {
-          config = s3BareMinimumConfig;
-        });
+        const config: S3StorageServiceClientConfig = s3BareMinimumConfig;
 
         it('throw error', () => {
           const s3 = require('../../src/storage-service-clients/s3');
@@ -85,9 +90,7 @@ describe('S3StorageServiceClient', () => {
       });
 
       describe('when config is valid with "awsEndpointUrl"', () => {
-        beforeAll(() => {
-          config = s3BareMinimumConfig;
-        });
+        const config: S3StorageServiceClientConfig = s3BareMinimumConfig;
 
         it('call constructor of Storage class with args', () => {
           const s3 = require('../../src/storage-service-clients/s3');
@@ -104,7 +107,10 @@ describe('S3StorageServiceClient', () => {
     });
   });
 
+  // Reload "s3ServiceClient" before each test.
+  // You can call mock functions with "beforeAll" to execute before set "s3ServiceClient" variable.
   beforeEach(() => {
+    const { S3StorageServiceClient } = require('../../src/storage-service-clients/s3');
     s3ServiceClient = new S3StorageServiceClient(s3BareMinimumConfig);
   });
 
@@ -133,26 +139,12 @@ describe('S3StorageServiceClient', () => {
   });
 
   describe('#listFiles', () => {
-    // You can use these function called in "beforeAll" to execute before set "s3ServiceClient" variable.
-    const doMockS3Client = (s3ClientMock: jest.Mock) => {
-      jest.resetModules();
-      jest.doMock('@aws-sdk/client-s3', () => {
-        const mock = jest.requireActual('@aws-sdk/client-s3');
-        mock.S3Client.prototype.send = s3ClientMock;
-        return mock;
-      });
-    };
-    const doMockS3ClientContent = (content: Array<{ Key: string }>) => {
+    const doMockS3ClientListContent = (content: Array<{ Key: string }>) => {
       doMockS3Client(jest.fn().mockResolvedValue({
         $metadata: {},
         Contents: content,
       }));
     };
-
-    beforeEach(() => {
-      const { S3StorageServiceClient } = require('../../src/storage-service-clients/s3');
-      s3ServiceClient = new S3StorageServiceClient(s3BareMinimumConfig);
-    });
 
     describe('when requested S3 URI is valid', () => {
       describe('when options are not specified', () => {
@@ -161,7 +153,7 @@ describe('S3StorageServiceClient', () => {
 
           describe('when S3Client#send response files', () => {
             beforeAll(() => {
-              doMockS3ClientContent([{ Key: 'file1' }]);
+              doMockS3ClientListContent([{ Key: 'file1' }]);
             });
 
             it('return files', async() => {
@@ -175,7 +167,7 @@ describe('S3StorageServiceClient', () => {
 
           describe('when S3Client#send response exact matched files', () => {
             beforeAll(() => {
-              doMockS3ClientContent([{ Key: 'object-name' }]);
+              doMockS3ClientListContent([{ Key: 'object-name' }]);
             });
 
             it('return matched files', async() => {
@@ -185,7 +177,7 @@ describe('S3StorageServiceClient', () => {
 
           describe('when S3Client#send response not exact matched files', () => {
             beforeAll(() => {
-              doMockS3ClientContent([
+              doMockS3ClientListContent([
                 { Key: 'unmatched-object-name' },
               ]);
             });
@@ -197,7 +189,7 @@ describe('S3StorageServiceClient', () => {
 
           describe('when S3Client#send response prefix matched files', () => {
             beforeAll(() => {
-              doMockS3ClientContent([
+              doMockS3ClientListContent([
                 { Key: 'object-name1' },
               ]);
             });
@@ -239,7 +231,7 @@ describe('S3StorageServiceClient', () => {
 
           describe('when S3Client#send response files', () => {
             beforeAll(() => {
-              doMockS3ClientContent([
+              doMockS3ClientListContent([
                 { Key: 'bucket-name' },
                 { Key: 'bucket-name/file1' },
               ]);
@@ -265,7 +257,7 @@ describe('S3StorageServiceClient', () => {
 
           describe('when S3Client#send response files', () => {
             beforeAll(() => {
-              doMockS3ClientContent([
+              doMockS3ClientListContent([
                 { Key: 'bucket-name/file1' },
               ]);
             });
@@ -289,7 +281,7 @@ describe('S3StorageServiceClient', () => {
 
           describe('when S3Client#send response prefix matched files', () => {
             beforeAll(() => {
-              doMockS3ClientContent([
+              doMockS3ClientListContent([
                 { Key: 'bucket-name/file1' },
               ]);
             });
@@ -314,63 +306,40 @@ describe('S3StorageServiceClient', () => {
   });
 
   describe('#deleteFile', () => {
-    describe("when request URI is valid S3's", () => {
-      describe('when S3Client#send success', () => {
-        let s3ServiceClient: S3StorageServiceClient;
+    describe('when requested S3 URI is valid', () => {
+      const url = 's3://bucket-name/object-name';
 
+      describe('when S3Client#send success', () => {
         beforeEach(() => {
-          jest.doMock('@aws-sdk/client-s3', () => {
-            const mock = jest.requireActual('@aws-sdk/client-s3');
-            mock.S3Client.prototype.send = jest.fn().mockResolvedValue(null);
-            return mock;
-          });
-          const { S3StorageServiceClient } = require('../../src/storage-service-clients/s3');
-          s3ServiceClient = new S3StorageServiceClient(s3BareMinimumConfig);
+          s3ServiceClient.client.send = jest.fn().mockResolvedValue(undefined);
         });
 
         it('resolve with undfined', async() => {
-          const url = 's3://bucket-name/object-name';
           await expect(s3ServiceClient.deleteFile(url)).resolves.toBe(undefined);
         });
       });
 
-      describe('when S3Client#send fail', () => {
-        let s3ServiceClient: S3StorageServiceClient;
-
+      describe('when S3Client#send reject', () => {
         beforeEach(() => {
-          jest.doMock('@aws-sdk/client-s3', () => {
-            const mock = jest.requireActual('@aws-sdk/client-s3');
-            mock.S3Client.prototype.send = jest.fn().mockRejectedValue(new Error('some error occur'));
-            return mock;
-          });
-          const { S3StorageServiceClient } = require('../../src/storage-service-clients/s3');
-          s3ServiceClient = new S3StorageServiceClient(s3BareMinimumConfig);
+          s3ServiceClient.client.send = jest.fn().mockRejectedValue(new Error('some error'));
         });
 
         it('reject and throw Error', async() => {
-          const url = 's3://bucket-name/object-name';
-          await expect(s3ServiceClient.deleteFile(url)).rejects.toThrowError();
+          await expect(s3ServiceClient.deleteFile(url)).rejects.toThrowError('some error');
         });
       });
     });
 
     describe('when request URI is not S3\'s', () => {
+      const url = 'http://hostname/';
+
       it('reject and throw Error', async() => {
-        const { S3StorageServiceClient } = require('../../src/storage-service-clients/s3');
-        const s3ServiceClient = new S3StorageServiceClient(s3BareMinimumConfig);
-        const url = 'http://hostname/';
         await expect(s3ServiceClient.deleteFile(url)).rejects.toThrowError();
       });
     });
   });
 
   describe('#copyFile', () => {
-    let s3ServiceClient: S3StorageServiceClient;
-
-    beforeEach(() => {
-      s3ServiceClient = new S3StorageServiceClient(s3BareMinimumConfig);
-    });
-
     describe("when copySource is local file path and copyDestination is S3's URI", () => {
       const copySource = '/path/to/file';
       const copyDestination = 's3://bucket-name/object-name';
@@ -427,25 +396,23 @@ describe('S3StorageServiceClient', () => {
   });
 
   describe('#uploadFile', () => {
+    const doMockReadingUploadSource = (body: string) => {
+      // mock function which read '/path/to/file'
+      jest.doMock('fs', () => ({
+        ...(jest.requireActual('fs') as any),
+        readFileSync: jest.fn().mockReturnValue(body),
+      }));
+    };
+
     const uploadSource = '/path/to/file';
     const uploadDestination: S3URI = { bucket: 'bucket-name', key: 'object-name' };
 
     describe('when S3Client#send resolve', () => {
-      let s3ServiceClient: S3StorageServiceClient;
-
-      beforeEach(async() => {
-        jest.doMock('@aws-sdk/client-s3', () => {
-          const mock = jest.requireActual('@aws-sdk/client-s3');
-          mock.S3Client.prototype.send = jest.fn().mockResolvedValue(undefined);
-          return mock;
-        });
-        jest.doMock('fs', () => {
-          const mock = jest.requireActual('fs');
-          mock.readFileSync = jest.fn().mockReturnValue('some body');
-          return mock;
-        });
-        const { S3StorageServiceClient } = require('../../src/storage-service-clients/s3');
-        s3ServiceClient = new S3StorageServiceClient(s3BareMinimumConfig);
+      beforeAll(() => {
+        doMockReadingUploadSource('some body');
+      });
+      beforeEach(() => {
+        s3ServiceClient.client.send = jest.fn().mockResolvedValue(undefined);
       });
 
       it('resolve with undfined', async() => {
@@ -454,21 +421,11 @@ describe('S3StorageServiceClient', () => {
     });
 
     describe('when S3Client#send reject', () => {
-      let s3ServiceClient: S3StorageServiceClient;
-
-      beforeEach(async() => {
-        jest.doMock('@aws-sdk/client-s3', () => {
-          const mock = jest.requireActual('@aws-sdk/client-s3');
-          mock.S3Client.prototype.send = jest.fn().mockRejectedValue(new Error('some error'));
-          return mock;
-        });
-        jest.doMock('fs', () => {
-          const mock = jest.requireActual('fs');
-          mock.readFileSync = jest.fn().mockReturnValue('some body');
-          return mock;
-        });
-        const { S3StorageServiceClient } = require('../../src/storage-service-clients/s3');
-        s3ServiceClient = new S3StorageServiceClient(s3BareMinimumConfig);
+      beforeAll(() => {
+        doMockReadingUploadSource('some body');
+      });
+      beforeEach(() => {
+        s3ServiceClient.client.send = jest.fn().mockRejectedValue(new Error('some error'));
       });
 
       it('reject and throw Error', async() => {
@@ -478,31 +435,28 @@ describe('S3StorageServiceClient', () => {
   });
 
   describe('#downloadFile', () => {
+    const doMockS3ClientDownloadBody = (body: string | null) => {
+      doMockS3Client(jest.fn().mockResolvedValue({
+        $metadata: {},
+        Body: jest.fn().mockImplementation(() => {
+          const readable = new Readable();
+          readable.push(body);
+          return readable;
+        }),
+      }));
+    };
+
     const downloadSource: S3URI = { bucket: 'bucket-name', key: 'object-name' };
     const downloadDestination = '/path/to/file';
-    let s3ServiceClient: S3StorageServiceClient;
 
     describe('when S3Client#send resolve', () => {
-      beforeEach(() => {
-        jest.doMock('@aws-sdk/client-s3', () => {
-          const mock = jest.requireActual('@aws-sdk/client-s3');
-          mock.S3Client.prototype.send = jest.fn().mockResolvedValue({
-            $metadata: {},
-            Body: jest.fn().mockImplementation(() => {
-              const readable = new Readable();
-              readable.push(null);
-              return readable;
-            }),
-          });
-          return mock;
-        });
+      beforeAll(() => {
+        doMockS3ClientDownloadBody(null);
         jest.doMock('fs', () => {
           const mock = jest.requireActual('fs');
           mock.createWriteStream = jest.fn().mockReturnValue(new PassThrough());
           return mock;
         });
-        const { S3StorageServiceClient } = require('../../src/storage-service-clients/s3');
-        s3ServiceClient = new S3StorageServiceClient(s3BareMinimumConfig);
       });
 
       it('resolve with undefined', async() => {
@@ -512,13 +466,7 @@ describe('S3StorageServiceClient', () => {
 
     describe('when S3Client#send reject', () => {
       beforeEach(() => {
-        jest.doMock('@aws-sdk/client-s3', () => {
-          const mock = jest.requireActual('@aws-sdk/client-s3');
-          mock.S3Client.prototype.send = jest.fn().mockRejectedValue(new Error('some error'));
-          return mock;
-        });
-        const { S3StorageServiceClient } = require('../../src/storage-service-clients/s3');
-        s3ServiceClient = new S3StorageServiceClient(s3BareMinimumConfig);
+        s3ServiceClient.client.send = jest.fn().mockRejectedValue(new Error('some error'));
       });
 
       it('reject and throw Error', async() => {
@@ -527,20 +475,14 @@ describe('S3StorageServiceClient', () => {
     });
 
     describe('when internal.promises#pipeline reject', () => {
-      beforeEach(() => {
-        jest.doMock('@aws-sdk/client-s3', () => {
-          const mock = jest.requireActual('@aws-sdk/client-s3');
-          mock.S3Client.prototype.send = jest.fn().mockResolvedValue(undefined);
-          return mock;
-        });
+      beforeAll(() => {
+        s3ServiceClient.client.send = jest.fn().mockResolvedValue(undefined);
         jest.doMock('stream', () => ({
           ...(jest.requireActual('stream') as any),
           promises: {
             pipeline: jest.fn(),
           },
         }));
-        const { S3StorageServiceClient } = require('../../src/storage-service-clients/s3');
-        s3ServiceClient = new S3StorageServiceClient(s3BareMinimumConfig);
       });
       afterEach(() => {
         jest.dontMock('stream');
@@ -555,17 +497,10 @@ describe('S3StorageServiceClient', () => {
   describe('#copyFileOnRemote', () => {
     const copySource: S3URI = { bucket: 'bucket-name', key: 'object-name1' };
     const copyDestination: S3URI = { bucket: 'bucket-name', key: 'object-name2' };
-    let s3ServiceClient: S3StorageServiceClient;
 
     describe('when S3Client#send resolve', () => {
       beforeEach(() => {
-        jest.doMock('@aws-sdk/client-s3', () => {
-          const mock = jest.requireActual('@aws-sdk/client-s3');
-          mock.S3Client.prototype.send = jest.fn().mockResolvedValue(null);
-          return mock;
-        });
-        const { S3StorageServiceClient } = require('../../src/storage-service-clients/s3');
-        s3ServiceClient = new S3StorageServiceClient(s3BareMinimumConfig);
+        s3ServiceClient.client.send = jest.fn().mockResolvedValue(null);
       });
 
       it('resolve with undfined', async() => {
@@ -575,13 +510,7 @@ describe('S3StorageServiceClient', () => {
 
     describe('when S3Client#send reject', () => {
       beforeEach(() => {
-        jest.doMock('@aws-sdk/client-s3', () => {
-          const mock = jest.requireActual('@aws-sdk/client-s3');
-          mock.S3Client.prototype.send = jest.fn().mockRejectedValue(new Error('some error'));
-          return mock;
-        });
-        const { S3StorageServiceClient } = require('../../src/storage-service-clients/s3');
-        s3ServiceClient = new S3StorageServiceClient(s3BareMinimumConfig);
+        s3ServiceClient.client.send = jest.fn().mockRejectedValue(new Error('some error'));
       });
 
       it('reject and throw Error', async() => {
