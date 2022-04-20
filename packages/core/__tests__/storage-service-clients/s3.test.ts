@@ -8,6 +8,7 @@ afterEach(() => {
   jest.dontMock('@aws-sdk/client-s3');
   jest.dontMock('fs');
   jest.dontMock('stream');
+  jest.dontMock('../../src/storage-service-clients/s3-config');
 });
 
 describe('S3StorageServiceClient', () => {
@@ -27,9 +28,6 @@ describe('S3StorageServiceClient', () => {
         jest.doMock('../../src/storage-service-clients/s3-config', () => ({
           configExistS3: jest.fn().mockReturnValue(true),
         }));
-      });
-      afterEach(() => {
-        jest.dontMock('../../src/storage-service-clients/s3-config');
       });
 
       it('return undefined', () => {
@@ -51,10 +49,6 @@ describe('S3StorageServiceClient', () => {
           ...(jest.requireActual('@aws-sdk/client-s3') as any),
           S3Client: S3ClientMock,
         }));
-      });
-      afterEach(() => {
-        jest.dontMock('../../src/storage-service-clients/s3-config');
-        jest.dontMock('@aws-sdk/client-s3');
       });
 
       describe('when config is empty', () => {
