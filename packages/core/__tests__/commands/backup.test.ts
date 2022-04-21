@@ -67,15 +67,16 @@ describe('BackupCommand', () => {
 
   describe('dumpDB', () => {
     const destinationPath = 'test-path';
+    const option = '';
 
     it('reject with error', async() => {
-      await expect(command.dumpDB(destinationPath))
+      await expect(command.dumpDB(destinationPath, option))
         .rejects
         .toThrowError('Method not implemented.');
     });
   });
 
-  describe('backup', () => {
+  describe('execBackupAction', () => {
     describe('when cromode is empty', () => {
       const options = s3BareMinimumOptions;
 

@@ -343,45 +343,42 @@ describe('S3StorageServiceClient', () => {
     describe("when copySource is local file path and copyDestination is S3's URI", () => {
       const copySource = '/path/to/file';
       const copyDestination = 's3://bucket-name/object-name';
-      const uploadFileMock = jest.fn().mockResolvedValue(undefined);
 
-      beforeEach(async() => {
-        s3ServiceClient.uploadFile = uploadFileMock;
-        await s3ServiceClient.copyFile(copySource, copyDestination);
+      beforeEach(() => {
+        s3ServiceClient.uploadFile = jest.fn().mockResolvedValue(undefined);
       });
 
-      it('call uploadFile()', () => {
-        expect(uploadFileMock).toBeCalled();
+      it('call uploadFile()', async() => {
+        await s3ServiceClient.copyFile(copySource, copyDestination);
+        expect(s3ServiceClient.uploadFile).toBeCalled();
       });
     });
 
     describe("when copySource is S3's URI and copyDestination is local file path", () => {
       const copySource = 's3://bucket-name/object-name';
       const copyDestination = '/path/to/file';
-      const downloadFileMock = jest.fn().mockResolvedValue(undefined);
 
-      beforeEach(async() => {
-        s3ServiceClient.downloadFile = downloadFileMock;
-        await s3ServiceClient.copyFile(copySource, copyDestination);
+      beforeEach(() => {
+        s3ServiceClient.downloadFile = jest.fn().mockResolvedValue(undefined);
       });
 
-      it('call downloadFile()', () => {
-        expect(downloadFileMock).toBeCalled();
+      it('call downloadFile()', async() => {
+        await s3ServiceClient.copyFile(copySource, copyDestination);
+        expect(s3ServiceClient.downloadFile).toBeCalled();
       });
     });
 
     describe("when copySource and copyDestination are both S3's URI", () => {
       const copySource = 's3://bucket-name/object-name1';
       const copyDestination = 's3://bucket-name/object-name2';
-      const copyFileOnRemoteMock = jest.fn().mockResolvedValue(undefined);
 
-      beforeEach(async() => {
-        s3ServiceClient.copyFileOnRemote = copyFileOnRemoteMock;
-        await s3ServiceClient.copyFile(copySource, copyDestination);
+      beforeEach(() => {
+        s3ServiceClient.copyFileOnRemote = jest.fn().mockResolvedValue(undefined);
       });
 
-      it('call copyFileOnRemote()', () => {
-        expect(copyFileOnRemoteMock).toBeCalled();
+      it('call copyFileOnRemote()', async() => {
+        await s3ServiceClient.copyFile(copySource, copyDestination);
+        expect(s3ServiceClient.copyFileOnRemote).toBeCalled();
       });
     });
 
@@ -396,8 +393,8 @@ describe('S3StorageServiceClient', () => {
   });
 
   describe('#uploadFile', () => {
+    // mock function which read '/path/to/file'
     const doMockReadingUploadSource = (body: string) => {
-      // mock function which read '/path/to/file'
       jest.doMock('fs', () => ({
         ...(jest.requireActual('fs') as any),
         readFileSync: jest.fn().mockReturnValue(body),
