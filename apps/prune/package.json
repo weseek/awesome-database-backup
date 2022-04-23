@@ -32,7 +32,7 @@
     "lint:fix": "eslint src --ext .ts --fix"
   },
   "dependencies": {
-    "@awesome-backup/core": "^0.0.1",
+    "@awesome-backup/commands": "^0.0.1",
     "bunyan": "^1.8.15",
     "universal-bunyan": "^0.9.2",
     "browser-bunyan": "^1.6.3"

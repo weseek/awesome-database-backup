@@ -1,5 +1,5 @@
-import { GCSURI, GCSStorageServiceClientConfig } from '../../src/storage-service-clients/interfaces';
-import GCSStorageServiceClient from '../../src/storage-service-clients/gcs';
+import { GCSURI, GCSStorageServiceClientConfig } from '../src/interfaces';
+import GCSStorageServiceClient from '../src/gcs';
 
 describe('GCSStorageServiceClient', () => {
   let gcsServiceClient: GCSStorageServiceClient;
@@ -40,7 +40,7 @@ describe('GCSStorageServiceClient', () => {
         jest.doMock('@google-cloud/storage', () => ({
           Storage: StorageMock,
         }));
-        const gcs = require('../../src/storage-service-clients/gcs');
+        const gcs = require('../src/gcs');
         gcsServiceClient = new gcs.GCSStorageServiceClient(config);
       });
       afterEach(() => {
@@ -68,7 +68,7 @@ describe('GCSStorageServiceClient', () => {
         jest.doMock('@google-cloud/storage', () => ({
           Storage: StorageMock,
         }));
-        const gcs = require('../../src/storage-service-clients/gcs');
+        const gcs = require('../src/gcs');
         gcsServiceClient = new gcs.GCSStorageServiceClient(config);
       });
       afterEach(() => {

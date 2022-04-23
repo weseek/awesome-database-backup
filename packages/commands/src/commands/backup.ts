@@ -4,7 +4,7 @@ import { Option } from 'commander';
 import axios from 'axios';
 import axiosRetry from 'axios-retry';
 import { EOL } from 'os';
-import { compressBZIP2 } from '../utils/tar';
+import { compressBZIP2 } from '@awesome-backup/tar';
 import { IBackupCommandOption } from './interfaces';
 import { StorageServiceClientCommand } from './common';
 import loggerFactory from '../logger/factory';

@@ -1,5 +1,5 @@
+import { IStorageServiceClient } from '@awesome-backup/storage-service-clients';
 import { RestoreCommand, IRestoreCommandOption } from '../../src/commands/restore';
-import { IStorageServiceClient } from '../../src/storage-service-clients/interfaces';
 
 describe('RestoreCommand', () => {
   let command: RestoreCommand;
@@ -33,9 +33,9 @@ describe('RestoreCommand', () => {
     });
 
     // Mock tar
-    jest.doMock('../../src/utils/tar', () => {
+    jest.doMock('@awesome-backup/tar', () => {
       return {
-        ...(jest.requireActual('../../src/utils/tar') as any),
+        ...(jest.requireActual('@awesome-backup/tar') as any),
         expandBZIP2: jest.fn().mockReturnValue(''),
       };
     });
@@ -45,7 +45,7 @@ describe('RestoreCommand', () => {
   });
   afterEach(() => {
     jest.dontMock('universal-bunyan');
-    jest.dontMock('../../src/utils/tar');
+    jest.dontMock('@awesome-backup/tar');
   });
 
   const gcsBareMinumumOptions: IRestoreCommandOption = {

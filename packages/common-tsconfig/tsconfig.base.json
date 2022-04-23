@@ -22,8 +22,6 @@
      * This is an assumption inherited by "tsconfig.json", which is placed in the top directory of each package.
      */
     "paths": {
-      "@awesome-backup/core": ["../../packages/core/src"],
-      "@awesome-backup/core/*": ["../../packages/core/src/*"]
     }
   }
 }

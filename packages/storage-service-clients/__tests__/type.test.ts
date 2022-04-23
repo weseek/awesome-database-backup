@@ -1,4 +1,4 @@
-import { getStorageServiceClientType } from '../../src/storage-service-clients/types';
+import { getStorageServiceClientType } from '../src/types';
 
 describe('getStorageServiceClientType()', () => {
   describe('in case of URL startWith "s3"', () => {

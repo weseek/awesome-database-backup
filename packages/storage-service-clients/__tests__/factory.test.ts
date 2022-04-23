@@ -1,4 +1,4 @@
-import { ICommonCommandOption } from '../../src/commands/interfaces';
+import { ICommonCommandOption } from '@awesome-backup/commands';
 
 afterEach(() => {
   jest.resetModules();
@@ -23,7 +23,7 @@ describe('storageServiceClientFactory()', () => {
       };
 
       it('return S3StorageServiceClient calss', () => {
-        const { storageServiceClientFactory } = require('../../src/storage-service-clients/factory');
+        const { storageServiceClientFactory } = require('../src/factory');
         expect(storageServiceClientFactory(storageProviderType, options).constructor.name).toBe('S3StorageServiceClient');
       });
     });
@@ -45,7 +45,7 @@ describe('storageServiceClientFactory()', () => {
       };
 
       it('call generateS3ServiceClient', () => {
-        const { storageServiceClientFactory } = require('../../src/storage-service-clients/factory');
+        const { storageServiceClientFactory } = require('../src/factory');
         expect(storageServiceClientFactory(storageProviderType, options).constructor.name).toBe('GCSStorageServiceClient');
       });
     });

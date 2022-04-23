@@ -1,14 +1,13 @@
 import { PassThrough, Readable } from 'stream';
-import { S3URI, S3StorageServiceClientConfig, listS3FilesOptions } from '../../src/storage-service-clients/interfaces';
-import S3StorageServiceClient from '../../src/storage-service-clients/s3';
+import { S3URI, S3StorageServiceClientConfig, listS3FilesOptions } from '../src/interfaces';
+import S3StorageServiceClient from '../src/s3';
 
 afterEach(() => {
   jest.resetModules();
-  jest.dontMock('@awesome-backup/core');
   jest.dontMock('@aws-sdk/client-s3');
   jest.dontMock('fs');
   jest.dontMock('stream');
-  jest.dontMock('../../src/storage-service-clients/s3-config');
+  jest.dontMock('../src/s3-config');
 });
 
 // You can call mock functions with "beforeAll" to execute before set "s3ServiceClient" variable.
@@ -35,13 +34,13 @@ describe('S3StorageServiceClient', () => {
 
       beforeEach(() => {
         jest.resetModules();
-        jest.doMock('../../src/storage-service-clients/s3-config', () => ({
+        jest.doMock('../src/s3-config', () => ({
           configExistS3: jest.fn().mockReturnValue(true),
         }));
       });
 
       it('return undefined', () => {
-        const s3 = require('../../src/storage-service-clients/s3');
+        const s3 = require('../src/s3');
         expect(new s3.S3StorageServiceClient(config).constructor.name).toBe('S3StorageServiceClient');
       });
     });
@@ -51,7 +50,7 @@ describe('S3StorageServiceClient', () => {
 
       beforeEach(() => {
         jest.resetModules();
-        jest.doMock('../../src/storage-service-clients/s3-config', () => ({
+        jest.doMock('../src/s3-config', () => ({
           configExistS3: jest.fn().mockReturnValue(false),
         }));
         jest.doMock('@aws-sdk/client-s3', () => ({
@@ -64,7 +63,7 @@ describe('S3StorageServiceClient', () => {
         const config: S3StorageServiceClientConfig = {};
 
         it('throw error', () => {
-          const s3 = require('../../src/storage-service-clients/s3');
+          const s3 = require('../src/s3');
           expect(() => new s3.S3StorageServiceClient(config))
             .toThrowError(new Error(
               'If the configuration file does not exist, '
@@ -77,7 +76,7 @@ describe('S3StorageServiceClient', () => {
         const config: S3StorageServiceClientConfig = s3BareMinimumConfig;
 
         it('throw error', () => {
-          const s3 = require('../../src/storage-service-clients/s3');
+          const s3 = require('../src/s3');
           expect(new s3.S3StorageServiceClient(config).constructor.name).toBe('S3StorageServiceClient');
           expect(S3ClientMock).toBeCalledWith({
             region: 'validRegion',
@@ -93,7 +92,7 @@ describe('S3StorageServiceClient', () => {
         const config: S3StorageServiceClientConfig = s3BareMinimumConfig;
 
         it('call constructor of Storage class with args', () => {
-          const s3 = require('../../src/storage-service-clients/s3');
+          const s3 = require('../src/s3');
           expect(new s3.S3StorageServiceClient(config).constructor.name).toBe('S3StorageServiceClient');
           expect(S3ClientMock).toBeCalledWith({
             region: 'validRegion',
@@ -110,7 +109,7 @@ describe('S3StorageServiceClient', () => {
   // Reload "s3ServiceClient" before each test.
   // You can call mock functions with "beforeAll" to execute before set "s3ServiceClient" variable.
   beforeEach(() => {
-    const { S3StorageServiceClient } = require('../../src/storage-service-clients/s3');
+    const { S3StorageServiceClient } = require('../src/s3');
     s3ServiceClient = new S3StorageServiceClient(s3BareMinimumConfig);
   });
 

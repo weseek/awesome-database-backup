@@ -2,7 +2,7 @@ import { format } from 'date-fns';
 import { basename, join } from 'path';
 import { Option } from 'commander';
 import { EOL } from 'os';
-import { expandBZIP2 } from '../utils/tar';
+import { expandBZIP2 } from '@awesome-backup/tar';
 import { IRestoreCommandOption } from './interfaces';
 import { StorageServiceClientCommand } from './common';
 import loggerFactory from '../logger/factory';

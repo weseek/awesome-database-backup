@@ -3,7 +3,7 @@
  * Execute with --help to see usage instructions.
  */
 import { exec } from 'child_process';
-import { RestoreCommand } from '@awesome-backup/core';
+import { RestoreCommand } from '@awesome-backup/commands';
 import loggerFactory from '../logger/factory';
 import { PACKAGE_VERSION } from '../config/version';
 

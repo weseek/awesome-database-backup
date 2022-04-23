@@ -1,5 +1,5 @@
+import { IStorageServiceClient } from '@awesome-backup/storage-service-clients';
 import { BackupCommand, IBackupCommandOption } from '../../src/commands/backup';
-import { IStorageServiceClient } from '../../src/storage-service-clients/interfaces';
 
 describe('BackupCommand', () => {
   let command: BackupCommand;
@@ -44,9 +44,9 @@ describe('BackupCommand', () => {
     });
 
     // Mock tar
-    jest.doMock('../../src/utils/tar', () => {
+    jest.doMock('@awesome-backup/tar', () => {
       return {
-        ...(jest.requireActual('../../src/utils/tar') as any),
+        ...(jest.requireActual('@awesome-backup/tar') as any),
         compressBZIP2: jest.fn().mockReturnValue(''),
       };
     });
@@ -57,7 +57,7 @@ describe('BackupCommand', () => {
   afterEach(() => {
     jest.dontMock('universal-bunyan');
     jest.dontMock('axios');
-    jest.dontMock('../../src/utils/tar');
+    jest.dontMock('@awesome-backup/tar');
   });
 
   const s3BareMinimumOptions: IBackupCommandOption = {

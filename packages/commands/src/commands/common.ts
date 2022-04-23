@@ -1,7 +1,9 @@
 import { Command, Option } from 'commander';
-import { IStorageServiceClient } from '../storage-service-clients/interfaces';
-import { getStorageServiceClientType } from '../storage-service-clients/types';
-import storageServiceClientFactory from '../storage-service-clients/factory';
+import {
+  IStorageServiceClient,
+  getStorageServiceClientType,
+  storageServiceClientFactory,
+} from '@awesome-backup/storage-service-clients';
 import { ICommonCommandOption } from './interfaces';
 
 /**

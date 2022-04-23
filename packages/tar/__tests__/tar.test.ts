@@ -1,4 +1,4 @@
-let tar = require('../../src/utils/tar');
+let tar = require('../src/tar');
 
 const execMock = jest.fn().mockImplementation((command, callback) => {
   callback(null, 'stdout', 'stderr');
@@ -13,7 +13,7 @@ beforeEach(() => {
       exec: execMock,
     };
   });
-  tar = require('../../src/utils/tar');
+  tar = require('../src/tar');
 });
 
 describe('compressBZIP2', () => {

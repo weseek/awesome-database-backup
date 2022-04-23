@@ -1,12 +1,15 @@
 import {
   S3StorageServiceClientConfig,
   GCSStorageServiceClientConfig,
-} from '../../storage-service-clients/interfaces';
+} from '@awesome-backup/storage-service-clients';
 
 /* Common command option types */
-export type ICommonCommandOption = S3StorageServiceClientConfig & GCSStorageServiceClientConfig & {
-  targetBucketUrl: URL,
-};
+export type ICommonCommandOption =
+  {
+    targetBucketUrl: URL,
+  }
+  & S3StorageServiceClientConfig
+  & GCSStorageServiceClientConfig;
 
 /* Backup command option types */
 export interface IBackupCommandOption extends ICommonCommandOption {

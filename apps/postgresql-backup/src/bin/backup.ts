@@ -4,7 +4,7 @@
  * Execute with --help to see usage instructions.
  */
 import { exec } from 'child_process';
-import { BackupCommand } from '@awesome-backup/core';
+import { BackupCommand } from '@awesome-backup/commands';
 import loggerFactory from '../logger/factory';
 import { PACKAGE_VERSION } from '../config/version';
 
