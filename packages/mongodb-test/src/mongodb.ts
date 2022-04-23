@@ -1,7 +1,8 @@
+import { v4 as uuidv4 } from 'uuid';
 import { MongoClient } from 'mongodb';
 import { mongodbURI } from './config/mongodb';
 
-export const testMongoDBName = 'dummy';
+export const testMongoDBName = `dummy-${uuidv4()}`;
 const client = new MongoClient(mongodbURI);
 
 export async function dropTestMongoDB(): Promise<void> {

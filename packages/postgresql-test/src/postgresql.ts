@@ -1,14 +1,15 @@
+import { v4 as uuidv4 } from 'uuid';
 import { Pool } from 'pg';
 import { postgresqlConfig } from './config/postgresql';
 
-export const testPGName = 'dummy';
+export const testPGName = `dummy-${uuidv4()}`;
 const dbConfig = postgresqlConfig;
 
 export async function cleanTestPG(): Promise<void> {
   const pool = new Pool(dbConfig);
   const client = await pool.connect();
-  await client.query(`DROP DATABASE IF EXISTS ${testPGName}`);
-  await client.query(`CREATE DATABASE ${testPGName}`);
+  await client.query(`DROP DATABASE IF EXISTS "${testPGName}"`);
+  await client.query(`CREATE DATABASE "${testPGName}" TEMPLATE template0`);
   client.release();
   await pool.end();
 }

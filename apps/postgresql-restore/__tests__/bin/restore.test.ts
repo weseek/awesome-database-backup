@@ -2,6 +2,7 @@ import { exec as execOriginal } from 'child_process';
 import { promisify } from 'util';
 import {
   s3ClientConfig,
+  testS3BucketURI,
   cleanTestS3Bucket,
   uploadFixtureToTestS3Bucket,
   storageConfig,
@@ -10,6 +11,7 @@ import {
   uploadFixtureToTestGCSBucket,
 } from '@awesome-backup/storage-service-test';
 import {
+  testPGName,
   cleanTestPG,
   listTableNamesInTestPG,
   postgresqlConfig,
@@ -40,16 +42,16 @@ describe('restore', () => {
   });
 
   describe('when valid S3 options are specified', () => {
-    const bucketURI = 's3://test/';
-    const objectURI = `${bucketURI}backup-20220402000000.tar.bz2`;
+    const objectURI = `${testS3BucketURI}/backup-20220402000000.tar.bz2`;
     const commandLine = `PGPASSWORD="password" \
       ${execRestoreCommand} \
       --aws-endpoint-url ${s3ClientConfig.endpoint} \
       --aws-region ${s3ClientConfig.region} \
       --aws-access-key-id ${s3ClientConfig.credentials.accessKeyId} \
       --aws-secret-access-key ${s3ClientConfig.credentials.secretAccessKey} \
-      --restore-tool-options "--host ${postgresqlConfig.host} --username ${postgresqlConfig.user} --port ${postgresqlConfig.port}" \
+      --restore-tool-options "--host ${postgresqlConfig.host} --username ${postgresqlConfig.user} --port ${postgresqlConfig.port} --dbname ${testPGName}" \
       --target-bucket-url ${objectURI}`;
+console.log(commandLine);
 
     beforeEach(cleanTestS3Bucket);
     beforeEach(cleanTestPG);
@@ -75,9 +77,9 @@ describe('restore', () => {
       --gcp-project-id ${storageConfig.projectId} \
       --gcp-client-email ${storageConfig.credentials.client_email} \
       --gcp-private-key ${storageConfig.credentials.private_key} \
-      --restore-tool-options "--host ${postgresqlConfig.host} --username ${postgresqlConfig.user} --port ${postgresqlConfig.port}" \
+      --restore-tool-options "--host ${postgresqlConfig.host} --username ${postgresqlConfig.user} --port ${postgresqlConfig.port} --dbname ${testPGName}" \
       --target-bucket-url ${objectURI}`;
-
+console.log(commandLine);
     beforeEach(cleanTestGCSBucket);
     beforeEach(cleanTestPG);
     beforeEach(async() => {
