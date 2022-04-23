@@ -24,7 +24,8 @@ const logger = loggerFactory('mongodb-awesome-backup');
  */
 export class BackupCommand extends StorageServiceClientCommand {
 
-  async dumpDB(destinationPath: string, userSpecifiedOption?: string): Promise<{ stdout: string, stderr: string }> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async dumpDB(_destinationPath: string, _userSpecifiedOption?: string): Promise<{ stdout: string, stderr: string }> {
     throw new Error('Method not implemented.');
   }
 

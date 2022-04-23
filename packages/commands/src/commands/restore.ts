@@ -20,7 +20,8 @@ const tmp = require('tmp');
  */
 export class RestoreCommand extends StorageServiceClientCommand {
 
-  async restoreDB(sourcePath: string, userSpecifiedOption?: string): Promise<{ stdout: string, stderr: string }> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async restoreDB(_sourcePath: string, _userSpecifiedOption?: string): Promise<{ stdout: string, stderr: string }> {
     throw new Error('Method not implemented.');
   }
 
