@@ -4,28 +4,32 @@
  * Execute with --help to see usage instructions.
  */
 import { exec } from 'child_process';
-import { BackupCommand } from '@awesome-backup/core';
+import { BackupCommand } from '@awesome-backup/commands';
 import loggerFactory from '../logger/factory';
 import { PACKAGE_VERSION } from '../config/version';
 
 const logger = loggerFactory('postgresql-awesome-backup');
 
-async function dumpPostgreSQL(destinationPath: string, userSpecifiedOption?: string): Promise<{ stdout: string, stderr: string }> {
-  logger.info('dump PostgreSQL...');
-  return new Promise((resolve, reject) => {
-    exec(
-      `pg_dumpall --file ${destinationPath} ${userSpecifiedOption}`,
-      (error, stdout, stderr) => {
-        if (error) {
-          reject(error);
-        }
-        resolve({ stdout, stderr });
-      },
-    );
-  });
+class PostgreSQLBackupCommand extends BackupCommand {
+
+  async dumpDB(destinationPath: string, userSpecifiedOption?: string): Promise<{ stdout: string; stderr: string; }> {
+    logger.info('dump PostgreSQL...');
+    return new Promise((resolve, reject) => {
+      exec(
+        `pg_dumpall --file ${destinationPath} ${userSpecifiedOption}`,
+        (error, stdout, stderr) => {
+          if (error) {
+            reject(error);
+          }
+          resolve({ stdout, stderr });
+        },
+      );
+    });
+  }
+
 }
 
-const backupCommand = new BackupCommand();
+const backupCommand = new PostgreSQLBackupCommand();
 
 backupCommand
   .version(PACKAGE_VERSION)
@@ -38,6 +42,6 @@ backupCommand
     NOTICE:
       You can pass PostgreSQL options by set "--restore-tool-options". (ex. "--host db.example.com --username postgres")
       `.replace(/^ {4}/mg, ''))
-  .setBackupAction(dumpPostgreSQL);
+  .setBackupAction();
 
 backupCommand.parse(process.argv); // execute backup command

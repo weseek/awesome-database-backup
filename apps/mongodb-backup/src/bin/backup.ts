@@ -3,28 +3,32 @@
  * Execute with --help to see usage instructions.
  */
 import { exec } from 'child_process';
-import { BackupCommand } from '@awesome-backup/core';
+import { BackupCommand } from '@awesome-backup/commands';
 import loggerFactory from '../logger/factory';
 import { PACKAGE_VERSION } from '../config/version';
 
 const logger = loggerFactory('mongodb-awesome-backup');
 
-async function dumpMongoDB(destinationPath: string, userSpecifiedOption?: string): Promise<{ stdout: string, stderr: string }> {
-  logger.info('dump MongoDB...');
-  return new Promise((resolve, reject) => {
-    exec(
-      `mongodump --out ${destinationPath} ${userSpecifiedOption}`,
-      (error, stdout, stderr) => {
-        if (error) {
-          reject(error);
-        }
-        resolve({ stdout, stderr });
-      },
-    );
-  });
+class MongoDBBackupCommand extends BackupCommand {
+
+  async dumpDB(destinationPath: string, userSpecifiedOption?: string): Promise<{ stdout: string; stderr: string; }> {
+    logger.info('dump MongoDB...');
+    return new Promise((resolve, reject) => {
+      exec(
+        `mongodump --out ${destinationPath} ${userSpecifiedOption}`,
+        (error, stdout, stderr) => {
+          if (error) {
+            reject(error);
+          }
+          resolve({ stdout, stderr });
+        },
+      );
+    });
+  }
+
 }
 
-const backupCommand = new BackupCommand();
+const backupCommand = new MongoDBBackupCommand();
 
 backupCommand
   .version(PACKAGE_VERSION)
@@ -33,6 +37,6 @@ backupCommand
     NOTICE:
       You can pass mongoDB options by set "--backup-tool-options". (ex. "--host db.example.com --username admin")
       `.replace(/^ {4}/mg, ''))
-  .setBackupAction(dumpMongoDB);
+  .setBackupAction();
 
 backupCommand.parse(process.argv); // execute backup command

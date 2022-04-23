@@ -2,7 +2,7 @@
  * An executable file that list files in a storage service.
  * Execute with --help to see usage instructions.
  */
-import { ListCommand } from '@awesome-backup/core';
+import { ListCommand } from '@awesome-backup/commands';
 import { PACKAGE_VERSION } from '../config/version';
 
 const listCommand = new ListCommand();

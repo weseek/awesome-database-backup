@@ -1,0 +1,16 @@
+{
+  "extends": "@awesome-backup/tsconfig/tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "baseUrl": "."
+  },
+  "include": [
+    "src",
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "src/public/**",
+    "coverage"
+  ]
+}
