@@ -32,7 +32,7 @@
   },
   "scripts": {
     "build": "turbo run build",
-    "test": "turbo run test",
+    "test": "turbo run test --concurrency=100%",
     "rimraf": "rimraf",
     "clean": "npm run rimraf node_modules/.cache .turbo apps/*/dist packages/*/dist */*/coverage */*/.turbo"
   },
