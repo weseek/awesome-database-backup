@@ -4,17 +4,18 @@ import {
   s3ClientConfig,
   testS3BucketURI,
   cleanTestS3Bucket,
-  uploadFixtureToTestS3Bucket,
+  uploadPGFixtureToTestS3Bucket,
   storageConfig,
   testGCSBucketURI,
   cleanTestGCSBucket,
-  uploadFixtureToTestGCSBucket,
+  uploadPGFixtureToTestGCSBucket,
+  testS3BucketName,
 } from '@awesome-backup/storage-service-test';
 import {
-  testPGName,
   cleanTestPG,
   listTableNamesInTestPG,
   postgresqlConfig,
+  testPGName,
 } from '@awesome-backup/postgresql-test';
 
 const exec = promisify(execOriginal);
@@ -42,21 +43,20 @@ describe('restore', () => {
   });
 
   describe('when valid S3 options are specified', () => {
-    const objectURI = `${testS3BucketURI}/backup-20220402000000.tar.bz2`;
+    const objectURI = `${testS3BucketURI}/${testPGName}.tar.bz2`;
     const commandLine = `PGPASSWORD="password" \
       ${execRestoreCommand} \
       --aws-endpoint-url ${s3ClientConfig.endpoint} \
       --aws-region ${s3ClientConfig.region} \
       --aws-access-key-id ${s3ClientConfig.credentials.accessKeyId} \
       --aws-secret-access-key ${s3ClientConfig.credentials.secretAccessKey} \
-      --restore-tool-options "--host ${postgresqlConfig.host} --username ${postgresqlConfig.user} --port ${postgresqlConfig.port} --dbname ${testPGName}" \
+      --restore-tool-options "--host ${postgresqlConfig.host} --username ${postgresqlConfig.user} --port ${postgresqlConfig.port}" \
       --target-bucket-url ${objectURI}`;
-console.log(commandLine);
 
     beforeEach(cleanTestS3Bucket);
     beforeEach(cleanTestPG);
     beforeEach(async() => {
-      await uploadFixtureToTestS3Bucket('backup-20220402000000.tar.bz2'); // includes 'dummy' table
+      await uploadPGFixtureToTestS3Bucket(testPGName); // includes 'dummy' table
     });
 
     it('restore PostgreSQL in bucket', async() => {
@@ -70,20 +70,19 @@ console.log(commandLine);
   });
 
   describe('when valid GCS options are specified', () => {
-    const objectURI = `${testGCSBucketURI}/backup-20220402000000.tar.bz2`;
+    const objectURI = `${testGCSBucketURI}/${testPGName}.tar.bz2`;
     const commandLine = `PGPASSWORD="password" \
       ${execRestoreCommand} \
       --gcp-endpoint-url ${storageConfig.apiEndpoint} \
       --gcp-project-id ${storageConfig.projectId} \
       --gcp-client-email ${storageConfig.credentials.client_email} \
       --gcp-private-key ${storageConfig.credentials.private_key} \
-      --restore-tool-options "--host ${postgresqlConfig.host} --username ${postgresqlConfig.user} --port ${postgresqlConfig.port} --dbname ${testPGName}" \
+      --restore-tool-options "--host ${postgresqlConfig.host} --username ${postgresqlConfig.user} --port ${postgresqlConfig.port}" \
       --target-bucket-url ${objectURI}`;
-console.log(commandLine);
     beforeEach(cleanTestGCSBucket);
     beforeEach(cleanTestPG);
     beforeEach(async() => {
-      await uploadFixtureToTestGCSBucket('backup-20220402000000.tar.bz2'); // includes 'dummy' table
+      await uploadPGFixtureToTestGCSBucket(testPGName); // includes 'dummy' table
     });
 
     it('restore PostgreSQL in bucket', async() => {

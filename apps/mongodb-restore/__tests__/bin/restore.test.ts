@@ -2,17 +2,19 @@ import { exec as execOriginal } from 'child_process';
 import { promisify } from 'util';
 import {
   s3ClientConfig,
+  testS3BucketURI,
   cleanTestS3Bucket,
-  uploadFixtureToTestS3Bucket,
+  uploadMongoDBFixtureToTestS3Bucket,
   storageConfig,
   testGCSBucketURI,
   cleanTestGCSBucket,
-  uploadFixtureToTestGCSBucket,
+  uploadMongoDBFixtureToTestGCSBucket,
 } from '@awesome-backup/storage-service-test';
 import {
   dropTestMongoDB,
   listCollectionNamesInTestMongoDB,
   mongodbURI,
+  testMongoDBName,
 } from '@awesome-backup/mongodb-test';
 
 const exec = promisify(execOriginal);
@@ -40,8 +42,7 @@ describe('restore', () => {
   });
 
   describe('when valid S3 options are specified', () => {
-    const bucketURI = 's3://test/';
-    const objectURI = `${bucketURI}backup-20220327224212.tar.bz2`;
+    const objectURI = `${testS3BucketURI}/${testMongoDBName}.tar.bz2`;
     const commandLine = `${execRestoreCommand} \
       --aws-endpoint-url ${s3ClientConfig.endpoint} \
       --aws-region ${s3ClientConfig.region} \
@@ -53,7 +54,7 @@ describe('restore', () => {
     beforeEach(cleanTestS3Bucket);
     beforeEach(dropTestMongoDB);
     beforeEach(async() => {
-      await uploadFixtureToTestS3Bucket('backup-20220327224212.tar.bz2'); // includes 'dummy' collection
+      await uploadMongoDBFixtureToTestS3Bucket(testMongoDBName); // includes 'dummy' collection
     });
 
     it('restore mongo in bucket', async() => {
@@ -67,7 +68,7 @@ describe('restore', () => {
   });
 
   describe('when valid GCS options are specified', () => {
-    const objectURI = `${testGCSBucketURI}/backup-20220327224212.tar.bz2`;
+    const objectURI = `${testGCSBucketURI}/${testMongoDBName}.tar.bz2`;
     const commandLine = `${execRestoreCommand} \
       --gcp-endpoint-url ${storageConfig.apiEndpoint} \
       --gcp-project-id ${storageConfig.projectId} \
@@ -79,7 +80,7 @@ describe('restore', () => {
     beforeEach(cleanTestGCSBucket);
     beforeEach(dropTestMongoDB);
     beforeEach(async() => {
-      await uploadFixtureToTestGCSBucket('backup-20220327224212.tar.bz2'); // includes 'dummy' collection
+      await uploadMongoDBFixtureToTestGCSBucket(testMongoDBName); // includes 'dummy' collection
     });
 
     it('restore mongo in bucket', async() => {

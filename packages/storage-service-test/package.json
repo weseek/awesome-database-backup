@@ -18,11 +18,11 @@
   "// Use Typescript as is, so Typescript must be enabled for use with mocks. (ex. enable ts-jest)": "",
   "main": "src/index.ts",
   "dependencies": {
-    "uuid": "^8.3.2"
+    "@awesome-backup/mongodb-test": "^0.0.1",
+    "@awesome-backup/postgresql-test": "^0.0.1"
   },
   "devDependencies": {
     "@aws-sdk/client-s3": "^3.45.0",
-    "@google-cloud/storage": "^5.16.1",
-    "@types/uuid": "^8.3.4"
+    "@google-cloud/storage": "^5.16.1"
   }
 }

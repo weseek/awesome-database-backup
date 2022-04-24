@@ -1,3 +1,4 @@
+import { StorageOptions } from '@google-cloud/storage';
 import { v4 as uuidv4 } from 'uuid';
 
 export const storageConfig = {
@@ -8,7 +9,6 @@ export const storageConfig = {
     private_key: process.env.GCP_PRIVATE_KEY || 'valid_private_key',
   },
 };
-
 export const testGCSBucketName = `test-${uuidv4()}`;
 export const testGCSBucketURI = `gs://${testGCSBucketName}`;
 
