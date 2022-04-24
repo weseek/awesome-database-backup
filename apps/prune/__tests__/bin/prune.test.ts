@@ -1,16 +1,17 @@
 import { exec as execOriginal } from 'child_process';
 import { promisify } from 'util';
 import { format } from 'date-fns';
+import { basename } from 'path';
 import {
   s3ClientConfig,
   testS3BucketURI,
   cleanTestS3Bucket,
-  uploadFixtureToTestS3Bucket,
+  uploadPGFixtureToTestS3Bucket,
   listFileNamesInTestS3Bucket,
   storageConfig,
   testGCSBucketURI,
   cleanTestGCSBucket,
-  uploadFixtureToTestGCSBucket,
+  uploadPGFixtureToTestGCSBucket,
   listFileNamesInTestGCSBucket,
 } from '@awesome-backup/storage-service-test';
 
@@ -53,7 +54,7 @@ describe('prune', () => {
       const backupFileName = `backup-${format(Date.now(), 'yyyyMMddHHmmss')}.tar.bz2`;
 
       beforeEach(async() => {
-        await uploadFixtureToTestS3Bucket('backup-20220327224212.tar.bz2', backupFileName);
+        await uploadPGFixtureToTestS3Bucket(basename(backupFileName, '.tar.bz2'));
       });
 
       it("prune today's files in bucket", async() => {
@@ -82,7 +83,7 @@ describe('prune', () => {
       const backupFileName = `backup-${format(Date.now(), 'yyyyMMddHHmmss')}.tar.bz2`;
 
       beforeEach(async() => {
-        await uploadFixtureToTestGCSBucket('backup-20220327224212.tar.bz2', backupFileName);
+        await uploadPGFixtureToTestGCSBucket(basename(backupFileName, '.tar.bz2'));
       });
 
       it("prune today's files in bucket", async() => {

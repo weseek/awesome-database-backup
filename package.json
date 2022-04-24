@@ -26,13 +26,13 @@
     "ts-node": "^10.4.0",
     "ts-node-dev": "^1.1.8",
     "tsc-alias": "^1.5.0",
-    "turbo": "^1.0.28",
+    "turbo": "^1.2.5",
     "typescript": "^4.5.4",
     "rimraf": "^3.0.2"
   },
   "scripts": {
     "build": "turbo run build",
-    "test": "turbo run test --concurrency=1",
+    "test": "turbo run test --concurrency='100%'",
     "rimraf": "rimraf",
     "clean": "npm run rimraf node_modules/.cache .turbo apps/*/dist packages/*/dist */*/coverage */*/.turbo"
   },

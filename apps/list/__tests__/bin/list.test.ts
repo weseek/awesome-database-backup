@@ -4,11 +4,11 @@ import {
   s3ClientConfig,
   testS3BucketURI,
   cleanTestS3Bucket,
-  uploadFixtureToTestS3Bucket,
+  uploadPGFixtureToTestS3Bucket,
   storageConfig,
   testGCSBucketURI,
   cleanTestGCSBucket,
-  uploadFixtureToTestGCSBucket,
+  uploadPGFixtureToTestGCSBucket,
 } from '@awesome-backup/storage-service-test';
 
 const exec = promisify(execOriginal);
@@ -45,12 +45,12 @@ describe('list', () => {
 
     beforeEach(cleanTestS3Bucket);
     beforeEach(async() => {
-      await uploadFixtureToTestS3Bucket('backup-20220327224212.tar.bz2');
+      await uploadPGFixtureToTestS3Bucket('backup-20220327224212');
     });
 
     it('list files in bucket', async() => {
       expect(await exec(commandLine)).toEqual({
-        stdout: expect.stringContaining('backup-20220327224212.tar.bz2'),
+        stdout: expect.stringContaining('backup-20220327224212'),
         stderr: '',
       });
     });
@@ -66,12 +66,12 @@ describe('list', () => {
 
     beforeEach(cleanTestGCSBucket);
     beforeEach(async() => {
-      await uploadFixtureToTestGCSBucket('backup-20220327224212.tar.bz2');
+      await uploadPGFixtureToTestGCSBucket('backup-20220327224212');
     });
 
     it('list files in bucket', async() => {
       expect(await exec(commandLine)).toEqual({
-        stdout: expect.stringContaining('backup-20220327224212.tar.bz2'),
+        stdout: expect.stringContaining('backup-20220327224212'),
         stderr: '',
       });
     });

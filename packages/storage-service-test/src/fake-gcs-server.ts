@@ -1,5 +1,7 @@
 import { Storage } from '@google-cloud/storage';
-import { fixturePath } from './fixtures';
+import { createPGBackup } from '@awesome-backup/postgresql-test';
+import { createMongoDBBackup } from '@awesome-backup/mongodb-test';
+import { basename } from 'path';
 import { storageConfig, testGCSBucketName } from './config/fake-gcs-server';
 
 const storage = new Storage(storageConfig);
@@ -11,10 +13,24 @@ export async function cleanTestGCSBucket(): Promise<void> {
   await storage.createBucket(testGCSBucketName);
 }
 
-export async function uploadFixtureToTestGCSBucket(fixtureName: string, newFixtureName?: string): Promise<void> {
-  await storage.bucket(testGCSBucketName).upload(fixturePath(fixtureName), {
-    destination: newFixtureName || fixtureName,
-  });
+export async function uploadPGFixtureToTestGCSBucket(fixtureName: string): Promise<void> {
+  const fixturePath = createPGBackup(fixtureName);
+  await storage.bucket(testGCSBucketName).upload(
+    fixturePath,
+    {
+      destination: basename(fixturePath),
+    },
+  );
+}
+
+export async function uploadMongoDBFixtureToTestGCSBucket(fixtureName: string): Promise<void> {
+  const fixturePath = createMongoDBBackup(fixtureName);
+  await storage.bucket(testGCSBucketName).upload(
+    fixturePath,
+    {
+      destination: basename(fixturePath),
+    },
+  );
 }
 
 export async function listFileNamesInTestGCSBucket(): Promise<Array<string>> {
