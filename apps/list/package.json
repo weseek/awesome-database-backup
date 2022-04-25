@@ -18,7 +18,7 @@
   "files": [
     "dist"
   ],
-  "main": "dist/apps/list/src/bin/list.js",
+  "main": "dist/apps/list/src/list.js",
   "bin": {
     "list": "bin/list.js"
   },
