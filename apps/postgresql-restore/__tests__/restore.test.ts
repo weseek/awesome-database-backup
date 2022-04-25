@@ -10,14 +10,14 @@ import {
   uploadFixtureToTestGCSBucket,
 } from '@awesome-backup/storage-service-test';
 import {
-  dropTestMongoDB,
-  listCollectionNamesInTestMongoDB,
-  mongodbURI,
-} from '@awesome-backup/mongodb-test';
+  cleanTestPG,
+  listTableNamesInTestPG,
+  postgresqlConfig,
+} from '@awesome-backup/postgresql-test';
 
 const exec = promisify(execOriginal);
 
-const execRestoreCommand = 'yarn run ts-node src/bin/restore';
+const execRestoreCommand = 'yarn run ts-node src/restore';
 
 describe('restore', () => {
   describe('when option --help is specified', () => {
@@ -41,54 +41,56 @@ describe('restore', () => {
 
   describe('when valid S3 options are specified', () => {
     const bucketURI = 's3://test/';
-    const objectURI = `${bucketURI}backup-20220327224212.tar.bz2`;
-    const commandLine = `${execRestoreCommand} \
+    const objectURI = `${bucketURI}backup-20220402000000.tar.bz2`;
+    const commandLine = `PGPASSWORD="password" \
+      ${execRestoreCommand} \
       --aws-endpoint-url ${s3ClientConfig.endpoint} \
       --aws-region ${s3ClientConfig.region} \
       --aws-access-key-id ${s3ClientConfig.credentials.accessKeyId} \
       --aws-secret-access-key ${s3ClientConfig.credentials.secretAccessKey} \
-      --restore-tool-options "--uri ${mongodbURI}" \
+      --restore-tool-options "--host ${postgresqlConfig.host} --username ${postgresqlConfig.user} --port ${postgresqlConfig.port}" \
       --target-bucket-url ${objectURI}`;
 
     beforeEach(cleanTestS3Bucket);
-    beforeEach(dropTestMongoDB);
+    beforeEach(cleanTestPG);
     beforeEach(async() => {
-      await uploadFixtureToTestS3Bucket('backup-20220327224212.tar.bz2'); // includes 'dummy' collection
+      await uploadFixtureToTestS3Bucket('backup-20220402000000.tar.bz2'); // includes 'dummy' table
     });
 
-    it('restore mongo in bucket', async() => {
-      expect(await listCollectionNamesInTestMongoDB()).toEqual([]);
+    it('restore PostgreSQL in bucket', async() => {
+      expect(await listTableNamesInTestPG()).toEqual([]);
       expect(await exec(commandLine)).toEqual({
         stdout: expect.stringMatching(/=== restore.ts started at .* ===/),
         stderr: '',
       });
-      expect(await listCollectionNamesInTestMongoDB()).toEqual(['dummy']);
+      expect(await listTableNamesInTestPG()).toEqual(['dummy']);
     });
   });
 
   describe('when valid GCS options are specified', () => {
-    const objectURI = `${testGCSBucketURI}/backup-20220327224212.tar.bz2`;
-    const commandLine = `${execRestoreCommand} \
+    const objectURI = `${testGCSBucketURI}/backup-20220402000000.tar.bz2`;
+    const commandLine = `PGPASSWORD="password" \
+      ${execRestoreCommand} \
       --gcp-endpoint-url ${storageConfig.apiEndpoint} \
       --gcp-project-id ${storageConfig.projectId} \
       --gcp-client-email ${storageConfig.credentials.client_email} \
       --gcp-private-key ${storageConfig.credentials.private_key} \
-      --restore-tool-options "--uri ${mongodbURI}" \
+      --restore-tool-options "--host ${postgresqlConfig.host} --username ${postgresqlConfig.user} --port ${postgresqlConfig.port}" \
       --target-bucket-url ${objectURI}`;
 
     beforeEach(cleanTestGCSBucket);
-    beforeEach(dropTestMongoDB);
+    beforeEach(cleanTestPG);
     beforeEach(async() => {
-      await uploadFixtureToTestGCSBucket('backup-20220327224212.tar.bz2'); // includes 'dummy' collection
+      await uploadFixtureToTestGCSBucket('backup-20220402000000.tar.bz2'); // includes 'dummy' table
     });
 
-    it('restore mongo in bucket', async() => {
-      expect(await listCollectionNamesInTestMongoDB()).toEqual([]);
+    it('restore PostgreSQL in bucket', async() => {
+      expect(await listTableNamesInTestPG()).toEqual([]);
       expect(await exec(commandLine)).toEqual({
         stdout: expect.stringMatching(/=== restore.ts started at .* ===/),
         stderr: '',
       });
-      expect(await listCollectionNamesInTestMongoDB()).toEqual(['dummy']);
+      expect(await listTableNamesInTestPG()).toEqual(['dummy']);
     });
   });
 });

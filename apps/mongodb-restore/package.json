@@ -18,7 +18,7 @@
   "files": [
     "dist"
   ],
-  "main": "dist/apps/mongodb-restore/src/bin/restore.js",
+  "main": "dist/apps/mongodb-restore/src/restore.js",
   "bin": {
     "restore": "bin/restore.js"
   },

@@ -5,8 +5,9 @@
  */
 import { exec } from 'child_process';
 import { BackupCommand } from '@awesome-backup/commands';
-import loggerFactory from '../logger/factory';
-import { PACKAGE_VERSION } from '../config/version';
+import loggerFactory from './logger/factory';
+
+const version = require('@awesome-backup/list/package.json').version;
 
 const logger = loggerFactory('postgresql-awesome-backup');
 
@@ -32,7 +33,7 @@ class PostgreSQLBackupCommand extends BackupCommand {
 const backupCommand = new PostgreSQLBackupCommand();
 
 backupCommand
-  .version(PACKAGE_VERSION)
+  .version(version)
   .addBackupOptions()
   .addHelpText('after', `
     TIPS:

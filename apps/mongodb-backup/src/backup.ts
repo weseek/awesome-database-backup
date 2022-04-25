@@ -4,8 +4,9 @@
  */
 import { exec } from 'child_process';
 import { BackupCommand } from '@awesome-backup/commands';
-import loggerFactory from '../logger/factory';
-import { PACKAGE_VERSION } from '../config/version';
+import loggerFactory from './logger/factory';
+
+const version = require('@awesome-backup/list/package.json').version;
 
 const logger = loggerFactory('mongodb-awesome-backup');
 
@@ -31,7 +32,7 @@ class MongoDBBackupCommand extends BackupCommand {
 const backupCommand = new MongoDBBackupCommand();
 
 backupCommand
-  .version(PACKAGE_VERSION)
+  .version(version)
   .addBackupOptions()
   .addHelpText('after', `
     NOTICE:

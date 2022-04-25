@@ -18,7 +18,7 @@
   "files": [
     "dist"
   ],
-  "main": "dist/apps/postgresql-backup/src/bin/backup.js",
+  "main": "dist/apps/postgresql-backup/src/backup.js",
   "bin": {
     "backup": "bin/backup.js"
   },
