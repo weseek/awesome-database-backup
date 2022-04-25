@@ -16,7 +16,7 @@ import {
 
 const exec = promisify(execOriginal);
 
-const execPruneCommand = 'yarn run ts-node src/bin/prune';
+const execPruneCommand = 'yarn run ts-node src/prune';
 
 describe('prune', () => {
   describe('when option --help is specified', () => {

@@ -3,12 +3,13 @@
  * Execute with --help to see usage instructions.
  */
 import { PruneCommand } from '@awesome-backup/commands';
-import { PACKAGE_VERSION } from '../config/version';
+
+const version = require('@awesome-backup/list/package.json').version;
 
 const pruneCommand = new PruneCommand();
 
 pruneCommand
-  .version(PACKAGE_VERSION)
+  .version(version)
   .addPruneOptions()
   .setPruneAction();
 
