@@ -36,4 +36,3 @@ You must change the following environment variables.
 | `MARIADB_PASSWORD` | `BACKUP_TOOL_OPTIONS` or `RESTORE_TOOL_OPTIONS` |
 | `MYSQLDUMP_OPTS` | `BACKUP_TOOL_OPTIONS` |
 | `MYSQL_OPTS` | `RESTORE_TOOL_OPTIONS` |
-
