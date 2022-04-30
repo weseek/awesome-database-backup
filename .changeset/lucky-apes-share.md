@@ -1,0 +1,11 @@
+---
+"@awesome-backup/list": patch
+"@awesome-backup/mongodb-backup": patch
+"@awesome-backup/mongodb-restore": patch
+"@awesome-backup/postgresql-backup": patch
+"@awesome-backup/postgresql-restore": patch
+"@awesome-backup/prune": patch
+---
+
+* Add changesets
+* Detect app version frrom package.json instead of version.ts
