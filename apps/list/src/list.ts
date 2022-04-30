@@ -3,12 +3,13 @@
  * Execute with --help to see usage instructions.
  */
 import { ListCommand } from '@awesome-backup/commands';
-import { PACKAGE_VERSION } from '../config/version';
+
+const version = require('@awesome-backup/list/package.json').version;
 
 const listCommand = new ListCommand();
 
 listCommand
-  .version(PACKAGE_VERSION)
+  .version(version)
   .addListOptions()
   .setListAction();
 

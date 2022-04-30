@@ -4,8 +4,9 @@
  */
 import { exec } from 'child_process';
 import { RestoreCommand } from '@awesome-backup/commands';
-import loggerFactory from '../logger/factory';
-import { PACKAGE_VERSION } from '../config/version';
+import loggerFactory from './logger/factory';
+
+const version = require('@awesome-backup/list/package.json').version;
 
 const logger = loggerFactory('postgresql-awesome-backup');
 
@@ -31,7 +32,7 @@ class PostgreSQLRestoreCommand extends RestoreCommand {
 const restoreCommand = new PostgreSQLRestoreCommand();
 
 restoreCommand
-  .version(PACKAGE_VERSION)
+  .version(version)
   .addRestoreOptions()
   .addHelpText('after', `
     TIPS:

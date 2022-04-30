@@ -4,7 +4,8 @@
  */
 import { exec } from 'child_process';
 import { RestoreCommand } from '@awesome-backup/commands';
-import { PACKAGE_VERSION } from '../config/version';
+
+const version = require('@awesome-backup/list/package.json').version;
 
 class MongoDBRestoreCommand extends RestoreCommand {
 
@@ -27,7 +28,7 @@ class MongoDBRestoreCommand extends RestoreCommand {
 const restoreCommand = new MongoDBRestoreCommand();
 
 restoreCommand
-  .version(PACKAGE_VERSION)
+  .version(version)
   .addRestoreOptions()
   .addHelpText('after', `
     NOTICE:

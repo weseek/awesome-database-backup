@@ -9,15 +9,22 @@ import {
   testGCSBucketURI,
   cleanTestGCSBucket,
   uploadPGFixtureToTestGCSBucket,
+  testS3BucketName,
 } from '@awesome-backup/storage-service-test';
+import {
+  cleanTestPG,
+  listTableNamesInTestPG,
+  postgresqlConfig,
+  testPGName,
+} from '@awesome-backup/postgresql-test';
 
 const exec = promisify(execOriginal);
 
-const execListCommand = 'yarn run ts-node src/bin/list';
+const execRestoreCommand = 'yarn run ts-node src/restore';
 
-describe('list', () => {
+describe('restore', () => {
   describe('when option --help is specified', () => {
-    const commandLine = `${execListCommand} --help`;
+    const commandLine = `${execRestoreCommand} --help`;
     it('show help messages', async() => {
       expect(await exec(commandLine)).toEqual({
         stdout: expect.stringContaining('Usage:'),
@@ -27,7 +34,7 @@ describe('list', () => {
   });
 
   describe('when no option is specified', () => {
-    const commandLine = `${execListCommand}`;
+    const commandLine = `${execRestoreCommand}`;
     it('throw error message', async() => {
       await expect(exec(commandLine)).rejects.toThrowError(
         /required option '--target-bucket-url <TARGET_BUCKET_URL> \*\*MANDATORY\*\*' not specified/,
@@ -36,44 +43,55 @@ describe('list', () => {
   });
 
   describe('when valid S3 options are specified', () => {
-    const commandLine = `${execListCommand} \
+    const objectURI = `${testS3BucketURI}/${testPGName}.tar.bz2`;
+    const commandLine = `PGPASSWORD="password" \
+      ${execRestoreCommand} \
       --aws-endpoint-url ${s3ClientConfig.endpoint} \
       --aws-region ${s3ClientConfig.region} \
       --aws-access-key-id ${s3ClientConfig.credentials.accessKeyId} \
       --aws-secret-access-key ${s3ClientConfig.credentials.secretAccessKey} \
-      --target-bucket-url ${testS3BucketURI}/`;
+      --restore-tool-options "--host ${postgresqlConfig.host} --username ${postgresqlConfig.user} --port ${postgresqlConfig.port}" \
+      --target-bucket-url ${objectURI}`;
 
     beforeEach(cleanTestS3Bucket);
+    beforeEach(cleanTestPG);
     beforeEach(async() => {
-      await uploadPGFixtureToTestS3Bucket('backup-20220327224212');
+      await uploadPGFixtureToTestS3Bucket(testPGName); // includes 'dummy' table
     });
 
-    it('list files in bucket', async() => {
+    it('restore PostgreSQL in bucket', async() => {
+      expect(await listTableNamesInTestPG()).toEqual([]);
       expect(await exec(commandLine)).toEqual({
-        stdout: expect.stringContaining('backup-20220327224212'),
+        stdout: expect.stringMatching(/=== restore.ts started at .* ===/),
         stderr: '',
       });
+      expect(await listTableNamesInTestPG()).toEqual(['dummy']);
     });
   });
 
   describe('when valid GCS options are specified', () => {
-    const commandLine = `${execListCommand} \
+    const objectURI = `${testGCSBucketURI}/${testPGName}.tar.bz2`;
+    const commandLine = `PGPASSWORD="password" \
+      ${execRestoreCommand} \
       --gcp-endpoint-url ${storageConfig.apiEndpoint} \
       --gcp-project-id ${storageConfig.projectId} \
       --gcp-client-email ${storageConfig.credentials.client_email} \
       --gcp-private-key ${storageConfig.credentials.private_key} \
-      --target-bucket-url ${testGCSBucketURI}/`;
-
+      --restore-tool-options "--host ${postgresqlConfig.host} --username ${postgresqlConfig.user} --port ${postgresqlConfig.port}" \
+      --target-bucket-url ${objectURI}`;
     beforeEach(cleanTestGCSBucket);
+    beforeEach(cleanTestPG);
     beforeEach(async() => {
-      await uploadPGFixtureToTestGCSBucket('backup-20220327224212');
+      await uploadPGFixtureToTestGCSBucket(testPGName); // includes 'dummy' table
     });
 
-    it('list files in bucket', async() => {
+    it('restore PostgreSQL in bucket', async() => {
+      expect(await listTableNamesInTestPG()).toEqual([]);
       expect(await exec(commandLine)).toEqual({
-        stdout: expect.stringContaining('backup-20220327224212'),
+        stdout: expect.stringMatching(/=== restore.ts started at .* ===/),
         stderr: '',
       });
+      expect(await listTableNamesInTestPG()).toEqual(['dummy']);
     });
   });
 });
