@@ -8,7 +8,9 @@ import {
   PutObjectCommand,
 } from '@aws-sdk/client-s3';
 import { readFileSync } from 'fs';
-import { fixturePath } from './fixtures';
+import { createPGBackup } from '@awesome-backup/postgresql-test';
+import { createMongoDBBackup } from '@awesome-backup/mongodb-test';
+import { basename } from 'path';
 import { s3ClientConfig, testS3BucketName } from './config/minio';
 
 const s3client = new S3Client(s3ClientConfig);
@@ -26,11 +28,21 @@ export async function cleanTestS3Bucket(): Promise<void> {
   await s3client.send(new CreateBucketCommand({ Bucket: testS3BucketName }));
 }
 
-export async function uploadFixtureToTestS3Bucket(fixtureName: string, newFixtureName?: string): Promise<void> {
+export async function uploadPGFixtureToTestS3Bucket(fixtureName: string): Promise<void> {
+  const fixturePath = createPGBackup(fixtureName);
   await s3client.send(new PutObjectCommand({
     Bucket: testS3BucketName,
-    Key: newFixtureName || fixtureName,
-    Body: readFileSync(fixturePath(fixtureName)),
+    Key: basename(fixturePath),
+    Body: readFileSync(fixturePath),
+  }));
+}
+
+export async function uploadMongoDBFixtureToTestS3Bucket(fixtureName: string): Promise<void> {
+  const fixturePath = createMongoDBBackup(fixtureName);
+  await s3client.send(new PutObjectCommand({
+    Bucket: testS3BucketName,
+    Key: basename(fixturePath),
+    Body: readFileSync(fixturePath),
   }));
 }
 
