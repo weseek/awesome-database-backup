@@ -3,6 +3,11 @@ name: Application test
 on:
   push:
     branches-ignore: [stable]
+    paths-ignore:
+    - '.*'
+    - '!.devcontainer'
+    - docker
+    - README.md
 
 jobs:
   test:

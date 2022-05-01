@@ -3,6 +3,9 @@ name: Container test
 on:
   push:
     branches-ignore: [stable]
+    paths-ignore:
+    - '.*'
+    - README.md
 
 jobs:
   test:

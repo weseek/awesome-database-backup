@@ -3,6 +3,10 @@ name: Application build
 on:
   push:
     branches-ignore: [stable]
+    paths-ignore:
+    - '.*'
+    - docker
+    - README.md
 
 jobs:
   test:

@@ -3,6 +3,11 @@ name: Application lint
 on:
   push:
     branches-ignore: [stable]
+    paths-ignore:
+    - '.*'
+    - '!.eslintrc.js'
+    - docker
+    - README.md
 
 jobs:
   test:
