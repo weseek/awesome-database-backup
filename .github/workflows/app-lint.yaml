@@ -4,10 +4,10 @@ on:
   push:
     branches-ignore: [stable]
     paths-ignore:
-    - '.*'
+    - '.**'
     - '!.eslintrc.js'
-    - docker
-    - README.md
+    - 'docker/**'
+    - '**.md'
 
 jobs:
   test:
