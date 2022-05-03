@@ -9,7 +9,7 @@ const { Bzip2 } = require('compressjs');
 const tar = require('tar');
 const tmp = require('tmp');
 
-// tmp.setGracefulCleanup();
+tmp.setGracefulCleanup();
 
 export const testMongoDBName = `dummy-${uuidv4()}`;
 const client = new MongoClient(mongodbURI);
