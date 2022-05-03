@@ -18,8 +18,10 @@ describe('RestoreCommand', () => {
     copyFile: jest.fn(),
     deleteFile: jest.fn(),
   };
-  // Default mock of restoreDB
+  // Default mock of restoreDB()
   const restoreDBFuncMock = jest.fn().mockReturnValue({ stdout: '', stderr: '' });
+  // Default mock of processBackupFile()
+  const processBackupFileMock = jest.fn().mockResolvedValue('path');
 
   beforeEach(() => {
     jest.resetModules();
@@ -32,20 +34,11 @@ describe('RestoreCommand', () => {
       };
     });
 
-    // Mock tar
-    jest.doMock('@awesome-backup/tar', () => {
-      return {
-        ...(jest.requireActual('@awesome-backup/tar') as any),
-        expandBZIP2: jest.fn().mockReturnValue(''),
-      };
-    });
-
     const restore = require('../../src/commands/restore');
     command = new restore.RestoreCommand();
   });
   afterEach(() => {
     jest.dontMock('universal-bunyan');
-    jest.dontMock('@awesome-backup/tar');
   });
 
   const gcsBareMinumumOptions: IRestoreCommandOption = {
@@ -65,6 +58,7 @@ describe('RestoreCommand', () => {
   describe('restore', () => {
     beforeEach(() => {
       command.restoreDB = restoreDBFuncMock;
+      command.processBackupFile = processBackupFileMock;
     });
 
     describe('when options are valid, but "storageServiceClient" is not set in advance', () => {

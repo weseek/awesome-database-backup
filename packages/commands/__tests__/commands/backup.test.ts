@@ -43,21 +43,12 @@ describe('BackupCommand', () => {
       };
     });
 
-    // Mock tar
-    jest.doMock('@awesome-backup/tar', () => {
-      return {
-        ...(jest.requireActual('@awesome-backup/tar') as any),
-        compressBZIP2: jest.fn().mockReturnValue(''),
-      };
-    });
-
     const backup = require('../../src/commands/backup');
     command = new backup.BackupCommand();
   });
   afterEach(() => {
     jest.dontMock('universal-bunyan');
     jest.dontMock('axios');
-    jest.dontMock('@awesome-backup/tar');
   });
 
   const s3BareMinimumOptions: IBackupCommandOption = {
@@ -66,11 +57,10 @@ describe('BackupCommand', () => {
   };
 
   describe('dumpDB', () => {
-    const destinationPath = 'test-path';
-    const option = '';
+    const option = s3BareMinimumOptions;
 
     it('reject with error', async() => {
-      await expect(command.dumpDB(destinationPath, option))
+      await expect(command.dumpDB(option))
         .rejects
         .toThrowError('Method not implemented.');
     });
