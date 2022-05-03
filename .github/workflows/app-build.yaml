@@ -4,9 +4,9 @@ on:
   push:
     branches-ignore: [stable]
     paths-ignore:
-    - '.**'
-    - 'docker/**'
-    - '**.md'
+    - .**
+    - docker/**
+    - **.md
 
 jobs:
   test:
