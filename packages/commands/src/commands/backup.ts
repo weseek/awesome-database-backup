@@ -1,16 +1,14 @@
 import { format } from 'date-fns';
-import { basename, join } from 'path';
+import { basename } from 'path';
 import { Option } from 'commander';
 import axios from 'axios';
 import axiosRetry from 'axios-retry';
 import { EOL } from 'os';
-import { compressBZIP2 } from '@awesome-backup/tar';
 import { IBackupCommandOption } from './interfaces';
 import { StorageServiceClientCommand } from './common';
 import loggerFactory from '../logger/factory';
 
 const schedule = require('node-schedule');
-const tmp = require('tmp');
 
 const logger = loggerFactory('mongodb-awesome-backup');
 
@@ -25,8 +23,14 @@ const logger = loggerFactory('mongodb-awesome-backup');
 export class BackupCommand extends StorageServiceClientCommand {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async dumpDB(_destinationPath: string, _userSpecifiedOption?: string): Promise<{ stdout: string, stderr: string }> {
+  async dumpDB(_options: IBackupCommandOption): Promise<{ stdout: string, stderr: string, dbDumpFilePath: string }> {
     throw new Error('Method not implemented.');
+  }
+
+  async processDBDumpFile(dbDumpFilePath: string): Promise<string> {
+    // If you want to add compression or other processing to the DB dumped file, override the process.
+    // By default, nothing is done.
+    return dbDumpFilePath;
   }
 
   async execBackupAction(options: IBackupCommandOption): Promise<void> {
@@ -41,16 +45,11 @@ export class BackupCommand extends StorageServiceClientCommand {
 
     logger.info(`=== ${basename(__filename)} started at ${format(Date.now(), 'yyyy/MM/dd HH:mm:ss')} ===`);
 
-    tmp.setGracefulCleanup();
-    const tmpdir = tmp.dirSync({ unsafeCleanup: true });
-    const backupFilePath = join(tmpdir.name, `${options.backupfilePrefix}-${format(Date.now(), 'yyyyMMddHHmmss')}`);
-
-    logger.info(`backup ${backupFilePath}...`);
-    const { stdout, stderr } = await this.dumpDB(backupFilePath, options.backupToolOptions);
+    const { stdout, stderr, dbDumpFilePath } = await this.dumpDB(options);
     if (stdout) stdout.split(EOL).forEach(line => logger.info(line));
     if (stderr) stderr.split(EOL).forEach(line => logger.warn(line));
 
-    const { compressedFilePath } = await compressBZIP2(backupFilePath);
+    const compressedFilePath = await this.processDBDumpFile(dbDumpFilePath);
     await this.storageServiceClient.copyFile(compressedFilePath, options.targetBucketUrl.toString());
 
     await this.processEndOfBackupOnce(options);
