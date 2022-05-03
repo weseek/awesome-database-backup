@@ -8,7 +8,7 @@ import {
   DeleteObjectCommand, DeleteObjectCommandInput,
   ListObjectsCommand, ListObjectsCommandInput,
 } from '@aws-sdk/client-s3';
-import * as internal from 'stream';
+import { promises as StreamPromises, Readable } from 'stream';
 import {
   IStorageServiceClient,
   listS3FilesOptions,
@@ -57,11 +57,9 @@ export class S3StorageServiceClient implements IStorageServiceClient {
     this.client = new S3Client(s3ClientConfig);
   }
 
-  exists(url: string): Promise<boolean> {
-    return new Promise((resolve, reject) => {
-      this.listFiles(url)
-        .then(lists => resolve(lists.length > 0), error => reject(error));
-    });
+  async exists(url: string): Promise<boolean> {
+    const files = await this.listFiles(url);
+    return files.length > 0;
   }
 
   /**
@@ -78,9 +76,9 @@ export class S3StorageServiceClient implements IStorageServiceClient {
    * You can get only object name by setting the "absolutePath" option to false.
    * (If the url is "s3://bucket-name/directory", it will look like ["object-name1", "object-name2"])
    */
-  listFiles(url: string, optionsRequired?: listS3FilesOptions): Promise<string[]> {
+  async listFiles(url: string, optionsRequired?: listS3FilesOptions): Promise<string[]> {
     const parseResult = this._parseFilePath(url);
-    if (parseResult == null) return Promise.reject(new Error(`URI ${url} is not correct S3's`));
+    if (parseResult == null) throw new Error(`URI ${url} is not correct S3's`);
 
     const defaultOption: listS3FilesOptions = {
       includeFolderInList: false,
@@ -89,32 +87,28 @@ export class S3StorageServiceClient implements IStorageServiceClient {
     };
     const options = optionsRequired ? { ...defaultOption, ...optionsRequired } : defaultOption;
     const s3Uri = parseResult as S3URI;
-    const params: ListObjectsCommandInput = {
+
+    const command = new ListObjectsCommand({
       Bucket: s3Uri.bucket,
       Prefix: s3Uri.key,
-    };
-    const command = new ListObjectsCommand(params);
-    return new Promise((resolve, reject) => {
-      this.client.send(command)
-        .then((response) => {
-          if (response == null) return reject(new Error('ListObjectsCommand return null or Contents is null'));
-
-          let files = response.Contents?.map((content: any) => content.Key) || [];
-          if (url.endsWith('/') && !options.includeFolderInList) {
-            const excludeFolderFilter = (filePath: string) => filePath !== s3Uri.key;
-            files = files.filter(excludeFolderFilter);
-          }
-          if (!url.endsWith('/') && options.exactMatch) {
-            const exactMatchFilter = (filePath: string) => filePath === s3Uri.key;
-            files = files.filter(exactMatchFilter);
-          }
-          if (!options.absolutePath) {
-            const relativePathChanger = (filePath: string) => basename(filePath);
-            files = files.map(relativePathChanger);
-          }
-          return resolve(files);
-        }, error => reject(error));
     });
+    const response = await this.client.send(command);
+    if (response == null) throw new Error('ListObjectsCommand return null or Contents is null');
+
+    let files = response.Contents?.map((content: any) => content.Key) || [];
+    if (url.endsWith('/') && !options.includeFolderInList) {
+      const excludeFolderFilter = (filePath: string) => filePath !== s3Uri.key;
+      files = files.filter(excludeFolderFilter);
+    }
+    if (!url.endsWith('/') && options.exactMatch) {
+      const exactMatchFilter = (filePath: string) => filePath === s3Uri.key;
+      files = files.filter(exactMatchFilter);
+    }
+    if (!options.absolutePath) {
+      const relativePathChanger = (filePath: string) => basename(filePath);
+      files = files.map(relativePathChanger);
+    }
+    return files;
   }
 
   /**
@@ -123,20 +117,16 @@ export class S3StorageServiceClient implements IStorageServiceClient {
    * The function will not fail even if the object to be deleted does not exist.
    * Also, when removing a directory, the URL must end with a slash. (ex. 's3://bucket-name/directory/')
    */
-  deleteFile(url: string): Promise<void> {
-    const parseResult = this._parseFilePath(url);
-    if (parseResult == null) return Promise.reject(new Error(`URI ${url} is not correct S3's`));
+  async deleteFile(url: string): Promise<void> {
+    const s3Uri = this._parseFilePath(url);
+    if (s3Uri == null) throw new Error(`URI ${url} is not correct S3's`);
 
-    const s3Uri = parseResult as S3URI;
     const params: DeleteObjectCommandInput = {
       Bucket: s3Uri.bucket,
       Key: s3Uri.key,
     };
     const command = new DeleteObjectCommand(params);
-    return new Promise((resolve, reject) => {
-      this.client.send(command)
-        .then(() => resolve(), error => reject(error));
-    });
+    await this.client.send(command);
   }
 
   /**
@@ -146,7 +136,7 @@ export class S3StorageServiceClient implements IStorageServiceClient {
    * If the copy source is a local file and the copy destination is the URI of S3, the file is uploaded to S3.
    * If the source and destination are S3 URIs, the S3 object will be copied directly.
    */
-  copyFile(copySource: string, copyDestination: string): Promise<void> {
+  async copyFile(copySource: string, copyDestination: string): Promise<void> {
     const parseSourceResult = this._parseFilePath(copySource);
     const parseDestinationResult = this._parseFilePath(copyDestination);
 
@@ -167,10 +157,10 @@ export class S3StorageServiceClient implements IStorageServiceClient {
       return this.copyFileOnRemote(sourceS3Uri, destinationS3Uri);
     }
 
-    return Promise.reject(new Error('At least the copy source or destination must be an S3 endpoint.'));
+    throw new Error('At least the copy source or destination must be an S3 endpoint.');
   }
 
-  uploadFile(sourceFilePath: string, destinationS3Uri: S3URI): Promise<void> {
+  async uploadFile(sourceFilePath: string, destinationS3Uri: S3URI): Promise<void> {
     const params: PutObjectCommandInput = {
       Bucket: destinationS3Uri.bucket,
       Key: (destinationS3Uri.key === '' || destinationS3Uri.key.endsWith('/'))
@@ -179,40 +169,34 @@ export class S3StorageServiceClient implements IStorageServiceClient {
       Body: readFileSync(sourceFilePath),
     };
     const command = new PutObjectCommand(params);
-    return new Promise((resolve, reject) => {
-      this.client.send(command)
-        .then(() => resolve(), error => reject(error));
-    });
+
+    await this.client.send(command);
   }
 
-  downloadFile(sourceS3Uri: S3URI, destinationFilePath: string): Promise<void> {
+  async downloadFile(sourceS3Uri: S3URI, destinationFilePath: string): Promise<void> {
     const params: GetObjectCommandInput = {
       Bucket: sourceS3Uri.bucket,
       Key: sourceS3Uri.key,
     };
     const command = new GetObjectCommand(params);
-    return new Promise((resolve, reject) => {
-      this.client.send(command)
-        .then((response) => {
-          if (response == null) return reject(new Error('GetObjectCommand return null'));
+    const response = await this.client.send(command);
+    if (response == null || response.Body == null) throw new Error('GetObjectCommand return null');
 
-          internal.promises.pipeline(response.Body as internal.Readable, createWriteStream(destinationFilePath))
-            .then(() => resolve(), error => reject(error));
-        }, error => reject(error));
-    });
+    await StreamPromises.pipeline(
+      response.Body as Readable,
+      createWriteStream(destinationFilePath),
+    );
   }
 
-  copyFileOnRemote(sourceS3Uri: S3URI, destinationS3Uri: S3URI): Promise<void> {
+  async copyFileOnRemote(sourceS3Uri: S3URI, destinationS3Uri: S3URI): Promise<void> {
     const params: CopyObjectCommandInput = {
       CopySource: [sourceS3Uri.bucket, sourceS3Uri.key].join('/'),
       Bucket: destinationS3Uri.bucket,
       Key: destinationS3Uri.key,
     };
     const command = new CopyObjectCommand(params);
-    return new Promise((resolve, reject) => {
-      this.client.send(command)
-        .then(() => resolve(), error => reject(error));
-    });
+
+    await this.client.send(command);
   }
 
   /**
