@@ -3,14 +3,16 @@
  * Execute with --help to see usage instructions.
  */
 import { format } from 'date-fns';
-import { exec } from 'child_process';
+import { exec as execOriginal } from 'child_process';
 import { BackupCommand, IBackupCommandOption } from '@awesome-backup/commands';
 import { join } from 'path';
+import { promisify } from 'util';
 import loggerFactory from './logger/factory';
 
 const version = require('@awesome-backup/list/package.json').version;
 const tmp = require('tmp');
 
+const exec = promisify(execOriginal);
 const logger = loggerFactory('postgresql-awesome-backup');
 
 class PostgreSQLBackupCommand extends BackupCommand {
@@ -27,19 +29,9 @@ class PostgreSQLBackupCommand extends BackupCommand {
     const dbDumpFilePath = join(tmpdir.name, `${options.backupfilePrefix}-${format(Date.now(), 'yyyyMMddHHmmss')}.bz2`);
 
     logger.info(`backup ${dbDumpFilePath}...`);
-
     logger.info('dump PostgreSQL...');
-    return new Promise((resolve, reject) => {
-      exec(
-        `pg_dumpall ${options.backupToolOptions} | bzip2 > ${dbDumpFilePath}`,
-        (error, stdout, stderr) => {
-          if (error) {
-            reject(error);
-          }
-          resolve({ stdout, stderr, dbDumpFilePath });
-        },
-      );
-    });
+    const { stdout, stderr } = await exec(`pg_dumpall ${options.backupToolOptions} | bzip2 > ${dbDumpFilePath}`);
+    return { stdout, stderr, dbDumpFilePath };
   }
 
 }

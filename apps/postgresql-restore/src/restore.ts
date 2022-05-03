@@ -2,7 +2,8 @@
  * An executable file that restore for PostgreSQL from a backup in a storage service.
  * Execute with --help to see usage instructions.
  */
-import { exec } from 'child_process';
+import { exec as execOriginal } from 'child_process';
+import { promisify } from 'util';
 import { RestoreCommand } from '@awesome-backup/commands';
 import loggerFactory from './logger/factory';
 
@@ -10,21 +11,12 @@ const version = require('@awesome-backup/list/package.json').version;
 
 const logger = loggerFactory('postgresql-awesome-backup');
 
+const exec = promisify(execOriginal);
 class PostgreSQLRestoreCommand extends RestoreCommand {
 
   async restoreDB(sourcePath: string, userSpecifiedOption?: string): Promise<{ stdout: string, stderr: string }> {
     logger.info('restore PostgreSQL...');
-    return new Promise((resolve, reject) => {
-      exec(
-        `psql --file ${sourcePath} ${userSpecifiedOption}`,
-        (error, stdout, stderr) => {
-          if (error) {
-            reject(error);
-          }
-          resolve({ stdout, stderr });
-        },
-      );
-    });
+    return exec(`psql --file ${sourcePath} ${userSpecifiedOption}`);
   }
 
 }
