@@ -35,7 +35,8 @@
     "@awesome-backup/commands": "^0.0.1",
     "bunyan": "^1.8.15",
     "universal-bunyan": "^0.9.2",
-    "browser-bunyan": "^1.6.3"
+    "browser-bunyan": "^1.6.3",
+    "tmp": "^0.2.1"
   },
   "devDependencies": {
     "@awesome-backup/tsconfig": "^0.0.1",
