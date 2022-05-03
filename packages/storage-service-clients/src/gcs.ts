@@ -49,53 +49,49 @@ export class GCSStorageServiceClient implements IStorageServiceClient {
     this.client = new Storage(storageconfig);
   }
 
-  exists(url: string): Promise<boolean> {
-    return new Promise((resolve, reject) => {
-      this.listFiles(url)
-        .then(lists => resolve(lists.length > 0), error => reject(error));
-    });
+  async exists(url: string): Promise<boolean> {
+    return this
+      .listFiles(url)
+      .then(lists => (lists.length > 0));
   }
 
-  listFiles(url: string, optionsRequired?: listGCSFilesOptions): Promise<string[]> {
+  async listFiles(url: string, optionsRequired?: listGCSFilesOptions): Promise<string[]> {
     const gcsUri = this._parseFilePath(url);
-    if (gcsUri == null) return Promise.reject(new Error(`URI ${url} is not correct GCS's`));
+    if (gcsUri == null) throw new Error(`URI ${url} is not correct GCS's`);
 
     const defaultOption: listGCSFilesOptions = {
       exactMatch: true,
     };
     const options = optionsRequired ? { ...defaultOption, ...optionsRequired } : defaultOption;
 
-    return new Promise((resolve, reject) => {
-      const targetBucket = this.client.bucket(gcsUri.bucket);
-      targetBucket.getFiles({ prefix: gcsUri.filepath })
-        // getFiles() return like "[[File1],[File2],...]", so removed the outermost array
-        .then(([matchedFiles]: File[][]) => {
-          if (matchedFiles == null) return reject(new Error('Bucket#getFiles return null'));
+    const targetBucket = this.client.bucket(gcsUri.bucket);
+    return targetBucket
+      .getFiles({ prefix: gcsUri.filepath }) // getFiles() return like "[[File1],[File2],...]", so removed the outermost array
+      .then(([matchedFiles]: File[][]) => {
+        if (matchedFiles == null) throw new Error('Bucket#getFiles return null');
 
-          let files = matchedFiles;
-          if (!url.endsWith('/')) {
-            const exactFileMatcher = (it: File) => it.name === gcsUri.filepath;
-            const prefixFileMatcher = (it: File) => it.name.startsWith(gcsUri.filepath);
-            files = files.filter(options.exactMatch ? exactFileMatcher : prefixFileMatcher);
-          }
-          const filepaths = files.map(file => file.name);
-          return resolve(filepaths);
-        }, error => reject(error));
-    });
+        let files = matchedFiles;
+        if (!url.endsWith('/')) {
+          const exactFileMatcher = (it: File) => it.name === gcsUri.filepath;
+          const prefixFileMatcher = (it: File) => it.name.startsWith(gcsUri.filepath);
+          files = files.filter(options.exactMatch ? exactFileMatcher : prefixFileMatcher);
+        }
+        const filepaths = files.map(file => file.name);
+        return filepaths;
+      });
   }
 
-  deleteFile(url: string): Promise<void> {
+  async deleteFile(url: string): Promise<void> {
     const gcsUri = this._parseFilePath(url);
-    if (gcsUri == null) return Promise.reject(new Error(`URI ${url} is not correct GCS's`));
+    if (gcsUri == null) throw new Error(`URI ${url} is not correct GCS's`);
 
-    return new Promise((resolve, reject) => {
-      const deleteTargetFile = this.client.bucket(gcsUri.bucket).file(gcsUri.filepath);
-      deleteTargetFile.delete()
-        .then(() => resolve(), error => reject(error));
-    });
+    const deleteTargetFile = this.client.bucket(gcsUri.bucket).file(gcsUri.filepath);
+    return deleteTargetFile
+      .delete()
+      .then(() => undefined);
   }
 
-  copyFile(copySource: string, copyDestination: string): Promise<void> {
+  async copyFile(copySource: string, copyDestination: string): Promise<void> {
     const parseSourceResult = this._parseFilePath(copySource);
     const parseDestinationResult = this._parseFilePath(copyDestination);
 
@@ -116,36 +112,36 @@ export class GCSStorageServiceClient implements IStorageServiceClient {
       return this.copyFileOnRemote(sourceGCSUri, destinationGCSUri);
     }
 
-    return Promise.reject(new Error('At least the copy source or destination must be an GCS endpoint.'));
+    throw new Error('At least the copy source or destination must be an GCS endpoint.');
   }
 
-  uploadFile(sourceFilePath: string, destinationGCSUri: GCSURI): Promise<void> {
-    return new Promise((resolve, reject) => {
-      const destinationBucket = this.client.bucket(destinationGCSUri.bucket);
-      const destination = join(destinationGCSUri.filepath, basename(sourceFilePath));
-      destinationBucket.upload(sourceFilePath, { destination })
-        .then(() => resolve(), error => reject(error));
-    });
+  async uploadFile(sourceFilePath: string, destinationGCSUri: GCSURI): Promise<void> {
+    const destinationBucket = this.client.bucket(destinationGCSUri.bucket);
+    const destination = join(destinationGCSUri.filepath, basename(sourceFilePath));
+
+    return destinationBucket
+      .upload(sourceFilePath, { destination })
+      .then(() => undefined);
   }
 
-  downloadFile(sourceGCSUri: GCSURI, destinationFilePath: string): Promise<void> {
-    return new Promise((resolve, reject) => {
-      const sourceFile = this.client.bucket(sourceGCSUri.bucket).file(sourceGCSUri.filepath);
-      const options = {
-        destination: destinationFilePath,
-      };
-      sourceFile.download(options)
-        .then(() => resolve(), error => reject(error));
-    });
+  async downloadFile(sourceGCSUri: GCSURI, destinationFilePath: string): Promise<void> {
+    const sourceFile = this.client.bucket(sourceGCSUri.bucket).file(sourceGCSUri.filepath);
+    const options = {
+      destination: destinationFilePath,
+    };
+
+    return sourceFile
+      .download(options)
+      .then(() => undefined);
   }
 
-  copyFileOnRemote(sourceGCSUri: GCSURI, destinationGCSUri: GCSURI): Promise<void> {
-    return new Promise((resolve, reject) => {
-      const sourceFile = this.client.bucket(sourceGCSUri.bucket).file(sourceGCSUri.filepath);
-      const destinationFile = this.client.bucket(destinationGCSUri.bucket).file(destinationGCSUri.filepath);
-      sourceFile.copy(destinationFile)
-        .then(() => resolve(), error => reject(error));
-    });
+  async copyFileOnRemote(sourceGCSUri: GCSURI, destinationGCSUri: GCSURI): Promise<void> {
+    const sourceFile = this.client.bucket(sourceGCSUri.bucket).file(sourceGCSUri.filepath);
+    const destinationFile = this.client.bucket(destinationGCSUri.bucket).file(destinationGCSUri.filepath);
+
+    return sourceFile
+      .copy(destinationFile)
+      .then(() => undefined);
   }
 
   /**
