@@ -1,16 +1,14 @@
 import { format } from 'date-fns';
-import { basename, join } from 'path';
+import { basename } from 'path';
 import { Option } from 'commander';
 import axios from 'axios';
 import axiosRetry from 'axios-retry';
 import { EOL } from 'os';
-import { compressBZIP2 } from '@awesome-backup/tar';
 import { IBackupCommandOption } from './interfaces';
 import { StorageServiceClientCommand } from './common';
 import loggerFactory from '../logger/factory';
 
 const schedule = require('node-schedule');
-const tmp = require('tmp');
 
 const logger = loggerFactory('mongodb-awesome-backup');
 
