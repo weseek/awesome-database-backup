@@ -13,7 +13,7 @@ const version = require('@awesome-backup/list/package.json').version;
 const tmp = require('tmp');
 
 const exec = promisify(execOriginal);
-const logger = loggerFactory('mongodb-awesome-backup');
+const logger = loggerFactory('mongodb-backup');
 
 class MongoDBBackupCommand extends BackupCommand {
 

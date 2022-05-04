@@ -9,9 +9,10 @@ import loggerFactory from './logger/factory';
 
 const version = require('@awesome-backup/list/package.json').version;
 
-const logger = loggerFactory('postgresql-awesome-backup');
+const logger = loggerFactory('postgresql-restore');
 
 const exec = promisify(execOriginal);
+
 class PostgreSQLRestoreCommand extends RestoreCommand {
 
   async restoreDB(sourcePath: string, userSpecifiedOption?: string): Promise<{ stdout: string, stderr: string }> {

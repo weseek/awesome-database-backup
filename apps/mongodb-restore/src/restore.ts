@@ -5,14 +5,18 @@
 import { exec as execOriginal } from 'child_process';
 import { promisify } from 'util';
 import { RestoreCommand } from '@awesome-backup/commands';
+import loggerFactory from './logger/factory';
 
 const version = require('@awesome-backup/list/package.json').version;
+
+const logger = loggerFactory('mongodb-restore');
 
 const exec = promisify(execOriginal);
 
 class MongoDBRestoreCommand extends RestoreCommand {
 
   async restoreDB(sourcePath: string, userSpecifiedOption?: string): Promise<{ stdout: string; stderr: string; }> {
+    logger.info('restore MongoDB...');
     return exec(`mongorestore ${sourcePath} ${userSpecifiedOption}`);
   }
 
