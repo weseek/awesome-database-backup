@@ -1,4 +1,4 @@
-name: Release - Make next PR
+name: Release - Create PR to bump up version
 
 on:
   push:
@@ -9,7 +9,7 @@ concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
   release:
-    name: Make next PR
+    name: Create PR to bump up version and add changelog of all of packages
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -18,9 +18,12 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16.x
+          cache: "yarn"
       - run: yarn install
       - name: Run changeset version
         uses: changesets/action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          version: yarn changeset version
+          version: |
+            yarn build --scope="@awesome-backup/custom-changelog"
+            yarn run changeset version

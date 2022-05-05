@@ -1,9 +1,8 @@
 # ignore all node_modules
 node_modules
-# ignore all package artifacts except "custom-changelog"
+# ignore all package artifacts
 /apps/*/dist
 /packages/*/dist
-!/packages/custom-changelog/dist
 # ignore all coverage reports
 /apps/*/coverage
 /packages/*/coverage
