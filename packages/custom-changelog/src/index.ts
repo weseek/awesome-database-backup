@@ -2,6 +2,88 @@
 import { ChangelogFunctions } from '@changesets/types';
 import { getInfo, getInfoFromPullRequest } from '@changesets/get-github-info';
 
+type MetaFromPR = {
+  user: string | null,
+  commit: string | null
+}
+type MetaFromCommit = {
+  user: string | null,
+  pull: number | null
+}
+type Meta = {
+  pull: number | null,
+  commit: string | null,
+  users: Array<string> | null,
+}
+
+function replaceMeta(summary: string) {
+  const meta: Meta = {
+    pull: null,
+    commit: null,
+    users: null,
+  };
+  const replacedSummary = summary
+    .replace(/^\s*(?:pr|pull|pull\s+request):\s*#?(\d+)/im, (_, pr) => {
+      const num = Number(pr);
+      if (!Number.isNaN(num)) meta.pull = num;
+      return '';
+    })
+    .replace(/^\s*commit:\s*([^\s]+)/im, (_, commit) => {
+      meta.commit = commit;
+      return '';
+    })
+    .replace(/^\s*(?:author|user):\s*@?([^\s]+)/gim, (_, user) => {
+      meta.users = meta.users || [];
+      meta.users.push(user);
+      return '';
+    })
+    .trim();
+
+  return {
+    meta,
+    summary: replacedSummary,
+  };
+}
+
+async function getMetaFromGitHub(repo: string, meta: Meta, changesetCommit: string | undefined) {
+  let metaFromPR: MetaFromPR = {
+    user: null,
+    commit: null,
+  };
+  let metaFromCommit: MetaFromCommit = {
+    user: null,
+    pull: null,
+  };
+
+  if (meta.pull) {
+    const { user, commit } = await getInfoFromPullRequest({
+      repo,
+      pull: meta.pull,
+    });
+    metaFromPR = {
+      user,
+      commit,
+    };
+  }
+  else {
+    const commit = meta.commit || changesetCommit;
+    if (commit) {
+      const { user, pull } = await getInfo({
+        repo,
+        commit,
+      });
+      metaFromCommit = {
+        user,
+        pull,
+      };
+    }
+  }
+  return {
+    metaFromPR,
+    metaFromCommit,
+  };
+}
+
 const changelogFunctions: ChangelogFunctions = {
 
   /*
@@ -78,74 +160,26 @@ const changelogFunctions: ChangelogFunctions = {
       );
     }
 
-    /* Get metadata from "changeset.summary", and delete the got metadata from "changeset.summary" */
-    const metaFromSummary: { pull: number | null, commit: string | null, users: Array<string> | null } = {
-      pull: null,
-      commit: null,
-      users: null,
-    };
-    const replacedChangelog = changeset.summary
-      .replace(/^\s*(?:pr|pull|pull\s+request):\s*#?(\d+)/im, (_, pr) => {
-        const num = Number(pr);
-        if (!Number.isNaN(num)) metaFromSummary.pull = num;
-        return '';
-      })
-      .replace(/^\s*commit:\s*([^\s]+)/im, (_, commit) => {
-        metaFromSummary.commit = commit;
-        return '';
-      })
-      .replace(/^\s*(?:author|user):\s*@?([^\s]+)/gim, (_, user) => {
-        metaFromSummary.users = metaFromSummary.users || [];
-        metaFromSummary.users.push(user);
-        return '';
-      })
-      .trim();
+    const { meta: metaFromSummary, summary: replacedSummary } = replaceMeta(changeset.summary);
+    const { metaFromPR, metaFromCommit } = await getMetaFromGitHub(options.repo, metaFromSummary, changeset.commit);
 
-    /* Get metadata from GitHub API */
-    let metaFromPR: { user: string | null, commit: string | null } = { user: null, commit: null };
-    let metaFromCommit: { user: string | null, pull: number | null } = { user: null, pull: null };
-    await (async() => {
-      if (metaFromSummary.pull) {
-        const { user, commit } = await getInfoFromPullRequest({
-          repo: options.repo,
-          pull: metaFromSummary.pull,
-        });
-        metaFromPR = {
-          user,
-          commit,
-        };
-      }
-      else {
-        const commit = metaFromSummary.commit || changeset.commit;
-        if (commit) {
-          const { user, pull } = await getInfo({
-            repo: options.repo,
-            commit,
-          });
-          metaFromCommit = {
-            user,
-            pull,
-          };
-        }
-      }
-    })();
-
-    const ignoredUsers = ['dependabot'];
+    const ignoreUsersFilter = ((it: any) => it != null && (options.ignoreUsers && options.ignoreUsers.indexOf(it) === -1));
     const meta = {
       pull: metaFromSummary.pull || metaFromCommit.pull,
       commit: metaFromSummary.commit || metaFromPR.commit || changeset.commit,
       users: [metaFromSummary.users || metaFromPR.user || metaFromCommit.user]
         .flat()
-        .filter(it => it != null && ignoredUsers.indexOf(it) === -1),
+        .filter(ignoreUsersFilter),
     };
+
+    const [firstLine, ...followLines] = replacedSummary
+      .split('\n')
+      .map(l => l.trimEnd());
     const links = {
       pull: meta.pull ? `[#${meta.pull}](https://github.com/${options.repo}/pull/${meta.pull})` : null,
       commit: meta.commit ? `[\`${meta.commit}\`](https://github.com/${options.repo}/commit/${meta.commit})` : null,
       users: meta.users.map(it => `[@${it}](https://github.com/${it})`).join(', '),
     };
-    const [firstLine, ...followLines] = replacedChangelog
-      .split('\n')
-      .map(l => l.trimEnd());
     const newFirstLine = [
       links.pull,
       !links.pull ? links.commit : null,
