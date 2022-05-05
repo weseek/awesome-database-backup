@@ -111,7 +111,7 @@ export async function getMetaFromCommit(owner: string, repo: string, commitID: s
     repo,
     ref: commitID,
   });
-  const commitAuthor = commit.data.author?.name || null;
+  const commitAuthor = commit.data.author?.login || null;
 
   let latestMergedPRNumber = null;
   if (options.withRelatedPullRequest) {
