@@ -1,10 +1,15 @@
+# ignore all node_modules
 node_modules
-/packages/*/dist
-/packages/*/coverage
+# ignore all package artifacts except "custom-changelog"
 /apps/*/dist
+/packages/*/dist
+!/packages/custom-changelog/dist
+# ignore all coverage reports
 /apps/*/coverage
+/packages/*/coverage
+# ignore logs
 yarn-error.log
 
-# Turborepo
+# ignore files related to Turborepo
 .turbo
 *-profile.json
