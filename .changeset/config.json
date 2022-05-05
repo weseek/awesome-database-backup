@@ -1,6 +1,6 @@
 {
   "$schema": "https://unpkg.com/@changesets/config@2.0.0/schema.json",
-  "changelog": "@changesets/cli/changelog",
+  "changelog": ["@awesome-backup/custom-changelog", { "repo": "ryu-sato/awesome-backup" }],
   "commit": false,
   "fixed": [],
   "linked": [],
