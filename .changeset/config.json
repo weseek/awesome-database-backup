@@ -56,7 +56,8 @@
     ]
   }],
   "commit": false,
-  "fixed": [],
+  "// Bump up the version of all packages uniformly": null,
+  "fixed": [["@awesome-backup/*"]],
   "linked": [],
   "access": "restricted",
   "baseBranch": "master",
