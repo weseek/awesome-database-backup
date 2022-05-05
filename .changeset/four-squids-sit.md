@@ -2,4 +2,4 @@
 
 ---
 
-🧰Bump actions/setup-node from 2 to 3
+Bump actions/setup-node from 2 to 3

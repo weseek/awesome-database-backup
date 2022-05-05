@@ -2,4 +2,4 @@
 
 ---
 
-🧰Support/set paths in workflows
+Support/set paths in workflows
