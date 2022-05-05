@@ -20,10 +20,8 @@ jobs:
           node-version: 16.x
           cache: "yarn"
       - run: yarn install
-      - name: Build "@awesome-backup/custom-changelog"
-        run: yarn build --scope="@awesome-backup/custom-changelog"
       - name: Run changeset version
         uses: changesets/action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          version: yarn run changeset version
+          version: yarn bump:version
