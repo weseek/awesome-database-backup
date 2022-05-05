@@ -130,10 +130,13 @@ const changelogFunctions: ChangelogFunctions = {
       }
     })();
 
+    const ignoredUsers = ['dependabot'];
     const meta = {
       pull: metaFromSummary.pull || metaFromCommit.pull,
       commit: metaFromSummary.commit || metaFromPR.commit || changeset.commit,
-      users: [metaFromSummary.users || metaFromPR.user || metaFromCommit.user].flat(),
+      users: [metaFromSummary.users || metaFromPR.user || metaFromCommit.user]
+        .flat()
+        .filter(it => it != null && ignoredUsers.indexOf(it) === -1),
     };
     const links = {
       pull: meta.pull ? `[#${meta.pull}](https://github.com/${options.repo}/pull/${meta.pull})` : null,
