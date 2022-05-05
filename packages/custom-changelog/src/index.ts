@@ -6,7 +6,7 @@ import { Category, prefixSummary } from './category';
 type Options = {
   owner: string,
   repo: string,
-  ignoreUsers?: Array<string>,
+  noThanksUsers?: Array<string>,
   categories?: Array<Category>,
 }
 
@@ -102,7 +102,7 @@ const changelogFunctions: ChangelogFunctions = {
       ? await getMetaFromCommit(options.owner, options.repo, commitID, { withRelatedPullRequest: true })
       : null;
 
-    const ignoreUsersFilter = ((it: any) => it != null && (options.ignoreUsers && options.ignoreUsers.indexOf(it) === -1));
+    const ignoreUsersFilter = ((it: any) => it != null && (options.noThanksUsers && options.noThanksUsers.indexOf(it) === -1));
     const meta = {
       pull: metaFromSummary.pull || metaFromCommit?.pull,
       commit: metaFromSummary.commit || metaFromPR?.commit || changeset.commit,
