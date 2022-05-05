@@ -1,107 +1,36 @@
 /* eslint-disable max-len */
 import { ChangelogFunctions } from '@changesets/types';
-import { getInfo, getInfoFromPullRequest } from '@changesets/get-github-info';
+import { getMetaFromCommit, getMetaFromPullRequest, replaceMeta } from './meta';
 
-const RegexParser = require('regex-parser');
-
-type MetaFromPR = {
-  user: string | null,
-  commit: string | null
+type Category = {
+  title: string,
+  summary: Array<string>,
 }
-type MetaFromCommit = {
-  user: string | null,
-  pull: number | null
-}
-type Meta = {
-  pull: number | null,
-  commit: string | null,
-  users: Array<string> | null,
+type Options = {
+  owner: string,
+  repo: string,
+  ignoreUsers?: Array<string>,
+  categories?: Array<Category>,
 }
 
-function replaceMeta(summary: string) {
-  const meta: Meta = {
-    pull: null,
-    commit: null,
-    users: null,
-  };
-  const processors = [
-    /* Get Pull Request's info */
-    {
-      pattern: '/^\\s*(?:pr|pull|pull\\s+request):\\s*#?(\\d+)/im',
-      process: (_: string, pr: string) => {
-        const num = Number(pr);
-        if (!Number.isNaN(num)) meta.pull = num;
-        return '';
-      },
-    },
-    /* Get Commit info */
-    {
-      pattern: '/^\\s*commit:\\s*([^\\s]+)/im',
-      process: (_: string, commit: string) => {
-        meta.commit = commit;
-        return '';
-      },
-    },
-    /* Get users info */
-    {
-      pattern: '/^\\s*(?:author|user):\\s*@?([^\\s]+)/gim',
-      process: (_: string, user: string) => {
-        meta.users = meta.users || [];
-        meta.users.push(user);
-        return '';
-      },
-    },
-  ];
+const prLink = (owner: string, repo: string, pull: number) => `[#${pull}](https://github.com/${owner}/${repo}/pull/${pull})`;
+const commitLink = (owner: string, repo: string, commit: string) => `[\`${commit}\`](https://github.com/${owner}/${repo}/commit/${commit})`;
+const userLink = (user: string | null) => (user ? `[@${user}](https://github.com/${user})` : '');
 
-  let replacedSummary = summary;
-  processors.forEach((p) => {
-    replacedSummary = replacedSummary.replace(RegexParser(p.pattern), p.process);
-  });
-  replacedSummary = replacedSummary.trim();
-
-  return {
-    meta,
-    summary: replacedSummary,
-  };
-}
-
-async function getMetaFromGitHub(repo: string, meta: Meta, changesetCommit: string | undefined) {
-  let metaFromPR: MetaFromPR = {
-    user: null,
-    commit: null,
-  };
-  let metaFromCommit: MetaFromCommit = {
-    user: null,
-    pull: null,
-  };
-
-  if (meta.pull) {
-    const { user, commit } = await getInfoFromPullRequest({
-      repo,
-      pull: meta.pull,
-    });
-    metaFromPR = {
-      user,
-      commit,
-    };
+function assertRequiredOptionPresence(options: Record<string, any> | null) {
+  if (!process.env.GITHUB_TOKEN) {
+    throw new Error(
+      'Please create a GitHub personal access token at https://github.com/settings/tokens/new'
+      + ' and add it as the GITHUB_TOKEN environment variable',
+    );
   }
-  else {
-    const commit = meta.commit || changesetCommit;
-    if (commit) {
-      const { user, pull } = await getInfo({
-        repo,
-        commit,
-      });
-      metaFromCommit = {
-        user,
-        pull,
-      };
-    }
+
+  if (!options?.owner || !options?.repo) {
+    throw new Error(
+      'Please provide a owner and repo to this changelog generator like this:\n'
+      + '"changelog": ["@changesets/changelog-github", { "owner": "org", "repo": "repo" }]',
+    );
   }
-  return {
-    metaFromPR,
-    metaFromCommit,
-  };
 }
 
 const changelogFunctions: ChangelogFunctions = {
@@ -123,36 +52,26 @@ const changelogFunctions: ChangelogFunctions = {
   getDependencyReleaseLine: async(
       changesets,
       dependenciesUpdated,
-      options,
+      dangerOptions,
   ) => {
-    if (!options.repo) {
-      throw new Error(
-        'Please provide a repo to this changelog generator like this:\n"changelog": ["@changesets/changelog-github", { "repo": "org/repo" }]',
-      );
-    }
     if (dependenciesUpdated.length === 0) return '';
 
-    const changesetLink = `- Updated dependencies [${(
-      await Promise.all(
-        changesets.map(async(cs) => {
-          if (cs.commit) {
-            const { links } = await getInfo({
-              repo: options.repo,
-              commit: cs.commit,
-            });
-            return links.commit;
-          }
-        }),
-      )
-    )
-      .filter(_ => _)
-      .join(', ')}]:`;
+    assertRequiredOptionPresence(dangerOptions);
+    const options: Options = dangerOptions as Options;
 
-    const updatedDepenenciesList = dependenciesUpdated.map(
-      dependency => `  - ${dependency.name}@${dependency.newVersion}`,
-    );
+    const commitLinks = changesets
+      .filter(cs => cs.commit != null)
+      .map(cs => commitLink(options.owner, options.repo, cs.commit as string));
 
-    return [changesetLink, ...updatedDepenenciesList].join('\n');
+    const dependencyReleaseLines = [
+      `- Updated dependencies [${commitLinks.join(', ')}]`,
+      ...(dependenciesUpdated.map((dependency) => {
+        return `  - ${dependency.name}@${dependency.newVersion}`;
+      })),
+    ]
+      .join('\n');
+
+    return dependencyReleaseLines;
   },
 
   /*
@@ -172,37 +91,35 @@ const changelogFunctions: ChangelogFunctions = {
   getReleaseLine: async(
       changeset,
       type,
-      options,
+      dangerOptions,
   ) => {
-    if (!options || !options.repo) {
-      throw new Error(
-        'Please provide a repo to this changelog generator like this:\n"changelog": ["@changesets/changelog-github", { "repo": "org/repo" }]',
-      );
-    }
+    assertRequiredOptionPresence(dangerOptions);
+    const options: Options = dangerOptions as Options;
 
     const { meta: metaFromSummary, summary: replacedSummary } = replaceMeta(changeset.summary);
-    const { metaFromPR, metaFromCommit } = await getMetaFromGitHub(options.repo, metaFromSummary, changeset.commit);
+    const metaFromPR = metaFromSummary.pull
+      ? await getMetaFromPullRequest(options.owner, options.repo, metaFromSummary.pull)
+      : null;
+    const commitID = metaFromSummary.commit || changeset.commit;
+    const metaFromCommit = commitID
+      ? await getMetaFromCommit(options.owner, options.repo, commitID, { withRelatedPullRequest: true })
+      : null;
 
     const ignoreUsersFilter = ((it: any) => it != null && (options.ignoreUsers && options.ignoreUsers.indexOf(it) === -1));
     const meta = {
-      pull: metaFromSummary.pull || metaFromCommit.pull,
-      commit: metaFromSummary.commit || metaFromPR.commit || changeset.commit,
-      users: [metaFromSummary.users || metaFromPR.user || metaFromCommit.user]
-        .flat()
-        .filter(ignoreUsersFilter),
+      pull: metaFromSummary.pull || metaFromCommit?.pull,
+      commit: metaFromSummary.commit || metaFromPR?.commit || changeset.commit,
+      users: [metaFromSummary.users || metaFromPR?.user || metaFromCommit?.user].flat().filter(ignoreUsersFilter),
     };
 
     const [firstLine, ...followLines] = replacedSummary
       .split('\n')
       .map(l => l.trimEnd());
-    const prLink = (repo: string, pull: number) => `[#${pull}](https://github.com/${repo}/pull/${pull})`;
-    const commitLink = (repo: string, commit: string) => `[\`${commit}\`](https://github.com/${repo}/commit/${commit})`;
-    const userLink = (user: string | null) => (user ? `[@${user}](https://github.com/${user})` : '');
     const newFirstLine = [
       firstLine,
-      meta.pull ? `(${prLink(options.repo, meta.pull)})` : null,
-      (!meta.pull && meta.commit) ? `[${commitLink(options.repo, meta.commit)}]` : null,
-      meta.users.length > 0 ? `Thanks ${meta.users.map(it => userLink(it)).join(', ')}!` : null,
+      meta.pull ? `(${prLink(options.owner, options.repo, meta.pull)})` : null,
+      (!meta.pull && meta.commit) ? `[${commitLink(options.owner, options.repo, meta.commit)}]` : null,
+      meta.users.length > 0 ? `Thanks ${meta.users.map(it => userLink(it as string)).join(', ')}!` : null,
     ]
       .filter(it => it != null)
       .join(' ');

@@ -1,6 +1,40 @@
 {
   "$schema": "https://unpkg.com/@changesets/config@2.0.0/schema.json",
-  "changelog": ["@awesome-backup/custom-changelog", { "repo": "ryu-sato/awesome-backup" }],
+  "changelog": ["@awesome-backup/custom-changelog", {
+    "owner": "ryu-sato",
+    "repo": "awesome-backup",
+    "ignoreUsers": ["dependabot"],
+    "categories": [
+      {
+        "title": "💎 Features - ",
+        "summary": [
+          "/^feat/i"
+        ]
+      },
+      {
+        "title": "🚀 Improvement - ",
+        "summary": [
+          "/^imprv/i"
+        ]
+      },
+      {
+        "title": "🐛 Bug Fixes - ",
+        "summary": [
+          "/^fix/i"
+        ]
+      },
+      {
+        "title": "🧰 Maintenance - ",
+        "summary": [
+          "/^support/i",
+          "/^chore/i",
+          "/^ci/i",
+          "/^docs/i",
+          "/^test/i"
+        ]
+      }
+    ]
+  }],
   "commit": false,
   "fixed": [],
   "linked": [],
