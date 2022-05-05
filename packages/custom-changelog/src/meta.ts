@@ -106,21 +106,26 @@ export async function getMetaFromCommit(owner: string, repo: string, commitID: s
     auth: process.env.GITHUB_TOKEN,
   });
 
+  let commitAuthorOrPRCreator = null;
   const commit = await octokit.rest.repos.getCommit({
     owner,
     repo,
     ref: commitID,
   });
-  const commitAuthor = commit.data.author?.login || null;
+  commitAuthorOrPRCreator = commit.data.author?.login || null;
 
   let latestMergedPRNumber = null;
   if (options.withRelatedPullRequest) {
     const pull = await getLatestMergedPRAssociatedWithCommit(owner, repo, commitID);
+
     latestMergedPRNumber = pull?.number || null;
+    if (pull?.user?.login) {
+      commitAuthorOrPRCreator = pull.user.login;
+    }
   }
 
   return {
     pull: latestMergedPRNumber,
-    user: commitAuthor,
+    user: commitAuthorOrPRCreator,
   };
 }

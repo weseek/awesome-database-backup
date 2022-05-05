@@ -3,7 +3,7 @@
   "changelog": ["@awesome-backup/custom-changelog", {
     "owner": "ryu-sato",
     "repo": "awesome-backup",
-    "noThanksUsers": ["dependabot"],
+    "noThanksUsers": ["dependabot[bot]"],
     "categories": [
       {
         "text": "BREAKING CHANGES",
