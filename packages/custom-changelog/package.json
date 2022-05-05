@@ -27,10 +27,11 @@
     "lint:fix": "eslint src --ext .ts --fix"
   },
   "dependencies": {
-    "@changesets/get-github-info": "^0.5.0"
+    "@changesets/get-github-info": "^0.5.0",
+    "regex-parser": "^2.2.11"
   },
   "devDependencies": {
-    "@awesome-backup/tsconfig": "^0.0.2",
+    "@awesome-backup/tsconfig": "^0.0.1",
     "@changesets/types": "^5.0.0"
   },
   "engines": {

@@ -2,6 +2,8 @@
 import { ChangelogFunctions } from '@changesets/types';
 import { getInfo, getInfoFromPullRequest } from '@changesets/get-github-info';
 
+const RegexParser = require('regex-parser');
+
 type MetaFromPR = {
   user: string | null,
   commit: string | null
@@ -22,22 +24,40 @@ function replaceMeta(summary: string) {
     commit: null,
     users: null,
   };
-  const replacedSummary = summary
-    .replace(/^\s*(?:pr|pull|pull\s+request):\s*#?(\d+)/im, (_, pr) => {
-      const num = Number(pr);
-      if (!Number.isNaN(num)) meta.pull = num;
-      return '';
-    })
-    .replace(/^\s*commit:\s*([^\s]+)/im, (_, commit) => {
-      meta.commit = commit;
-      return '';
-    })
-    .replace(/^\s*(?:author|user):\s*@?([^\s]+)/gim, (_, user) => {
-      meta.users = meta.users || [];
-      meta.users.push(user);
-      return '';
-    })
-    .trim();
+  const processors = [
+    /* Get Pull Request's info */
+    {
+      pattern: '/^\\s*(?:pr|pull|pull\\s+request):\\s*#?(\\d+)/im',
+      process: (_: string, pr: string) => {
+        const num = Number(pr);
+        if (!Number.isNaN(num)) meta.pull = num;
+        return '';
+      },
+    },
+    /* Get Commit info */
+    {
+      pattern: '/^\\s*commit:\\s*([^\\s]+)/im',
+      process: (_: string, commit: string) => {
+        meta.commit = commit;
+        return '';
+      },
+    },
+    /* Get users info */
+    {
+      pattern: '/^\\s*(?:author|user):\\s*@?([^\\s]+)/gim',
+      process: (_: string, user: string) => {
+        meta.users = meta.users || [];
+        meta.users.push(user);
+        return '';
+      },
+    },
+  ];
+
+  let replacedSummary = summary;
+  processors.forEach((p) => {
+    replacedSummary = replacedSummary.replace(RegexParser(p.pattern), p.process);
+  });
+  replacedSummary = replacedSummary.trim();
 
   return {
     meta,
