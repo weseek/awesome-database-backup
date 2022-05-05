@@ -22,7 +22,7 @@
   "scripts": {
     "build": "tsc && tsc-alias",
     "// Since the risk of memory leaks increases when a few workers, we chose to use many workers even though the processing speed would be lower.": "",
-    "test": "cross-env NODE_ENV=test jest --maxWorkers 4 --ci --logHeapUsage",
+    "test": "cross-env NODE_ENV=test jest --maxWorkers 4 --ci --passWithNoTests --logHeapUsage",
     "lint": "eslint src --ext .ts",
     "lint:fix": "eslint src --ext .ts --fix"
   },
