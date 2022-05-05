@@ -196,21 +196,22 @@ const changelogFunctions: ChangelogFunctions = {
       .split('\n')
       .map(l => l.trimEnd());
     const links = {
-      pull: meta.pull ? `[#${meta.pull}](https://github.com/${options.repo}/pull/${meta.pull})` : null,
+      pull: meta.pull ? `([#${meta.pull}](https://github.com/${options.repo}/pull/${meta.pull}))` : null,
       commit: meta.commit ? `[\`${meta.commit}\`](https://github.com/${options.repo}/commit/${meta.commit})` : null,
-      users: meta.users.map(it => `[@${it}](https://github.com/${it})`).join(', '),
+      users: meta.users.length > 0 ? `Thanks ${meta.users.map(it => `[@${it}](https://github.com/${it})`).join(', ')}!` : null,
     };
     const newFirstLine = [
+      firstLine,
+      '-', // seperator
       links.pull,
       !links.pull ? links.commit : null,
-      meta.users.length > 0 ? `Thanks ${links.users}!` : null,
-      firstLine,
+      links.users,
     ]
       .filter(it => it != null)
       .join(' ');
     const releaseLines = [
-      '',
-      '',
+      '', // empty line
+      '', // empty line
       `- ${newFirstLine}`,
       followLines
         .map(l => `  ${l}`)
