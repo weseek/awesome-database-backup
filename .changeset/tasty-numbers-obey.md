@@ -5,4 +5,4 @@
 "@awesome-backup/postgresql-restore": patch
 ---
 
-🧰Support/Use promise instead of using callback
+Support/Use promise instead of using callback

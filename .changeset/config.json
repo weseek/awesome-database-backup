@@ -6,31 +6,51 @@
     "ignoreUsers": ["dependabot"],
     "categories": [
       {
-        "title": "💎 Features - ",
-        "summary": [
+        "text": "BREAKING CHANGES",
+        "pullRequestLabels": [
+          "breaking"
+        ]
+      },
+      {
+        "text": "💎 Features",
+        "changesetSummaryPatterns": [
           "/^feat/i"
+        ],
+        "pullRequestLabels": [
+          "feature"
         ]
       },
       {
-        "title": "🚀 Improvement - ",
-        "summary": [
+        "text": "🚀 Improvement",
+        "changesetSummaryPatterns": [
           "/^imprv/i"
+        ],
+        "pullRequestLabels": [
+          "improvement"
         ]
       },
       {
-        "title": "🐛 Bug Fixes - ",
-        "summary": [
-          "/^fix/i"
+        "text": "🐛 Bug Fixes",
+        "changesetSummaryPatterns": [
+          "/^fix/i",
+          "/^hotfix/i"
+        ],
+        "pullRequestLabels": [
+          "bug"
         ]
       },
       {
-        "title": "🧰 Maintenance - ",
-        "summary": [
+        "text": "🧰 Maintenance",
+        "changesetSummaryPatterns": [
           "/^support/i",
           "/^chore/i",
           "/^ci/i",
           "/^docs/i",
           "/^test/i"
+        ],
+        "pullRequestLabels": [
+          "support",
+          "dependencies"
         ]
       }
     ]

@@ -1,11 +1,8 @@
 /* eslint-disable max-len */
 import { ChangelogFunctions } from '@changesets/types';
 import { getMetaFromCommit, getMetaFromPullRequest, replaceMeta } from './meta';
+import { Category, prefixSummary } from './category';
 
-type Category = {
-  title: string,
-  summary: Array<string>,
-}
 type Options = {
   owner: string,
   repo: string,
@@ -112,7 +109,11 @@ const changelogFunctions: ChangelogFunctions = {
       users: [metaFromSummary.users || metaFromPR?.user || metaFromCommit?.user].flat().filter(ignoreUsersFilter),
     };
 
-    const [firstLine, ...followLines] = replacedSummary
+    const [firstLine, ...followingLines] = (
+      options.categories
+        ? await prefixSummary(replacedSummary, options.categories, options.owner, options.repo, meta.commit as string)
+        : replacedSummary
+    )
       .split('\n')
       .map(l => l.trimEnd());
     const newFirstLine = [
@@ -127,7 +128,7 @@ const changelogFunctions: ChangelogFunctions = {
       '', // empty line
       '', // empty line
       `- ${newFirstLine}`,
-      followLines
+      followingLines
         .map(l => `  ${l}`)
         .join('\n'),
     ]

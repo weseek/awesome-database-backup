@@ -1,6 +1,5 @@
-import { Octokit } from '@octokit/rest';
-
-const RegexParser = require('regex-parser');
+import { Octokit, RestEndpointMethodTypes } from '@octokit/rest';
+import RegexParser from 'regex-parser';
 
 export type Meta = {
   pull: number | null,
@@ -74,6 +73,33 @@ export async function getMetaFromPullRequest(owner: string, repo: string, pull: 
   };
 }
 
+type ArrayElement<ArrayType extends readonly unknown[]> = ArrayType extends readonly (infer ElementType)[] ? ElementType : never
+type pullType = ArrayElement<RestEndpointMethodTypes['repos']['listPullRequestsAssociatedWithCommit']['response']['data']>
+export async function getLatestMergedPRAssociatedWithCommit(owner: string, repo: string, commitID: string)
+    : Promise<pullType | undefined> {
+  const octokit = new Octokit({
+    auth: process.env.GITHUB_TOKEN,
+  });
+
+  const prs = await octokit.rest.repos.listPullRequestsAssociatedWithCommit({
+    owner,
+    repo,
+    commit_sha: commitID,
+  });
+
+  if (prs.data.length > 0) {
+    return prs.data
+      .filter(pr => pr.merged_at != null)
+      .sort((prA, prB) => {
+        const prAMergedAt = new Date(prA.merged_at as string);
+        const prBMergedAt = new Date(prB.merged_at as string);
+        return prAMergedAt.getTime() - prBMergedAt.getTime();
+      })
+      .at(0);
+  }
+  return undefined;
+}
+
 export async function getMetaFromCommit(owner: string, repo: string, commitID: string, options = { withRelatedPullRequest: false })
     : Promise<{ pull: number | null; user: string | null; }> {
   const octokit = new Octokit({
@@ -89,23 +115,8 @@ export async function getMetaFromCommit(owner: string, repo: string, commitID: s
 
   let latestMergedPRNumber = null;
   if (options.withRelatedPullRequest) {
-    const prs = await octokit.rest.repos.listPullRequestsAssociatedWithCommit({
-      owner,
-      repo,
-      commit_sha: commitID,
-    });
-
-    if (prs.data.length > 0) {
-      const latestMergedPR = prs.data
-        .filter(pr => pr.merged_at != null)
-        .sort((prA, prB) => {
-          const prAMergedAt = new Date(prA.merged_at as string);
-          const prBMergedAt = new Date(prB.merged_at as string);
-          return prAMergedAt.getTime() - prBMergedAt.getTime();
-        })
-        .at(0);
-      latestMergedPRNumber = latestMergedPR?.number || null;
-    }
+    const pull = await getLatestMergedPRAssociatedWithCommit(owner, repo, commitID);
+    latestMergedPRNumber = pull?.number || null;
   }
 
   return {
