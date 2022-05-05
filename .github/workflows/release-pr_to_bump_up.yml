@@ -22,6 +22,7 @@ jobs:
       - run: yarn install
       - name: Run changeset version
         uses: changesets/action@v1
+        with:
+          version: yarn bump:version
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          version: yarn bump:version
