@@ -1,6 +1,60 @@
 {
   "$schema": "https://unpkg.com/@changesets/config@2.0.0/schema.json",
-  "changelog": "@changesets/cli/changelog",
+  "changelog": ["../packages/custom-changelog", {
+    "owner": "ryu-sato",
+    "repo": "awesome-backup",
+    "noThanksUsers": ["dependabot[bot]"],
+    "categories": [
+      {
+        "text": "BREAKING CHANGES",
+        "pullRequestLabels": [
+          "breaking"
+        ]
+      },
+      {
+        "text": "💎 Features",
+        "changesetSummaryPatterns": [
+          "/^feat/i"
+        ],
+        "pullRequestLabels": [
+          "feature"
+        ]
+      },
+      {
+        "text": "🚀 Improvement",
+        "changesetSummaryPatterns": [
+          "/^imprv/i"
+        ],
+        "pullRequestLabels": [
+          "improvement"
+        ]
+      },
+      {
+        "text": "🐛 Bug Fixes",
+        "changesetSummaryPatterns": [
+          "/^fix/i",
+          "/^hotfix/i"
+        ],
+        "pullRequestLabels": [
+          "bug"
+        ]
+      },
+      {
+        "text": "🧰 Maintenance",
+        "changesetSummaryPatterns": [
+          "/^support/i",
+          "/^chore/i",
+          "/^ci/i",
+          "/^docs/i",
+          "/^test/i"
+        ],
+        "pullRequestLabels": [
+          "support",
+          "dependencies"
+        ]
+      }
+    ]
+  }],
   "commit": false,
   "fixed": [],
   "linked": [],
