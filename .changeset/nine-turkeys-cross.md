@@ -5,4 +5,4 @@
 "@awesome-backup/tsconfig": patch
 ---
 
-Support/Use pipe or stream to reduce the number of files to be saved
+🧰Support/Use pipe or stream to reduce the number of files to be saved

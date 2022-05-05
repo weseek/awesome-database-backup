@@ -7,4 +7,4 @@
 "@awesome-backup/prune": patch
 ---
 
-Support/Add changesets, and detect app version from "package.json" instead of "version.ts".
+🧰Support/Add changesets, and detect app version from "package.json" instead of "version.ts".

@@ -4,4 +4,4 @@
 "@awesome-backup/storage-service-test": patch
 ---
 
-Bump @google-cloud/storage from 5.16.1 to 5.19.4
+🧰Bump @google-cloud/storage from 5.16.1 to 5.19.4
