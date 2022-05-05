@@ -65,9 +65,9 @@ const changelogFunctions: ChangelogFunctions = {
 
     const dependencyReleaseLines = [
       `- Updated dependencies [${commitLinks.join(', ')}]`,
-      ...(dependenciesUpdated.map((dependency) => {
-        return `  - ${dependency.name}@${dependency.newVersion}`;
-      })),
+      ...(dependenciesUpdated.map(dependency => (
+        `  - ${dependency.name}@${dependency.newVersion}`
+      ))),
     ]
       .join('\n');
 
