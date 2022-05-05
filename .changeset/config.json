@@ -1,6 +1,6 @@
 {
   "$schema": "https://unpkg.com/@changesets/config@2.0.0/schema.json",
-  "changelog": ["../packages/custom-changelog", {
+  "changelog": ["@awesome-backup/custom-changelog", {
     "owner": "ryu-sato",
     "repo": "awesome-backup",
     "noThanksUsers": ["dependabot[bot]"],
