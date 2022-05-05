@@ -148,7 +148,7 @@ const changelogFunctions: ChangelogFunctions = {
       .map(l => l.trimEnd());
     const newFirstLine = [
       links.pull,
-      links.commit,
+      !links.pull ? links.commit : null,
       meta.users.length > 0 ? `Thanks ${links.users}!` : null,
       firstLine,
     ]
