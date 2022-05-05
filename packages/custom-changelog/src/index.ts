@@ -195,17 +195,14 @@ const changelogFunctions: ChangelogFunctions = {
     const [firstLine, ...followLines] = replacedSummary
       .split('\n')
       .map(l => l.trimEnd());
-    const links = {
-      pull: meta.pull ? `([#${meta.pull}](https://github.com/${options.repo}/pull/${meta.pull}))` : null,
-      commit: meta.commit ? `[\`${meta.commit}\`](https://github.com/${options.repo}/commit/${meta.commit})` : null,
-      users: meta.users.length > 0 ? `Thanks ${meta.users.map(it => `[@${it}](https://github.com/${it})`).join(', ')}!` : null,
-    };
+    const prLink = (repo: string, pull: number) => `[#${pull}](https://github.com/${repo}/pull/${pull})`;
+    const commitLink = (repo: string, commit: string) => `[\`${commit}\`](https://github.com/${repo}/commit/${commit})`;
+    const userLink = (user: string | null) => (user ? `[@${user}](https://github.com/${user})` : '');
     const newFirstLine = [
       firstLine,
-      '-', // seperator
-      links.pull,
-      !links.pull ? links.commit : null,
-      links.users,
+      meta.pull ? `(${prLink(options.repo, meta.pull)})` : null,
+      (!meta.pull && meta.commit) ? `[${commitLink(options.repo, meta.commit)}]` : null,
+      meta.users.length > 0 ? `Thanks ${meta.users.map(it => userLink(it)).join(', ')}!` : null,
     ]
       .filter(it => it != null)
       .join(' ');
