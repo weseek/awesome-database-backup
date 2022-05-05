@@ -5,7 +5,12 @@ import { getInfo, getInfoFromPullRequest } from '@changesets/get-github-info';
 const changelogFunctions: ChangelogFunctions = {
 
   /*
-   * Return changelog's line for updated dependencies
+   * Return changelog's line for updated dependencies.
+   * It return these format:
+   * ```
+   * - Update dependencies [$commitLink1, $commitLink2, ...]:"
+   *   - $packageName@$newVersion
+   * ```
    *
    * ex.
    * - Updated dependencies [[`27a5a82`](https://github.com/changesets/changesets/commit/27a5a82188914570d192162f9d045dfd082a3c15)]:
@@ -49,28 +54,18 @@ const changelogFunctions: ChangelogFunctions = {
   },
 
   /*
-   * Return changelog's line for Pull Request
+   * Return changelog's lines per changeset.
+   * ```
+   * - [#$PRLink] [$commitLink] Thanks @$userLink1, @$userLink2, ...! - $changesetSummary#L1"
+   * changesetSummary#L2
+   * changesetSummary#L3
+   * ...
+   * ```
    *
    * ex.
    * - [#564](https://github.com/changesets/changesets/pull/564) [`707002d`](https://github.com/changesets/changesets/commit/707002dec9332a2c1322522a23861e747a6bff6f) Thanks [@Andarist](https://github.com/Andarist)! - It's now possible to specify multiple authors of a change by using multiple `author: @someuser` lines.
    *
    * see. https://github.com/changesets/changesets/blob/main/packages/changelog-github/CHANGELOG.md
-   *
-   * [TYPES]
-   *     type getReleaseLine(
-   *         changeset: {
-   *             // This is the string of the summary from the changeset markdown file
-   *             summary: string
-   *             // This is an array of information about what is going to be released. each is an object with name: the name of the package, and type, which is "major", "minor", or "patch"
-   *             releases
-   *             // the hash for the commit that introduced the changeset
-   *             commit
-   *         },
-   *         // the type of the change this changeset refers to, as "major", "minor", or "patch"
-   *         type
-   *         // This needs to be explained - see @changesets/changelog-github's code for how this works
-   *         changelogOpts
-   *     ) => string
    */
   getReleaseLine: async(
       changeset,
@@ -83,75 +78,89 @@ const changelogFunctions: ChangelogFunctions = {
       );
     }
 
-    let prFromSummary: number | undefined;
-    let commitFromSummary: string | undefined;
-    const usersFromSummary: string[] = [];
-    const ignoredUsers = ['dependabot'];
-
+    /* Get metadata from "changeset.summary", and delete the got metadata from "changeset.summary" */
+    const metaFromSummary: { pull: number | null, commit: string | null, users: Array<string> | null } = {
+      pull: null,
+      commit: null,
+      users: null,
+    };
     const replacedChangelog = changeset.summary
       .replace(/^\s*(?:pr|pull|pull\s+request):\s*#?(\d+)/im, (_, pr) => {
         const num = Number(pr);
-        if (!Number.isNaN(num)) prFromSummary = num;
+        if (!Number.isNaN(num)) metaFromSummary.pull = num;
         return '';
       })
       .replace(/^\s*commit:\s*([^\s]+)/im, (_, commit) => {
-        commitFromSummary = commit;
+        metaFromSummary.commit = commit;
         return '';
       })
       .replace(/^\s*(?:author|user):\s*@?([^\s]+)/gim, (_, user) => {
-        if (ignoredUsers.find(user)) return '';
-
-        usersFromSummary.push(user);
+        metaFromSummary.users = metaFromSummary.users || [];
+        metaFromSummary.users.push(user);
         return '';
       })
       .trim();
 
-    const [firstLine, ...futureLines] = replacedChangelog
-      .split('\n')
-      .map(l => l.trimRight());
-
-    const links = await (async() => {
-      if (prFromSummary !== undefined) {
-        const { links } = await getInfoFromPullRequest({
+    /* Get metadata from GitHub API */
+    let metaFromPR: { user: string | null, commit: string | null } = { user: null, commit: null };
+    let metaFromCommit: { user: string | null, pull: number | null } = { user: null, pull: null };
+    await (async() => {
+      if (metaFromSummary.pull) {
+        const { user, commit } = await getInfoFromPullRequest({
           repo: options.repo,
-          pull: prFromSummary,
+          pull: metaFromSummary.pull,
         });
-        return links;
+        metaFromPR = {
+          user,
+          commit,
+        };
       }
-
-      const commitToFetchFrom = commitFromSummary || changeset.commit;
-      if (commitToFetchFrom) {
-        const { links } = await getInfo({
-          repo: options.repo,
-          commit: commitToFetchFrom,
-        });
-        return links;
+      else {
+        const commit = metaFromSummary.commit || changeset.commit;
+        if (commit) {
+          const { user, pull } = await getInfo({
+            repo: options.repo,
+            commit,
+          });
+          metaFromCommit = {
+            user,
+            pull,
+          };
+        }
       }
-
-      return {
-        commit: null,
-        pull: null,
-        user: null,
-      };
     })();
 
-    const users = usersFromSummary.length
-      ? usersFromSummary
-        .map(
-          userFromSummary => `[@${userFromSummary}](https://github.com/${userFromSummary})`,
-        )
-        .join(', ')
-      : links.user;
-
-    const prefix = [
-      links.pull === null ? '' : ` ${links.pull}`,
-      links.commit === null ? '' : ` ${links.commit}`,
-      users === null ? '' : ` Thanks ${users}!`,
-    ].join('');
-
-    return `\n\n-${prefix ? `${prefix} -` : ''} ${firstLine}\n${futureLines
-      .map(l => `  ${l}`)
-      .join('\n')}`;
+    const meta = {
+      pull: metaFromSummary.pull || metaFromCommit.pull,
+      commit: metaFromSummary.commit || metaFromPR.commit || changeset.commit,
+      users: [metaFromSummary.users || metaFromPR.user || metaFromCommit.user].flat(),
+    };
+    const links = {
+      pull: meta.pull ? `[#${meta.pull}](https://github.com/${options.repo}/pull/${meta.pull})` : null,
+      commit: meta.commit ? `[\`${meta.commit}\`](https://github.com/${options.repo}/commit/${meta.commit})` : null,
+      users: meta.users.map(it => `[@${it}](https://github.com/${it})`).join(', '),
+    };
+    const [firstLine, ...followLines] = replacedChangelog
+      .split('\n')
+      .map(l => l.trimEnd());
+    const newFirstLine = [
+      links.pull,
+      links.commit,
+      meta.users.length > 0 ? `Thanks ${links.users}!` : null,
+      firstLine,
+    ]
+      .filter(it => it != null)
+      .join(' ');
+    const releaseLines = [
+      '',
+      '',
+      `- ${newFirstLine}`,
+      followLines
+        .map(l => `  ${l}`)
+        .join('\n'),
+    ]
+      .join('\n');
+    return releaseLines;
   },
 };
 
