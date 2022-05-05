@@ -19,7 +19,7 @@ jobs:
     - name: Labeling "bug"
       if: >
         startsWith(github.ref, 'fix/')
-        startsWith(github.ref, 'hotfix/')
+        || startsWith(github.ref, 'hotfix/')
       run: gh pr edit --add-label 'bug'
 
     - name: Labeling "feature"
