@@ -26,4 +26,4 @@ jobs:
         version: yarn bump:version
         title: "Bump up version"
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GHTOKEN_FOR_ACTION }}
