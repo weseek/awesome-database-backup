@@ -35,7 +35,7 @@ jobs:
       id: package-json
     - name: Set up Docker meta
       id: meta
-      uses: docker/metadata-action@v3
+      uses: docker/metadata-action@v4
       with:
         images: ${{ steps.pkg_meta.outputs.package_repository }}
         tags: |
