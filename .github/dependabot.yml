@@ -2,67 +2,79 @@ version: 2
 updates:
 
 # GitHub actions
-- package-ecosystem: "github-actions"
-  directory: "/"
+- package-ecosystem: github-actions
+  directory: /
   schedule:
-    interval: "daily"
+    interval: daily
 
 # npm
-- package-ecosystem: "npm"
-  directory: "/"
+- package-ecosystem: npm
+  directory: /
   schedule:
-    interval: "daily"
-- package-ecosystem: "npm"
-  directory: "/apps/list/"
+    interval: daily
+  versioning-strategy: lockfile-only
+- package-ecosystem: npm
+  directory: /apps/list/
   schedule:
-    interval: "daily"
-- package-ecosystem: "npm"
-  directory: "/apps/mongodb-backup/"
+    interval: daily
+  versioning-strategy: lockfile-only
+- package-ecosystem: npm
+  directory: /apps/mongodb-backup/
   schedule:
-    interval: "daily"
-- package-ecosystem: "npm"
-  directory: "/apps/mongodb-restore/"
+    interval: daily
+  versioning-strategy: lockfile-only
+- package-ecosystem: npm
+  directory: /apps/mongodb-restore/
   schedule:
-    interval: "daily"
-- package-ecosystem: "npm"
-  directory: "/apps/postgresql-backup/"
+    interval: daily
+  versioning-strategy: lockfile-only
+- package-ecosystem: npm
+  directory: /apps/postgresql-backup/
   schedule:
-    interval: "daily"
-- package-ecosystem: "npm"
-  directory: "/apps/postgresql-restore/"
+    interval: daily
+  versioning-strategy: lockfile-only
+- package-ecosystem: npm
+  directory: /apps/postgresql-restore/
   schedule:
-    interval: "daily"
-- package-ecosystem: "npm"
-  directory: "/apps/prune/"
+    interval: daily
+  versioning-strategy: lockfile-only
+- package-ecosystem: npm
+  directory: /apps/prune/
   schedule:
-    interval: "daily"
-- package-ecosystem: "npm"
-  directory: "/packages/commands/"
+    interval: daily
+  versioning-strategy: lockfile-only
+- package-ecosystem: npm
+  directory: /packages/commands/
   schedule:
-    interval: "daily"
-- package-ecosystem: "npm"
-  directory: "/packages/mongodb-test/"
+    interval: daily
+  versioning-strategy: lockfile-only
+- package-ecosystem: npm
+  directory: /packages/mongodb-test/
   schedule:
-    interval: "daily"
-- package-ecosystem: "npm"
-  directory: "/packages/postgresql-test/"
+    interval: daily
+  versioning-strategy: lockfile-only
+- package-ecosystem: npm
+  directory: /packages/postgresql-test/
   schedule:
-    interval: "daily"
-- package-ecosystem: "npm"
-  directory: "/packages/storage-service-clients/"
+    interval: daily
+  versioning-strategy: lockfile-only
+- package-ecosystem: npm
+  directory: /packages/storage-service-clients/
   schedule:
-    interval: "daily"
-- package-ecosystem: "npm"
-  directory: "/packages/storage-service-test/"
+    interval: daily
+  versioning-strategy: lockfile-only
+- package-ecosystem: npm
+  directory: /packages/storage-service-test/
   schedule:
-    interval: "daily"
+    interval: daily
+  versioning-strategy: lockfile-only
 
 # Docker
-- package-ecosystem: "docker"
-  directory: "/.devcontainer/"
+- package-ecosystem: docker
+  directory: /.devcontainer/
   schedule:
-    interval: "daily"
-- package-ecosystem: "docker"
-  directory: "/docker/"
+    interval: daily
+- package-ecosystem: docker
+  directory: /docker/
   schedule:
-    interval: "daily"
+    interval: daily
