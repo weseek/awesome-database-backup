@@ -6,13 +6,13 @@
     "noThanksUsers": ["dependabot[bot]"],
     "categories": [
       {
-        "text": "BREAKING CHANGES",
+        "text": "⚠️",
         "pullRequestLabels": [
           "breaking"
         ]
       },
       {
-        "text": "💎 Features",
+        "text": "💎",
         "changesetSummaryPatterns": [
           "/^feat/i"
         ],
@@ -21,7 +21,7 @@
         ]
       },
       {
-        "text": "🚀 Improvement",
+        "text": "🚀",
         "changesetSummaryPatterns": [
           "/^imprv/i"
         ],
@@ -30,7 +30,7 @@
         ]
       },
       {
-        "text": "🐛 Bug Fixes",
+        "text": "🐛",
         "changesetSummaryPatterns": [
           "/^fix/i",
           "/^hotfix/i"
@@ -40,7 +40,7 @@
         ]
       },
       {
-        "text": "🧰 Maintenance",
+        "text": "🧰",
         "changesetSummaryPatterns": [
           "/^support/i",
           "/^chore/i",
