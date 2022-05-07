@@ -1,0 +1,30 @@
+{
+  "name": "@awesome-backup/bump-versions",
+  "version": "0.0.1",
+  "description": "Bump versions in this monorepo",
+  "author": "Ryu Sato <ryu@weseek.co.jp>",
+  "license": "MIT",
+  "homepage": "https://github.com/ryu-sato/awesome-backup#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ryu-sato/awesome-backup.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ryu-sato/awesome-backup/issues"
+  },
+  "main": "index.js",
+  "bin": {
+    "bump-version": "index.js"
+  },
+  "scripts": {
+  },
+  "dependencies": {
+    "shipjs": "^0.24.4"
+  },
+  "devDependencies": {
+  },
+  "engines": {
+    "node": ">= 16.13.1 < 17",
+    "yarn": ">= 1.22.4"
+  }
+}
