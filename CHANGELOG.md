@@ -29,7 +29,6 @@
 - Bump tsconfig-paths from 3.14.1 to 4.0.0 in /apps/prune ([#32](https://github.com/ryu-sato/awesome-backup/pull/32))
 - Bump turbo from 1.2.5 to 1.2.8 ([#52](https://github.com/ryu-sato/awesome-backup/pull/52))
 - Bump typescript from 4.5.4 to 4.6.4 ([#37](https://github.com/ryu-sato/awesome-backup/pull/37))
-- Support/Add changesets, and detect app version from "package.json" instead of "version.ts" ([#20](https://github.com/ryu-sato/awesome-backup/pull/20)) @ryu-sato
 - Support/Clean code ([#24](https://github.com/ryu-sato/awesome-backup/pull/24)) @ryu-sato
 - Support/Use pipe or stream to reduce the number of files to be saved ([#23](https://github.com/ryu-sato/awesome-backup/pull/23)) @ryu-sato
 - Support/Use promise instead of using callback ([#25](https://github.com/ryu-sato/awesome-backup/pull/25)) @ryu-sato
