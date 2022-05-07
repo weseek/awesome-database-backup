@@ -25,7 +25,7 @@ async function bumpVersions({
     printDryRunBanner();
   }
 
-  const config = await loadConfig(dir, 'bump-versions.config');
+  const config = await loadConfig(dir, '.bump-versionsrc.js');
 
   const { monorepo } = config;
   if (!updateDependencies) {
