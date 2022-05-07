@@ -55,7 +55,7 @@ jobs:
       uses: bakunyo/git-pr-release-action@281e1fe424fac01f3992542266805e4202a22fe0
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        GIT_PR_RELEASE_BRANCH_PRODUCTION: release/current
+        GIT_PR_RELEASE_BRANCH_PRODUCTION: stable
         GIT_PR_RELEASE_BRANCH_STAGING: master
         GIT_PR_RELEASE_TEMPLATE: .github/git-pr-release-template.erb
         GIT_PR_RELEASE_TITLE: Release v${{ steps.release-version.outputs.RELEASE_VERSION }}
