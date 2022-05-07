@@ -5,7 +5,7 @@ module.exports = {
   monorepo: {
     mainVersionFile: 'package.json',
     packagesToBump: [
-      './',
+      'apps/*',
       'packages/*',
     ],
   },
