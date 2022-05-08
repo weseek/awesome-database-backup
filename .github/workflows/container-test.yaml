@@ -1,4 +1,4 @@
-name: Container test
+name: Container - Test
 
 on:
   push:
