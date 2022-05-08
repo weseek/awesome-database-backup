@@ -17,8 +17,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-      with:
-        fetch-depth: 0
 
     - name: Retrieve information from package.json
       uses: myrotvorets/info-from-package-json-action@1.1.0
@@ -43,6 +41,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
 
     - name: Get release version
       id: release-version
