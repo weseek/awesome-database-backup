@@ -1,7 +1,7 @@
 {
   "name": "@awesome-backup/bump-versions",
   "version": "0.0.1",
-  "description": "Bump versions in this monorepo",
+  "description": "Bump up versions in this monorepo",
   "author": "Ryu Sato <ryu@weseek.co.jp>",
   "license": "MIT",
   "homepage": "https://github.com/ryu-sato/awesome-backup#readme",
