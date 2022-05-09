@@ -5,7 +5,7 @@ on:
     types: [published]
 
 jobs:
-  build-and-push-latest:
+  publish-container:
     runs-on: ubuntu-latest
 
     strategy:
@@ -15,6 +15,10 @@ jobs:
           "postgresql"
         ]
       fail-fast: false
+
+    outputs:
+      PACKAGE_PATH: ${{ steps.pkg_meta.outputs.package_path }}
+      DOCKERHUB_REPOSITORY: ${{ steps.pkg_meta.outputs.package_repository }}
 
     steps:
     - uses: actions/checkout@v3
@@ -56,10 +60,17 @@ jobs:
           dbType=${{ matrix.db_type }}
         tags: ${{ steps.meta.outputs.tags }}
 
+  udpate-docker-hubs-description:
+    needs: publish-container
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
     - name: Update Docker hub's description
       uses: peter-evans/dockerhub-description@v3.0.0
       env:
         DOCKERHUB_USERNAME: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
         DOCKERHUB_PASSWORD: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
-        DOCKERHUB_REPOSITORY: ${{ steps.pkg_meta.outputs.package_repository }}
-        README_FILEPATH: ${{ steps.pkg_meta.outputs.package_path }}/README.md
+        DOCKERHUB_REPOSITORY: ${{ needs.publish-container.outputs.DOCKERHUB_REPOSITORY }}
+        README_FILEPATH: ${{ needs.publish-container.outputs.PACKAGE_PATH }}/README.md
