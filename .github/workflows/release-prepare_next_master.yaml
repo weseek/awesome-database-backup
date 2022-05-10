@@ -33,3 +33,5 @@ jobs:
         git push origin next-version
 
         gh pr create --title 'support: Prepare next version'
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
