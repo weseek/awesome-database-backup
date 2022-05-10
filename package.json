@@ -35,9 +35,10 @@
     "test": "turbo run test --concurrency='100%'",
     "rimraf": "rimraf",
     "clean": "npm run rimraf node_modules/** .turbo apps/*/dist packages/*/dist */*/coverage */*/.turbo",
-    "bump-version:major": "./node_modules/.bin/bump-version -i major",
-    "bump-version:minor": "./node_modules/.bin/bump-version -i minor",
-    "bump-version:patch": "./node_modules/.bin/bump-version -i patch"
+    "bump-version": "bump-version",
+    "bump-version:major": "npm run bump-version -i major --",
+    "bump-version:minor": "npm run bump-version -i minor --",
+    "bump-version:patch": "npm run bump-version -i patch --"
   },
   "packageManager": "yarn@1.22.15",
   "turbo": {
