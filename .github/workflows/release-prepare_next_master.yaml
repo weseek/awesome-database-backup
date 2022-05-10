@@ -32,6 +32,6 @@ jobs:
         git commit -am 'Bump up version'
         git push origin next-version
 
-        gh pr create --title 'support: Prepare next version' --body ''
+        gh pr create --title 'Bump up patch version' --body '' --label 'support'
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
