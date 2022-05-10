@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
-      CURRENT_VERSION: ${{ steps.package-json.outputs.packageVersion }}
+      RELEASE_VERSION: ${{ steps.package-json.outputs.packageVersion }}
       RELEASE_DRAFT_BODY: ${{ steps.release-drafter.outputs.body }}
 
     steps:
@@ -46,12 +46,6 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Get release version
-      id: release-version
-      run: |
-        RELEASE_VERSION=`npx semver -i patch ${{ needs.update-release-draft.outputs.CURRENT_VERSION }}`
-        echo ::set-output name=RELEASE_VERSION::$RELEASE_VERSION
-
     # See: https://github.com/bakunyo/git-pr-release-action/issues/15, https://github.com/samunohito/SimpleVolumeMixer/commit/2059044c71236509466cf9b1bb2d56d515274938
     - name: Create/Update Pull Request
       uses: bakunyo/git-pr-release-action@281e1fe424fac01f3992542266805e4202a22fe0
@@ -60,5 +54,5 @@ jobs:
         GIT_PR_RELEASE_BRANCH_PRODUCTION: stable
         GIT_PR_RELEASE_BRANCH_STAGING: master
         GIT_PR_RELEASE_TEMPLATE: .github/git-pr-release-template.erb
-        GIT_PR_RELEASE_TITLE: Release v${{ steps.release-version.outputs.RELEASE_VERSION }}
+        GIT_PR_RELEASE_TITLE: Release v${{ needs.update-release-draft.outputs.RELEASE_VERSION }}
         GIT_PR_RELEASE_BODY: ${{ needs.update-release-draft.outputs.RELEASE_DRAFT_BODY }}
