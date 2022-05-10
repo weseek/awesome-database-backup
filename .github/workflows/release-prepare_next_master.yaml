@@ -30,9 +30,11 @@ jobs:
       run: |
         git config user.name github-actions
         git config user.email github-actions@github.com
-        git checkout ${{ env.TARGET_BRANCH }}
+        git checkout ${{ env.TARGET_BRANCH }} -b next-version
 
         yarn run bump-version:${{ env.UPDATE }}
 
         git commit -am '${{ env.COMMIT_MESSAGE }}'
         git push
+
+        gh pr create --title "Prepare next version"
