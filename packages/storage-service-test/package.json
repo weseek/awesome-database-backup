@@ -1,6 +1,6 @@
 {
   "name": "@awesome-backup/storage-service-test",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Mock of Amazon S3 or Google Cloud Storage.",
   "author": "Ryu Sato <ryu@weseek.co.jp>",
   "license": "MIT",
@@ -18,8 +18,8 @@
   "// Use Typescript as is, so Typescript must be enabled for use with mocks. (ex. enable ts-jest)": "",
   "main": "src/index.ts",
   "dependencies": {
-    "@awesome-backup/mongodb-test": "^0.0.1",
-    "@awesome-backup/postgresql-test": "^0.0.1"
+    "@awesome-backup/mongodb-test": "^0.0.2",
+    "@awesome-backup/postgresql-test": "^0.0.2"
   },
   "devDependencies": {
     "@aws-sdk/client-s3": "^3.85.0",
