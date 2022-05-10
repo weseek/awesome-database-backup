@@ -1,0 +1,22 @@
+name: Application - Build
+
+on:
+  push:
+    branches-ignore: [stable]
+    paths-ignore:
+    - ".**"
+    - "docker/**"
+    - "**.md"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+      with:
+        node-version: "16.13.1"
+        cache: "yarn"
+    - run: yarn install
+    - run: yarn build

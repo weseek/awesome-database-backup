@@ -1,8 +1,11 @@
-name: Container test
+name: Container - Test
 
 on:
   push:
     branches-ignore: [stable]
+    paths-ignore:
+    - ".**"
+    - "**.md"
 
 jobs:
   test:
@@ -24,7 +27,7 @@ jobs:
         echo "::set-output name=package_path::apps/${{ matrix.db_type }}-awesome-backup"
         echo "::set-output name=package_image_name::ryu310/${{ matrix.db_type }}-awesome-backup"
     - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v1
+      uses: docker/setup-buildx-action@v2
     - name: Cache Docker layers
       uses: actions/cache@v2
       with:
@@ -35,7 +38,7 @@ jobs:
           ${{ runner.os }}-buildx-app-${{ matrix.db_type }}-
           ${{ runner.os }}-buildx-app-
     - name: Build container (No push)
-      uses: docker/build-push-action@v2
+      uses: docker/build-push-action@v3
       with:
         context: .
         file: ./docker/Dockerfile

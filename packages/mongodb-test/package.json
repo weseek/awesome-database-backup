@@ -1,6 +1,6 @@
 {
   "name": "@awesome-backup/mongodb-test",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Functions of MongoDB to support test",
   "author": "Ryu Sato <ryu@weseek.co.jp>",
   "license": "MIT",
@@ -15,8 +15,10 @@
   "// Use Typescript as is, so Typescript must be enabled for use with mocks. (ex. enable ts-jest)": "",
   "main": "src/index.ts",
   "dependencies": {
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "mongodb": "^4.4.1"
+    "mongodb": "^4.5.0",
+    "@types/uuid": "^8.3.4"
   }
 }

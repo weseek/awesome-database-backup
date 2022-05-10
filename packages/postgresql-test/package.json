@@ -1,6 +1,6 @@
 {
   "name": "@awesome-backup/postgresql-test",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Functions of PostgreSQL to support test",
   "author": "Ryu Sato <ryu@weseek.co.jp>",
   "license": "MIT",
@@ -15,9 +15,15 @@
   "// Use Typescript as is, so Typescript must be enabled for use with mocks. (ex. enable ts-jest)": "",
   "main": "src/index.ts",
   "dependencies": {
+    "uuid": "^8.3.2",
+    "tar": "^6.1.11",
+    "compressjs": "^1.0.3",
+    "tmp": "^0.2.1",
+    "bsonfy": "^1.0.2"
   },
   "devDependencies": {
     "pg": "^8.7.3",
-    "@types/pg": "^8.6.5"
+    "@types/pg": "^8.6.5",
+    "@types/uuid": "^8.3.4"
   }
 }
