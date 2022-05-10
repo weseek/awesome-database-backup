@@ -12,11 +12,6 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    env:
-      TARGET_BRANCH: master
-      UPDATE: patch
-      COMMIT_MESSAGE: "Bump up version"
-
     steps:
     - uses: actions/checkout@v3
       with:
@@ -30,11 +25,11 @@ jobs:
       run: |
         git config user.name github-actions
         git config user.email github-actions@github.com
-        git checkout ${{ env.TARGET_BRANCH }} -b next-version
+        git checkout -b next-version master
 
-        yarn run bump-version:${{ env.UPDATE }}
+        yarn run bump-version:patch
 
-        git commit -am '${{ env.COMMIT_MESSAGE }}'
-        git push
+        git commit -am 'Bump up version'
+        git push origin next-version
 
-        gh pr create --title "Prepare next version"
+        gh pr create --title 'support: Prepare next version'
