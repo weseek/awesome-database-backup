@@ -34,7 +34,7 @@
     "build": "turbo run build",
     "test": "turbo run test --concurrency='100%'",
     "rimraf": "rimraf",
-    "clean": "npm run rimraf node_modules/.cache .turbo apps/*/dist packages/*/dist */*/coverage */*/.turbo",
+    "clean": "npm run rimraf node_modules/** .turbo apps/*/dist packages/*/dist */*/coverage */*/.turbo",
     "bump-version:major": "./node_modules/.bin/bump-version -i major",
     "bump-version:minor": "./node_modules/.bin/bump-version -i minor",
     "bump-version:patch": "./node_modules/.bin/bump-version -i patch"
