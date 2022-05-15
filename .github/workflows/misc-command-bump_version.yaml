@@ -1,0 +1,39 @@
+name: Misc - Command - Bump up version
+
+on:
+  issue_comment:
+    types: [created, edited]
+
+jobs:
+
+  bump-version:
+    runs-on: ubuntu-latest
+
+    if: >
+      contains( github.event.comment.html_url, '/pull/' )
+      && startWith( github.event.comment.body, '/bump-version ' )
+
+    steps:
+    - name: Map certain command from comment
+      run: |
+        COMMAND=$(echo ${{ github.event.comment.body }} | sed -e 's/\/bump-version\s+(.*)/\1/')
+        for CERTAIN_COMMAND in "patch minor major"; do
+          test $COMMAND -eq $CERTAIN_COMMAND && exit 0
+        done
+        exit 1
+
+    - uses: actions/checkout@v3
+    - name: Bump up version
+      run: |
+        git config user.name github-actions
+        git config user.email github-actions@github.com
+        git checkout -b next-version origin/master
+
+        yarn run "bump-version:$COMMAND"
+
+        git commit -am 'Bump up version'
+        git push origin next-version
+
+        gh pr create --title 'Bump up patch version' --body '' --label 'exclude from changelog'
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
