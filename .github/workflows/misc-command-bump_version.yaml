@@ -16,11 +16,9 @@ jobs:
     steps:
     - name: Map certain command from comment
       run: |
-        COMMAND=$(echo ${{ github.event.comment.body }} | sed -e 's/\/bump-version\s+(.*)/\1/')
-        for CERTAIN_COMMAND in "patch minor major"; do
-          test $COMMAND -eq $CERTAIN_COMMAND && exit 0
-        done
-        exit 1
+        COMMAND=$(echo ${{ github.event.comment.body }} | sed -e 's/\/bump-version [[:space:]]*\(.*\)/\1/')
+        bash -c "[[ ${COMMAND} =~ (patch|minor|major) ]]"
+        exit $?
 
     - uses: actions/checkout@v3
     - name: Bump up version
