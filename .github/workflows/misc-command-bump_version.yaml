@@ -15,10 +15,11 @@ jobs:
 
     steps:
     - name: Map certain command from comment
+      id: bump_version
       run: |
-        COMMAND=$(echo ${{ github.event.comment.body }} | sed -e 's/\/bump-version [[:space:]]*\(.*\)/\1/')
-        bash -c "[[ ${COMMAND} =~ (patch|minor|major) ]]"
-        exit $?
+        UP_RANGE=$(echo ${{ github.event.comment.body }} | sed -e 's/\/bump-version [[:space:]]*\(.*\)/\1/')
+        bash -c "[[ ${UP_RANGE} =~ (patch|minor|major) ]]"
+        echo "::set-output name=up_range::${UP_RANGE}"
 
     - uses: actions/checkout@v3
     - name: Bump up version
@@ -26,7 +27,7 @@ jobs:
         git config user.name github-actions
         git config user.email github-actions@github.com
 
-        yarn run "bump-version:$COMMAND"
+        yarn run "bump-version:${{ steps.bump_version.outputs.up_range }}"
 
         git commit -am 'Bump up version'
         git push
