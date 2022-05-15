@@ -5,7 +5,7 @@
 
 awesome-backup is the collection of scripts which backup databases to Cloud storage services like Amazon S3 or Google Cloud Storage.
 
-## migrate from mongodb-awesome-backup / mariadb-awesome-backup
+## migrate from [weseek/mongodb-awesome-backup](https://github.com/weseek/mongodb-awesome-backup) / [weseek/mariadb-awesome-backup](https://github.com/weseek/mariadb-awesome-backup)
 
 ### change environment variable
 
