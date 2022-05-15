@@ -1,0 +1,46 @@
+name: Misc - Command - Bump up version
+
+on:
+  issue_comment:
+    types: [created, edited]
+
+jobs:
+
+  bump-version:
+    runs-on: ubuntu-latest
+
+    if: >
+      contains( github.event.comment.html_url, '/pull/' )
+      && startsWith( github.event.comment.body, '/bump-version ' )
+
+    steps:
+    - name: Get metadata
+      id: meta
+      run: |
+        # Get up range from comment (one of ["patch","minor","major"])
+        UP_RANGE=$(echo ${{ github.event.comment.body }} | sed -e 's/\/bump-version [[:space:]]*\(.*\)/\1/')
+        bash -c "[[ ${UP_RANGE} =~ (patch|minor|major) ]]"
+        echo "::set-output name=up_range::${UP_RANGE}"
+
+        # Get ref branch
+        echo "::set-output name=branch_name::$(curl -H \"Authorization: token ${GITHUB_TOKEN}\" ${{ github.event.issue.pull_request.url }} | jq -r '.head.ref')"
+
+    - uses: actions/checkout@v3
+      with:
+        ref: ${{ steps.meta.outputs.branch_name }}
+    - uses: actions/setup-node@v3
+      with:
+        node-version: "16.13.1"
+        cache: "yarn"
+    - run: yarn install
+    - name: Bump up version
+      run: |
+        git config user.name github-actions
+        git config user.email github-actions@github.com
+
+        yarn run "bump-version:${{ steps.meta.outputs.up_range }}"
+
+        git commit -am 'Bump up version'
+        git push
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

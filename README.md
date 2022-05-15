@@ -1,11 +1,29 @@
 [![Application test](https://github.com/ryu-sato/awesome-backup/actions/workflows/test.yaml/badge.svg)](https://github.com/ryu-sato/awesome-backup/actions/workflows/test.yaml)
 [![Container test](https://github.com/ryu-sato/awesome-backup/actions/workflows/container-test.yaml/badge.svg)](https://github.com/ryu-sato/awesome-backup/actions/workflows/container-test.yaml)
 
-# awesome-backup
+# What is awesome-backup
 
 awesome-backup is the collection of scripts which backup databases to Cloud storage services like Amazon S3 or Google Cloud Storage.
 
-## migrate from mongodb-awesome-backup / mariadb-awesome-backup
+# How to execute
+
+## Authenticate storage service
+
+* Using S3
+    * Set `AWS_REGION` and `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`
+
+OR
+
+* Using GCS (see https://cloud.google.com/storage/docs/migrating#keys)
+  * If using service account authentication, set `GCP_SERVICE_ACCOUNT_KEY_JSON_PATH` and `GCP_PROJECT_ID`
+  * If using HMAC authentication, set `GCP_ACCESS_KEY_ID`, `GCP_SECRET_ACCESS_KEY`, and `GCP_PROJECT_ID`
+
+For more information, see tool's "README.md".
+
+- [mongodb-awesome-backup's README.md](./apps/mongodb-awesome-backup/README.md)
+- [postgresql-awesome-backup's README.md](./apps/postgresql-awesome-backup/README.md)
+
+## migrate from [weseek/mongodb-awesome-backup](https://github.com/weseek/mongodb-awesome-backup) / [weseek/mariadb-awesome-backup](https://github.com/weseek/mariadb-awesome-backup)
 
 ### change environment variable
 
@@ -36,3 +54,7 @@ You must change the following environment variables.
 | `MARIADB_PASSWORD` | `BACKUP_TOOL_OPTIONS` or `RESTORE_TOOL_OPTIONS` |
 | `MYSQLDUMP_OPTS` | `BACKUP_TOOL_OPTIONS` |
 | `MYSQL_OPTS` | `RESTORE_TOOL_OPTIONS` |
+
+# How to contribute
+
+see. [CONTRIBUTING](./CONTRIBUTING.md)

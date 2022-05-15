@@ -1,6 +1,6 @@
 {
   "name": "@awesome-backup/awesome-backup",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "private": true,
   "workspaces": [
     "apps/*",
@@ -36,9 +36,9 @@
     "rimraf": "rimraf",
     "clean": "npm run rimraf node_modules/** .turbo apps/*/dist packages/*/dist */*/coverage */*/.turbo",
     "bump-version": "bump-version",
-    "bump-version:major": "npm run bump-version -i major --",
-    "bump-version:minor": "npm run bump-version -i minor --",
-    "bump-version:patch": "npm run bump-version -i patch --"
+    "bump-version:major": "npm run bump-version -- -i major",
+    "bump-version:minor": "npm run bump-version -- -i minor",
+    "bump-version:patch": "npm run bump-version -- -i patch"
   },
   "packageManager": "yarn@1.22.15",
   "turbo": {
