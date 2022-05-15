@@ -11,7 +11,7 @@ jobs:
 
     if: >
       contains( github.event.comment.html_url, '/pull/' )
-      && startWith( github.event.comment.body, '/bump-version ' )
+      && startsWith( github.event.comment.body, '/bump-version ' )
 
     steps:
     - name: Map certain command from comment
