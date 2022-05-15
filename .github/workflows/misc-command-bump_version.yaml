@@ -22,6 +22,11 @@ jobs:
         echo "::set-output name=up_range::${UP_RANGE}"
 
     - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+      with:
+        node-version: "16.13.1"
+        cache: "yarn"
+    - run: yarn install
     - name: Bump up version
       run: |
         git config user.name github-actions
