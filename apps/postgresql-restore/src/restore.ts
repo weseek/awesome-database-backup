@@ -7,7 +7,7 @@ import { promisify } from 'util';
 import { RestoreCommand } from '@awesome-backup/commands';
 import loggerFactory from './logger/factory';
 
-const version = require('@awesome-backup/list/package.json').version;
+const version = require('@awesome-backup/postgresql-restore/package.json').version;
 
 const logger = loggerFactory('postgresql-restore');
 
