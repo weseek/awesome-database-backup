@@ -1,6 +1,6 @@
 {
   "name": "@awesome-backup/commands",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "commands of awesome-backup",
   "author": "Ryu Sato <ryu@weseek.co.jp>",
   "license": "MIT",
@@ -26,7 +26,7 @@
     "lint:fix": "eslint src --ext .ts --fix"
   },
   "dependencies": {
-    "@awesome-backup/storage-service-clients": "^0.0.3",
+    "@awesome-backup/storage-service-clients": "^0.0.4",
     "@aws-sdk/client-s3": "^3.85.0",
     "@google-cloud/storage": "^5.19.4",
     "axios": "^0.27.2",
@@ -42,7 +42,7 @@
     "unbzip2-stream": "^1.4.3"
   },
   "devDependencies": {
-    "@awesome-backup/tsconfig": "^0.0.3",
+    "@awesome-backup/tsconfig": "^0.0.4",
     "@types/bunyan": "^1.8.8"
   },
   "engines": {
