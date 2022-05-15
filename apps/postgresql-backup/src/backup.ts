@@ -9,7 +9,7 @@ import { join } from 'path';
 import { promisify } from 'util';
 import loggerFactory from './logger/factory';
 
-const version = require('@awesome-backup/list/package.json').version;
+const version = require('@awesome-backup/postgresql-backup/package.json').version;
 const tmp = require('tmp');
 
 const exec = promisify(execOriginal);

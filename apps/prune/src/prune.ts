@@ -4,7 +4,7 @@
  */
 import { PruneCommand } from '@awesome-backup/commands';
 
-const version = require('@awesome-backup/list/package.json').version;
+const version = require('@awesome-backup/prune/package.json').version;
 
 const pruneCommand = new PruneCommand();
 
