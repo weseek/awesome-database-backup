@@ -77,10 +77,16 @@ RUN apt-get update \
       && apt-get clean \
       && rm -rf /var/lib/apt/lists/*
 
+FROM tool-common AS mysql-tools
+
+RUN apt-get update \
+      && apt-get install -y mysql-common mysql-client --no-install-recommends \
+      && apt-get clean \
+      && rm -rf /var/lib/apt/lists/*
 
 ##
 ## release
-## dbType is "mongodb" or "postgresql"
+## dbType is one of "mongodb", "postgresql", "mysql"
 ##
 FROM ${dbType}-tools AS release
 
