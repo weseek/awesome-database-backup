@@ -4,18 +4,18 @@ import {
   s3ClientConfig,
   testS3BucketURI,
   cleanTestS3Bucket,
-  uploadPGFixtureToTestS3Bucket,
+  uploadMySQLFixtureToTestS3Bucket,
   storageConfig,
   testGCSBucketURI,
   cleanTestGCSBucket,
-  uploadPGFixtureToTestGCSBucket,
+  uploadMySQLFixtureToTestGCSBucket,
 } from '@awesome-backup/storage-service-test';
 import {
-  cleanTestPG,
-  listTableNamesInTestPG,
-  postgresqlConfig,
-  testPGName,
-} from '@awesome-backup/postgresql-test';
+  cleanTestMySQL,
+  listTableNamesInTestMySQL,
+  mysqlConfig,
+  testMySQLName,
+} from '@awesome-backup/mysql-test';
 
 const exec = promisify(execOriginal);
 
@@ -42,55 +42,55 @@ describe('restore', () => {
   });
 
   describe('when valid S3 options are specified', () => {
-    const objectURI = `${testS3BucketURI}/${testPGName}.tar.bz2`;
-    const commandLine = `PGPASSWORD="password" \
+    const objectURI = `${testS3BucketURI}/${testMySQLName}.tar.bz2`;
+    const commandLine = `MYSQL_PWD="password" \
       ${execRestoreCommand} \
       --aws-endpoint-url ${s3ClientConfig.endpoint} \
       --aws-region ${s3ClientConfig.region} \
       --aws-access-key-id ${s3ClientConfig.credentials.accessKeyId} \
       --aws-secret-access-key ${s3ClientConfig.credentials.secretAccessKey} \
-      --restore-tool-options "--host ${postgresqlConfig.host} --user ${postgresqlConfig.user} --port ${postgresqlConfig.port}" \
+      --restore-tool-options "--host ${mysqlConfig.host} --user ${mysqlConfig.user} --port ${mysqlConfig.port}" \
       --target-bucket-url ${objectURI}`;
 
     beforeEach(cleanTestS3Bucket);
-    beforeEach(cleanTestPG);
+    beforeEach(cleanTestMySQL);
     beforeEach(async() => {
-      await uploadPGFixtureToTestS3Bucket(testPGName); // includes 'dummy' table
+      await uploadMySQLFixtureToTestS3Bucket(testMySQLName); // includes 'dummy' table
     });
 
     it('restore PostgreSQL in bucket', async() => {
-      expect(await listTableNamesInTestPG()).toEqual([]);
+      expect(await listTableNamesInTestMySQL()).toEqual([]);
       expect(await exec(commandLine)).toEqual({
         stdout: expect.stringMatching(/=== restore.ts started at .* ===/),
         stderr: '',
       });
-      expect(await listTableNamesInTestPG()).toEqual(['dummy']);
+      expect(await listTableNamesInTestMySQL()).toEqual(['dummy']);
     });
   });
 
   describe('when valid GCS options are specified', () => {
-    const objectURI = `${testGCSBucketURI}/${testPGName}.tar.bz2`;
-    const commandLine = `PGPASSWORD="password" \
+    const objectURI = `${testGCSBucketURI}/${testMySQLName}.tar.bz2`;
+    const commandLine = `MYSQL_PWD="password" \
       ${execRestoreCommand} \
       --gcp-endpoint-url ${storageConfig.apiEndpoint} \
       --gcp-project-id ${storageConfig.projectId} \
       --gcp-client-email ${storageConfig.credentials.client_email} \
       --gcp-private-key ${storageConfig.credentials.private_key} \
-      --restore-tool-options "--host ${postgresqlConfig.host} --user ${postgresqlConfig.user} --port ${postgresqlConfig.port}" \
+      --restore-tool-options "--host ${mysqlConfig.host} --user ${mysqlConfig.user} --port ${mysqlConfig.port}" \
       --target-bucket-url ${objectURI}`;
     beforeEach(cleanTestGCSBucket);
-    beforeEach(cleanTestPG);
+    beforeEach(cleanTestMySQL);
     beforeEach(async() => {
-      await uploadPGFixtureToTestGCSBucket(testPGName); // includes 'dummy' table
+      await uploadMySQLFixtureToTestGCSBucket(testMySQLName); // includes 'dummy' table
     });
 
     it('restore PostgreSQL in bucket', async() => {
-      expect(await listTableNamesInTestPG()).toEqual([]);
+      expect(await listTableNamesInTestMySQL()).toEqual([]);
       expect(await exec(commandLine)).toEqual({
         stdout: expect.stringMatching(/=== restore.ts started at .* ===/),
         stderr: '',
       });
-      expect(await listTableNamesInTestPG()).toEqual(['dummy']);
+      expect(await listTableNamesInTestMySQL()).toEqual(['dummy']);
     });
   });
 });
