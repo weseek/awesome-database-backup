@@ -43,7 +43,7 @@ backupCommand
   .addBackupOptions()
   .addHelpText('after', `
     NOTICE:
-      You can pass MysSQL options by set "--backup-tool-options". (ex. "--host db.example.com --username admin")
+      You can pass MysSQL options by set "--backup-tool-options". (ex. "--host db.example.com --user admin")
       `.replace(/^ {4}/mg, ''))
   .setBackupAction();
 
