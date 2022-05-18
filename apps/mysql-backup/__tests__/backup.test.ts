@@ -48,7 +48,7 @@ describe('backup', () => {
         --aws-region ${s3ClientConfig.region} \
         --aws-access-key-id ${s3ClientConfig.credentials.accessKeyId} \
         --aws-secret-access-key ${s3ClientConfig.credentials.secretAccessKey} \
-        --backup-tool-options "--host ${mysqlConfig.host} --username ${mysqlConfig.user} --port ${mysqlConfig.port}" \
+        --backup-tool-options "--host ${mysqlConfig.host} --user ${mysqlConfig.user} --port ${mysqlConfig.port}" \
         --target-bucket-url ${testS3BucketURI}`;
 
       it('backup mongo in bucket', async() => {
@@ -70,7 +70,7 @@ describe('backup', () => {
         --gcp-project-id ${storageConfig.projectId} \
         --gcp-client-email ${storageConfig.credentials.client_email} \
         --gcp-private-key ${storageConfig.credentials.private_key} \
-        --backup-tool-options "--host ${mysqlConfig.host} --username ${mysqlConfig.user} --port ${mysqlConfig.port}" \
+        --backup-tool-options "--host ${mysqlConfig.host} --user ${mysqlConfig.user} --port ${mysqlConfig.port}" \
         --target-bucket-url ${testGCSBucketURI}/`;
 
       it('backup mongo in bucket', async() => {
