@@ -1,6 +1,6 @@
 {
   "name": "@awesome-backup/storage-service-clients",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Storage service clients module of awesome-backup",
   "author": "Ryu Sato <ryu@weseek.co.jp>",
   "license": "MIT",
@@ -39,7 +39,7 @@
     "tmp": "^0.2.1"
   },
   "devDependencies": {
-    "@awesome-backup/tsconfig": "^0.0.4",
+    "@awesome-backup/tsconfig": "^0.0.5",
     "@types/bunyan": "^1.8.8"
   },
   "engines": {

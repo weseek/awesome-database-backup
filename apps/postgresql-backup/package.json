@@ -1,6 +1,6 @@
 {
   "name": "@awesome-backup/postgresql-backup",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Backup PostgreSQL database and store to Amazon S3 or Google Cloud Storage. You can set a custom S3 endpoint to use S3 based services like DigitalOcean Spaces instead of Amazon S3.",
   "author": "Ryu Sato <ryu@weseek.co.jp>",
   "license": "MIT",
@@ -30,16 +30,16 @@
     "lint:fix": "eslint src --ext .ts --fix"
   },
   "dependencies": {
-    "@awesome-backup/commands": "^0.0.4",
+    "@awesome-backup/commands": "^0.0.5",
     "bunyan": "^1.8.15",
     "universal-bunyan": "^0.9.2",
     "browser-bunyan": "^1.6.3",
     "tmp": "^0.2.1"
   },
   "devDependencies": {
-    "@awesome-backup/tsconfig": "^0.0.4",
-    "@awesome-backup/storage-service-test": "^0.0.4",
-    "@awesome-backup/postgresql-test": "^0.0.4",
+    "@awesome-backup/tsconfig": "^0.0.5",
+    "@awesome-backup/storage-service-test": "^0.0.5",
+    "@awesome-backup/postgresql-test": "^0.0.5",
     "cross-env": "^7.0.3",
     "tsconfig-paths": "^4.0.0",
     "@types/bunyan": "^1.8.8"
