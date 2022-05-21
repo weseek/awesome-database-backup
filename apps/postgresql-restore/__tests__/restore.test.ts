@@ -9,7 +9,6 @@ import {
   testGCSBucketURI,
   cleanTestGCSBucket,
   uploadPGFixtureToTestGCSBucket,
-  testS3BucketName,
 } from '@awesome-backup/storage-service-test';
 import {
   cleanTestPG,
