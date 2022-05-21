@@ -3,9 +3,15 @@
 
 # What is awesome-backup
 
-awesome-backup is the collection of scripts which backup databases to Cloud storage services like Amazon S3 or Google Cloud Storage.
+awesome-backup is the collection of npm packages which backup/restore databases to/from Cloud storage services like Amazon S3 or Google Cloud Storage.
 
 # How to execute
+
+Refer to the "README" corresponding to the database you are using.
+
+- For mongoDB, you can use [mongodb-awesome-backup](./apps/mongodb-awesome-backup). See [README](./apps/mongodb-awesome-backup/README.md).
+- For PostgreSQL, you can use [postgresql-awesome-backup](./apps/postgresql-awesome-backup). See [README](./apps/postgresql-awesome-backup/README.md).
+- For MariaDB, you can use [mariadb-awesome-backup](./apps/mariadb-awesome-backup). See [README](./apps/mariadb-awesome-backup/README.md).
 
 ## Authenticate storage service
 
@@ -18,14 +24,9 @@ OR
   * If using service account authentication, set `GCP_SERVICE_ACCOUNT_KEY_JSON_PATH` and `GCP_PROJECT_ID`
   * If using HMAC authentication, set `GCP_ACCESS_KEY_ID`, `GCP_SECRET_ACCESS_KEY`, and `GCP_PROJECT_ID`
 
-For more information, see tool's "README.md".
+# Migrate from [weseek/mongodb-awesome-backup](https://github.com/weseek/mongodb-awesome-backup) / [weseek/mariadb-awesome-backup](https://github.com/weseek/mariadb-awesome-backup)
 
-- [mongodb-awesome-backup's README.md](./apps/mongodb-awesome-backup/README.md)
-- [postgresql-awesome-backup's README.md](./apps/postgresql-awesome-backup/README.md)
-
-## migrate from [weseek/mongodb-awesome-backup](https://github.com/weseek/mongodb-awesome-backup) / [weseek/mariadb-awesome-backup](https://github.com/weseek/mariadb-awesome-backup)
-
-### change environment variable
+## change environment variable
 
 You must change the following environment variables.
 
