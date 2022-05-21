@@ -1,5 +1,5 @@
 {
-  "name": "@awesome-backup/mariadb-test",
+  "name": "@awesome-database-backup/mariadb-test",
   "version": "0.1.1",
   "description": "Functions of MariaDB to support test",
   "author": "Ryu Sato <ryu@weseek.co.jp>",

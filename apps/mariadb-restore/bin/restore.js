@@ -1,3 +1,3 @@
 #!/usr/bin/env node
 
-require('@awesome-backup/mariadb-restore');
+require('@awesome-database-backup/mariadb-restore');
