@@ -33,13 +33,13 @@ commandTests:
   command: which
   args: ["bzip2"]
 
-- name: expect "which mariadbdump" return valid path
+- name: expect "which mysqldump" return valid path
   command: which
-  args: ["mariadbdump"]
+  args: ["mysqldump"]
 
-- name: expect "which mariadb" return valid path
+- name: expect "which mysql" return valid path
   command: which
-  args: ["mariadb"]
+  args: ["mysql"]
 
 # ================================================================================
 # Execution

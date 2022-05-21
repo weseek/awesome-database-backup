@@ -30,7 +30,7 @@ class MariaDBBackupCommand extends BackupCommand {
 
     logger.info(`backup ${dbDumpFilePath}...`);
     logger.info('dump MariaDB...');
-    const { stdout, stderr } = await exec(`mariadbdump ${options.backupToolOptions} | gzip > ${dbDumpFilePath}`);
+    const { stdout, stderr } = await exec(`mysqldump ${options.backupToolOptions} | gzip > ${dbDumpFilePath}`);
     return { stdout, stderr, dbDumpFilePath };
   }
 
