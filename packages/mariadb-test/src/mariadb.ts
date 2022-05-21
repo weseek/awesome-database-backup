@@ -46,7 +46,7 @@ export async function listTableNamesInTestMariaDB(): Promise<Array<string>> {
 
 export function createMariaDBBackup(fileName: string): string {
   const sql = `
-  -- MariaDB dump 10.19  Distrib 10.3.34-MariaDB, for debian-linux-gnu (x86_64)
+  -- MySQL dump 10.19  Distrib 10.3.34-MariaDB, for debian-linux-gnu (x86_64)
   --
   -- Host: mariadb    Database: \`${testMariaDBName}\`
   -- ------------------------------------------------------
