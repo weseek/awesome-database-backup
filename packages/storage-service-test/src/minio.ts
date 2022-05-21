@@ -10,6 +10,7 @@ import {
 import { readFileSync } from 'fs';
 import { createPGBackup } from '@awesome-backup/postgresql-test';
 import { createMongoDBBackup } from '@awesome-backup/mongodb-test';
+import { createMariaDBBackup } from '@awesome-backup/mariadb-test';
 import { basename } from 'path';
 import { s3ClientConfig, testS3BucketName } from './config/minio';
 
@@ -39,6 +40,15 @@ export async function uploadPGFixtureToTestS3Bucket(fixtureName: string): Promis
 
 export async function uploadMongoDBFixtureToTestS3Bucket(fixtureName: string): Promise<void> {
   const fixturePath = createMongoDBBackup(fixtureName);
+  await s3client.send(new PutObjectCommand({
+    Bucket: testS3BucketName,
+    Key: basename(fixturePath),
+    Body: readFileSync(fixturePath),
+  }));
+}
+
+export async function uploadMariaDBFixtureToTestS3Bucket(fixtureName: string): Promise<void> {
+  const fixturePath = createMariaDBBackup(fixtureName);
   await s3client.send(new PutObjectCommand({
     Bucket: testS3BucketName,
     Key: basename(fixturePath),

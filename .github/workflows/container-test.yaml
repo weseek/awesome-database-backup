@@ -13,10 +13,10 @@ jobs:
 
     strategy:
       matrix:
-        db_type: [
-          "mongodb",
-          "postgresql"
-        ]
+        db_type:
+        - mongodb
+        - postgresql
+        - mariadb
 
     steps:
     - uses: actions/checkout@v3

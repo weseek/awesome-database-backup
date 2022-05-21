@@ -1,0 +1,22 @@
+{
+  "name": "@awesome-backup/mariadb-awesome-backup",
+  "version": "0.1.0",
+  "description": "Collection of scripts which backup MariaDB databases to Amazon S3 or Google Cloud Storage. You can set a custom S3 endpoint to use S3 based services like DigitalOcean Spaces instead of Amazon S3.",
+  "author": "Ryu Sato <ryu@weseek.co.jp>",
+  "license": "MIT",
+  "homepage": "https://github.com/ryu-sato/awesome-backup#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ryu-sato/awesome-backup.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ryu-sato/awesome-backup/issues"
+  },
+  "dependencies": {
+    "@awesome-backup/mariadb-backup": "^0.1.0",
+    "@awesome-backup/mariadb-restore": "^0.1.0",
+    "@awesome-backup/list": "^0.1.0",
+    "@awesome-backup/prune": "^0.1.0"
+  },
+  "devDependencies": {}
+}

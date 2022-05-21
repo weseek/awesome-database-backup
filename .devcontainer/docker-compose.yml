@@ -50,6 +50,22 @@ services:
       timeout: 5s
       retries: 5
 
+  mariadb:
+    image: mariadb:10.8.2
+    environment:
+      MARIADB_USER: ${DB_ADMIN_USERNAME:-root}
+      MARIADB_ROOT_PASSWORD: ${DB_ADMIN_PASSWORD:-password}
+    volumes:
+    - mysql_data:/var/lib/mysql
+    healthcheck:
+      test:
+      - CMD
+      - mysqladmin
+      - ping
+      - -h
+      - localhost
+      - -p${DB_ADMIN_PASSWORD}
+
   # S3 Mock for test
   minio:
     image: minio/minio:RELEASE.2022-04-09T15-09-52Z
@@ -105,6 +121,7 @@ services:
 volumes:
   mongo_data:
   postgres_data:
+  mysql_data:
   minio_data:
   minio_config:
   fake-gcs-server:

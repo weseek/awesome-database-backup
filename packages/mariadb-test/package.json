@@ -1,0 +1,28 @@
+{
+  "name": "@awesome-backup/mariadb-test",
+  "version": "0.1.0",
+  "description": "Functions of MariaDB to support test",
+  "author": "Ryu Sato <ryu@weseek.co.jp>",
+  "license": "MIT",
+  "homepage": "https://github.com/ryu-sato/awesome-backup#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ryu-sato/awesome-backup.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ryu-sato/awesome-backup/issues"
+  },
+  "// Use Typescript as is, so Typescript must be enabled for use with mocks. (ex. enable ts-jest)": "",
+  "main": "src/index.ts",
+  "dependencies": {
+    "mysql2": "^2.3.3",
+    "uuid": "^8.3.2",
+    "tar": "^6.1.11",
+    "compressjs": "^1.0.3",
+    "tmp": "^0.2.1",
+    "bsonfy": "^1.0.2"
+  },
+  "devDependencies": {
+    "@types/uuid": "^8.3.4"
+  }
+}

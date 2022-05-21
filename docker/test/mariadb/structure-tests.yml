@@ -1,0 +1,81 @@
+schemaVersion: 2.0.0
+commandTests:
+# ================================================================================
+# Path
+# ================================================================================
+# ----------
+# scripts
+# ----------
+- name: expect "which backup" return valid path
+  command: which
+  args: ["backup"]
+
+- name: expect "which list" return valid path
+  command: which
+  args: ["list"]
+
+- name: expect "which prune" return valid path
+  command: which
+  args: ["prune"]
+
+- name: expect "which restore" return valid path
+  command: which
+  args: ["restore"]
+
+# ----------
+# backup tools
+# ----------
+- name: expect "which tar" return valid path
+  command: which
+  args: ["tar"]
+
+- name: expect "which bzip2" return valid path
+  command: which
+  args: ["bzip2"]
+
+- name: expect "which mysqldump" return valid path
+  command: which
+  args: ["mysqldump"]
+
+- name: expect "which mysql" return valid path
+  command: which
+  args: ["mysql"]
+
+# ================================================================================
+# Execution
+# ================================================================================
+- name: when --help is specified, expect "backup" success
+  command: backup
+  args: ["--help"]
+- name: when no argument is specified, expect "backup" fail with error message
+  command: backup
+  args: []
+  expectedError: [".*required option.*not specified.*"]
+  exitCode: 1
+
+- name: when --help is specified, expect "list" success
+  command: list
+  args: ["--help"]
+- name: when no argument is specified, expect "list" fail with error message
+  command: list
+  args: []
+  expectedError: [".*required option.*not specified.*"]
+  exitCode: 1
+
+- name: when --help is specified, expect "prune" success
+  command: prune
+  args: ["--help"]
+- name: when no argument is specified, expect "prune" fail with error message
+  command: prune
+  args: []
+  expectedError: [".*required option.*not specified.*"]
+  exitCode: 1
+
+- name: when --help is specified, expect "restore" success
+  command: restore
+  args: ["--help"]
+- name: when no argument is specified, expect "restore" fail with error message
+  command: restore
+  args: []
+  expectedError: [".*required option.*not specified.*"]
+  exitCode: 1

@@ -54,6 +54,12 @@ RUN echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg ma
       && apt-get install -y postgresql-common postgresql-client-14 --no-install-recommends \
       && apt-get clean \
       && rm -rf /var/lib/apt/lists/*
+## MariaDB tools
+RUN apt-get update \
+      && apt-get install -y mariadb-common mariadb-client --no-install-recommends \
+      && apt-get clean \
+      && rm -rf /var/lib/apt/lists/*
+
 ## AWS cli
 ADD https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip /tmp/awscliv2.zip
 RUN unzip /tmp/awscliv2.zip -d /tmp \
