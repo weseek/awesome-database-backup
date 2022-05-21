@@ -33,6 +33,7 @@
   "scripts": {
     "build": "turbo run build",
     "test": "turbo run test --concurrency='100%'",
+    "lint": "turbo run lint",
     "rimraf": "rimraf",
     "clean": "npm run rimraf node_modules/** .turbo apps/*/dist packages/*/dist */*/coverage */*/.turbo",
     "bump-version": "bump-version",
