@@ -4,18 +4,18 @@ import {
   s3ClientConfig,
   testS3BucketURI,
   cleanTestS3Bucket,
-  uploadMySQLFixtureToTestS3Bucket,
+  uploadMariaDBFixtureToTestS3Bucket,
   storageConfig,
   testGCSBucketURI,
   cleanTestGCSBucket,
-  uploadMySQLFixtureToTestGCSBucket,
+  uploadMariaDBFixtureToTestGCSBucket,
 } from '@awesome-backup/storage-service-test';
 import {
-  cleanTestMySQL,
-  listTableNamesInTestMySQL,
-  mysqlConfig,
-  testMySQLName,
-} from '@awesome-backup/mysql-test';
+  cleanTestMariaDB,
+  listTableNamesInTestMariaDB,
+  mariadbConfig,
+  testMariaDBName,
+} from '@awesome-backup/mariadb-test';
 
 const exec = promisify(execOriginal);
 
@@ -42,55 +42,55 @@ describe('restore', () => {
   });
 
   describe('when valid S3 options are specified', () => {
-    const objectURI = `${testS3BucketURI}/${testMySQLName}.tar.bz2`;
+    const objectURI = `${testS3BucketURI}/${testMariaDBName}.tar.bz2`;
     const commandLine = `MYSQL_PWD="password" \
       ${execRestoreCommand} \
       --aws-endpoint-url ${s3ClientConfig.endpoint} \
       --aws-region ${s3ClientConfig.region} \
       --aws-access-key-id ${s3ClientConfig.credentials.accessKeyId} \
       --aws-secret-access-key ${s3ClientConfig.credentials.secretAccessKey} \
-      --restore-tool-options "--host ${mysqlConfig.host} --user ${mysqlConfig.user} --port ${mysqlConfig.port}" \
+      --restore-tool-options "--host ${mariadbConfig.host} --user ${mariadbConfig.user} --port ${mariadbConfig.port}" \
       --target-bucket-url ${objectURI}`;
 
     beforeEach(cleanTestS3Bucket);
-    beforeEach(cleanTestMySQL);
+    beforeEach(cleanTestMariaDB);
     beforeEach(async() => {
-      await uploadMySQLFixtureToTestS3Bucket(testMySQLName); // includes 'dummy' table
+      await uploadMariaDBFixtureToTestS3Bucket(testMariaDBName); // includes 'dummy' table
     });
 
-    it('restore MySQL in bucket', async() => {
-      expect(await listTableNamesInTestMySQL()).toEqual([]);
+    it('restore MariaDB in bucket', async() => {
+      expect(await listTableNamesInTestMariaDB()).toEqual([]);
       expect(await exec(commandLine)).toEqual({
         stdout: expect.stringMatching(/=== restore.ts started at .* ===/),
         stderr: '',
       });
-      expect(await listTableNamesInTestMySQL()).toEqual(['dummy']);
+      expect(await listTableNamesInTestMariaDB()).toEqual(['dummy']);
     });
   });
 
   describe('when valid GCS options are specified', () => {
-    const objectURI = `${testGCSBucketURI}/${testMySQLName}.tar.bz2`;
+    const objectURI = `${testGCSBucketURI}/${testMariaDBName}.tar.bz2`;
     const commandLine = `MYSQL_PWD="password" \
       ${execRestoreCommand} \
       --gcp-endpoint-url ${storageConfig.apiEndpoint} \
       --gcp-project-id ${storageConfig.projectId} \
       --gcp-client-email ${storageConfig.credentials.client_email} \
       --gcp-private-key ${storageConfig.credentials.private_key} \
-      --restore-tool-options "--host ${mysqlConfig.host} --user ${mysqlConfig.user} --port ${mysqlConfig.port}" \
+      --restore-tool-options "--host ${mariadbConfig.host} --user ${mariadbConfig.user} --port ${mariadbConfig.port}" \
       --target-bucket-url ${objectURI}`;
     beforeEach(cleanTestGCSBucket);
-    beforeEach(cleanTestMySQL);
+    beforeEach(cleanTestMariaDB);
     beforeEach(async() => {
-      await uploadMySQLFixtureToTestGCSBucket(testMySQLName); // includes 'dummy' table
+      await uploadMariaDBFixtureToTestGCSBucket(testMariaDBName); // includes 'dummy' table
     });
 
-    it('restore MySQL in bucket', async() => {
-      expect(await listTableNamesInTestMySQL()).toEqual([]);
+    it('restore MariaDB in bucket', async() => {
+      expect(await listTableNamesInTestMariaDB()).toEqual([]);
       expect(await exec(commandLine)).toEqual({
         stdout: expect.stringMatching(/=== restore.ts started at .* ===/),
         stderr: '',
       });
-      expect(await listTableNamesInTestMySQL()).toEqual(['dummy']);
+      expect(await listTableNamesInTestMariaDB()).toEqual(['dummy']);
     });
   });
 });

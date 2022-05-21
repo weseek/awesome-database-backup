@@ -16,7 +16,7 @@ jobs:
         db_type:
         - mongodb
         - postgresql
-        - mysql
+        - mariadb
 
     steps:
     - uses: actions/checkout@v3

@@ -13,7 +13,7 @@ jobs:
         db_type:
         - mongodb
         - postgresql
-        - mysql
+        - mariadb
       fail-fast: false
 
     steps:

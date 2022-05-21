@@ -1,5 +1,5 @@
 /**
- * An executable file that stores backups for MySQL to a storage service.
+ * An executable file that stores backups for MariaDB to a storage service.
  * Execute with --help to see usage instructions.
  */
 import { format } from 'date-fns';
@@ -9,13 +9,13 @@ import { join } from 'path';
 import { promisify } from 'util';
 import loggerFactory from './logger/factory';
 
-const version = require('@awesome-backup/mysql-backup/package.json').version;
+const version = require('@awesome-backup/mariadb-backup/package.json').version;
 const tmp = require('tmp');
 
 const exec = promisify(execOriginal);
-const logger = loggerFactory('mysql-backup');
+const logger = loggerFactory('mariadb-backup');
 
-class MySQLBackupCommand extends BackupCommand {
+class MariaDBBackupCommand extends BackupCommand {
 
   constructor() {
     super();
@@ -29,14 +29,14 @@ class MySQLBackupCommand extends BackupCommand {
     const dbDumpFilePath = join(tmpdir.name, `${options.backupfilePrefix}-${format(Date.now(), 'yyyyMMddHHmmss')}.gz`);
 
     logger.info(`backup ${dbDumpFilePath}...`);
-    logger.info('dump MySQL...');
-    const { stdout, stderr } = await exec(`mysqldump ${options.backupToolOptions} | gzip > ${dbDumpFilePath}`);
+    logger.info('dump MariaDB...');
+    const { stdout, stderr } = await exec(`mariadbdump ${options.backupToolOptions} | gzip > ${dbDumpFilePath}`);
     return { stdout, stderr, dbDumpFilePath };
   }
 
 }
 
-const backupCommand = new MySQLBackupCommand();
+const backupCommand = new MariaDBBackupCommand();
 
 backupCommand
   .version(version)

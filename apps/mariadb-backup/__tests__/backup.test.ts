@@ -10,9 +10,9 @@ import {
   listFileNamesInTestGCSBucket,
 } from '@awesome-backup/storage-service-test';
 import {
-  prepareTestMySQL,
-  mysqlConfig,
-} from '@awesome-backup/mysql-test';
+  prepareTestMariaDB,
+  mariadbConfig,
+} from '@awesome-backup/mariadb-test';
 
 const exec = promisify(execOriginal);
 
@@ -40,7 +40,7 @@ describe('backup', () => {
 
   describe('when valid S3 options are specified', () => {
     beforeEach(cleanTestS3Bucket);
-    beforeEach(prepareTestMySQL);
+    beforeEach(prepareTestMariaDB);
 
     describe('and when backup tool options are specified', () => {
       const commandLine = `${execBackupCommand} \
@@ -48,10 +48,10 @@ describe('backup', () => {
         --aws-region ${s3ClientConfig.region} \
         --aws-access-key-id ${s3ClientConfig.credentials.accessKeyId} \
         --aws-secret-access-key ${s3ClientConfig.credentials.secretAccessKey} \
-        --backup-tool-options "--host ${mysqlConfig.host} --user ${mysqlConfig.user} --port ${mysqlConfig.port}" \
+        --backup-tool-options "--host ${mariadbConfig.host} --user ${mariadbConfig.user} --port ${mariadbConfig.port}" \
         --target-bucket-url ${testS3BucketURI}`;
 
-      it('backup mysql in bucket', async() => {
+      it('backup mariadb in bucket', async() => {
         expect(await exec(commandLine)).toEqual({
           stdout: expect.stringMatching(/=== backup.ts started at .* ===/),
           stderr: '',
@@ -62,7 +62,7 @@ describe('backup', () => {
 
   describe('when valid GCS options are specified', () => {
     beforeEach(cleanTestGCSBucket);
-    beforeEach(prepareTestMySQL);
+    beforeEach(prepareTestMariaDB);
 
     describe('and when backup tool options are specified', () => {
       const commandLine = `${execBackupCommand} \
@@ -70,10 +70,10 @@ describe('backup', () => {
         --gcp-project-id ${storageConfig.projectId} \
         --gcp-client-email ${storageConfig.credentials.client_email} \
         --gcp-private-key ${storageConfig.credentials.private_key} \
-        --backup-tool-options "--host ${mysqlConfig.host} --user ${mysqlConfig.user} --port ${mysqlConfig.port}" \
+        --backup-tool-options "--host ${mariadbConfig.host} --user ${mariadbConfig.user} --port ${mariadbConfig.port}" \
         --target-bucket-url ${testGCSBucketURI}/`;
 
-      it('backup mysql in bucket', async() => {
+      it('backup mariadb in bucket', async() => {
         expect((await listFileNamesInTestGCSBucket()).length).toBe(0);
         expect(await exec(commandLine)).toEqual({
           stdout: expect.stringMatching(/=== backup.ts started at .* ===/),

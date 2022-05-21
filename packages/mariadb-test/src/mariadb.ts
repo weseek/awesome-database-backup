@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { createPool, RowDataPacket, FieldPacket } from 'mysql2/promise';
 import { join, basename } from 'path';
 import { readFileSync, writeFileSync } from 'fs';
-import { mysqlConfig } from './config/mysql';
+import { mariadbConfig } from './config/mariadb';
 
 const { Bzip2 } = require('compressjs');
 const tar = require('tar');
@@ -10,31 +10,31 @@ const tmp = require('tmp');
 
 tmp.setGracefulCleanup();
 
-export const testMySQLName = `dummy-${uuidv4()}`;
-const dbConfig = mysqlConfig;
+export const testMariaDBName = `dummy-${uuidv4()}`;
+const dbConfig = mariadbConfig;
 
-export async function cleanTestMySQL(): Promise<void> {
+export async function cleanTestMariaDB(): Promise<void> {
   const pool = createPool(dbConfig);
-  await pool.query(`DROP DATABASE IF EXISTS \`${testMySQLName}\``);
-  await pool.query(`CREATE DATABASE \`${testMySQLName}\``);
+  await pool.query(`DROP DATABASE IF EXISTS \`${testMariaDBName}\``);
+  await pool.query(`CREATE DATABASE \`${testMariaDBName}\``);
   pool.end();
 }
 
-export async function prepareTestMySQL(): Promise<void> {
-  await cleanTestMySQL();
+export async function prepareTestMariaDB(): Promise<void> {
+  await cleanTestMariaDB();
 
   const pool = createPool({
     ...dbConfig,
-    database: testMySQLName,
+    database: testMariaDBName,
   });
   await pool.query('CREATE TABLE IF NOT EXISTS dummy (id INT)');
   pool.end();
 }
 
-export async function listTableNamesInTestMySQL(): Promise<Array<string>> {
+export async function listTableNamesInTestMariaDB(): Promise<Array<string>> {
   const pool = createPool({
     ...dbConfig,
-    database: testMySQLName,
+    database: testMariaDBName,
   });
   const [rows, fields]: [RowDataPacket[], FieldPacket[]] = await pool.query('\
     SHOW TABLES \
@@ -44,11 +44,11 @@ export async function listTableNamesInTestMySQL(): Promise<Array<string>> {
   return tableNames;
 }
 
-export function createMySQLBackup(fileName: string): string {
+export function createMariaDBBackup(fileName: string): string {
   const sql = `
-  -- MySQL dump 10.19  Distrib 10.3.34-MariaDB, for debian-linux-gnu (x86_64)
+  -- MariaDB dump 10.19  Distrib 10.3.34-MariaDB, for debian-linux-gnu (x86_64)
   --
-  -- Host: mariadb    Database: \`${testMySQLName}\`
+  -- Host: mariadb    Database: \`${testMariaDBName}\`
   -- ------------------------------------------------------
   -- Server version       10.8.2-MariaDB-1:10.8.2+maria~focal
 
@@ -64,12 +64,12 @@ export function createMySQLBackup(fileName: string): string {
   /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
   --
-  -- Current Database: \`${testMySQLName}\`
+  -- Current Database: \`${testMariaDBName}\`
   --
 
-  CREATE DATABASE /*!32312 IF NOT EXISTS*/ \`${testMySQLName}\` /*!40100 DEFAULT CHARACTER SET utf8mb4 */;
+  CREATE DATABASE /*!32312 IF NOT EXISTS*/ \`${testMariaDBName}\` /*!40100 DEFAULT CHARACTER SET utf8mb4 */;
 
-  USE \`${testMySQLName}\`;
+  USE \`${testMariaDBName}\`;
 
   --
   -- Table structure for table \`dummy\`

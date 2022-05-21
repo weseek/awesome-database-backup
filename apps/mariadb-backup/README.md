@@ -1,6 +1,6 @@
-# mysql-backup
+# mariadb-backup
 
-Backup MySQL database and store to Amazon S3 or Google Cloud Storage. You can set a custom S3 endpoint to use S3 based services like DigitalOcean Spaces instead of Amazon S3.
+Backup MariaDB database and store to Amazon S3 or Google Cloud Storage. You can set a custom S3 endpoint to use S3 based services like DigitalOcean Spaces instead of Amazon S3.
 
 ## Usage
 
@@ -28,5 +28,5 @@ Options:
   -h, --help                                                               display help for command
 
 NOTICE:
-  You can pass MySQL options by set "--backup-tool-options". (ex. "--host db.example.com --user root")
+  You can pass MariaDB options by set "--backup-tool-options". (ex. "--host db.example.com --user root")
 ```

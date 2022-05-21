@@ -77,16 +77,16 @@ RUN apt-get update \
       && apt-get clean \
       && rm -rf /var/lib/apt/lists/*
 
-FROM tool-common AS mysql-tools
+FROM tool-common AS mariadb-tools
 
 RUN apt-get update \
-      && apt-get install -y mysql-common mysql-client --no-install-recommends \
+      && apt-get install -y mariadb-common mariadb-client-10.3 --no-install-recommends \
       && apt-get clean \
       && rm -rf /var/lib/apt/lists/*
 
 ##
 ## release
-## dbType is one of "mongodb", "postgresql", "mysql"
+## dbType is one of "mongodb", "postgresql", "mariadb"
 ##
 FROM ${dbType}-tools AS release
 

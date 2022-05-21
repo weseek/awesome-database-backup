@@ -1,4 +1,4 @@
-export const mysqlConfig = {
+export const mariadbConfig = {
   user: process.env.MYSQL_USER || 'root',
   password: process.env.MYSQLL_PASSWORD || 'password',
   host: process.env.MYSQLL_HOST || 'mariadb',

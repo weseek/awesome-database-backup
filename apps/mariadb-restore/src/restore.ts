@@ -1,5 +1,5 @@
 /**
- * An executable file that restore for MySQL from a backup in a storage service.
+ * An executable file that restore for MariaDB from a backup in a storage service.
  * Execute with --help to see usage instructions.
  */
 import { exec as execOriginal } from 'child_process';
@@ -7,22 +7,22 @@ import { promisify } from 'util';
 import { RestoreCommand } from '@awesome-backup/commands';
 import loggerFactory from './logger/factory';
 
-const version = require('@awesome-backup/mysql-restore/package.json').version;
+const version = require('@awesome-backup/mariadb-restore/package.json').version;
 
-const logger = loggerFactory('mysql-restore');
+const logger = loggerFactory('mariadb-restore');
 
 const exec = promisify(execOriginal);
 
-class MySQLSQLRestoreCommand extends RestoreCommand {
+class MariaDBSQLRestoreCommand extends RestoreCommand {
 
   async restoreDB(sourcePath: string, userSpecifiedOption?: string): Promise<{ stdout: string, stderr: string }> {
-    logger.info('restore MySQL...');
-    return exec(`cat ${sourcePath} | mysql ${userSpecifiedOption}`);
+    logger.info('restore MariaDB...');
+    return exec(`cat ${sourcePath} | mariadb ${userSpecifiedOption}`);
   }
 
 }
 
-const restoreCommand = new MySQLSQLRestoreCommand();
+const restoreCommand = new MariaDBSQLRestoreCommand();
 
 restoreCommand
   .version(version)
@@ -33,7 +33,7 @@ restoreCommand
       `.replace(/^ {4}/mg, ''))
   .addHelpText('after', `
     NOTICE:
-      You can pass MySQL options by set "--restore-tool-options". (ex. "--host db.example.com --user root")
+      You can pass MariaDB options by set "--restore-tool-options". (ex. "--host db.example.com --user root")
       `.replace(/^ {4}/mg, ''))
   .setRestoreAction();
 

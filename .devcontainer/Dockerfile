@@ -54,9 +54,9 @@ RUN echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg ma
       && apt-get install -y postgresql-common postgresql-client-14 --no-install-recommends \
       && apt-get clean \
       && rm -rf /var/lib/apt/lists/*
-## MySQL tools
+## MariaDB tools
 RUN apt-get update \
-      && apt-get install -y mysql-common default-mysql-client --no-install-recommends \
+      && apt-get install -y mariadb-common default-mariadb-client --no-install-recommends \
       && apt-get clean \
       && rm -rf /var/lib/apt/lists/*
 
