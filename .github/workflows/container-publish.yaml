@@ -10,10 +10,10 @@ jobs:
 
     strategy:
       matrix:
-        db_type: [
-          "mongodb",
-          "postgresql"
-        ]
+        db_type:
+        - mongodb
+        - postgresql
+        - mysql
       fail-fast: false
 
     steps:
