@@ -22,10 +22,10 @@
      * This is an assumption inherited by "tsconfig.json", which is placed in the top directory of each package.
      */
     "paths": {
-      "@awesome-backup/commands": ["../../packages/commands/src"],
-      "@awesome-backup/commands/*": ["../../packages/commands/src/*"],
-      "@awesome-backup/storage-service-clients": ["../../packages/storage-service-clients/src"],
-      "@awesome-backup/storage-service-clients/*": ["../../packages/storage-service-clients/src/*"],
+      "@awesome-database-backup/commands": ["../../packages/commands/src"],
+      "@awesome-database-backup/commands/*": ["../../packages/commands/src/*"],
+      "@awesome-database-backup/storage-service-clients": ["../../packages/storage-service-clients/src"],
+      "@awesome-database-backup/storage-service-clients/*": ["../../packages/storage-service-clients/src/*"],
     }
   }
 }

@@ -2,9 +2,9 @@
  * An executable file that prune backuped files in a storage service.
  * Execute with --help to see usage instructions.
  */
-import { PruneCommand } from '@awesome-backup/commands';
+import { PruneCommand } from '@awesome-database-backup/commands';
 
-const version = require('@awesome-backup/prune/package.json').version;
+const version = require('@awesome-database-backup/prune/package.json').version;
 
 const pruneCommand = new PruneCommand();
 

@@ -1,9 +1,9 @@
-[![Application test](https://github.com/ryu-sato/awesome-backup/actions/workflows/test.yaml/badge.svg)](https://github.com/ryu-sato/awesome-backup/actions/workflows/test.yaml)
-[![Container test](https://github.com/ryu-sato/awesome-backup/actions/workflows/container-test.yaml/badge.svg)](https://github.com/ryu-sato/awesome-backup/actions/workflows/container-test.yaml)
+[![Application test](https://github.com/ryu-sato/awesome-database-backup/actions/workflows/test.yaml/badge.svg)](https://github.com/ryu-sato/awesome-database-backup/actions/workflows/test.yaml)
+[![Container test](https://github.com/ryu-sato/awesome-database-backup/actions/workflows/container-test.yaml/badge.svg)](https://github.com/ryu-sato/awesome-database-backup/actions/workflows/container-test.yaml)
 
-# What is awesome-backup
+# What is awesome-database-backup
 
-awesome-backup is the collection of npm packages which backup/restore databases to/from Cloud storage services like Amazon S3 or Google Cloud Storage.
+awesome-database-backup is the collection of npm packages which backup/restore databases to/from Cloud storage services like Amazon S3 or Google Cloud Storage.
 
 # How to execute
 
@@ -20,16 +20,16 @@ Refer to the "README" corresponding to the database you are using.
 
 OR
 
-* Using GCS (see https://cloud.google.com/storage/docs/migrating#keys)
-  * If using service account authentication, set `GCP_SERVICE_ACCOUNT_KEY_JSON_PATH` and `GCP_PROJECT_ID`
+* Using GCSawesome-database-backupcloud.google.com/storage/docsawesome-database-backups)
+  * If using sawesome-database-backup authentication, set `GCP_SERVICawesome-database-backupJSON_PATH` and `GCP_PROJECT_ID`
   * If using HMAC authentication, set `GCP_ACCESS_KEY_ID`, `GCP_SECRET_ACCESS_KEY`, and `GCP_PROJECT_ID`
-
+awesome-database-backupawesome-database-backupawesome-database-backupawesome-database-backup
 # Migrate from [weseek/mongodb-awesome-backup](https://github.com/weseek/mongodb-awesome-backup) / [weseek/mariadb-awesome-backup](https://github.com/weseek/mariadb-awesome-backup)
 
 ## change environment variable
 
 You must change the following environment variables.
-
+awesome-database-backupawesome-database-backup
 | weseek/mongodb-awesome-backup | awesome-backup |
 | ----------------------------- | -------------- |
 | `AWSCLI_ENDPOINT_OPT` | `AWS_ENDPOINT_URL` |
@@ -44,7 +44,7 @@ You must change the following environment variables.
 | `CRONMODE` | - **NO SETTINGS REQURIED** (Only `CRON_EXPRESSION` needs to be set) |
 | `AWSCLIOPT` | - **DISABLED** |
 | `GCSCLIOPT` | - **DISABLED** |
-
+awesome-database-backupawesome-database-backup
 | weseek/mariadb-awesome-backup | awesome-backup |
 | ----------------------------- | -------------- |
 | `GCP_ACCESS_KEY_ID` | `GCP_CLIENT_EMAIL` |

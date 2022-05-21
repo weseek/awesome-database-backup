@@ -8,11 +8,11 @@ import {
   testGCSBucketURI,
   cleanTestGCSBucket,
   listFileNamesInTestGCSBucket,
-} from '@awesome-backup/storage-service-test';
+} from '@awesome-database-backup/storage-service-test';
 import {
   prepareTestMongoDB,
   mongodbURI,
-} from '@awesome-backup/mongodb-test';
+} from '@awesome-database-backup/mongodb-test';
 
 const exec = promisify(execOriginal);
 

@@ -1,7 +1,7 @@
 import {
   S3StorageServiceClientConfig,
   GCSStorageServiceClientConfig,
-} from '@awesome-backup/storage-service-clients';
+} from '@awesome-database-backup/storage-service-clients';
 
 /* Common command option types */
 export type ICommonCommandOption =

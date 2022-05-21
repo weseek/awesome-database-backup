@@ -1,5 +1,5 @@
 {
-  "name": "@awesome-backup/awesome-backup",
+  "name": "@awesome-database-backup/awesome-database-backup",
   "version": "0.1.1",
   "private": true,
   "workspaces": [

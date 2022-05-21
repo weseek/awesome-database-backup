@@ -1,3 +1,3 @@
 #!/usr/bin/env node
 
-require('@awesome-backup/prune');
+require('@awesome-database-backup/prune');

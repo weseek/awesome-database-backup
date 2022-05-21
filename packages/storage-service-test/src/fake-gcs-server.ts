@@ -1,7 +1,7 @@
 import { Storage } from '@google-cloud/storage';
-import { createPGBackup } from '@awesome-backup/postgresql-test';
-import { createMongoDBBackup } from '@awesome-backup/mongodb-test';
-import { createMariaDBBackup } from '@awesome-backup/mariadb-test';
+import { createPGBackup } from '@awesome-database-backup/postgresql-test';
+import { createMongoDBBackup } from '@awesome-database-backup/mongodb-test';
+import { createMariaDBBackup } from '@awesome-database-backup/mariadb-test';
 import { basename } from 'path';
 import { storageConfig, testGCSBucketName } from './config/fake-gcs-server';
 
