@@ -56,7 +56,7 @@ RUN echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg ma
       && rm -rf /var/lib/apt/lists/*
 ## MariaDB tools
 RUN apt-get update \
-      && apt-get install -y mariadb-common default-mariadb-client --no-install-recommends \
+      && apt-get install -y mariadb-common mariadb-client --no-install-recommends \
       && apt-get clean \
       && rm -rf /var/lib/apt/lists/*
 

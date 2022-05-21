@@ -80,7 +80,7 @@ RUN apt-get update \
 FROM tool-common AS mariadb-tools
 
 RUN apt-get update \
-      && apt-get install -y mariadb-common mariadb-client-10.3 --no-install-recommends \
+      && apt-get install -y mariadb-common mariadb-client --no-install-recommends \
       && apt-get clean \
       && rm -rf /var/lib/apt/lists/*
 
