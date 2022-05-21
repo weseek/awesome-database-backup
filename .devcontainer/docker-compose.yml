@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile
     volumes:
-    - ..:/awesome-backup:delegated
+    - ..:/awesome-database-backup:delegated
     tty: true
     environment:
       TZ: Asia/Tokyo
@@ -16,7 +16,7 @@ services:
         ipv4_address: 172.16.2.5
     dns:
     - 172.16.2.2 # dnsmasq container
-    working_dir: /awesome-backup
+    working_dir: /awesome-database-backup
 
   mongo:
     image: mongo:5.0.6

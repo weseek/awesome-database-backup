@@ -4,7 +4,7 @@
   "name": "Node.js & TypeScript",
   "dockerComposeFile": ["docker-compose.yml", "docker-compose.volume-node-modules.yml"],
   "service": "node",
-  "workspaceFolder": "/awesome-backup",
+  "workspaceFolder": "/awesome-database-backup",
 
 
   // Set *default* container specific settings.json values on container create.
