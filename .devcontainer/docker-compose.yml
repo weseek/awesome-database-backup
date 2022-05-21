@@ -54,7 +54,7 @@ services:
     image: mariadb:10.8.2
     environment:
       MARIADB_USER: ${DB_ADMIN_USERNAME:-root}
-      MARIADB_ROOT_PASSWORD: ${DB_ADMIN_PASSWOD:-password}
+      MARIADB_ROOT_PASSWORD: ${DB_ADMIN_PASSWORD:-password}
     volumes:
     - mysql_data:/var/lib/mysql
     healthcheck:
@@ -64,7 +64,7 @@ services:
       - ping
       - -h
       - localhost
-      - -p${DB_ADMIN_PASSWOD}
+      - -p${DB_ADMIN_PASSWORD}
 
   # S3 Mock for test
   minio:
