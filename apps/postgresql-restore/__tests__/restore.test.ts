@@ -9,6 +9,7 @@ import {
   testGCSBucketURI,
   cleanTestGCSBucket,
   uploadPGFixtureToTestGCSBucket,
+  testS3BucketName,
 } from '@awesome-backup/storage-service-test';
 import {
   cleanTestPG,
@@ -49,7 +50,7 @@ describe('restore', () => {
       --aws-region ${s3ClientConfig.region} \
       --aws-access-key-id ${s3ClientConfig.credentials.accessKeyId} \
       --aws-secret-access-key ${s3ClientConfig.credentials.secretAccessKey} \
-      --restore-tool-options "--host ${postgresqlConfig.host} --user ${postgresqlConfig.user} --port ${postgresqlConfig.port}" \
+      --restore-tool-options "--host ${postgresqlConfig.host} --username ${postgresqlConfig.user} --port ${postgresqlConfig.port}" \
       --target-bucket-url ${objectURI}`;
 
     beforeEach(cleanTestS3Bucket);
@@ -76,7 +77,7 @@ describe('restore', () => {
       --gcp-project-id ${storageConfig.projectId} \
       --gcp-client-email ${storageConfig.credentials.client_email} \
       --gcp-private-key ${storageConfig.credentials.private_key} \
-      --restore-tool-options "--host ${postgresqlConfig.host} --user ${postgresqlConfig.user} --port ${postgresqlConfig.port}" \
+      --restore-tool-options "--host ${postgresqlConfig.host} --username ${postgresqlConfig.user} --port ${postgresqlConfig.port}" \
       --target-bucket-url ${objectURI}`;
     beforeEach(cleanTestGCSBucket);
     beforeEach(cleanTestPG);
