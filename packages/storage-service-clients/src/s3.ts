@@ -6,7 +6,7 @@ import {
   PutObjectCommand, PutObjectCommandInput,
   CopyObjectCommand, CopyObjectCommandInput,
   DeleteObjectCommand, DeleteObjectCommandInput,
-  ListObjectsCommand, ListObjectsCommandInput,
+  ListObjectsCommand,
 } from '@aws-sdk/client-s3';
 import { promises as StreamPromises, Readable } from 'stream';
 import {
