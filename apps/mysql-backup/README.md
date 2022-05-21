@@ -1,13 +1,13 @@
-# mysql-restore
+# mysql-backup
 
-Restore MySQL database from backuped file on Amazon S3 or Google Cloud Storage. You can set a custom S3 endpoint to use S3 based services like DigitalOcean Spaces instead of Amazon S3.
+Backup MySQL database and store to Amazon S3 or Google Cloud Storage. You can set a custom S3 endpoint to use S3 based services like DigitalOcean Spaces instead of Amazon S3.
 
 ## Usage
 
-### How to restore
+### How to backup
 
 ```
-Usage: restore [options]
+Usage: backup [options]
 
 Options:
   -V, --version                                                            output the version number
@@ -21,12 +21,12 @@ Options:
   --gcp-private-key <GCP_PRIVATE_KEY>                                      GCP Private Key (env: GCP_PRIVATE_KEY)
   --gcp-client-email <GCP_CLIENT_EMAIL>                                    GCP Client Email (env: GCP_CLIENT_EMAIL)
   --gcp-service-account-key-json-path <GCP_SERVICE_ACCOUNT_KEY_JSON_PATH>  JSON file path to your GCP Service Account Key (env: GCP_SERVICE_ACCOUNT_KEY_JSON_PATH)
-  --restore-tool-options <OPTIONS_STRING>                                  pass options to restore tool exec (env: RESTORE_TOOL_OPTIONS)
+  --backupfile-prefix <BACKUPFILE_PREFIX>                                  Prefix of backup file. (default: "backup", env: BACKUPFILE_PREFIX)
+  --cronmode <CRON_EXPRESSION>                                             Run `backup` as cron mode. In Cron mode, `backup` will be executed periodically.(ex. CRON_EXPRESSION="0 4 * * *" if you want to run at 4:00 every day) (env: CRON_EXPRESSION)
+  --healthcheck-url <HEALTHCHECK_URL>                                      URL that gets called after a successful backup (eg. https://healthchecks.io) (env: HEALTHCHECKS_URL)
+  --backup-tool-options <OPTIONS_STRING>                                   pass options to backup tool exec (ex. "--host db.example.com --user root") (env: BACKUP_TOOL_OPTIONS)
   -h, --help                                                               display help for command
 
-TIPS:
-  You can omit entering the DB password by setting it as an environment variable like this: `export MYSQL_PWD="password"      
-
 NOTICE:
-  You can pass MySQL options by set "--restore-tool-options". (ex. "--host db.example.com --user root")
+  You can pass MySQL options by set "--backup-tool-options". (ex. "--host db.example.com --user root")
 ```

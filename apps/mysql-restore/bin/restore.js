@@ -1,3 +1,3 @@
 #!/usr/bin/env node
 
-require('@awesome-backup/postgresql-restore');
+require('@awesome-backup/mysql-restore');

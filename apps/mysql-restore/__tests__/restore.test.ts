@@ -58,7 +58,7 @@ describe('restore', () => {
       await uploadMySQLFixtureToTestS3Bucket(testMySQLName); // includes 'dummy' table
     });
 
-    it('restore PostgreSQL in bucket', async() => {
+    it('restore MySQL in bucket', async() => {
       expect(await listTableNamesInTestMySQL()).toEqual([]);
       expect(await exec(commandLine)).toEqual({
         stdout: expect.stringMatching(/=== restore.ts started at .* ===/),
@@ -84,7 +84,7 @@ describe('restore', () => {
       await uploadMySQLFixtureToTestGCSBucket(testMySQLName); // includes 'dummy' table
     });
 
-    it('restore PostgreSQL in bucket', async() => {
+    it('restore MySQL in bucket', async() => {
       expect(await listTableNamesInTestMySQL()).toEqual([]);
       expect(await exec(commandLine)).toEqual({
         stdout: expect.stringMatching(/=== restore.ts started at .* ===/),

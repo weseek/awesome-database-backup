@@ -1,5 +1,5 @@
 /**
- * An executable file that restore for PostgreSQL from a backup in a storage service.
+ * An executable file that restore for MySQL from a backup in a storage service.
  * Execute with --help to see usage instructions.
  */
 import { exec as execOriginal } from 'child_process';

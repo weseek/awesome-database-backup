@@ -51,7 +51,7 @@ describe('backup', () => {
         --backup-tool-options "--host ${mysqlConfig.host} --user ${mysqlConfig.user} --port ${mysqlConfig.port}" \
         --target-bucket-url ${testS3BucketURI}`;
 
-      it('backup mongo in bucket', async() => {
+      it('backup mysql in bucket', async() => {
         expect(await exec(commandLine)).toEqual({
           stdout: expect.stringMatching(/=== backup.ts started at .* ===/),
           stderr: '',
@@ -73,7 +73,7 @@ describe('backup', () => {
         --backup-tool-options "--host ${mysqlConfig.host} --user ${mysqlConfig.user} --port ${mysqlConfig.port}" \
         --target-bucket-url ${testGCSBucketURI}/`;
 
-      it('backup mongo in bucket', async() => {
+      it('backup mysql in bucket', async() => {
         expect((await listFileNamesInTestGCSBucket()).length).toBe(0);
         expect(await exec(commandLine)).toEqual({
           stdout: expect.stringMatching(/=== backup.ts started at .* ===/),
