@@ -9,9 +9,9 @@ awesome-database-backup is the collection of npm packages which backup/restore d
 
 Refer to the "README" corresponding to the database you are using.
 
-- For mongoDB, you can use [awesome-mongodb-backup](./apps/awesome-mongodb-backup). See [README](./apps/awesome-mongodb-backup/README.md).
-- For PostgreSQL, you can use [awesome-postgresql-backup](./apps/awesome-postgresql-backup). See [README](./apps/awesome-postgresql-backup/README.md).
-- For MariaDB, you can use [awesome-mariadb-backup](./apps/awesome-mariadb-backup). See [README](./apps/awesome-mariadb-backup/README.md).
+- For mongoDB, you can use [awesome-mongodb-backup](./apps/awesome-mongodb-backup)
+- For PostgreSQL, you can use [awesome-postgresql-backup](./apps/awesome-postgresql-backup)
+- For MariaDB, you can use [awesome-mariadb-backup](./apps/awesome-mariadb-backup)
 
 ## Authenticate storage service
 

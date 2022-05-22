@@ -16,7 +16,7 @@ categories:
   - 'support'
   - 'dependencies'
 category-template: '### $TITLE'
-change-template: '- $TITLE ([#$NUMBER](https://github.com/ryu-sato/awesome-backup/pull/$NUMBER)) [@$AUTHOR](https://github.com/$AUTHOR)'
+change-template: '- $TITLE (#$NUMBER) @$AUTHOR'
 change-title-escapes: '\<*_&' # You can add # and @ to disable mentions, and add ` to disable code blocks.
 autolabeler:
 - label: 'feature'
