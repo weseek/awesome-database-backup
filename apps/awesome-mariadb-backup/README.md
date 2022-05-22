@@ -6,7 +6,7 @@ Collection of CLI executable npm packages which backup MariaDB databases to Amaz
 
 See "README.md" each command follows or run command with "--help" option.
 
-- [mariadb-backup](https://github.com/ryu-sato/awesome-database-backup/blob/master/apps/mariadb-backup/README.md)
-- [mariadb-restore](https://github.com/ryu-sato/awesome-database-backup/blob/master/apps/mariadb-restore/README.md)
-- [list](https://github.com/ryu-sato/awesome-database-backup/blob/master/apps/list/README.md)
-- [prune](https://github.com/ryu-sato/awesome-database-backup/blob/master/apps/prune/README.md)
+- [mariadb-backup](https://github.com/weseek/awesome-database-backup/blob/master/apps/mariadb-backup/README.md)
+- [mariadb-restore](https://github.com/weseek/awesome-database-backup/blob/master/apps/mariadb-restore/README.md)
+- [list](https://github.com/weseek/awesome-database-backup/blob/master/apps/list/README.md)
+- [prune](https://github.com/weseek/awesome-database-backup/blob/master/apps/prune/README.md)
