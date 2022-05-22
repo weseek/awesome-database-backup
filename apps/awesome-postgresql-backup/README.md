@@ -1,4 +1,4 @@
-# awesome-postgresql-backup
+# What is awesome-postgresql-backup
 
 Collection of CLI executable npm packages which backup PostgreSQL databases to Amazon S3 or Google Cloud Storage. You can set a custom S3 endpoint to use S3 based services like DigitalOcean Spaces instead of Amazon S3.
 
