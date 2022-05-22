@@ -1,6 +1,6 @@
 {
   "name": "@awesome-database-backup/awesome-postgresql-backup",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Collection of scripts which backup PostgreSQL databases to Amazon S3 or Google Cloud Storage. You can set a custom S3 endpoint to use S3 based services like DigitalOcean Spaces instead of Amazon S3.",
   "author": "Ryu Sato <ryu@weseek.co.jp>",
   "license": "MIT",
@@ -13,10 +13,10 @@
     "url": "https://github.com/ryu-sato/awesome-database-backup/issues"
   },
   "dependencies": {
-    "@awesome-database-backup/postgresql-backup": "^0.1.1",
-    "@awesome-database-backup/postgresql-restore": "^0.1.1",
-    "@awesome-database-backup/list": "^0.1.1",
-    "@awesome-database-backup/prune": "^0.1.1"
+    "@awesome-database-backup/postgresql-backup": "^0.1.2",
+    "@awesome-database-backup/postgresql-restore": "^0.1.2",
+    "@awesome-database-backup/list": "^0.1.2",
+    "@awesome-database-backup/prune": "^0.1.2"
   },
   "devDependencies": {}
 }

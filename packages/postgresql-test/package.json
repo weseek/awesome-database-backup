@@ -1,6 +1,6 @@
 {
   "name": "@awesome-database-backup/postgresql-test",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Functions of PostgreSQL to support test",
   "author": "Ryu Sato <ryu@weseek.co.jp>",
   "license": "MIT",
