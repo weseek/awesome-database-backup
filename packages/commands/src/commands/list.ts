@@ -3,7 +3,7 @@ import { StorageServiceClientCommand } from './common';
 import loggerFactory from '../logger/factory';
 import { IListCommandOption } from './interfaces';
 
-const logger = loggerFactory('mongodb-awesome-core');
+const logger = loggerFactory('list');
 
 /**
  * Define actions, options, and arguments that are commonly required for list command from the CLI, regardless of the database type.

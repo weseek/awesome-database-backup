@@ -1,4 +1,4 @@
-import { ICommonCommandOption } from '@awesome-backup/commands';
+import { ICommonCommandOption } from '@awesome-database-backup/commands';
 
 afterEach(() => {
   jest.resetModules();

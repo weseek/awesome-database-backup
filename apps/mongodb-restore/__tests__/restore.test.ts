@@ -9,13 +9,13 @@ import {
   testGCSBucketURI,
   cleanTestGCSBucket,
   uploadMongoDBFixtureToTestGCSBucket,
-} from '@awesome-backup/storage-service-test';
+} from '@awesome-database-backup/storage-service-test';
 import {
   dropTestMongoDB,
   listCollectionNamesInTestMongoDB,
   mongodbURI,
   testMongoDBName,
-} from '@awesome-backup/mongodb-test';
+} from '@awesome-database-backup/mongodb-test';
 
 const exec = promisify(execOriginal);
 

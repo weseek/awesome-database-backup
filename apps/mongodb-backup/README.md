@@ -30,3 +30,34 @@ Options:
 NOTICE:
   You can pass mongoDB options by set "--backup-tool-options". (ex. "--host db.example.com --username admin")
 ```
+
+## Authenticate storage service
+
+S3 or GCS authentication is required depending on the storage service used.
+
+- For S3
+  - Set `AWS_REGION` and `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`
+- For GCS
+  - To use [service account authentication](https://cloud.google.com/docs/authentication/production), create JSON Web Key and set `GCP_SERVICE_JSON_PATH` and `GCP_PROJECT_ID`
+  - To use [HMAC authentication](https://cloud.google.com/storage/docs/authentication/hmackeys), set `GCP_ACCESS_KEY_ID`, `GCP_SECRET_ACCESS_KEY`, and `GCP_PROJECT_ID`
+
+# Migrate from [weseek/mongodb-awesome-backup](https://github.com/weseek/mongodb-awesome-backup)
+
+## change environment variable
+
+Change the following environment variables.
+
+| weseek/mongodb-awesome-backup | mongodb-backup |
+| ----------------------------- | -------------- |
+| `AWSCLI_ENDPOINT_OPT` | `AWS_ENDPOINT_URL` |
+| `GCP_ACCESS_KEY_ID` | `GCP_CLIENT_EMAIL` |
+| `GCP_SECRET_ACCESS_KEY` | `GCP_PRIVATE_KEY` |
+| `MONGODB_URI` | `BACKUP_TOOL_OPTIONS` or `RESTORE_TOOL_OPTIONS` |
+| `MONGODB_HOST` | `BACKUP_TOOL_OPTIONS` or `RESTORE_TOOL_OPTIONS` |
+| `MONGODB_DBNAME` | `BACKUP_TOOL_OPTIONS` or `RESTORE_TOOL_OPTIONS` |
+| `MONGODB_USERNAME` | `BACKUP_TOOL_OPTIONS` or `RESTORE_TOOL_OPTIONS` |
+| `MONGODB_PASSWORD` | `BACKUP_TOOL_OPTIONS` or `RESTORE_TOOL_OPTIONS` |
+| `MONGODB_AUTHDB` | `BACKUP_TOOL_OPTIONS` or `RESTORE_TOOL_OPTIONS` |
+| `CRONMODE` | - **NO SETTINGS REQURIED** (Only `CRON_EXPRESSION` needs to be set) |
+| `AWSCLIOPT` | - **DISABLED** |
+| `GCSCLIOPT` | - **DISABLED** |

@@ -10,7 +10,7 @@ import loggerFactory from '../logger/factory';
 
 const schedule = require('node-schedule');
 
-const logger = loggerFactory('mongodb-awesome-backup');
+const logger = loggerFactory('backup');
 
 /**
  * Define actions, options, and arguments that are commonly required for backup command from the CLI, regardless of the database type.

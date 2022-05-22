@@ -4,7 +4,7 @@ import { IPruneCommandOption } from './interfaces';
 import { StorageServiceClientCommand } from './common';
 import loggerFactory from '../logger/factory';
 
-const logger = loggerFactory('mongodb-awesome-backup');
+const logger = loggerFactory('prune');
 
 /**
  * Define actions, options, and arguments that are commonly required for prune command from the CLI, regardless of the database type.

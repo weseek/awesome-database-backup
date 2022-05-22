@@ -27,3 +27,13 @@ Options:
   --delete-target-days-left <DELETE_TARGET_DAYS_LEFT>                      How many days ago to be deleted (default: 4, env: DELETE_TARGET_DAYS_LEFT)
   -h, --help                                                               display help for command
 ```
+
+## Authenticate storage service
+
+S3 or GCS authentication is required depending on the storage service used.
+
+- For S3
+  - Set `AWS_REGION` and `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`
+- For GCS
+  - To use [service account authentication](https://cloud.google.com/docs/authentication/production), create JSON Web Key and set `GCP_SERVICE_JSON_PATH` and `GCP_PROJECT_ID`
+  - To use [HMAC authentication](https://cloud.google.com/storage/docs/authentication/hmackeys), set `GCP_ACCESS_KEY_ID`, `GCP_SECRET_ACCESS_KEY`, and `GCP_PROJECT_ID`

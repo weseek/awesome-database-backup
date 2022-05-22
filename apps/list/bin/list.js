@@ -1,3 +1,3 @@
 #!/usr/bin/env node
 
-require('@awesome-backup/list');
+require('@awesome-database-backup/list');

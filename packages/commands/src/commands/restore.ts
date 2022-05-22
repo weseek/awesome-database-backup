@@ -12,7 +12,7 @@ import { IRestoreCommandOption } from './interfaces';
 import { StorageServiceClientCommand } from './common';
 import loggerFactory from '../logger/factory';
 
-const logger = loggerFactory('mongodb-awesome-backup');
+const logger = loggerFactory('restore');
 const tmp = require('tmp');
 const tar = require('tar');
 const bz2 = require('unbzip2-stream');

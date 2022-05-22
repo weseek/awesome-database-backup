@@ -1,3 +1,3 @@
 #!/usr/bin/env node
 
-require('@awesome-backup/mongodb-restore');
+require('@awesome-database-backup/mongodb-restore');

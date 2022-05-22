@@ -2,6 +2,6 @@ version: '3'
 services:
   node:
     volumes:
-    - node_modules:/awesome-backup/node_modules
+    - node_modules:/awesome-database-backup/node_modules
 volumes:
   node_modules:

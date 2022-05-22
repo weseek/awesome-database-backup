@@ -8,11 +8,11 @@ import {
   testGCSBucketURI,
   cleanTestGCSBucket,
   listFileNamesInTestGCSBucket,
-} from '@awesome-backup/storage-service-test';
+} from '@awesome-database-backup/storage-service-test';
 import {
   prepareTestMariaDB,
   mariadbConfig,
-} from '@awesome-backup/mariadb-test';
+} from '@awesome-database-backup/mariadb-test';
 
 const exec = promisify(execOriginal);
 

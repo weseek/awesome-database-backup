@@ -8,11 +8,11 @@ import {
   testGCSBucketURI,
   cleanTestGCSBucket,
   listFileNamesInTestGCSBucket,
-} from '@awesome-backup/storage-service-test';
+} from '@awesome-database-backup/storage-service-test';
 import {
   prepareTestPG,
   postgresqlConfig,
-} from '@awesome-backup/postgresql-test';
+} from '@awesome-database-backup/postgresql-test';
 
 const exec = promisify(execOriginal);
 

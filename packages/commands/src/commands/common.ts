@@ -3,7 +3,7 @@ import {
   IStorageServiceClient,
   getStorageServiceClientType,
   storageServiceClientFactory,
-} from '@awesome-backup/storage-service-clients';
+} from '@awesome-database-backup/storage-service-clients';
 import { ICommonCommandOption } from './interfaces';
 
 /**

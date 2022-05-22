@@ -1,3 +1,3 @@
 #!/usr/bin/env node
 
-require('@awesome-backup/postgresql-backup');
+require('@awesome-database-backup/postgresql-backup');

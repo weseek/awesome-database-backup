@@ -21,9 +21,9 @@ jobs:
     - name: Set up metadata
       id: pkg_meta
       run: |
-        echo "::set-output name=package_scope::@awesome-backup/${{ matrix.db_type }}-awesome-backup"
-        echo "::set-output name=package_path::apps/${{ matrix.db_type }}-awesome-backup"
-        echo "::set-output name=package_repository::ryu310/${{ matrix.db_type }}-awesome-backup"
+        echo "::set-output name=package_scope::@awesome-database-backup/awesome-${{ matrix.db_type }}-backup"
+        echo "::set-output name=package_path::apps/awesome-${{ matrix.db_type }}-backup"
+        echo "::set-output name=package_repository::ryu310/awesome-${{ matrix.db_type }}-backup"
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
     - name: Login to docker.io registry

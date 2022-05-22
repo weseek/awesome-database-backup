@@ -1,4 +1,4 @@
-import { IStorageServiceClient } from '@awesome-backup/storage-service-clients';
+import { IStorageServiceClient } from '@awesome-database-backup/storage-service-clients';
 import { PruneCommand, IPruneCommandOption } from '../../src/commands/prune';
 
 describe('PruneCommand', () => {

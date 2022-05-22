@@ -1,4 +1,4 @@
-import { IStorageServiceClient } from '@awesome-backup/storage-service-clients';
+import { IStorageServiceClient } from '@awesome-database-backup/storage-service-clients';
 import { BackupCommand, IBackupCommandOption } from '../../src/commands/backup';
 
 describe('BackupCommand', () => {

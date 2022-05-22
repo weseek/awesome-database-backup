@@ -4,10 +4,10 @@
  */
 import { exec as execOriginal } from 'child_process';
 import { promisify } from 'util';
-import { RestoreCommand } from '@awesome-backup/commands';
+import { RestoreCommand } from '@awesome-database-backup/commands';
 import loggerFactory from './logger/factory';
 
-const version = require('@awesome-backup/mongodb-restore/package.json').version;
+const version = require('@awesome-database-backup/mongodb-restore/package.json').version;
 
 const logger = loggerFactory('mongodb-restore');
 
