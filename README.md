@@ -3,7 +3,7 @@
 
 # What is awesome-database-backup
 
-awesome-database-backup is the collection of npm packages which backup/restore databases to/from Cloud storage services like Amazon S3 or Google Cloud Storage.
+Collection of CLI executable npm packages which backup/restore databases to/from Cloud storage services like Amazon S3 or Google Cloud Storage.
 
 # How to execute
 
