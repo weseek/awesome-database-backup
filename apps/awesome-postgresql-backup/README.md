@@ -6,7 +6,7 @@ Collection of scripts which backup PostgreSQL databases to Amazon S3 or Google C
 
 See "README.md" each command follows or run command with "--help" option.
 
-- [postgresql-backup](https://github.com/ryu-sato/awesome-backup/blob/master/apps/postgresql-backup/README.md)
-- [postgresql-restore](https://github.com/ryu-sato/awesome-backup/blob/master/apps/postgresql-restore/README.md)
-- [list](https://github.com/ryu-sato/awesome-backup/blob/master/apps/list/README.md)
-- [prune](https://github.com/ryu-sato/awesome-backup/blob/master/apps/prune/README.md)
+- [postgresql-backup](https://github.com/ryu-sato/awesome-database-backup/blob/master/apps/postgresql-backup/README.md)
+- [postgresql-restore](https://github.com/ryu-sato/awesome-database-backup/blob/master/apps/postgresql-restore/README.md)
+- [list](https://github.com/ryu-sato/awesome-database-backup/blob/master/apps/list/README.md)
+- [prune](https://github.com/ryu-sato/awesome-database-backup/blob/master/apps/prune/README.md)

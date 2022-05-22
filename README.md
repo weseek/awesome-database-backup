@@ -9,9 +9,9 @@ awesome-database-backup is the collection of npm packages which backup/restore d
 
 Refer to the "README" corresponding to the database you are using.
 
-- For mongoDB, you can use [mongodb-awesome-backup](./apps/mongodb-awesome-backup). See [README](./apps/mongodb-awesome-backup/README.md).
-- For PostgreSQL, you can use [postgresql-awesome-backup](./apps/postgresql-awesome-backup). See [README](./apps/postgresql-awesome-backup/README.md).
-- For MariaDB, you can use [mariadb-awesome-backup](./apps/mariadb-awesome-backup). See [README](./apps/mariadb-awesome-backup/README.md).
+- For mongoDB, you can use [awesome-mongodb-backup](./apps/awesome-mongodb-backup). See [README](./apps/awesome-mongodb-backup/README.md).
+- For PostgreSQL, you can use [awesome-postgresql-backup](./apps/awesome-postgresql-backup). See [README](./apps/awesome-postgresql-backup/README.md).
+- For MariaDB, you can use [awesome-mariadb-backup](./apps/awesome-mariadb-backup). See [README](./apps/awesome-mariadb-backup/README.md).
 
 ## Authenticate storage service
 
@@ -24,13 +24,13 @@ OR
   * If using sawesome-database-backup authentication, set `GCP_SERVICawesome-database-backupJSON_PATH` and `GCP_PROJECT_ID`
   * If using HMAC authentication, set `GCP_ACCESS_KEY_ID`, `GCP_SECRET_ACCESS_KEY`, and `GCP_PROJECT_ID`
 awesome-database-backupawesome-database-backupawesome-database-backupawesome-database-backup
-# Migrate from [weseek/mongodb-awesome-backup](https://github.com/weseek/mongodb-awesome-backup) / [weseek/mariadb-awesome-backup](https://github.com/weseek/mariadb-awesome-backup)
+# Migrate from [weseek/awesome-mongodb-backup](https://github.com/weseek/awesome-mongodb-backup) / [weseek/awesome-mariadb-backup](https://github.com/weseek/awesome-mariadb-backup)
 
 ## change environment variable
 
 You must change the following environment variables.
 awesome-database-backupawesome-database-backup
-| weseek/mongodb-awesome-backup | awesome-backup |
+| weseek/awesome-mongodb-backup | awesome-database-backup |
 | ----------------------------- | -------------- |
 | `AWSCLI_ENDPOINT_OPT` | `AWS_ENDPOINT_URL` |
 | `GCP_ACCESS_KEY_ID` | `GCP_CLIENT_EMAIL` |
@@ -45,7 +45,7 @@ awesome-database-backupawesome-database-backup
 | `AWSCLIOPT` | - **DISABLED** |
 | `GCSCLIOPT` | - **DISABLED** |
 awesome-database-backupawesome-database-backup
-| weseek/mariadb-awesome-backup | awesome-backup |
+| weseek/awesome-mariadb-backup | awesome-database-backup |
 | ----------------------------- | -------------- |
 | `GCP_ACCESS_KEY_ID` | `GCP_CLIENT_EMAIL` |
 | `GCP_SECRET_ACCESS_KEY` | `GCP_PRIVATE_KEY` |
