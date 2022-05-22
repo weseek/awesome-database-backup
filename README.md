@@ -20,10 +20,10 @@ Refer to the "README" corresponding to the database you are using.
 
 OR
 
-* Using GCSawesome-database-backupcloud.google.com/storage/docsawesome-database-backups)
+* Using GCS (see https://cloud.google.com/storage/docs/migrating#keys)
   * If using sawesome-database-backup authentication, set `GCP_SERVICawesome-database-backupJSON_PATH` and `GCP_PROJECT_ID`
   * If using HMAC authentication, set `GCP_ACCESS_KEY_ID`, `GCP_SECRET_ACCESS_KEY`, and `GCP_PROJECT_ID`
-awesome-database-backupawesome-database-backupawesome-database-backupawesome-database-backup
+
 # Migrate from [weseek/awesome-mongodb-backup](https://github.com/weseek/awesome-mongodb-backup) / [weseek/awesome-mariadb-backup](https://github.com/weseek/awesome-mariadb-backup)
 
 ## change environment variable
