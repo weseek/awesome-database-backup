@@ -30,3 +30,29 @@ Options:
 NOTICE:
   You can pass MariaDB options by set "--backup-tool-options". (ex. "--host db.example.com --user root")
 ```
+
+## Authenticate storage service
+
+S3 or GCS authentication is required depending on the storage service used.
+
+- For S3
+  - Set `AWS_REGION` and `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`
+- For GCS
+  - To use [service account authentication](https://cloud.google.com/docs/authentication/production), create JSON Web Key and set `GCP_SERVICE_JSON_PATH` and `GCP_PROJECT_ID`
+  - To use [HMAC authentication](https://cloud.google.com/storage/docs/authentication/hmackeys), set `GCP_ACCESS_KEY_ID`, `GCP_SECRET_ACCESS_KEY`, and `GCP_PROJECT_ID`
+
+## Migrate from [weseek/mariadb-awesome-backup](https://github.com/weseek/mariadb-awesome-backup)
+
+### change environment variable
+
+Change the following environment variables.
+
+| weseek/mariadb-awesome-backup | mariadb-backup |
+| ----------------------------- | -------------- |
+| `GCP_ACCESS_KEY_ID` | `GCP_CLIENT_EMAIL` |
+| `GCP_SECRET_ACCESS_KEY` | `GCP_PRIVATE_KEY` |
+| `MARIADB_HOST` | `BACKUP_TOOL_OPTIONS` or `RESTORE_TOOL_OPTIONS` |
+| `MARIADB_DBNAME` | `BACKUP_TOOL_OPTIONS` or `RESTORE_TOOL_OPTIONS` |
+| `MARIADB_USERNAME` | `BACKUP_TOOL_OPTIONS` or `RESTORE_TOOL_OPTIONS` |
+| `MARIADB_PASSWORD` | `BACKUP_TOOL_OPTIONS` or `RESTORE_TOOL_OPTIONS` |
+| `MYSQLDUMP_OPTS` | `BACKUP_TOOL_OPTIONS` |
