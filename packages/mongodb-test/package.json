@@ -4,13 +4,13 @@
   "description": "Functions of MongoDB to support test",
   "author": "Ryu Sato <ryu@weseek.co.jp>",
   "license": "MIT",
-  "homepage": "https://github.com/weseek/awesome-database-backup#readme",
+  "homepage": "https://github.com/ryu-sato/awesome-database-backup#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/weseek/awesome-database-backup.git"
+    "url": "git+https://github.com/ryu-sato/awesome-database-backup.git"
   },
   "bugs": {
-    "url": "https://github.com/weseek/awesome-database-backup/issues"
+    "url": "https://github.com/ryu-sato/awesome-database-backup/issues"
   },
   "// Use Typescript as is, so Typescript must be enabled for use with mocks. (ex. enable ts-jest)": "",
   "main": "src/index.ts",
