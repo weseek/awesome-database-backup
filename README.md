@@ -13,10 +13,10 @@ Refer to the "README" corresponding to the database you are using.
 - For PostgreSQL, you can use [awesome-postgresql-backup](./apps/awesome-postgresql-backup)
 - For MariaDB, you can use [awesome-mariadb-backup](./apps/awesome-mariadb-backup)
 
-# Migrate from [weseek/mongodb-awesome-backup](https://github.com/weseek/mongodb-awesome-backup) / [weseek/mariadb-awesome-backup](https://github.com/weseek/mariadb-awesome-backup)
+# Migrate from `weseek/awesome-mongodb-backup` / `weseek/awesome-mariadb-backup`
 
-- From `weseek/awesome-mongodb-backup`, you can use [awesome-mongodb-backup](./apps/awesome-mongodb-backup)
-- From `weseek/awesome-mariadb-backup`, you can use [awesome-mariadb-backup](./apps/awesome-mariadb-backup)
+- From [weseek/mongodb-awesome-backup](https://github.com/weseek/mongodb-awesome-backup), you can use [awesome-mongodb-backup](./apps/awesome-mongodb-backup)
+- From [weseek/mariadb-awesome-backup](https://github.com/weseek/mariadb-awesome-backup), you can use [awesome-mariadb-backup](./apps/awesome-mariadb-backup)
 
 # How to contribute
 
