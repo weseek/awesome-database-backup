@@ -1,5 +1,5 @@
-[![Application test](https://github.com/ryu-sato/awesome-database-backup/actions/workflows/test.yaml/badge.svg)](https://github.com/ryu-sato/awesome-database-backup/actions/workflows/test.yaml)
-[![Container test](https://github.com/ryu-sato/awesome-database-backup/actions/workflows/container-test.yaml/badge.svg)](https://github.com/ryu-sato/awesome-database-backup/actions/workflows/container-test.yaml)
+[![Application test](https://github.com/weseek/awesome-database-backup/actions/workflows/test.yaml/badge.svg)](https://github.com/weseek/awesome-database-backup/actions/workflows/test.yaml)
+[![Container test](https://github.com/weseek/awesome-database-backup/actions/workflows/container-test.yaml/badge.svg)](https://github.com/weseek/awesome-database-backup/actions/workflows/container-test.yaml)
 
 # What is awesome-database-backup
 
