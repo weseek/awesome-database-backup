@@ -24,7 +24,7 @@
   "devDependencies": {
   },
   "engines": {
-    "node": ">= 16.13.1 < 17",
+    "node": ">= 16.15.0 < 17",
     "yarn": ">= 1.22.4"
   }
 }
