@@ -1,6 +1,6 @@
 ARG dbType
 
-FROM node:16-slim AS base
+FROM node:18-slim AS base
 
 ##
 ## Prepare a subset of this monorepo
