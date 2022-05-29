@@ -30,7 +30,10 @@ class PostgreSQLBackupCommand extends BackupCommand {
 
     logger.info(`backup ${dbDumpFilePath}...`);
     logger.info('dump PostgreSQL...');
-    const { stdout, stderr } = await exec(`pg_dumpall ${options.backupToolOptions} | bzip2 > ${dbDumpFilePath}`);
+    const { stdout, stderr } = await exec(
+      `set -o pipefail; pg_dumpall ${options.backupToolOptions} | bzip2 > ${dbDumpFilePath}`,
+      { shell: '/bin/bash' },
+    );
     return { stdout, stderr, dbDumpFilePath };
   }
 

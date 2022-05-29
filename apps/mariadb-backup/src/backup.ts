@@ -30,7 +30,10 @@ class MariaDBBackupCommand extends BackupCommand {
 
     logger.info(`backup ${dbDumpFilePath}...`);
     logger.info('dump MariaDB...');
-    const { stdout, stderr } = await exec(`mysqldump ${options.backupToolOptions} | gzip > ${dbDumpFilePath}`);
+    const { stdout, stderr } = await exec(
+      `set -o pipefail; mysqldump ${options.backupToolOptions} | gzip > ${dbDumpFilePath}`,
+      { shell: '/bin/bash' }
+    );
     return { stdout, stderr, dbDumpFilePath };
   }
 
