@@ -43,12 +43,13 @@ describe('backup', () => {
     beforeEach(prepareTestMariaDB);
 
     describe('and when backup tool options are specified', () => {
-      const commandLine = `${execBackupCommand} \
+      const commandLine = `MYSQL_PWD="${mariadbConfig.password}" \
+        ${execBackupCommand} \
         --aws-endpoint-url ${s3ClientConfig.endpoint} \
         --aws-region ${s3ClientConfig.region} \
         --aws-access-key-id ${s3ClientConfig.credentials.accessKeyId} \
         --aws-secret-access-key ${s3ClientConfig.credentials.secretAccessKey} \
-        --backup-tool-options "--host ${mariadbConfig.host} --user ${mariadbConfig.user} --port ${mariadbConfig.port}" \
+        --backup-tool-options "--host ${mariadbConfig.host} --user ${mariadbConfig.user} --port ${mariadbConfig.port} --all-databases" \
         --target-bucket-url ${testS3BucketURI}`;
 
       it('backup mariadb in bucket', async() => {
@@ -65,12 +66,13 @@ describe('backup', () => {
     beforeEach(prepareTestMariaDB);
 
     describe('and when backup tool options are specified', () => {
-      const commandLine = `${execBackupCommand} \
+      const commandLine = `MYSQL_PWD="${mariadbConfig.password}" \
+        ${execBackupCommand} \
         --gcp-endpoint-url ${storageConfig.apiEndpoint} \
         --gcp-project-id ${storageConfig.projectId} \
         --gcp-client-email ${storageConfig.credentials.client_email} \
         --gcp-private-key ${storageConfig.credentials.private_key} \
-        --backup-tool-options "--host ${mariadbConfig.host} --user ${mariadbConfig.user} --port ${mariadbConfig.port}" \
+        --backup-tool-options "--host ${mariadbConfig.host} --user ${mariadbConfig.user} --port ${mariadbConfig.port} --all-databases" \
         --target-bucket-url ${testGCSBucketURI}/`;
 
       it('backup mariadb in bucket', async() => {
