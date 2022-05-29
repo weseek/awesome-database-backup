@@ -3,7 +3,7 @@ name: Misc - Pull Request to master branch
 on:
   pull_request:
     branches:
-      - master
+    - master
     # Only following types are handled by the action, but one can default to all as well
     types: [opened, reopened, edited, synchronize]
 
@@ -50,3 +50,18 @@ jobs:
           requireScope: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  slack-notification:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Slack Notification
+      uses:  act10ns/slack@v1.5.0
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      with:
+        # "status" is used to be set notification's color.
+        # When "status" is "success", "failure", or "canceled", color is green, red, or yellow; otherwise it is #C0C0C0C0.
+        # see. https://github.com/act10ns/slack/blob/da3191ebe2e67f49b46880b4633f5591a96d1d33/src/slack.ts#L23
+        status: updated
+        channel: '#srv'
