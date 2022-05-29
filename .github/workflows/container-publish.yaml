@@ -63,3 +63,16 @@ jobs:
         DOCKERHUB_PASSWORD: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
         DOCKERHUB_REPOSITORY: ${{ steps.pkg_meta.outputs.package_repository }}
         README_FILEPATH: ${{ steps.pkg_meta.outputs.package_path }}/README.md
+
+  slack-notification:
+    needs: publish-container
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Slack Notification
+      uses: weseek/ghaction-release-slack-notification@master
+      with:
+        channel: '#release'
+        url: ${{ secrets.SLACK_WEBHOOK_URL }}
+        created_tag: ${{ github.ref_name }}
