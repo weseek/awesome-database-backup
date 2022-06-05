@@ -15,7 +15,7 @@ export async function cleanTestGCSBucket(): Promise<void> {
 }
 
 export async function uploadPGFixtureToTestGCSBucket(fixtureName: string): Promise<void> {
-  const fixturePath = createPGBackup(fixtureName);
+  const fixturePath = await createPGBackup(fixtureName);
   await storage.bucket(testGCSBucketName).upload(
     fixturePath,
     {
