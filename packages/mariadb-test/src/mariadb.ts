@@ -1,9 +1,10 @@
 import { v4 as uuidv4 } from 'uuid';
 import { createPool, RowDataPacket, FieldPacket } from 'mysql2/promise';
 import { join } from 'path';
-import { createReadStream, createWriteStream } from 'fs';
+import { createWriteStream } from 'fs';
 import * as StreamPromises from 'stream/promises';
 import { createGzip } from 'zlib';
+import { Readable } from 'stream';
 import { mariadbConfig } from './config/mariadb';
 
 const tmp = require('tmp');
@@ -104,16 +105,15 @@ export function createMariaDBBackup(fileName: string): Promise<string> {
   -- Dump completed on 2022-05-18  1:28:01
 `;
   const tmpdir = tmp.dirSync({ unsafeCleanup: true });
-  const sqlFilePath = join(tmpdir.name, fileName);
   const sqlBackupedFilePath = join(tmpdir.name, `${fileName}.gz`);
 
   // I'm using gzip because I can't find a package with a loose license for bzip2.
   // "mariadb-backup" backs up in bzip2 format
   return StreamPromises
     .pipeline([
-      createReadStream(sql),
+      Readable.from([sql]),
       createGzip(),
-      createWriteStream(sqlFilePath),
+      createWriteStream(sqlBackupedFilePath),
     ])
     .then(() => sqlBackupedFilePath);
 }
