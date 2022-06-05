@@ -1,11 +1,13 @@
 import { v4 as uuidv4 } from 'uuid';
 import { MongoClient } from 'mongodb';
 import { BSON } from 'bsonfy';
-import { join, basename } from 'path';
-import { writeFileSync, mkdirSync, readFileSync } from 'fs';
+import { join } from 'path';
+import {
+  writeFileSync, mkdirSync, createReadStream, createWriteStream,
+} from 'fs';
+import * as StreamPromises from 'stream/promises';
 import { mongodbURI } from './config/mongodb';
 
-const { Bzip2 } = require('compressjs');
 const tar = require('tar');
 const tmp = require('tmp');
 
@@ -34,7 +36,7 @@ export async function listCollectionNamesInTestMongoDB(): Promise<Array<string>>
   return collections.map(collection => collection.collectionName);
 }
 
-export function createMongoDBBackup(fileName: string): string {
+export function createMongoDBBackup(fileName: string): Promise<string> {
   const doc = {
     _id: '62406954e06d93aeef39f23c',
     test: 'test',
@@ -63,20 +65,21 @@ export function createMongoDBBackup(fileName: string): string {
   mkdirSync(docDirPath, { recursive: true });
   const docFilePath = join(docDirPath, 'dummy.bson');
   const docMetaFilePath = join(docDirPath, 'dummy.metadata.json');
-  const docTarballPath = join(tmpdir.name, `${fileName}.tar`);
-  const docBackupedFilePath = join(tmpdir.name, `${fileName}.tar.bz2`);
+  const docBackupedFilePath = join(tmpdir.name, `${fileName}.tar.gz`);
 
   writeFileSync(docFilePath, BSON.serialize(doc));
   writeFileSync(docMetaFilePath, JSON.stringify(docMetadata));
-  tar.c(
-    {
-      sync: true,
-      file: docTarballPath,
-      cwd: tmpdir.name,
-    },
-    [basename(docTopDirPath)],
-  );
-  writeFileSync(docBackupedFilePath, Bzip2.compressFile(readFileSync(docTarballPath)));
 
-  return docBackupedFilePath;
+  return StreamPromises
+    .pipeline([
+      createReadStream(docTopDirPath),
+      tar.Pack(
+        {
+          cwd: tmpdir.name,
+          gzip: true,
+        },
+      ),
+      createWriteStream(docBackupedFilePath),
+    ])
+    .then(() => docBackupedFilePath);
 }

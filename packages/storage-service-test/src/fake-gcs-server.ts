@@ -25,7 +25,7 @@ export async function uploadPGFixtureToTestGCSBucket(fixtureName: string): Promi
 }
 
 export async function uploadMongoDBFixtureToTestGCSBucket(fixtureName: string): Promise<void> {
-  const fixturePath = createMongoDBBackup(fixtureName);
+  const fixturePath = await createMongoDBBackup(fixtureName);
   await storage.bucket(testGCSBucketName).upload(
     fixturePath,
     {
