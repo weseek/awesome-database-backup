@@ -26,12 +26,12 @@ class MariaDBBackupCommand extends BackupCommand {
   async dumpDB(options: IBackupCommandOption):
       Promise<{ stdout: string, stderr: string, dbDumpFilePath: string }> {
     const tmpdir = tmp.dirSync({ unsafeCleanup: true });
-    const dbDumpFilePath = join(tmpdir.name, `${options.backupfilePrefix}-${format(Date.now(), 'yyyyMMddHHmmss')}.gz`);
+    const dbDumpFilePath = join(tmpdir.name, `${options.backupfilePrefix}-${format(Date.now(), 'yyyyMMddHHmmss')}.bz2`);
 
     logger.info(`backup ${dbDumpFilePath}...`);
     logger.info('dump MariaDB...');
     const { stdout, stderr } = await exec(
-      `set -o pipefail; mysqldump ${options.backupToolOptions} | gzip > ${dbDumpFilePath}`,
+      `set -o pipefail; mysqldump ${options.backupToolOptions} | bzip2 > ${dbDumpFilePath}`,
       { shell: '/bin/bash' },
     );
     return { stdout, stderr, dbDumpFilePath };
