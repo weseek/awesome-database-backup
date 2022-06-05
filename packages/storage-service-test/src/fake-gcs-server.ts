@@ -35,7 +35,7 @@ export async function uploadMongoDBFixtureToTestGCSBucket(fixtureName: string): 
 }
 
 export async function uploadMariaDBFixtureToTestGCSBucket(fixtureName: string): Promise<void> {
-  const fixturePath = createMariaDBBackup(fixtureName);
+  const fixturePath = await createMariaDBBackup(fixtureName);
   await storage.bucket(testGCSBucketName).upload(
     fixturePath,
     {

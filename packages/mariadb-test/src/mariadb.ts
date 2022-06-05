@@ -1,11 +1,11 @@
 import { v4 as uuidv4 } from 'uuid';
 import { createPool, RowDataPacket, FieldPacket } from 'mysql2/promise';
-import { join, basename } from 'path';
-import { readFileSync, writeFileSync } from 'fs';
+import { join } from 'path';
+import { createReadStream, createWriteStream } from 'fs';
+import * as StreamPromises from 'stream/promises';
+import { createGzip } from 'zlib';
 import { mariadbConfig } from './config/mariadb';
 
-const { Bzip2 } = require('compressjs');
-const tar = require('tar');
 const tmp = require('tmp');
 
 tmp.setGracefulCleanup();
@@ -44,7 +44,7 @@ export async function listTableNamesInTestMariaDB(): Promise<Array<string>> {
   return tableNames;
 }
 
-export function createMariaDBBackup(fileName: string): string {
+export function createMariaDBBackup(fileName: string): Promise<string> {
   const sql = `
   -- MySQL dump 10.19  Distrib 10.3.34-MariaDB, for debian-linux-gnu (x86_64)
   --
@@ -105,19 +105,15 @@ export function createMariaDBBackup(fileName: string): string {
 `;
   const tmpdir = tmp.dirSync({ unsafeCleanup: true });
   const sqlFilePath = join(tmpdir.name, fileName);
-  const sqlTarballPath = join(tmpdir.name, `${fileName}.tar`);
-  const sqlBackupedFilePath = join(tmpdir.name, `${fileName}.tar.bz2`);
+  const sqlBackupedFilePath = join(tmpdir.name, `${fileName}.gz`);
 
-  writeFileSync(sqlFilePath, sql);
-  tar.c(
-    {
-      sync: true,
-      file: sqlTarballPath,
-      cwd: tmpdir.name,
-    },
-    [basename(sqlFilePath)],
-  );
-  writeFileSync(sqlBackupedFilePath, Bzip2.compressFile(readFileSync(sqlTarballPath)));
-
-  return sqlBackupedFilePath;
+  // I'm using gzip because I can't find a package with a loose license for bzip2.
+  // "mariadb-backup" backs up in bzip2 format
+  return StreamPromises
+    .pipeline([
+      createReadStream(sql),
+      createGzip(),
+      createWriteStream(sqlFilePath),
+    ])
+    .then(() => sqlBackupedFilePath);
 }
