@@ -7,7 +7,7 @@ import { EOL } from 'os';
 import { createGunzip } from 'zlib';
 import { Transform } from 'stream';
 import * as StreamPromises from 'stream/promises';
-import { createReadStream } from 'fs';
+import { createReadStream, createWriteStream } from 'fs';
 import { IRestoreCommandOption } from './interfaces';
 import { StorageServiceClientCommand } from './common';
 import loggerFactory from '../logger/factory';
@@ -58,6 +58,7 @@ export class RestoreCommand extends StorageServiceClientCommand {
 
       newBackupFilePath = newBackupFilePath.slice(0, -ext.length);
     }
+    streams.push(createWriteStream(newBackupFilePath));
 
     return StreamPromises
       .pipeline(streams)
