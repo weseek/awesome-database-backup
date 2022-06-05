@@ -7,7 +7,9 @@ import { EOL } from 'os';
 import { createGunzip } from 'zlib';
 import { Transform } from 'stream';
 import * as StreamPromises from 'stream/promises';
-import { createReadStream } from 'fs';
+import {
+  createReadStream, createWriteStream, ReadStream, WriteStream,
+} from 'fs';
 import { IRestoreCommandOption } from './interfaces';
 import { StorageServiceClientCommand } from './common';
 import loggerFactory from '../logger/factory';
@@ -47,7 +49,7 @@ export class RestoreCommand extends StorageServiceClientCommand {
     };
 
     let newBackupFilePath = backupFilePath;
-    const streams = [];
+    const streams: (Transform|ReadStream|WriteStream)[] = [];
 
     streams.push(createReadStream(backupFilePath));
     while (extname(newBackupFilePath) !== '') {
@@ -57,6 +59,10 @@ export class RestoreCommand extends StorageServiceClientCommand {
       streams.push(processors[ext]);
 
       newBackupFilePath = newBackupFilePath.slice(0, -ext.length);
+    }
+    // If last stream is not of '.tar', add file writing stream.
+    if (streams.at(-1) !== processors['.tar']) {
+      streams.push(createWriteStream(newBackupFilePath));
     }
 
     return StreamPromises

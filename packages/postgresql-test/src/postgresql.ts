@@ -1,11 +1,12 @@
 import { v4 as uuidv4 } from 'uuid';
 import { Pool } from 'pg';
-import { join, basename } from 'path';
-import { readFileSync, writeFileSync } from 'fs';
+import { join } from 'path';
+import { createWriteStream } from 'fs';
+import * as StreamPromises from 'stream/promises';
+import { createGzip } from 'zlib';
+import { Readable } from 'stream';
 import { postgresqlConfig } from './config/postgresql';
 
-const { Bzip2 } = require('compressjs');
-const tar = require('tar');
 const tmp = require('tmp');
 
 tmp.setGracefulCleanup();
@@ -55,7 +56,7 @@ export async function listTableNamesInTestPG(): Promise<Array<string>> {
   return tableNames;
 }
 
-export function createPGBackup(fileName: string): string {
+export function createPGBackup(fileName: string): Promise<string> {
   const sql = `
 --
 -- PostgreSQL database cluster dump
@@ -158,20 +159,15 @@ COPY public.dummy (id) FROM stdin;
 
 `;
   const tmpdir = tmp.dirSync({ unsafeCleanup: true });
-  const sqlFilePath = join(tmpdir.name, fileName);
-  const sqlTarballPath = join(tmpdir.name, `${fileName}.tar`);
-  const sqlBackupedFilePath = join(tmpdir.name, `${fileName}.tar.bz2`);
+  const sqlBackupedFilePath = join(tmpdir.name, `${fileName}.gz`);
 
-  writeFileSync(sqlFilePath, sql);
-  tar.c(
-    {
-      sync: true,
-      file: sqlTarballPath,
-      cwd: tmpdir.name,
-    },
-    [basename(sqlFilePath)],
-  );
-  writeFileSync(sqlBackupedFilePath, Bzip2.compressFile(readFileSync(sqlTarballPath)));
-
-  return sqlBackupedFilePath;
+  // I'm using gzip because I can't find a package with a loose license for bzip2.
+  // "postgresql-backup" backs up in bzip2 format
+  return StreamPromises
+    .pipeline([
+      Readable.from([sql]),
+      createGzip(),
+      createWriteStream(sqlBackupedFilePath),
+    ])
+    .then(() => sqlBackupedFilePath);
 }

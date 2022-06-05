@@ -15,7 +15,7 @@ export async function cleanTestGCSBucket(): Promise<void> {
 }
 
 export async function uploadPGFixtureToTestGCSBucket(fixtureName: string): Promise<void> {
-  const fixturePath = createPGBackup(fixtureName);
+  const fixturePath = await createPGBackup(fixtureName);
   await storage.bucket(testGCSBucketName).upload(
     fixturePath,
     {
@@ -35,7 +35,7 @@ export async function uploadMongoDBFixtureToTestGCSBucket(fixtureName: string): 
 }
 
 export async function uploadMariaDBFixtureToTestGCSBucket(fixtureName: string): Promise<void> {
-  const fixturePath = createMariaDBBackup(fixtureName);
+  const fixturePath = await createMariaDBBackup(fixtureName);
   await storage.bucket(testGCSBucketName).upload(
     fixturePath,
     {

@@ -51,10 +51,10 @@ describe('prune', () => {
         --delete-divide 1 \
         --delete-target-days-left 0 \
         --target-bucket-url ${testS3BucketURI}`;
-      const backupFileName = `backup-${format(Date.now(), 'yyyyMMddHHmmss')}.tar.bz2`;
+      const backupFileName = `backup-${format(Date.now(), 'yyyyMMddHHmmss')}.gz`;
 
       beforeEach(async() => {
-        await uploadPGFixtureToTestS3Bucket(basename(backupFileName, '.tar.bz2'));
+        await uploadPGFixtureToTestS3Bucket(basename(backupFileName, '.gz'));
       });
 
       it("prune today's files in bucket", async() => {
@@ -80,10 +80,10 @@ describe('prune', () => {
         --delete-divide 1 \
         --delete-target-days-left 0 \
         --target-bucket-url ${testGCSBucketURI}/`;
-      const backupFileName = `backup-${format(Date.now(), 'yyyyMMddHHmmss')}.tar.bz2`;
+      const backupFileName = `backup-${format(Date.now(), 'yyyyMMddHHmmss')}.gz`;
 
       beforeEach(async() => {
-        await uploadPGFixtureToTestGCSBucket(basename(backupFileName, '.tar.bz2'));
+        await uploadPGFixtureToTestGCSBucket(basename(backupFileName, '.gz'));
       });
 
       it("prune today's files in bucket", async() => {

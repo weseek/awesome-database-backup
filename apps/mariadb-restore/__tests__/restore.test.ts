@@ -42,7 +42,7 @@ describe('restore', () => {
   });
 
   describe('when valid S3 options are specified', () => {
-    const objectURI = `${testS3BucketURI}/${testMariaDBName}.tar.bz2`;
+    const objectURI = `${testS3BucketURI}/${testMariaDBName}.gz`;
     const commandLine = `MYSQL_PWD="${mariadbConfig.password}" \
       ${execRestoreCommand} \
       --aws-endpoint-url ${s3ClientConfig.endpoint} \
@@ -69,7 +69,7 @@ describe('restore', () => {
   });
 
   describe('when valid GCS options are specified', () => {
-    const objectURI = `${testGCSBucketURI}/${testMariaDBName}.tar.bz2`;
+    const objectURI = `${testGCSBucketURI}/${testMariaDBName}.gz`;
     const commandLine = `MYSQL_PWD="${mariadbConfig.password}" \
       ${execRestoreCommand} \
       --gcp-endpoint-url ${storageConfig.apiEndpoint} \

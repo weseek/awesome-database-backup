@@ -1,11 +1,14 @@
 import { v4 as uuidv4 } from 'uuid';
 import { MongoClient } from 'mongodb';
 import { BSON } from 'bsonfy';
-import { join, basename } from 'path';
-import { writeFileSync, mkdirSync, readFileSync } from 'fs';
+import { basename, join } from 'path';
+import {
+  writeFileSync, mkdirSync, createWriteStream,
+} from 'fs';
+import * as StreamPromises from 'stream/promises';
 import { mongodbURI } from './config/mongodb';
+import { createGzip } from 'zlib';
 
-const { Bzip2 } = require('compressjs');
 const tar = require('tar');
 const tmp = require('tmp');
 
@@ -63,20 +66,23 @@ export function createMongoDBBackup(fileName: string): string {
   mkdirSync(docDirPath, { recursive: true });
   const docFilePath = join(docDirPath, 'dummy.bson');
   const docMetaFilePath = join(docDirPath, 'dummy.metadata.json');
-  const docTarballPath = join(tmpdir.name, `${fileName}.tar`);
-  const docBackupedFilePath = join(tmpdir.name, `${fileName}.tar.bz2`);
+  const docBackupedFilePath = join(tmpdir.name, `${fileName}.tar.gz`);
 
   writeFileSync(docFilePath, BSON.serialize(doc));
   writeFileSync(docMetaFilePath, JSON.stringify(docMetadata));
+
+  // "mongodb-backup" does not use tar.
+  // However, I use tar because I can't find an easy way to reproduce
+  //   the compressed format of mongodump without using mongo command.
   tar.c(
     {
       sync: true,
-      file: docTarballPath,
+      gzip: true,
+      file: docBackupedFilePath,
       cwd: tmpdir.name,
     },
     [basename(docTopDirPath)],
   );
-  writeFileSync(docBackupedFilePath, Bzip2.compressFile(readFileSync(docTarballPath)));
 
   return docBackupedFilePath;
 }

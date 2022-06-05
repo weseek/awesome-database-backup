@@ -42,7 +42,7 @@ describe('restore', () => {
   });
 
   describe('when valid S3 options are specified', () => {
-    const objectURI = `${testS3BucketURI}/${testPGName}.tar.bz2`;
+    const objectURI = `${testS3BucketURI}/${testPGName}.gz`;
     const commandLine = `PGPASSWORD="password" \
       ${execRestoreCommand} \
       --aws-endpoint-url ${s3ClientConfig.endpoint} \
@@ -69,7 +69,7 @@ describe('restore', () => {
   });
 
   describe('when valid GCS options are specified', () => {
-    const objectURI = `${testGCSBucketURI}/${testPGName}.tar.bz2`;
+    const objectURI = `${testGCSBucketURI}/${testPGName}.gz`;
     const commandLine = `PGPASSWORD="password" \
       ${execRestoreCommand} \
       --gcp-endpoint-url ${storageConfig.apiEndpoint} \

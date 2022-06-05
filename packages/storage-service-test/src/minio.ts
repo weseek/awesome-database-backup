@@ -30,7 +30,7 @@ export async function cleanTestS3Bucket(): Promise<void> {
 }
 
 export async function uploadPGFixtureToTestS3Bucket(fixtureName: string): Promise<void> {
-  const fixturePath = createPGBackup(fixtureName);
+  const fixturePath = await createPGBackup(fixtureName);
   await s3client.send(new PutObjectCommand({
     Bucket: testS3BucketName,
     Key: basename(fixturePath),
@@ -48,7 +48,7 @@ export async function uploadMongoDBFixtureToTestS3Bucket(fixtureName: string): P
 }
 
 export async function uploadMariaDBFixtureToTestS3Bucket(fixtureName: string): Promise<void> {
-  const fixturePath = createMariaDBBackup(fixtureName);
+  const fixturePath = await createMariaDBBackup(fixtureName);
   await s3client.send(new PutObjectCommand({
     Bucket: testS3BucketName,
     Key: basename(fixturePath),
