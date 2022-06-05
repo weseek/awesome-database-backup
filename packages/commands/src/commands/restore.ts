@@ -7,7 +7,9 @@ import { EOL } from 'os';
 import { createGunzip } from 'zlib';
 import { Transform } from 'stream';
 import * as StreamPromises from 'stream/promises';
-import { createReadStream, createWriteStream, ReadStream, WriteStream } from 'fs';
+import {
+  createReadStream, createWriteStream, ReadStream, WriteStream,
+} from 'fs';
 import { IRestoreCommandOption } from './interfaces';
 import { StorageServiceClientCommand } from './common';
 import loggerFactory from '../logger/factory';
