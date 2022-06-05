@@ -39,7 +39,7 @@ export async function uploadPGFixtureToTestS3Bucket(fixtureName: string): Promis
 }
 
 export async function uploadMongoDBFixtureToTestS3Bucket(fixtureName: string): Promise<void> {
-  const fixturePath = await createMongoDBBackup(fixtureName);
+  const fixturePath = createMongoDBBackup(fixtureName);
   await s3client.send(new PutObjectCommand({
     Bucket: testS3BucketName,
     Key: basename(fixturePath),

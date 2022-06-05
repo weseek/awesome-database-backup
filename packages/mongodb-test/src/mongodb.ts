@@ -1,12 +1,13 @@
 import { v4 as uuidv4 } from 'uuid';
 import { MongoClient } from 'mongodb';
 import { BSON } from 'bsonfy';
-import { join } from 'path';
+import { basename, join } from 'path';
 import {
-  writeFileSync, mkdirSync, createReadStream, createWriteStream,
+  writeFileSync, mkdirSync, createWriteStream,
 } from 'fs';
 import * as StreamPromises from 'stream/promises';
 import { mongodbURI } from './config/mongodb';
+import { createGzip } from 'zlib';
 
 const tar = require('tar');
 const tmp = require('tmp');
@@ -36,7 +37,7 @@ export async function listCollectionNamesInTestMongoDB(): Promise<Array<string>>
   return collections.map(collection => collection.collectionName);
 }
 
-export function createMongoDBBackup(fileName: string): Promise<string> {
+export function createMongoDBBackup(fileName: string): string {
   const doc = {
     _id: '62406954e06d93aeef39f23c',
     test: 'test',
@@ -70,16 +71,18 @@ export function createMongoDBBackup(fileName: string): Promise<string> {
   writeFileSync(docFilePath, BSON.serialize(doc));
   writeFileSync(docMetaFilePath, JSON.stringify(docMetadata));
 
-  return StreamPromises
-    .pipeline([
-      createReadStream(docTopDirPath),
-      tar.Pack(
-        {
-          cwd: tmpdir.name,
-          gzip: true,
-        },
-      ),
-      createWriteStream(docBackupedFilePath),
-    ])
-    .then(() => docBackupedFilePath);
+  // "mongodb-backup" does not use tar.
+  // However, I use tar because I can't find an easy way to reproduce
+  //   the compressed format of mongodump without using mongo command.
+  tar.c(
+    {
+      sync: true,
+      gzip: true,
+      file: docBackupedFilePath,
+      cwd: tmpdir.name,
+    },
+    [basename(docTopDirPath)],
+  );
+
+  return docBackupedFilePath;
 }
