@@ -60,9 +60,8 @@ export class RestoreCommand extends StorageServiceClientCommand {
 
       newBackupFilePath = newBackupFilePath.slice(0, -ext.length);
     }
-    // If Writable stream does not exist, add it.
-    const lastStream = streams.at(-1) as WriteStream;
-    if (lastStream?.writable === false) {
+    // If last stream is not of '.tar', add file writing stream.
+    if (streams.at(-1) !== processors['.tar']) {
       streams.push(createWriteStream(newBackupFilePath));
     }
 
