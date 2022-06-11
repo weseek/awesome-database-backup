@@ -11,7 +11,7 @@ See "README.md" each command follows or run command with "--help" option.
 - [list](../list/README.md)
 - [prune](../prune/README.md)
 
-### With docker iamge
+### With docker image
 
 Backed up file names will be time-stamped. (ex. `backup-20220611170158.bz2`)
 
@@ -20,4 +20,4 @@ If you want to change it, set the `TZ` environment variable. (see. https://en.wi
 
 # Migrate from `weseek/awesome-mariadb-backup`
 
-See [awesome-mariadb-backup](./apps/awesome-mariadb-backup).
+See [awesome-mariadb-backup](../apps/awesome-mariadb-backup).
