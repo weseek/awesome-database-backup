@@ -28,24 +28,26 @@ RUN if [ "$USER_GID" != "1000" ] || [ "$USER_UID" != "1000" ]; then \
     fi
 RUN chown -R $USER_UID:$USER_GID /home/$USERNAME /awesome-database-backup;
 
-# [Optional] Install tools if needed
-## bzip2 command
+# Install tools
+## bzip2, curl command
 RUN apt-get update \
-      && apt-get install -y bzip2 \
+      && apt-get install -y bzip2 curl \
       && apt-get clean \
       && rm -rf /var/lib/apt/lists/*
 ## mongo shell
-ADD https://downloads.mongodb.com/compass/mongodb-mongosh_1.3.1_amd64.deb .
 RUN apt-get update \
-      && apt-get install -y ./mongodb-mongosh_1.3.1_amd64.deb \
+      && curl https://downloads.mongodb.com/compass/mongodb-mongosh_1.3.1_amd64.deb -o mongodb-mongosh.deb \
+      && apt-get install -y ./mongodb-mongosh.deb \
       && apt-get clean \
-      && rm -rf /var/lib/apt/lists/*
+      && rm -rf /var/lib/apt/lists/* \
+      && rm ./mongodb-mongosh.deb
 ## mongo tools
-ADD https://fastdl.mongodb.org/tools/db/mongodb-database-tools-debian10-x86_64-100.5.2.deb .
 RUN apt-get update \
-      && apt-get install -y ./mongodb-database-tools-debian10-x86_64-100.5.2.deb \
+      && curl https://fastdl.mongodb.org/tools/db/mongodb-database-tools-debian10-x86_64-100.5.2.deb -o mongodb-database-tools.deb \
+      && apt-get install -y ./mongodb-database-tools.deb \
       && apt-get clean \
-      && rm -rf /var/lib/apt/lists/*
+      && rm -rf /var/lib/apt/lists/* \
+      && rm ./mongodb-database-tools.deb
 ## PostgreSQL tools
 RUN echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list \
       && apt-get install -y curl ca-certificates gnupg \
@@ -61,9 +63,10 @@ RUN apt-get update \
       && rm -rf /var/lib/apt/lists/*
 
 ## AWS cli
-ADD https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip /tmp/awscliv2.zip
-RUN unzip /tmp/awscliv2.zip -d /tmp \
-      && /tmp/aws/install
+RUN curl https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip -o /tmp/awscli.zip \
+      && unzip /tmp/awscli.zip -d /tmp \
+      && /tmp/aws/install \
+      && rm /tmp/awscli.zip
 ## Google cloud CLI (also gsutil)
 ## ref: https://cloud.google.com/sdk/docs?hl=en#install_the_latest_cloud_tools_version_cloudsdk_current_version
 RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" >> /etc/apt/sources.list.d/google-cloud-sdk.list \
