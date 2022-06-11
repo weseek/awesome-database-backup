@@ -40,8 +40,6 @@ S3 or GCS authentication is required depending on the storage service used.
 
 # Migrate from [weseek/mongodb-awesome-backup](https://github.com/weseek/mongodb-awesome-backup)
 
-## change environment variable
-
 Change the following environment variables.
 
 | weseek/mongodb-awesome-backup | mongodb-restore |
@@ -57,3 +55,33 @@ Change the following environment variables.
 | `MONGODB_AUTHDB` | `RESTORE_TOOL_OPTIONS` |
 | `AWSCLIOPT` | - **DISABLED** |
 | `GCSCLIOPT` | - **DISABLED** |
+
+### Set proper timezone
+
+If you use weseek/mongodb-awesome-backup with docker image, note that the default timezone of the docker image is different.
+
+- Default timezone of weseek/mongodb-awesome-backup is "Asia/Tokyo"
+- Default timezone of awesome-mongodb-backup is not set
+
+You can set the `TZ` environment variable to change timezone. (see. https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
+
+### Set proper `BACKUP_TOOL_OPTIONS`
+
+awesome-mongodb-backup specifies all the information needed to dump the database data,
+including the information to connect to the database, in `BACKUP_TOOL_OPTIONS`.
+
+Below is an example of migration.
+
+From weseek/mongodb-awesome-backup...
+
+| Environment | Value |
+| ----------------------------- | --- |
+| `TARGET_BUCKET_URL` | s3://some-bucket-name/backup-20220611170158.gz |
+| `MONGODB_URI` | mongodb+srv://root:password@mongo/db?ssl=false&authSource=admin |
+
+To awesome-mongodb-backup...
+
+| Environment | Value |
+| ----------------------------- | --- |
+| `TARGET_BUCKET_URL` | s3://some-bucket-name/backup-20220611170158.gz |
+| `BACKUP_TOOL_OPTIONS` | mongodb+srv://root:password@mongo/db?ssl=false&authSource=admin |
