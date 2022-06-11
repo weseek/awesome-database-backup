@@ -10,3 +10,16 @@ See "README.md" each command follows or run command with "--help" option.
 - [mongodb-restore](../mongodb-restore/README.md)
 - [list](../list/README.md)
 - [prune](../prune/README.md)
+
+### With docker image
+
+Backed up file names will be time-stamped. (ex. `backup-20220611170158.gz`)
+
+Timezone is not set as default so time-stamp show UTC.
+If you want to change it, set the `TZ` environment variable. (see. https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
+
+# Migrate from `weseek/awesome-mongodb-backup`
+
+See follows
+- [mongodb-backup](../mongodb-backup/README.md)
+- [mongodb-restore](../mongodb-restore/README.md)
