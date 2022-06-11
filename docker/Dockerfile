@@ -58,17 +58,18 @@ RUN yarn run turbo run build --scope="${packageScope}" --include-dependencies --
 FROM base AS tool-common
 
 RUN apt-get update \
-      && apt-get install -y bzip2 \
+      && apt-get install -y bzip2 curl \
       && apt-get clean \
       && rm -rf /var/lib/apt/lists/*
 
 FROM tool-common AS mongodb-tools
 
-ADD https://fastdl.mongodb.org/tools/db/mongodb-database-tools-debian10-x86_64-100.5.2.deb .
 RUN apt-get update \
-      && apt-get install -y ./mongodb-database-tools-debian10-x86_64-100.5.2.deb \
+      && curl https://fastdl.mongodb.org/tools/db/mongodb-database-tools-debian10-x86_64-100.5.2.deb -o mongodb-database-tools.deb \
+      && apt-get install -y ./mongodb-database-tools.deb \
       && apt-get clean \
       && rm -rf /var/lib/apt/lists/*
+      && rm ./mongodb-database-tools.deb
 
 FROM tool-common AS postgresql-tools
 
