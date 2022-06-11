@@ -20,4 +20,6 @@ If you want to change it, set the `TZ` environment variable. (see. https://en.wi
 
 # Migrate from `weseek/awesome-mariadb-backup`
 
-See [awesome-mariadb-backup](../apps/awesome-mariadb-backup).
+See follows
+- [mariadb-backup](../mariadb-backup/README.md)
+- [mariadb-restore](../mariadb-restore/README.md)
