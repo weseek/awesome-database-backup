@@ -68,7 +68,7 @@ RUN apt-get update \
       && curl https://fastdl.mongodb.org/tools/db/mongodb-database-tools-debian10-x86_64-100.5.2.deb -o mongodb-database-tools.deb \
       && apt-get install -y ./mongodb-database-tools.deb \
       && apt-get clean \
-      && rm -rf /var/lib/apt/lists/*
+      && rm -rf /var/lib/apt/lists/* \
       && rm ./mongodb-database-tools.deb
 
 FROM tool-common AS postgresql-tools
