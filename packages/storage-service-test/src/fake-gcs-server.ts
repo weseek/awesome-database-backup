@@ -2,6 +2,7 @@ import { Storage } from '@google-cloud/storage';
 import { createPGBackup } from '@awesome-database-backup/postgresql-test';
 import { createMongoDBBackup } from '@awesome-database-backup/mongodb-test';
 import { createMariaDBBackup } from '@awesome-database-backup/mariadb-test';
+import { createFileBackup } from '@awesome-database-backup/file-test';
 import { basename } from 'path';
 import { storageConfig, testGCSBucketName } from './config/fake-gcs-server';
 
@@ -36,6 +37,16 @@ export async function uploadMongoDBFixtureToTestGCSBucket(fixtureName: string): 
 
 export async function uploadMariaDBFixtureToTestGCSBucket(fixtureName: string): Promise<void> {
   const fixturePath = await createMariaDBBackup(fixtureName);
+  await storage.bucket(testGCSBucketName).upload(
+    fixturePath,
+    {
+      destination: basename(fixturePath),
+    },
+  );
+}
+
+export async function uploadFileFixtureToTestGCSBucket(fixtureName: string): Promise<void> {
+  const fixturePath = await createFileBackup(fixtureName);
   await storage.bucket(testGCSBucketName).upload(
     fixturePath,
     {
