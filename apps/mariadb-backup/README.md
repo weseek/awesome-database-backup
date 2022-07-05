@@ -43,8 +43,6 @@ S3 or GCS authentication is required depending on the storage service used.
 
 ## Migrate from [weseek/mariadb-awesome-backup](https://github.com/weseek/mariadb-awesome-backup)
 
-### change environment variable
-
 Change the following environment variables.
 
 | weseek/mariadb-awesome-backup | mariadb-backup |
@@ -54,5 +52,38 @@ Change the following environment variables.
 | `MARIADB_HOST` | `BACKUP_TOOL_OPTIONS` |
 | `MARIADB_DBNAME` | `BACKUP_TOOL_OPTIONS` |
 | `MARIADB_USERNAME` | `BACKUP_TOOL_OPTIONS` |
-| `MARIADB_PASSWORD` | `BACKUP_TOOL_OPTIONS` |
+| `MARIADB_PASSWORD` | `BACKUP_TOOL_OPTIONS` or `MYSQL_PWD` |
 | `MYSQLDUMP_OPTS` | `BACKUP_TOOL_OPTIONS` |
+
+### Set proper timezone
+
+If you use weseek/mariadb-awesome-backup with docker image, note that the default timezone of the docker image is different.
+
+- Default timezone of weseek/mariadb-awesome-backup is "Asia/Tokyo"
+- Default timezone of awesome-mariadb-backup is not set
+
+You can set the `TZ` environment variable to change timezone. (see. https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
+
+### Set proper `BACKUP_TOOL_OPTIONS`
+
+awesome-mariadb-backup specifies all the information needed to dump the database data,
+including the information to connect to the database, in `BACKUP_TOOL_OPTIONS`.
+
+Below is an example of migration.
+
+From weseek/mariadb-awesome-backup...
+
+| Environment | Value |
+| ----------------------------- | --- |
+| `TARGET_BUCKET_URL` | s3://some-bucket-name/ |
+| `MARIADB_HOST` | mariadb |
+| `MARIADB_USERNAME` | root |
+| `MARIADB_PASSWORD` | password |
+
+To awesome-mariadb-backup...
+
+| Environment | Value |
+| ----------------------------- | --- |
+| `TARGET_BUCKET_URL` | s3://some-bucket-name/ |
+| `BACKUP_TOOL_OPTIONS` | --host mariadb --user root --all-databases |
+| `MYSQL_PWD` | password |

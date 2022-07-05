@@ -56,7 +56,7 @@ jobs:
 
     steps:
     - name: Slack Notification
-      uses:  act10ns/slack@v1.5.1
+      uses:  act10ns/slack@v1.6.0
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
       with:
