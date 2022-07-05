@@ -28,9 +28,8 @@ Options:
   -h, --help                                                               display help for command
 
 NOTICE:
-  You can pass mongoDB options by set "--backup-tool-options". (ex. "--host db.example.com --username admin")
+  You can pass tar options by set "--backup-tool-options". (ex. "-v /path/to/file")
 ```
-★TBD
 
 ## Authenticate storage service
 

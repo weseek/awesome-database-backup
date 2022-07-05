@@ -43,7 +43,7 @@ backupCommand
   .addBackupOptions()
   .addHelpText('after', `
     NOTICE:
-      You can pass tar options by set "--backup-tool-options". (ex. "-jcvf /path/to/file")
+      You can pass tar options by set "--backup-tool-options". (ex. "-v /path/to/file")
       `.replace(/^ {4}/mg, ''))
   .setBackupAction();
 
