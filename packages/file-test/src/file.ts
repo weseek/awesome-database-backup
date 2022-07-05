@@ -1,21 +1,23 @@
 import { v4 as uuidv4 } from 'uuid';
-import { join, basename } from 'path';
+import { join } from 'path';
 import { readdirSync, writeFileSync } from 'fs';
+import tempDir from './temp-dir';
 
 const tar = require('tar');
 const tmp = require('tmp');
 
-tmp.setGracefulCleanup();
-
 export const testFileName = `dummy-${uuidv4()}`;
-const testDir = tmp.dirSync({ unsafeCleanup: true });
+
+export async function clearTestDir(): Promise<void> {
+  tempDir.clean();
+}
 
 export function getTestDirPath(): string {
-  return testDir.name;
+  return tempDir.tmpdir.name;
 }
 
 export function getTestFilePath(): string {
-  return join(testDir.name, testFileName);
+  return join(getTestDirPath(), testFileName);
 }
 
 export async function prepareTestFile(): Promise<void> {
@@ -23,22 +25,23 @@ export async function prepareTestFile(): Promise<void> {
 }
 
 export async function listFileNamesInTestDir(): Promise<Array<string>> {
-  return readdirSync(getTestFilePath());
+  return readdirSync(getTestDirPath());
 }
 
 export async function createFileBackup(fileName: string): Promise<string> {
-  await prepareTestFile();
+  const tmpdir = tmp.dirSync({ unsafeCleanup: true });
+  writeFileSync(join(tmpdir.name, 'dummy'), 'test');
 
-  const backupedFilePath = join(getTestFilePath(), `${fileName}.tar.gz`);
+  const backupedFilePath = join(tmpdir.name, `${fileName}.tar.gz`);
 
   tar.c(
     {
       sync: true,
       gzip: true,
       file: backupedFilePath,
-      cwd: getTestFilePath(),
+      cwd: tmpdir.name,
     },
-    [basename(getTestFilePath())],
+    ['dummy'],
   );
 
   return backupedFilePath;
