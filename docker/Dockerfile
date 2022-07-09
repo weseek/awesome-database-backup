@@ -85,6 +85,8 @@ RUN apt-get update \
       && apt-get clean \
       && rm -rf /var/lib/apt/lists/*
 
+FROM tool-common AS file-tools
+
 ##
 ## release
 ## dbType is one of "mongodb", "postgresql", "mariadb"
