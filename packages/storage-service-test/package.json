@@ -20,7 +20,7 @@
   "dependencies": {
     "@awesome-database-backup/mongodb-test": "^0.1.9",
     "@awesome-database-backup/postgresql-test": "^0.1.9",
-    "@awesome-database-backup/file-test": "^0.1.8"
+    "@awesome-database-backup/file-test": "^0.1.9"
   },
   "devDependencies": {
     "@aws-sdk/client-s3": "^3.85.0",

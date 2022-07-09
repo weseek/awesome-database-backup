@@ -1,6 +1,6 @@
 {
   "name": "@awesome-database-backup/file-test",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "Functions of file to support test",
   "author": "Ryu Sato <ryu@weseek.co.jp>",
   "license": "MIT",
