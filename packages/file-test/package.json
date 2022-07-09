@@ -1,0 +1,23 @@
+{
+  "name": "@awesome-database-backup/file-test",
+  "version": "0.2.0",
+  "description": "Functions of file to support test",
+  "author": "Ryu Sato <ryu@weseek.co.jp>",
+  "license": "MIT",
+  "homepage": "https://github.com/weseek/awesome-database-backup#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/weseek/awesome-database-backup.git"
+  },
+  "bugs": {
+    "url": "https://github.com/weseek/awesome-database-backup/issues"
+  },
+  "// Use Typescript as is, so Typescript must be enabled for use with mocks. (ex. enable ts-jest)": "",
+  "main": "src/index.ts",
+  "dependencies": {
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "@types/uuid": "^8.3.4"
+  }
+}

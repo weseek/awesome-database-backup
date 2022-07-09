@@ -37,9 +37,11 @@ S3 or GCS authentication is required depending on the storage service used.
 
 - For S3
   - Set `AWS_REGION` and `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`
-- For GCS
-  - To use [service account authentication](https://cloud.google.com/docs/authentication/production), create JSON Web Key and set `GCP_SERVICE_JSON_PATH` and `GCP_PROJECT_ID`
-  - To use [HMAC authentication](https://cloud.google.com/storage/docs/authentication/hmackeys), set `GCP_ACCESS_KEY_ID`, `GCP_SECRET_ACCESS_KEY`, and `GCP_PROJECT_ID`
+- For GCS(*)
+  - Set `GCP_SERVICE_JSON_PATH`, or `GCP_CLIENT_EMAIL` and `GCP_PRIVATE_KEY`.  
+    For detail, see [service account authentication](https://cloud.google.com/docs/authentication/production).
+
+(*) You can't use HMAC authentication to authenticate GCS. (https://github.com/googleapis/nodejs-storage/issues/117)
 
 ## Migrate from [weseek/mariadb-awesome-backup](https://github.com/weseek/mariadb-awesome-backup)
 
@@ -47,13 +49,18 @@ Change the following environment variables.
 
 | weseek/mariadb-awesome-backup | mariadb-restore |
 | ----------------------------- | -------------- |
-| `GCP_ACCESS_KEY_ID` | `GCP_CLIENT_EMAIL` |
-| `GCP_SECRET_ACCESS_KEY` | `GCP_PRIVATE_KEY` |
 | `MARIADB_HOST` | `RESTORE_TOOL_OPTIONS` |
 | `MARIADB_DBNAME` | `RESTORE_TOOL_OPTIONS` |
 | `MARIADB_USERNAME` | `RESTORE_TOOL_OPTIONS` |
 | `MARIADB_PASSWORD` | `RESTORE_TOOL_OPTIONS` or `MYSQL_PWD` |
 | `MYSQL_OPTS` | `RESTORE_TOOL_OPTIONS` |
+
+### Use service account authentication
+
+You can't use HMAC authentication to authenticate GCS. (https://github.com/googleapis/nodejs-storage/issues/117)
+
+So, you need to use [service account authentication](https://cloud.google.com/docs/authentication/production).
+Set `GCP_SERVICE_JSON_PATH`, or `GCP_CLIENT_EMAIL` and `GCP_PRIVATE_KEY`.
 
 ### Set proper timezone
 

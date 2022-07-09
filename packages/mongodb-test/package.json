@@ -1,6 +1,6 @@
 {
   "name": "@awesome-database-backup/mongodb-test",
-  "version": "0.1.8",
+  "version": "0.2.0",
   "description": "Functions of MongoDB to support test",
   "author": "Ryu Sato <ryu@weseek.co.jp>",
   "license": "MIT",
