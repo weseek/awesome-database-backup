@@ -1,7 +1,7 @@
 {
-  "name": "@awesome-database-backup/storage-service-test",
+  "name": "@awesome-database-backup/file-test",
   "version": "0.1.9",
-  "description": "Mock of Amazon S3 or Google Cloud Storage.",
+  "description": "Functions of file to support test",
   "author": "Ryu Sato <ryu@weseek.co.jp>",
   "license": "MIT",
   "homepage": "https://github.com/weseek/awesome-database-backup#readme",
@@ -12,18 +12,12 @@
   "bugs": {
     "url": "https://github.com/weseek/awesome-database-backup/issues"
   },
-  "directories": {
-    "test": "__tests__"
-  },
   "// Use Typescript as is, so Typescript must be enabled for use with mocks. (ex. enable ts-jest)": "",
   "main": "src/index.ts",
   "dependencies": {
-    "@awesome-database-backup/mongodb-test": "^0.1.9",
-    "@awesome-database-backup/postgresql-test": "^0.1.9",
-    "@awesome-database-backup/file-test": "^0.1.9"
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "@aws-sdk/client-s3": "^3.85.0",
-    "@google-cloud/storage": "^5.19.4"
+    "@types/uuid": "^8.3.4"
   }
 }

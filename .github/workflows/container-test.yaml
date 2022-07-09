@@ -17,6 +17,7 @@ jobs:
         - mongodb
         - postgresql
         - mariadb
+        - file
 
     steps:
     - uses: actions/checkout@v3

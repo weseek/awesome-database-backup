@@ -61,6 +61,8 @@ RUN apt-get update \
       && apt-get install -y mariadb-common mariadb-client --no-install-recommends \
       && apt-get clean \
       && rm -rf /var/lib/apt/lists/*
+## File tools
+### nothing to do
 
 ## AWS cli
 RUN curl https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip -o /tmp/awscli.zip \

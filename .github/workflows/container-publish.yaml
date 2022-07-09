@@ -14,6 +14,7 @@ jobs:
         - mongodb
         - postgresql
         - mariadb
+        - file
       fail-fast: false
 
     steps:
