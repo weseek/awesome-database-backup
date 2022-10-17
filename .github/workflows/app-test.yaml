@@ -28,7 +28,7 @@ jobs:
     # This step loads "node_modules" from the cache which contains the cache of Turborepo.
     # The "node_modules" will be mounted with the source code when docker-compose up is executed.
     - name: Load cache "node_modules" which includes cahce of Turborepo
-      uses: actions/cache@v3
+      uses: actions/cache@v3.0.11
       env:
         cache-name: cache-node-modules
       with:
