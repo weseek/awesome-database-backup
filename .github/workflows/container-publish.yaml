@@ -32,7 +32,7 @@ jobs:
         echo ${{ secrets. DOCKER_REGISTRY_PASSWORD }} |
           docker login --username ${{ secrets. DOCKER_REGISTRY_USERNAME }} --password-stdin
     - name: Retrieve information from package.json
-      uses: myrotvorets/info-from-package-json-action@1.1.1
+      uses: myrotvorets/info-from-package-json-action@1.2.0
       id: package-json
     - name: Set up Docker meta
       id: meta
