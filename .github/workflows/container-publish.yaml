@@ -32,7 +32,7 @@ jobs:
         echo ${{ secrets. DOCKER_REGISTRY_PASSWORD }} |
           docker login --username ${{ secrets. DOCKER_REGISTRY_USERNAME }} --password-stdin
     - name: Retrieve information from package.json
-      uses: myrotvorets/info-from-package-json-action@1.1.1
+      uses: myrotvorets/info-from-package-json-action@1.2.0
       id: package-json
     - name: Set up Docker meta
       id: meta
@@ -58,7 +58,7 @@ jobs:
         tags: ${{ steps.meta.outputs.tags }}
 
     - name: Update Docker hub's description
-      uses: peter-evans/dockerhub-description@v3.0.0
+      uses: peter-evans/dockerhub-description@v3.1.1
       env:
         DOCKERHUB_USERNAME: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
         DOCKERHUB_PASSWORD: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
@@ -74,6 +74,6 @@ jobs:
     - name: Slack Notification
       uses: weseek/ghaction-release-slack-notification@master
       with:
-        channel: '#release'
+        channel: '#srv'
         url: ${{ secrets.SLACK_WEBHOOK_URL }}
         created_tag: ${{ github.ref_name }}
