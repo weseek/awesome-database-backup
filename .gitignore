@@ -12,3 +12,4 @@ yarn-error.log
 # ignore files related to Turborepo
 .turbo
 *-profile.json
+out
