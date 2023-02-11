@@ -41,26 +41,5 @@
     "bump-version:minor": "npm run bump-version -- -i minor",
     "bump-version:patch": "npm run bump-version -- -i patch"
   },
-  "packageManager": "yarn@1.22.15",
-  "turbo": {
-    "pipeline": {
-      "build": {
-        "dependsOn": [
-          "^build"
-        ],
-        "outputs": [
-          "dist/**"
-        ]
-      },
-      "test": {
-        "dependsOn": [],
-        "outputs": [
-          "coverage/**"
-        ]
-      },
-      "lint": {
-        "outputs": []
-      }
-    }
-  }
+  "packageManager": "yarn@1.22.15"
 }
