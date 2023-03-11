@@ -7670,9 +7670,9 @@ ts-node@^9.0.0:
     yn "3.1.1"
 
 tsc-alias@^1.6.7:
-  version "1.7.1"
-  resolved "https://registry.yarnpkg.com/tsc-alias/-/tsc-alias-1.7.1.tgz#24e846788c53761a7d96135d1cf0e6566ae6ae5b"
-  integrity sha512-P4+0i+OB0hX17Ca+U6EJ4WZZ+OSupqW32VJ34N7g7+Ch+bwSx1AqYOvDdIVYEKymBh3dfG0t1qxbxPlBbtB1lQ==
+  version "1.8.3"
+  resolved "https://registry.yarnpkg.com/tsc-alias/-/tsc-alias-1.8.3.tgz#fe0c8331edd69b94160b2b936752b114f8063cb5"
+  integrity sha512-/9JARcmXBrEqSuLjdSOqxY7/xI/AnvmBi4CU9/Ba2oX6Oq8vnd0OGSQTk+PIwqWJ5ZxskV0X/x15yzxCNTHU+g==
   dependencies:
     chokidar "^3.5.3"
     commander "^9.0.0"
