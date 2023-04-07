@@ -58,7 +58,7 @@ jobs:
         tags: ${{ steps.meta.outputs.tags }}
 
     - name: Update Docker hub's description
-      uses: peter-evans/dockerhub-description@v3.3.0
+      uses: peter-evans/dockerhub-description@v3.4.0
       env:
         DOCKERHUB_USERNAME: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
         DOCKERHUB_PASSWORD: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
