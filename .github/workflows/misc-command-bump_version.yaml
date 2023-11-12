@@ -25,7 +25,7 @@ jobs:
         # Get ref branch
         echo "::set-output name=branch_name::$(curl -H \"Authorization: token ${GITHUB_TOKEN}\" ${{ github.event.issue.pull_request.url }} | jq -r '.head.ref')"
 
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         ref: ${{ steps.meta.outputs.branch_name }}
     - uses: actions/setup-node@v3
