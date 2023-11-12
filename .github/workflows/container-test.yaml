@@ -39,7 +39,7 @@ jobs:
           ${{ runner.os }}-buildx-app-${{ matrix.db_type }}-
           ${{ runner.os }}-buildx-app-
     - name: Build container (No push)
-      uses: docker/build-push-action@v4
+      uses: docker/build-push-action@v5
       with:
         context: .
         file: ./docker/Dockerfile
