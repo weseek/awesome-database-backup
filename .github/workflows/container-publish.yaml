@@ -26,7 +26,7 @@ jobs:
         echo "::set-output name=package_path::apps/awesome-${{ matrix.db_type }}-backup"
         echo "::set-output name=package_repository::weseek/awesome-${{ matrix.db_type }}-backup"
     - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2
+      uses: docker/setup-buildx-action@v3
     - name: Login to docker.io registry
       run:
         echo ${{ secrets. DOCKER_REGISTRY_PASSWORD }} |
