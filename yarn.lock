@@ -3216,9 +3216,9 @@ available-typed-arrays@^1.0.5:
   integrity sha512-DMD0KiN46eipeziST1LPP/STfDU0sufISXmjSgvVsoU2tqxctQeASejWcfNtxYKqETM1UxQ8sp2OrSBWpHY6sw==
 
 axios-retry@^3.2.5:
-  version "3.5.1"
-  resolved "https://registry.yarnpkg.com/axios-retry/-/axios-retry-3.5.1.tgz#d902f69fe1b2a71902e29605318f887bef0981c6"
-  integrity sha512-mQRJ4IyAUnYig14BQ4MnnNHHuH1cNH7NW4JxEUD6mNJwK6pwOY66wKLCwZ6Y0o3POpfStalqRC+J4+Hnn6Om7w==
+  version "3.9.0"
+  resolved "https://registry.yarnpkg.com/axios-retry/-/axios-retry-3.9.0.tgz#be5a52f4b04e72a514bf49e4d315b51bd2b65bc9"
+  integrity sha512-uK9K/GnlExfShu9dB4GuK0j+iGkIR+LRus3ILhE0zSVXY2q6Dxpemr50NPMs5kP7eOKv9Pz4VvUO40ps1F67dA==
   dependencies:
     "@babel/runtime" "^7.15.4"
     is-retry-allowed "^2.2.0"
