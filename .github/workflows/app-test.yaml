@@ -15,12 +15,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     # Increase workspace space
-    - name: Maximize build space
-      uses: easimon/maximize-build-space@master
-      with:
-        root-reserve-mb: 512
-        swap-size-mb: 1024
-        remove-dotnet: 'true'
+    - name: Remove docker image
+      run: |
+        docker image prune --force
     - uses: actions/checkout@v4
     # Pull the latest image to build, and avoid caching pull-only images.
     # (docker pull is faster than caching in most cases.)
