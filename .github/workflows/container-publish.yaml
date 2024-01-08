@@ -18,7 +18,7 @@ jobs:
       fail-fast: false
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Set up metadata
       id: pkg_meta
       run: |
@@ -26,17 +26,17 @@ jobs:
         echo "::set-output name=package_path::apps/awesome-${{ matrix.db_type }}-backup"
         echo "::set-output name=package_repository::weseek/awesome-${{ matrix.db_type }}-backup"
     - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2
+      uses: docker/setup-buildx-action@v3
     - name: Login to docker.io registry
       run:
         echo ${{ secrets. DOCKER_REGISTRY_PASSWORD }} |
           docker login --username ${{ secrets. DOCKER_REGISTRY_USERNAME }} --password-stdin
     - name: Retrieve information from package.json
-      uses: myrotvorets/info-from-package-json-action@1.2.0
+      uses: myrotvorets/info-from-package-json-action@2.0.0
       id: package-json
     - name: Set up Docker meta
       id: meta
-      uses: docker/metadata-action@v4
+      uses: docker/metadata-action@v5
       with:
         images: ${{ steps.pkg_meta.outputs.package_repository }}
         tags: |
@@ -45,7 +45,7 @@ jobs:
           type=semver,value=v${{ steps.package-json.outputs.packageVersion }},pattern={{major}}.{{minor}}
           type=semver,value=v${{ steps.package-json.outputs.packageVersion }},pattern={{major}}.{{minor}}.{{patch}}
     - name: Build and push container
-      uses: docker/build-push-action@v4
+      uses: docker/build-push-action@v5
       with:
         context: .
         file: ./docker/Dockerfile

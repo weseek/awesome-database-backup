@@ -6,6 +6,7 @@ on:
     paths-ignore:
     - ".**"
     - "!.devcontainer"
+    - "!.github/workflows/app-test.yaml"
     - "docker/**"
     - "**.md"
 
@@ -13,7 +14,11 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    # Increase workspace space
+    - name: Remove docker image
+      run: |
+        docker image prune --force --all
+    - uses: actions/checkout@v4
     # Pull the latest image to build, and avoid caching pull-only images.
     # (docker pull is faster than caching in most cases.)
     - name: Pull Docker images

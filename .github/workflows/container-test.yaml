@@ -20,7 +20,7 @@ jobs:
         - file
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Set up metadata
       id: pkg_meta
       run: |
@@ -28,7 +28,7 @@ jobs:
         echo "::set-output name=package_path::apps/awesome-${{ matrix.db_type }}-backup"
         echo "::set-output name=package_image_name::weseek/awesome-${{ matrix.db_type }}-backup"
     - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2
+      uses: docker/setup-buildx-action@v3
     - name: Cache Docker layers
       uses: actions/cache@v2
       with:
@@ -39,7 +39,7 @@ jobs:
           ${{ runner.os }}-buildx-app-${{ matrix.db_type }}-
           ${{ runner.os }}-buildx-app-
     - name: Build container (No push)
-      uses: docker/build-push-action@v4
+      uses: docker/build-push-action@v5
       with:
         context: .
         file: ./docker/Dockerfile
