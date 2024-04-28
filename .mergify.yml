@@ -36,6 +36,11 @@ pull_request_rules:
     conditions:
       - author = dependabot[bot]
       - and: *required_actions_were_succeeded_or_skipped
+      # override rules of branch protection
+      # - no approve is needed
+      # - no need to be HEAD whose base branch of PR
+      - "#approved-reviews-by >= 0"
+      - "#commits-behind >= 0"
     actions:
       merge:
         method: merge
