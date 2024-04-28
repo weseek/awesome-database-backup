@@ -23,7 +23,7 @@ jobs:
     - run: yarn install
     - name: Bump up version
       run: |
-        git config user.name github-actions
+        git config user.name github-actions[bot]
         git config user.email github-actions@github.com
         git checkout -b next-version origin/master
 
@@ -32,6 +32,6 @@ jobs:
         git commit -am 'Bump up version'
         git push origin next-version
 
-        gh pr create --title 'Bump up patch version' --body '' --label 'exclude from changelog'
+        gh pr create --title 'Bump up patch version' --body '' --label 'flag/exclude-from-changelog,type/prepare-next-version'
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

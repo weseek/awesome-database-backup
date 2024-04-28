@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
 
     if: >
-      !contains( github.event.pull_request.labels.*.name, 'exclude from changelog' )
+      !contains( github.event.pull_request.labels.*.name, 'flag/exclude-from-changelog' )
 
     steps:
     - uses: release-drafter/release-drafter@v5
@@ -31,7 +31,7 @@ jobs:
     # - Created by "dependabot", "github-actions"
     if: >
       (
-        !contains( github.event.pull_request.labels.*.name, 'exclude from changelog' )
+        !contains( github.event.pull_request.labels.*.name, 'flag/exclude-from-changelog' )
         && !startsWith( github.head_ref, 'dependabot/' )
         && !contains( github.actor, 'github-actions' )
       )
