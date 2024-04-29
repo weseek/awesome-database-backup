@@ -1,17 +1,26 @@
 shared:
   required_actions_were_succeeded_or_skipped: &required_actions_were_succeeded_or_skipped
     - or:
-        - check-success = test
-        - check-skipped = test
+        - check-success = app-build
+        - check-skipped = app-build
     - or:
-        - check-skipped = test (mariadb)
-        - check-success = test (mariadb)
+        - check-success = app-lint
+        - check-skipped = app-lint
     - or:
-        - check-skipped = test (mongodb)
-        - check-success = test (mongodb)
+        - check-success = app-test
+        - check-skipped = app-test
     - or:
-        - check-skipped = test (postgresql)
-        - check-success = test (postgresql)
+        - check-skipped = container-test (mongodb)
+        - check-success = container-test (mongodb)
+    - or:
+        - check-skipped = container-test (postgresql)
+        - check-success = container-test (postgresql)
+    - or:
+        - check-skipped = container-test (mariadb)
+        - check-success = container-test (mariadb)
+    - or:
+        - check-success = container-test (file)
+        - check-skipped = container-test (file)
 
 pull_request_rules:
   - name: All required actions were succeeded or skipped
