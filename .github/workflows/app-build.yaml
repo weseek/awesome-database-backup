@@ -9,7 +9,7 @@ on:
     - "**.md"
 
 jobs:
-  test:
+  app-build:
     runs-on: ubuntu-latest
 
     steps:

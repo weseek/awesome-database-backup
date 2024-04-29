@@ -10,7 +10,7 @@ on:
 jobs:
 
   # Refs: https://github.com/release-drafter/release-drafter
-  labeling:
+  misc-pr_to_master-labeling:
     runs-on: ubuntu-latest
 
     if: >
@@ -23,7 +23,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  check-title:
+  misc-pr_to_master-check-title:
     runs-on: ubuntu-latest
 
     # Ignore these cases
@@ -51,7 +51,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  slack-notification:
+  misc-pr_to_master-slack-notification:
     runs-on: ubuntu-latest
 
     steps:

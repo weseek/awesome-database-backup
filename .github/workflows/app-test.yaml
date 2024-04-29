@@ -11,7 +11,7 @@ on:
     - "**.md"
 
 jobs:
-  test:
+  app-test:
     runs-on: ubuntu-latest
     steps:
     # Increase workspace space

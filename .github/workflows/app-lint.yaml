@@ -10,7 +10,7 @@ on:
     - "**.md"
 
 jobs:
-  test:
+  app-lint:
     runs-on: ubuntu-latest
 
     steps:
