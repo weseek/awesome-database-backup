@@ -1,0 +1,17 @@
+name: Misc - Remove cache
+
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows:
+    - Application - Test
+    types:
+    - completed
+
+jobs:
+  misc-remove_cache:
+    runs-on: ubuntu-latest
+
+    steps:
+    # remove cache older than 1 hour ago
+    - run: gh cache list --json id,createdAt | jq ".[].createdAt |= (sub(\"\\\\..*Z\";\"Z\") | fromdateiso8601 < `expr $(date +%s) - 60 \* 60`)"
