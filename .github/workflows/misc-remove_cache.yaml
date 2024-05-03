@@ -14,4 +14,7 @@ jobs:
 
     steps:
     # remove cache older than 1 hour ago
-    - run: gh cache list --json id,createdAt | jq ".[].createdAt |= (sub(\"\\\\..*Z\";\"Z\") | fromdateiso8601 < `expr $(date +%s) - 60 \* 60`)"
+    - run:
+        for ID in $(gh cache list --json id,createdAt | jq ".[].createdAt |= (sub(\"\\\\..*Z\";\"Z\") | fromdateiso8601 < `expr $(date +%s) - 60 \* 60`)" | jq -r '.[].id');
+        do gh cache delete $ID;
+        done
