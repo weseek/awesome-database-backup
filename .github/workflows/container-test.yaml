@@ -3,12 +3,12 @@ name: Container - Test
 on:
   push:
     branches-ignore: [stable]
-    paths-ignore:
-    - ".**"
-    - "**.md"
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  test:
+  container-test:
     runs-on: ubuntu-latest
 
     strategy:

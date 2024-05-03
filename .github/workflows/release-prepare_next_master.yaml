@@ -7,7 +7,7 @@ on:
     - stable
 
 jobs:
-  bump-up-version:
+  release-prepare_next_master-bump-up-version:
     if:  github.head_ref == 'master'
 
     runs-on: ubuntu-latest

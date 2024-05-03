@@ -3,14 +3,12 @@ name: Application - Lint
 on:
   push:
     branches-ignore: [stable]
-    paths-ignore:
-    - ".**"
-    - "!.eslintrc.js"
-    - "docker/**"
-    - "**.md"
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  test:
+  app-lint:
     runs-on: ubuntu-latest
 
     steps:

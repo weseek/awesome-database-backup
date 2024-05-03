@@ -6,7 +6,7 @@ on:
 
 jobs:
 
-  bump-version:
+  misc-command-bump-version:
     runs-on: ubuntu-latest
 
     if: >
