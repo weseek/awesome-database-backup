@@ -3,9 +3,9 @@ name: Container - Test
 on:
   push:
     branches-ignore: [stable]
-    paths-ignore:
-    - ".**"
-    - "**.md"
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   container-test:

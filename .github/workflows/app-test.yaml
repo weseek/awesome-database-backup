@@ -3,12 +3,9 @@ name: Application - Test
 on:
   push:
     branches-ignore: [stable]
-    paths-ignore:
-    - ".**"
-    - "!.devcontainer"
-    - "!.github/workflows/app-test.yaml"
-    - "docker/**"
-    - "**.md"
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   app-test:
