@@ -1,38 +1,7 @@
-shared:
-  required_actions_were_succeeded_or_skipped: &required_actions_were_succeeded_or_skipped
-    - or:
-        - check-success = app-build
-        - check-skipped = app-build
-    - or:
-        - check-success = app-lint
-        - check-skipped = app-lint
-    - or:
-        - check-success = app-test
-        - check-skipped = app-test
-    - or:
-        - check-skipped = container-test (mongodb)
-        - check-success = container-test (mongodb)
-    - or:
-        - check-skipped = container-test (postgresql)
-        - check-success = container-test (postgresql)
-    - or:
-        - check-skipped = container-test (mariadb)
-        - check-success = container-test (mariadb)
-    - or:
-        - check-success = container-test (file)
-        - check-skipped = container-test (file)
-
 pull_request_rules:
-  - name: All required actions were succeeded or skipped
-    conditions:
-      - and: *required_actions_were_succeeded_or_skipped
-    actions:
-      post_check:
-        title: required-actions-were-succeeded-or-skipped
-        success_conditions:
-          - and: *required_actions_were_succeeded_or_skipped
   - name: Automatic merge for Preparing next version
     conditions:
+      # [MEMO] Branch protection settings are injected
       - author = github-actions[bot]
       - label = "type/prepare-next-version"
     actions:
@@ -43,8 +12,8 @@ pull_request_rules:
         method: merge
   - name: Automatic merge for Dependabot pull requests
     conditions:
+      # [MEMO] Branch protection settings are injected
       - author = dependabot[bot]
-      - and: *required_actions_were_succeeded_or_skipped
     actions:
       review:
         type: APPROVE
