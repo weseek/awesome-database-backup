@@ -4,7 +4,6 @@ import {
   IStorageServiceClient,
   listGCSFilesOptions,
   GCSURI,
-  GCSStorageServiceClientConfig,
 } from './interfaces';
 
 /**
@@ -16,37 +15,9 @@ export class GCSStorageServiceClient implements IStorageServiceClient {
 
   client: Storage;
 
-  constructor(config: GCSStorageServiceClientConfig) {
-    if (config.gcpProjectId == null) {
-      throw new Error('You will need to set "--gcp-project-id".');
-    }
-    if (config.gcpServiceAccountKeyJsonPath == null && (config.gcpClientEmail == null || config.gcpPrivateKey == null)) {
-      throw new Error('If you does not set "--gcp-service-account-key-json-path", '
-                        + 'you will need to set all of "--gcp-client-email" and "--gcp-private-key".');
-    }
-
-    const storageconfig = Object.assign(
-      config.gcpServiceAccountKeyJsonPath
-        ? {
-          keyFilename: config.gcpServiceAccountKeyJsonPath,
-        }
-        : {
-          projectId: config.gcpProjectId,
-          credentials: {
-            client_email: config.gcpClientEmail,
-            // [MEMO] Converting escaped characters because newline codes cannot be entered in the commander argument.
-            private_key: config.gcpPrivateKey?.replace(/\\n/g, '\n'),
-          },
-        },
-      config.gcpEndpointUrl
-        ? {
-          apiEndpoint: config.gcpEndpointUrl.toString(),
-        }
-        : {},
-    );
-
+  constructor() {
     this.name = 'GCS';
-    this.client = new Storage(storageconfig);
+    this.client = new Storage();
   }
 
   async exists(url: string): Promise<boolean> {
