@@ -3,12 +3,12 @@ name: Container - Test
 on:
   push:
     branches-ignore: [stable]
-    paths-ignore:
-    - ".**"
-    - "**.md"
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  test:
+  container-test:
     runs-on: ubuntu-latest
 
     strategy:
@@ -30,7 +30,7 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
     - name: Cache Docker layers
-      uses: actions/cache@v2
+      uses: actions/cache@v4
       with:
         path: /tmp/.buildx-cache
         key:
@@ -60,7 +60,7 @@ jobs:
         rm -rf /tmp/.buildx-cache
         mv /tmp/.buildx-cache-new /tmp/.buildx-cache
     - name: Run structure tests
-      uses: brpaz/structure-tests-action@v1.1.2
+      uses: brpaz/structure-tests-action@1.2.0
       with:
         image: ${{ steps.pkg_meta.outputs.package_image_name }}:latest
         configFile: ./docker/test/${{ matrix.db_type }}/structure-tests.yml
