@@ -16,9 +16,11 @@ jobs:
     steps:
     - name: Get metadata
       id: meta
+      env:
+        BUMP_COMMAND: ${{ github.event.comment.body }}
       run: |
         # Get up range from comment (one of ["patch","minor","major"])
-        UP_RANGE=$(echo ${{ github.event.comment.body }} | sed -e 's/\/bump-version [[:space:]]*\(.*\)/\1/')
+        UP_RANGE=$(echo $BUMP_COMMAND | sed -e 's/\/bump-version [[:space:]]*\(.*\)/\1/')
         bash -c "[[ ${UP_RANGE} =~ (patch|minor|major) ]]"
         echo "::set-output name=up_range::${UP_RANGE}"
 
