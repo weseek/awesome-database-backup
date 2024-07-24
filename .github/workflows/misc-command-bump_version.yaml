@@ -6,28 +6,30 @@ on:
 
 jobs:
 
-  bump-version:
+  misc-command-bump-version:
     runs-on: ubuntu-latest
 
     if: >
       contains( github.event.comment.html_url, '/pull/' )
       && startsWith( github.event.comment.body, '/bump-version ' )
-
+      && github.head_ref == 'next-version'
     steps:
-    - name: Get metadata
-      id: meta
-      run: |
-        # Get up range from comment (one of ["patch","minor","major"])
-        UP_RANGE=$(echo ${{ github.event.comment.body }} | sed -e 's/\/bump-version [[:space:]]*\(.*\)/\1/')
-        bash -c "[[ ${UP_RANGE} =~ (patch|minor|major) ]]"
-        echo "::set-output name=up_range::${UP_RANGE}"
-
-        # Get ref branch
-        echo "::set-output name=branch_name::$(curl -H \"Authorization: token ${GITHUB_TOKEN}\" ${{ github.event.issue.pull_request.url }} | jq -r '.head.ref')"
-
+    - name: Set up range to 'patch'
+      if: github.event.comment.body == '/bump-version patch'
+      run: echo "UP_RANGE=patch" >> $GITHUB_ENV
+    - name: Set up range to 'minor'
+      if: github.event.comment.body == '/bump-version minor'
+      run: echo "UP_RANGE=minor" >> $GITHUB_ENV
+    - name: Set up range to 'major'
+      if: github.event.comment.body == '/bump-version major'
+      run: echo "UP_RANGE=major" >> $GITHUB_ENV
+    - name: Check up range
+      if: >
+        ! contains(fromJSON('["patch", "minor", "major"]'), env.UP_RANGE)
+      run: echo 'invalid up range'; exit 1
     - uses: actions/checkout@v4
       with:
-        ref: ${{ steps.meta.outputs.branch_name }}
+        ref: ${{ github.head_ref }}
     - uses: actions/setup-node@v4
       with:
         node-version: "16.14.2"
@@ -38,7 +40,7 @@ jobs:
         git config user.name github-actions
         git config user.email github-actions@github.com
 
-        yarn run "bump-version:${{ steps.meta.outputs.up_range }}"
+        yarn run "bump-version:${UP_RANGE}"
 
         git commit -am 'Bump up version'
         git push
