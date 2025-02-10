@@ -1,6 +1,6 @@
 {
   "name": "@awesome-database-backup/mariadb-test",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "Functions of MariaDB to support test",
   "author": "Ryu Sato <ryu@weseek.co.jp>",
   "license": "MIT",
