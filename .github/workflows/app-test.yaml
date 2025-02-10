@@ -19,7 +19,7 @@ jobs:
     # Pull the latest image to build, and avoid caching pull-only images.
     # (docker pull is faster than caching in most cases.)
     - name: Pull Docker images
-      run: docker compose -f .devcontainer/docker-compose.yml pull
+      run: docker compose -f .devcontainer/compose.yml pull
     # This step loads "node_modules" from the cache which contains the cache of Turborepo.
     # The "node_modules" will be mounted with the source code when `docker compose up` is executed.
     - name: Load cache "node_modules" which includes cahce of Turborepo
@@ -34,9 +34,9 @@ jobs:
           ${{ runner.os }}-build-${{ env.cache-name }}-
     - name: Start all DBs and middle
       run: |
-        docker compose -f .devcontainer/docker-compose.yml build --build-arg USER_UID=$(id -u) --build-arg USER_GID=$(id -g)
-        docker compose -f .devcontainer/docker-compose.yml up -d
+        docker compose -f .devcontainer/compose.yml build --build-arg USER_UID=$(id -u) --build-arg USER_GID=$(id -g)
+        docker compose -f .devcontainer/compose.yml up -d
     - name: Run test
       run:
-        docker compose -f .devcontainer/docker-compose.yml exec -T -- node bash -c 'yarn install && yarn test'
+        docker compose -f .devcontainer/compose.yml exec -T -- node bash -c 'yarn install && yarn test'
     # [TODO] Coverage report
