@@ -10,7 +10,7 @@ concurrency: ${{ github.workflow }}-${{ github.ref }}
 jobs:
 
   # Refs: https://github.com/release-drafter/release-drafter
-  update-release-draft:
+  release-update_draft:
     runs-on: ubuntu-latest
 
     outputs:
@@ -25,7 +25,7 @@ jobs:
       id: package-json
 
     # Drafts your next Release notes as Pull Requests are merged into "master"
-    - uses: release-drafter/release-drafter@v5
+    - uses: release-drafter/release-drafter@v6
       id: release-drafter
       with:
         name: v${{ steps.package-json.outputs.packageVersion }}
@@ -37,7 +37,7 @@ jobs:
 
   # Refs: https://github.com/bakunyo/git-pr-release-action
   update-release-pr:
-    needs: update-release-draft
+    needs: release-update_draft
 
     runs-on: ubuntu-latest
 
@@ -54,5 +54,5 @@ jobs:
         GIT_PR_RELEASE_BRANCH_PRODUCTION: stable
         GIT_PR_RELEASE_BRANCH_STAGING: master
         GIT_PR_RELEASE_TEMPLATE: .github/git-pr-release-template.erb
-        GIT_PR_RELEASE_TITLE: Release v${{ needs.update-release-draft.outputs.RELEASE_VERSION }}
-        GIT_PR_RELEASE_BODY: ${{ needs.update-release-draft.outputs.RELEASE_DRAFT_BODY }}
+        GIT_PR_RELEASE_TITLE: Release v${{ needs.release-update_draft.outputs.RELEASE_VERSION }}
+        GIT_PR_RELEASE_BODY: ${{ needs.release-update_draft.outputs.RELEASE_DRAFT_BODY }}
