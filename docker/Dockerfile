@@ -1,6 +1,8 @@
 ARG dbType
 
-FROM node:16.14.2-slim AS base
+# You should set same Node.js version and Linux distribution as .devcontainer/Dockerfile
+# FROM node:16.14.2-bullseye-slim AS base
+FROM node:16.14.2-bullseye-slim AS base
 
 ##
 ## Prepare a subset of this monorepo
@@ -64,8 +66,9 @@ RUN apt-get update \
 
 FROM tool-common AS mongodb-tools
 
+ARG dbVersion=100.5.2
 RUN apt-get update \
-      && curl https://fastdl.mongodb.org/tools/db/mongodb-database-tools-debian10-x86_64-100.5.2.deb -o mongodb-database-tools.deb \
+      && curl https://fastdl.mongodb.org/tools/db/mongodb-database-tools-debian10-x86_64-${dbVersion}.deb -o mongodb-database-tools.deb \
       && apt-get install -y ./mongodb-database-tools.deb \
       && apt-get clean \
       && rm -rf /var/lib/apt/lists/* \
@@ -73,14 +76,21 @@ RUN apt-get update \
 
 FROM tool-common AS postgresql-tools
 
-RUN apt-get update \
-      && apt-get install -y postgresql-common postgresql-client --no-install-recommends \
+ARG dbVersion=11
+RUN echo "deb http://apt.postgresql.org/pub/repos/apt $(cat /etc/os-release | grep VERSION_CODENAME | cut -d = -f 2)-pgdg main" > /etc/apt/sources.list.d/pgdg.list \
+      && apt-get install -y curl ca-certificates gnupg \
+      && curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - \
+      && apt-get update \
+      && apt-get install -y postgresql-common postgresql-client-${dbVersion} --no-install-recommends \
       && apt-get clean \
       && rm -rf /var/lib/apt/lists/*
 
 FROM tool-common AS mariadb-tools
 
-RUN apt-get update \
+# Valid versions can be found here https://dlm.mariadb.com/rest/releases/mariadb_server/
+ARG dbVersion=10.5.28
+RUN curl -sSL https://downloads.mariadb.com/MariaDB/mariadb_repo_setup | bash -s -- --mariadb-server-version=${dbVersion} \
+      && apt-get update \
       && apt-get install -y mariadb-common mariadb-client --no-install-recommends \
       && apt-get clean \
       && rm -rf /var/lib/apt/lists/*

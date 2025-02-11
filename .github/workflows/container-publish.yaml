@@ -15,6 +15,16 @@ jobs:
         - postgresql
         - mariadb
         - file
+        include:
+        - dbType: mongodb
+          dbVersion: 100.5.2
+          dockerTagSuffix: mongotool-100.5.2
+        - dbType: postgresql
+          dbVersion: 11
+          dockerTagSuffix: postgresql-11
+        - dbType: mariadb
+          dbVersion: 10.5.28
+          dockerTagSuffix: mariadb-10.5.28
       fail-fast: false
 
     steps:
@@ -44,6 +54,7 @@ jobs:
           type=semver,value=v${{ steps.package-json.outputs.packageVersion }},pattern={{major}}
           type=semver,value=v${{ steps.package-json.outputs.packageVersion }},pattern={{major}}.{{minor}}
           type=semver,value=v${{ steps.package-json.outputs.packageVersion }},pattern={{major}}.{{minor}}.{{patch}}
+          type=semver,value=v${{ steps.package-json.outputs.packageVersion }}-${{ matrix.dockerTagSuffix }},pattern={{major}}.{{minor}}.{{patch}}
     - name: Build and push container
       uses: docker/build-push-action@v5
       with:
@@ -55,6 +66,7 @@ jobs:
           packageScope=${{ steps.pkg_meta.outputs.package_scope }}
           packagePath=${{ steps.pkg_meta.outputs.package_path }}
           dbType=${{ matrix.db_type }}
+          dbVersion=${{ matrix.db_version }}
         tags: ${{ steps.meta.outputs.tags }}
 
     - name: Update Docker hub's description

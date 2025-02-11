@@ -1,5 +1,6 @@
 # See here for image contents: https://github.com/microsoft/vscode-dev-containers/tree/v0.217.2/containers/typescript-node/.devcontainer/base.Dockerfile
 
+# You should set same Node.js version and Linux distribution as docker/Dockerfile
 # [Choice] Node.js version (use -bullseye variants on local arm64/Apple Silicon): 16, 14, 12, 16-bullseye, 14-bullseye, 12-bullseye, 16-buster, 14-buster, 12-buster
 ARG VARIANT="16"
 FROM mcr.microsoft.com/vscode/devcontainers/typescript-node:0-${VARIANT}
@@ -29,6 +30,9 @@ RUN if [ "$USER_GID" != "1000" ] || [ "$USER_UID" != "1000" ]; then \
 RUN chown -R $USER_UID:$USER_GID /home/$USERNAME /awesome-database-backup;
 
 # Install tools
+ARG MongoToolVersion=100.5.2
+ARG PostgreSQLVersion=11
+ARG MariaDBVersion=10.5.28
 ## bzip2, curl command
 RUN apt-get update \
       && apt-get install -y bzip2 curl \
@@ -43,21 +47,22 @@ RUN apt-get update \
       && rm ./mongodb-mongosh.deb
 ## mongo tools
 RUN apt-get update \
-      && curl https://fastdl.mongodb.org/tools/db/mongodb-database-tools-debian10-x86_64-100.5.2.deb -o mongodb-database-tools.deb \
+      && curl https://fastdl.mongodb.org/tools/db/mongodb-database-tools-debian10-x86_64-${MongoToolVersion}.deb -o mongodb-database-tools.deb \
       && apt-get install -y ./mongodb-database-tools.deb \
       && apt-get clean \
       && rm -rf /var/lib/apt/lists/* \
       && rm ./mongodb-database-tools.deb
 ## PostgreSQL tools
-RUN echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list \
+RUN echo "deb http://apt.postgresql.org/pub/repos/apt $(cat /etc/os-release | grep VERSION_CODENAME | cut -d = -f 2)-pgdg main" > /etc/apt/sources.list.d/pgdg.list \
       && apt-get install -y curl ca-certificates gnupg \
       && curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - \
       && apt-get update \
-      && apt-get install -y postgresql-common postgresql-client-14 --no-install-recommends \
+      && apt-get install -y postgresql-common postgresql-client-${PostgreSQLVersion} --no-install-recommends \
       && apt-get clean \
       && rm -rf /var/lib/apt/lists/*
 ## MariaDB tools
-RUN apt-get update \
+RUN curl -sSL https://downloads.mariadb.com/MariaDB/mariadb_repo_setup | bash -s -- --mariadb-server-version=${MariaDBVersion} \
+      && apt-get update \
       && apt-get install -y mariadb-common mariadb-client --no-install-recommends \
       && apt-get clean \
       && rm -rf /var/lib/apt/lists/*
