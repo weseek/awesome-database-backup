@@ -1,6 +1,6 @@
 # See here for image contents: https://github.com/microsoft/vscode-dev-containers/tree/v0.217.2/containers/typescript-node/.devcontainer/base.Dockerfile
 
-# You should set same Node.js version and Linux distribution as docker/Dockerfile
+# You must set same Node.js version and Linux distribution as docker/Dockerfile
 # [Choice] Node.js version (use -bullseye variants on local arm64/Apple Silicon): 16, 14, 12, 16-bullseye, 14-bullseye, 12-bullseye, 16-buster, 14-buster, 12-buster
 ARG VARIANT="16"
 FROM mcr.microsoft.com/vscode/devcontainers/typescript-node:0-${VARIANT}

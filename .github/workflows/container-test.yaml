@@ -12,6 +12,7 @@ jobs:
     runs-on: ubuntu-latest
 
     strategy:
+      # Set same as container-test.yaml
       matrix:
         db_type:
         - mongodb
@@ -19,8 +20,10 @@ jobs:
         - mariadb
         - file
         include:
+        # Valid versions can be found here https://www.mongodb.com/try/download/database-tools/releases/archive
         - db_type: mongodb
           db_tool_version: 100.5.2
+        # Valid versions can be found here https://apt.postgresql.org/pub/repos/apt/dists/bullseye-pgdg/
         - db_type: postgresql
           db_tool_version: 11
         # Valid versions can be found here https://dlm.mariadb.com/rest/releases/mariadb_server/
