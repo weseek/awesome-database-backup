@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
 
     strategy:
-      # Set same as container-test.yaml
+      # Set same as container-publish.yaml
       matrix:
         db_type:
         - mongodb
