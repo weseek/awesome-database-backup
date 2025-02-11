@@ -31,8 +31,8 @@ RUN chown -R $USER_UID:$USER_GID /home/$USERNAME /awesome-database-backup;
 
 # Install tools
 ARG MongoToolVersion=100.5.2
-ARG PostgreSQLVersion=11
-ARG MariaDBVersion=10.5.28
+ARG PostgreSQLClientVersion=11
+ARG MariaDBClientVersion=10.5.28
 ## bzip2, curl command
 RUN apt-get update \
       && apt-get install -y bzip2 curl \
@@ -57,11 +57,11 @@ RUN echo "deb http://apt.postgresql.org/pub/repos/apt $(cat /etc/os-release | gr
       && apt-get install -y curl ca-certificates gnupg \
       && curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - \
       && apt-get update \
-      && apt-get install -y postgresql-common postgresql-client-${PostgreSQLVersion} --no-install-recommends \
+      && apt-get install -y postgresql-common postgresql-client-${PostgreSQLClientVersion} --no-install-recommends \
       && apt-get clean \
       && rm -rf /var/lib/apt/lists/*
 ## MariaDB tools
-RUN curl -sSL https://downloads.mariadb.com/MariaDB/mariadb_repo_setup | bash -s -- --mariadb-server-version=${MariaDBVersion} \
+RUN curl -sSL https://downloads.mariadb.com/MariaDB/mariadb_repo_setup | bash -s -- --mariadb-server-version=${MariaDBClientVersion} \
       && apt-get update \
       && apt-get install -y mariadb-common mariadb-client --no-install-recommends \
       && apt-get clean \

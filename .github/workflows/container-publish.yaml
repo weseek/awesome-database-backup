@@ -17,13 +17,13 @@ jobs:
         - file
         include:
         - dbType: mongodb
-          dbVersion: 100.5.2
+          dbToolVersion: 100.5.2
           dockerTagSuffix: mongotool-100.5.2
         - dbType: postgresql
-          dbVersion: 11
+          dbToolVersion: 11
           dockerTagSuffix: postgresql-11
         - dbType: mariadb
-          dbVersion: 10.5.28
+          dbToolVersion: 10.5.28
           dockerTagSuffix: mariadb-10.5.28
       fail-fast: false
 
