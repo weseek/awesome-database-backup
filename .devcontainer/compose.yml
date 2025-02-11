@@ -18,8 +18,8 @@ services:
     working_dir: /awesome-database-backup
 
   mongo:
-    # You must set newest version of .github/workflows/container-publish.yaml
-    # ex. Set "100.5.3" if the following
+    # You must set compatible version with newest version of mongotool in .github/workflows/container-publish.yaml
+    # ex. Set "6" if the following
     # - db_type: mongodb
     #   db_tool_version: 100.5.2
     # - db_type: mongodb
