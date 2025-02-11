@@ -18,6 +18,14 @@ jobs:
         - postgresql
         - mariadb
         - file
+        include:
+        - db_type: mongodb
+          db_tool_version: 100.5.2
+        - db_type: postgresql
+          db_tool_version: 11
+        # Valid versions can be found here https://dlm.mariadb.com/rest/releases/mariadb_server/
+        - db_type: mariadb
+          db_tool_version: 10.5.28
 
     steps:
     - uses: actions/checkout@v4
@@ -49,6 +57,7 @@ jobs:
           packageScope=${{ steps.pkg_meta.outputs.package_scope }}
           packagePath=${{ steps.pkg_meta.outputs.package_path }}
           dbType=${{ matrix.db_type }}
+          dbToolVersion=${{ matrix.db_tool_version }}
         cache-from: type=local,src=/tmp/.buildx-cache
         cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
         tags: ${{ steps.pkg_meta.outputs.package_image_name }}:latest
