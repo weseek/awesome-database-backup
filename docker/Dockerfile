@@ -99,9 +99,9 @@ FROM tool-common AS file-tools
 
 ##
 ## release
-## dbType is one of "mongodb", "postgresql", "mariadb"
+## dbType is one of "mongodb", "postgresql", "mariadb", "file"
 ##
-FROM ${dbType}-tools AS release
+FROM ${dbType:-file}-tools AS release
 
 ARG distDir="dist"
 ARG packageScope
