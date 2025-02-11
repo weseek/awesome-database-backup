@@ -67,7 +67,7 @@ FROM tool-common AS mongodb-tools
 
 ARG dbToolVersion=100.5.2
 RUN apt-get update \
-      && curl https://fastdl.mongodb.org/tools/db/mongodb-database-tools-debian10-x86_64-${dbVersion}.deb -o mongodb-database-tools.deb \
+      && curl https://fastdl.mongodb.org/tools/db/mongodb-database-tools-debian10-x86_64-${dbToolVersion}.deb -o mongodb-database-tools.deb \
       && apt-get install -y ./mongodb-database-tools.deb \
       && apt-get clean \
       && rm -rf /var/lib/apt/lists/* \
@@ -80,7 +80,7 @@ RUN echo "deb http://apt.postgresql.org/pub/repos/apt $(cat /etc/os-release | gr
       && apt-get install -y curl ca-certificates gnupg \
       && curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - \
       && apt-get update \
-      && apt-get install -y postgresql-common postgresql-client-${dbVersion} --no-install-recommends \
+      && apt-get install -y postgresql-common postgresql-client-${dbToolVersion} --no-install-recommends \
       && apt-get clean \
       && rm -rf /var/lib/apt/lists/*
 
@@ -88,7 +88,7 @@ FROM tool-common AS mariadb-tools
 
 # Valid versions can be found here https://dlm.mariadb.com/rest/releases/mariadb_server/
 ARG dbToolVersion=10.5.28
-RUN curl -sSL https://downloads.mariadb.com/MariaDB/mariadb_repo_setup | bash -s -- --mariadb-server-version=${dbVersion} \
+RUN curl -sSL https://downloads.mariadb.com/MariaDB/mariadb_repo_setup | bash -s -- --mariadb-server-version=${dbToolVersion} \
       && apt-get update \
       && apt-get install -y mariadb-common mariadb-client --no-install-recommends \
       && apt-get clean \
