@@ -59,7 +59,7 @@ RUN yarn run turbo run build --scope="${packageScope}" --include-dependencies --
 FROM base AS tool-common
 
 RUN apt-get update \
-      && apt-get install -y bzip2 curl \
+      && apt-get install -y bzip2 curl ca-certificates gnupg \
       && apt-get clean \
       && rm -rf /var/lib/apt/lists/*
 
@@ -79,7 +79,6 @@ FROM tool-common AS postgresql-tools
 # YOU MUST SET dbToolVersion
 ARG dbToolVersion
 RUN echo "deb http://apt.postgresql.org/pub/repos/apt $(cat /etc/os-release | grep VERSION_CODENAME | cut -d = -f 2)-pgdg main" > /etc/apt/sources.list.d/pgdg.list \
-      && apt-get install -y curl ca-certificates gnupg \
       && curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - \
       && apt-get update \
       && apt-get install -y postgresql-common postgresql-client-${dbToolVersion} --no-install-recommends \

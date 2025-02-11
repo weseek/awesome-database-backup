@@ -54,7 +54,6 @@ RUN apt-get update \
       && rm ./mongodb-database-tools.deb
 ## PostgreSQL tools
 RUN echo "deb http://apt.postgresql.org/pub/repos/apt $(cat /etc/os-release | grep VERSION_CODENAME | cut -d = -f 2)-pgdg main" > /etc/apt/sources.list.d/pgdg.list \
-      && apt-get install -y curl ca-certificates gnupg \
       && curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - \
       && apt-get update \
       && apt-get install -y postgresql-common postgresql-client-${PostgreSQLClientVersion} --no-install-recommends \
