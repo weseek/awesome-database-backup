@@ -9,7 +9,7 @@ FROM node:16.14.2-bullseye-slim AS base
 FROM base AS pruned-package
 
 ARG packageScope
-ENV optDir /opt
+ENV optDir=/opt
 WORKDIR ${optDir}
 
 COPY . .
@@ -24,7 +24,7 @@ RUN npx turbo@1 prune --scope="${packageScope}" --docker \
 ##
 FROM base AS deps-resolver
 
-ENV optDir /opt
+ENV optDir=/opt
 WORKDIR ${optDir}
 
 COPY --from=pruned-package --chown=node:node \
@@ -40,8 +40,8 @@ RUN yarn --frozen-lockfile
 FROM base AS builder
 
 ARG packageScope
-ENV NODE_ENV production
-ENV optDir /opt
+ENV NODE_ENV=production
+ENV optDir=/opt
 WORKDIR ${optDir}
 
 COPY --from=deps-resolver --chown=node:node \
@@ -99,23 +99,23 @@ FROM tool-common AS file-tools
 
 ##
 ## release
-## dbType is one of "mongodb", "postgresql", "mariadb"
+## dbType is one of "mongodb", "postgresql", "mariadb", "file"
 ##
-FROM ${dbType}-tools AS release
+FROM ${dbType:-file}-tools AS release
 
 ARG distDir="dist"
 ARG packageScope
 ARG packagePath
-ENV NODE_ENV production
-ENV optDir /opt
-ENV appDir /app
+ENV NODE_ENV=production
+ENV optDir=/opt
+ENV appDir=/app
 WORKDIR ${appDir}/${packagePath}
 
 COPY --from=builder --chown=node:node \
   ${optDir}/ ${appDir}/
 COPY ./docker/entrypoint.sh ${appDir}/
 
-ENV PATH $PATH:${appDir}/${packagePath}/node_modules/.bin
+ENV PATH=$PATH:${appDir}/${packagePath}/node_modules/.bin
 
 ENTRYPOINT ["/app/entrypoint.sh"]
 CMD ["backup", "list", "prune"]
