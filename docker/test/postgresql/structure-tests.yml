@@ -1,7 +1,7 @@
 schemaVersion: 2.0.0
 containerRunOptions:
   envVars:
-  - DB_TOOL_VERSION
+  - BACKUP_TOOL_VERSION
 commandTests:
 # ================================================================================
 # Path
