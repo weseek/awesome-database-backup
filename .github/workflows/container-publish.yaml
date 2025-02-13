@@ -25,6 +25,9 @@ jobs:
         - db_type: postgresql
           db_tool_version: 11
           docker_tag_suffix: postgresql-11
+        - db_type: postgresql
+          db_tool_version: 16
+          docker_tag_suffix: postgresql-16
         # Valid versions can be found here https://dlm.mariadb.com/rest/releases/mariadb_server/
         - db_type: mariadb
           db_tool_version: 10.5.28
