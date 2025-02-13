@@ -1,6 +1,7 @@
 ARG dbType
 
-FROM node:16.14.2-slim AS base
+# You should set same Node.js version and Linux distribution as .devcontainer/Dockerfile
+FROM node:16.14.2-bullseye-slim AS base
 
 ##
 ## Prepare a subset of this monorepo
@@ -8,7 +9,7 @@ FROM node:16.14.2-slim AS base
 FROM base AS pruned-package
 
 ARG packageScope
-ENV optDir /opt
+ENV optDir=/opt
 WORKDIR ${optDir}
 
 COPY . .
@@ -23,7 +24,7 @@ RUN npx turbo@1 prune --scope="${packageScope}" --docker \
 ##
 FROM base AS deps-resolver
 
-ENV optDir /opt
+ENV optDir=/opt
 WORKDIR ${optDir}
 
 COPY --from=pruned-package --chown=node:node \
@@ -39,8 +40,8 @@ RUN yarn --frozen-lockfile
 FROM base AS builder
 
 ARG packageScope
-ENV NODE_ENV production
-ENV optDir /opt
+ENV NODE_ENV=production
+ENV optDir=/opt
 WORKDIR ${optDir}
 
 COPY --from=deps-resolver --chown=node:node \
@@ -58,14 +59,16 @@ RUN yarn run turbo run build --scope="${packageScope}" --include-dependencies --
 FROM base AS tool-common
 
 RUN apt-get update \
-      && apt-get install -y bzip2 curl \
+      && apt-get install -y bzip2 curl ca-certificates gnupg \
       && apt-get clean \
       && rm -rf /var/lib/apt/lists/*
 
 FROM tool-common AS mongodb-tools
 
+# YOU MUST SET dbToolVersion
+ARG dbToolVersion
 RUN apt-get update \
-      && curl https://fastdl.mongodb.org/tools/db/mongodb-database-tools-debian10-x86_64-100.5.2.deb -o mongodb-database-tools.deb \
+      && curl https://fastdl.mongodb.org/tools/db/mongodb-database-tools-debian10-x86_64-${dbToolVersion}.deb -o mongodb-database-tools.deb \
       && apt-get install -y ./mongodb-database-tools.deb \
       && apt-get clean \
       && rm -rf /var/lib/apt/lists/* \
@@ -73,14 +76,21 @@ RUN apt-get update \
 
 FROM tool-common AS postgresql-tools
 
-RUN apt-get update \
-      && apt-get install -y postgresql-common postgresql-client --no-install-recommends \
+# YOU MUST SET dbToolVersion
+ARG dbToolVersion
+RUN echo "deb http://apt.postgresql.org/pub/repos/apt $(cat /etc/os-release | grep VERSION_CODENAME | cut -d = -f 2)-pgdg main" > /etc/apt/sources.list.d/pgdg.list \
+      && curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - \
+      && apt-get update \
+      && apt-get install -y postgresql-common postgresql-client-${dbToolVersion} --no-install-recommends \
       && apt-get clean \
       && rm -rf /var/lib/apt/lists/*
 
 FROM tool-common AS mariadb-tools
 
-RUN apt-get update \
+# YOU MUST SET dbToolVersion
+ARG dbToolVersion
+RUN curl -sSL https://downloads.mariadb.com/MariaDB/mariadb_repo_setup | bash -s -- --mariadb-server-version=${dbToolVersion} \
+      && apt-get update \
       && apt-get install -y mariadb-common mariadb-client --no-install-recommends \
       && apt-get clean \
       && rm -rf /var/lib/apt/lists/*
@@ -89,23 +99,23 @@ FROM tool-common AS file-tools
 
 ##
 ## release
-## dbType is one of "mongodb", "postgresql", "mariadb"
+## dbType is one of "mongodb", "postgresql", "mariadb", "file"
 ##
-FROM ${dbType}-tools AS release
+FROM ${dbType:-file}-tools AS release
 
 ARG distDir="dist"
 ARG packageScope
 ARG packagePath
-ENV NODE_ENV production
-ENV optDir /opt
-ENV appDir /app
+ENV NODE_ENV=production
+ENV optDir=/opt
+ENV appDir=/app
 WORKDIR ${appDir}/${packagePath}
 
 COPY --from=builder --chown=node:node \
   ${optDir}/ ${appDir}/
 COPY ./docker/entrypoint.sh ${appDir}/
 
-ENV PATH $PATH:${appDir}/${packagePath}/node_modules/.bin
+ENV PATH=$PATH:${appDir}/${packagePath}/node_modules/.bin
 
 ENTRYPOINT ["/app/entrypoint.sh"]
 CMD ["backup", "list", "prune"]
