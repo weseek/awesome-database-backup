@@ -1,4 +1,7 @@
 schemaVersion: 2.0.0
+containerRunOptions:
+  envVars:
+  - DB_TOOL_VERSION
 commandTests:
 # ================================================================================
 # Path
@@ -79,3 +82,22 @@ commandTests:
   args: []
   expectedError: [".*required option.*not specified.*"]
   exitCode: 1
+
+# ================================================================================
+# Expect result
+# ================================================================================
+# ----------
+# backup tools
+# ----------
+- name: expect "mongodump --version" includes "$BACKUP_TOOL_VERSION"
+  command: sh
+  args:
+  - -c
+  - mongodump --version | grep "$BACKUP_TOOL_VERSION"
+  exitCode: 0
+- name: expect "mongorestore --version" includes "$BACKUP_TOOL_VERSION"
+  command: sh
+  args:
+  - -c
+  - mongorestore --version | grep "$BACKUP_TOOL_VERSION"
+  exitCode: 0

@@ -1,4 +1,7 @@
 schemaVersion: 2.0.0
+containerRunOptions:
+  envVars:
+  - DB_TOOL_VERSION
 commandTests:
 # ================================================================================
 # Path
@@ -79,3 +82,22 @@ commandTests:
   args: []
   expectedError: [".*required option.*not specified.*"]
   exitCode: 1
+
+# ================================================================================
+# Expect result
+# ================================================================================
+# ----------
+# backup tools
+# ----------
+- name: expect "mysqldump --version" includes "${BACKUP_TOOL_VERSION}-MariaDB"
+  command: sh
+  args:
+  - -c
+  - mysqldump --version | grep "${BACKUP_TOOL_VERSION}-MariaDB"
+  exitCode: 0
+- name: expect "mysql --version" includes "${BACKUP_TOOL_VERSION}-MariaDB"
+  command: sh
+  args:
+  - -c
+  - mysql --version | grep "${BACKUP_TOOL_VERSION}-MariaDB"
+  exitCode: 0
