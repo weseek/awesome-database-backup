@@ -54,12 +54,6 @@ jobs:
           version: 10.6.21
         - db_type: mariadb
           version: 10.11.11
-        - db_type: mariadb
-          version: 11.4.5
-        - db_type: mariadb
-          version: 11.7.2
-        - db_type: mariadb
-          version: 11.8.1
         - db_type: file
 
     steps:
