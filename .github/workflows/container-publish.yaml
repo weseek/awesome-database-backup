@@ -11,27 +11,45 @@ jobs:
     strategy:
       # Set same as container-test.yaml
       matrix:
-        db_type:
-        - mongodb
-        - postgresql
-        - mariadb
-        - file
-        include:
+        db_tool:
         # Valid versions can be found here https://www.mongodb.com/try/download/database-tools/releases/archive
         - db_type: mongodb
-          db_tool_version: 100.5.2
-          docker_tag_suffix: mongotool-100.5.2
+          version: 100.5.4
+        - db_type: mongodb
+          version: 100.6.1
+        - db_type: mongodb
+          version: 100.7.5
+        - db_type: mongodb
+          version: 100.8.0
+        - db_type: mongodb
+          version: 100.9.5
+        - db_type: mongodb
+          version: 100.10.0
         # Valid versions can be found here https://apt.postgresql.org/pub/repos/apt/dists/bullseye-pgdg/
         - db_type: postgresql
-          db_tool_version: 11
-          docker_tag_suffix: postgresql-11
+          version: 10
         - db_type: postgresql
-          db_tool_version: 16
-          docker_tag_suffix: postgresql-16
+          version: 11
+        - db_type: postgresql
+          version: 12
+        - db_type: postgresql
+          version: 13
+        - db_type: postgresql
+          version: 14
+        - db_type: postgresql
+          version: 15
+        - db_type: postgresql
+          version: 16
+        - db_type: postgresql
+          version: 17
         # Valid versions can be found here https://dlm.mariadb.com/rest/releases/mariadb_server/
         - db_type: mariadb
-          db_tool_version: 10.5.28
-          docker_tag_suffix: mariadb-10.5.28
+          version: 10.5.28
+        - db_type: mariadb
+          version: 10.6.21
+        - db_type: mariadb
+          version: 10.11.11
+        - db_type: file
       fail-fast: false
 
     steps:
@@ -39,9 +57,9 @@ jobs:
     - name: Set up metadata
       id: pkg_meta
       run: |
-        echo "package_scope=@awesome-database-backup/awesome-${{ matrix.db_type }}-backup" >> $GITHUB_OUTPUT
-        echo "package_path=apps/awesome-${{ matrix.db_type }}-backup" >> $GITHUB_OUTPUT
-        echo "package_repository=weseek/awesome-${{ matrix.db_type }}-backup" >> $GITHUB_OUTPUT
+        echo "package_scope=@awesome-database-backup/awesome-${{ matrix.db_tool.db_type }}-backup" >> $GITHUB_OUTPUT
+        echo "package_path=apps/awesome-${{ matrix.db_tool.db_type }}-backup" >> $GITHUB_OUTPUT
+        echo "package_repository=weseek/awesome-${{ matrix.db_tool.db_type }}-backup" >> $GITHUB_OUTPUT
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
     - name: Login to docker.io registry
@@ -49,19 +67,30 @@ jobs:
         echo ${{ secrets. DOCKER_REGISTRY_PASSWORD }} |
           docker login --username ${{ secrets. DOCKER_REGISTRY_USERNAME }} --password-stdin
     - name: Retrieve information from package.json
-      uses: myrotvorets/info-from-package-json-action@2.0.0
+      uses: xile611/read-package-version-action@v2.1
       id: package-json
     - name: Set up Docker meta
       id: meta
       uses: docker/metadata-action@v5
       with:
         images: ${{ steps.pkg_meta.outputs.package_repository }}
+        # awesome-mongodb-backup:latest                ... latest version of awesome-database-backup and latest version of DB tool
+        # awesome-mongodb-backup:1                     ... specified major version of awesome-database-backup and latest version of DB tool
+        # awesome-mongodb-backup:1.2                   ... specified minor version of awesome-database-backup and latest version of DB tool
+        # awesome-mongodb-backup:1.2.3                 ... specified patch version of awesome-database-backup and latest version of DB tool
+        # awesome-mongodb-backup:1.2.3-mongodb-100.5.4 ... specified patch version of awesome-database-backup and latest version of DB tool (except when DB tool version does not exist)
+        # awesome-mongodb-backup:mongodb-100.5.4       ... specified version of DB tool version and latest version of awesome-database-backup (except when DB tool version does not exist)
+        # awesome-mongodb-backup:mongodb-100.5.4-1     ... specified version of DB tool version and major version of awesome-database-backup (except when DB tool version does not exist)
+        # awesome-mongodb-backup:mongodb-100.5.4-1.2   ... specified version of DB tool version and minor version of awesome-database-backup (except when DB tool version does not exist)
         tags: |
           type=raw,value=latest
-          type=semver,value=v${{ steps.package-json.outputs.packageVersion }},pattern={{major}}
-          type=semver,value=v${{ steps.package-json.outputs.packageVersion }},pattern={{major}}.{{minor}}
-          type=semver,value=v${{ steps.package-json.outputs.packageVersion }},pattern={{major}}.{{minor}}.{{patch}}
-          type=semver,value=v${{ steps.package-json.outputs.packageVersion }}-${{ matrix.docker_tag_suffix }},pattern={{major}}.{{minor}}.{{patch}}
+          type=raw,value=${{ steps.package-json.outputs.major }}
+          type=raw,value=${{ steps.package-json.outputs.major }}.${{ steps.package-json.outputs.minor }}
+          type=raw,value=${{ steps.package-json.outputs.full }}
+          enable=${{ matrix.db_tool.version != '' }},type=raw,value=${{ steps.package-json.outputs.full }}-${{ matrix.db_tool.db_type }}-${{ matrix.db_tool.version }}
+          enable=${{ matrix.db_tool.version != '' }},type=raw,value=${{ matrix.db_tool.db_type }}-${{ matrix.db_tool.version }}
+          enable=${{ matrix.db_tool.version != '' }},type=raw,value=${{ matrix.db_tool.db_type }}-${{ matrix.db_tool.version }}-${{ steps.package-json.outputs.major }}
+          enable=${{ matrix.db_tool.version != '' }},type=raw,value=${{ matrix.db_tool.db_type }}-${{ matrix.db_tool.version }}-${{ steps.package-json.outputs.major }}.${{ steps.package-json.outputs.minor }}
     - name: Build and push container
       uses: docker/build-push-action@v5
       with:
@@ -72,8 +101,8 @@ jobs:
         build-args: |
           packageScope=${{ steps.pkg_meta.outputs.package_scope }}
           packagePath=${{ steps.pkg_meta.outputs.package_path }}
-          dbType=${{ matrix.db_type }}
-          dbToolVersion=${{ matrix.db_tool_version }}
+          dbType=${{ matrix.db_tool.db_type }}
+          dbToolVersion=${{ matrix.db_tool.version }}
         tags: ${{ steps.meta.outputs.tags }}
 
     - name: Update Docker hub's description
