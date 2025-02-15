@@ -2,8 +2,8 @@
 
 # You must set same Node.js version and Linux distribution as docker/Dockerfile
 # [Choice] Node.js version (use -bullseye variants on local arm64/Apple Silicon): 16, 14, 12, 16-bullseye, 14-bullseye, 12-bullseye, 16-buster, 14-buster, 12-buster
-ARG VARIANT="16"
-FROM mcr.microsoft.com/vscode/devcontainers/typescript-node:0-${VARIANT}
+ARG VARIANT="22"
+FROM mcr.microsoft.com/vscode/devcontainers/typescript-node:dev-${VARIANT}-bullseye
 
 # [Optional] Uncomment this section to install additional OS packages.
 # RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
@@ -32,7 +32,7 @@ RUN chown -R $USER_UID:$USER_GID /home/$USERNAME /awesome-database-backup;
 # Install tools
 ARG MongoToolVersion=100.5.2
 ARG PostgreSQLClientVersion=11
-ARG MariaDBClientVersion=10.5.28
+ARG MariaDBClientVersion=10.11.11
 ## bzip2, curl command
 RUN apt-get update \
       && apt-get install -y bzip2 curl \

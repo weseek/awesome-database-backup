@@ -49,8 +49,6 @@ jobs:
         # awesome-mariadb-backup
         # Valid versions can be found here https://dlm.mariadb.com/rest/releases/mariadb_server/
         - db_type: mariadb
-          version: 10.5.28
-        - db_type: mariadb
           version: 10.6.21
         - db_type: mariadb
           version: 10.11.11
