@@ -9,9 +9,6 @@ updates:
   commit-message:
     prefix: ci
     include: scope
-  ignore:
-  # See: https://github.com/bakunyo/git-pr-release-action/issues/15, https://github.com/samunohito/SimpleVolumeMixer/commit/2059044c71236509466cf9b1bb2d56d515274938
-  - dependency-name: bakunyo/git-pr-release-action
   labels:
   - github-actions
   - type/dependencies
@@ -30,23 +27,8 @@ updates:
   - type/dependencies
 
 # Docker
-- package-ecosystem: docker
-  directory: /.devcontainer/
-  schedule:
-    interval: daily
-  commit-message:
-    prefix: ci
-    include: scope
-  labels:
-  - docker
-  - type/dependencies
-- package-ecosystem: docker
-  directory: /docker/
-  schedule:
-    interval: daily
-  commit-message:
-    prefix: ci
-    include: scope
-  labels:
-  - docker
-  - type/dependencies
+# [MEMO]
+# It is difficult to align Node.js versions using only dependabot because
+# the base image differs between the development and production environments.
+# Therefore, the policy is not to update by dependabot, but to update by hand.
+# see. https://github.com/weseek/awesome-database-backup/wiki/Node.js,-yarn-%E3%82%A2%E3%83%83%E3%83%97%E3%83%87%E3%83%BC%E3%83%88%E6%96%B9%E6%B3%95-(%E3%83%A1%E3%83%B3%E3%83%86%E3%83%8A%E3%83%BC%E5%90%91%E3%81%91)
