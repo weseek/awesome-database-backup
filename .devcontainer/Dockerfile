@@ -30,9 +30,9 @@ RUN if [ "$USER_GID" != "1000" ] || [ "$USER_UID" != "1000" ]; then \
 RUN chown -R $USER_UID:$USER_GID /home/$USERNAME /awesome-database-backup;
 
 # Install tools
-ARG MongoToolVersion=100.10.0
-ARG PostgreSQLClientVersion=17
-ARG MariaDBClientVersion=11.8.1
+ARG MongoToolVersion=100.5.2
+ARG PostgreSQLClientVersion=11
+ARG MariaDBClientVersion=10.11.11
 ## bzip2, curl command
 RUN apt-get update \
       && apt-get install -y bzip2 curl \
