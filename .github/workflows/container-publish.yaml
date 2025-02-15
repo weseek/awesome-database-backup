@@ -12,6 +12,7 @@ jobs:
       # Set same as container-test.yaml
       matrix:
         db_tool:
+        # awesome-mongodb-backup
         # Valid versions can be found here https://www.mongodb.com/try/download/database-tools/releases/archive
         - db_type: mongodb
           version: 100.5.4
@@ -25,6 +26,8 @@ jobs:
           version: 100.9.5
         - db_type: mongodb
           version: 100.10.0
+          isLatest: true
+        # awesome-postgresql-backup
         # Valid versions can be found here https://apt.postgresql.org/pub/repos/apt/dists/bullseye-pgdg/
         - db_type: postgresql
           version: 10
@@ -42,6 +45,8 @@ jobs:
           version: 16
         - db_type: postgresql
           version: 17
+          isLatest: true
+        # awesome-mariadb-backup
         # Valid versions can be found here https://dlm.mariadb.com/rest/releases/mariadb_server/
         - db_type: mariadb
           version: 10.5.28
@@ -49,7 +54,9 @@ jobs:
           version: 10.6.21
         - db_type: mariadb
           version: 10.11.11
+        # awesome-file-backup
         - db_type: file
+          isLatest: true
       fail-fast: false
 
     steps:
@@ -83,7 +90,7 @@ jobs:
         # awesome-mongodb-backup:mongodb-100.5.4-1     ... specified version of DB tool version and major version of awesome-database-backup (except when DB tool version does not exist)
         # awesome-mongodb-backup:mongodb-100.5.4-1.2   ... specified version of DB tool version and minor version of awesome-database-backup (except when DB tool version does not exist)
         tags: |
-          type=raw,value=latest
+          enable=${{ matrix.db_tool.isLatest != '' }},type=raw,value=latest
           type=raw,value=${{ steps.package-json.outputs.major }}
           type=raw,value=${{ steps.package-json.outputs.major }}.${{ steps.package-json.outputs.minor }}
           type=raw,value=${{ steps.package-json.outputs.full }}
