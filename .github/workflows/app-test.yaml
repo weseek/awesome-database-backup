@@ -38,7 +38,7 @@ jobs:
         docker compose -f .devcontainer/compose.yml up -d
     - name: Run test
       run:
-        docker compose -f .devcontainer/compose.yml -e NODE_OPTIONS exec -T -- node bash -c 'yarn install && yarn test'
+        docker compose -f .devcontainer/compose.yml exec -e NODE_OPTIONS -T -- node bash -c 'yarn install && yarn test'
       env:
         # Temporarily ignore warnings
         # see:
