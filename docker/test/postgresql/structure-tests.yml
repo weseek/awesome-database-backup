@@ -1,4 +1,7 @@
 schemaVersion: 2.0.0
+containerRunOptions:
+  envVars:
+  - BACKUP_TOOL_VERSION
 commandTests:
 # ================================================================================
 # Path
@@ -79,3 +82,21 @@ commandTests:
   args: []
   expectedError: [".*required option.*not specified.*"]
   exitCode: 1
+
+# ----------
+# backup tool versions
+# ----------
+# `pg_dumpall --version` returns ex. "pg_dumpall (PostgreSQL) 11.22 (Debian 11.22-9.pgdg110+1)"
+- name: expect "pg_dumpall --version" includes "Debian $BACKUP_TOOL_VERSION"
+  command: sh
+  args:
+  - -c
+  - pg_dumpall --version | grep "Debian $BACKUP_TOOL_VERSION"
+  exitCode: 0
+# `psql --version` returns ex. "psql (PostgreSQL) 11.22 (Debian 11.22-9.pgdg110+1)"
+- name: expect "psql --version" includes "Debian $BACKUP_TOOL_VERSION"
+  command: sh
+  args:
+  - -c
+  - psql --version | grep "Debian $BACKUP_TOOL_VERSION"
+  exitCode: 0
