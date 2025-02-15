@@ -1,4 +1,7 @@
 schemaVersion: 2.0.0
+containerRunOptions:
+  envVars:
+  - BACKUP_TOOL_VERSION
 commandTests:
 # ================================================================================
 # Path
@@ -79,3 +82,33 @@ commandTests:
   args: []
   expectedError: [".*required option.*not specified.*"]
   exitCode: 1
+
+# ----------
+# backup tool versions
+# ----------
+# `mongodump --version` returns ex below...
+# mongodump version: 100.5.2
+# git version: e2842eb549308c16e070fb2e197d4631cfd085cb
+# Go version: go1.16.7
+#    os: linux
+#    arch: amd64
+#    compiler: gc
+- name: expect "mongodump --version" includes "$BACKUP_TOOL_VERSION"
+  command: sh
+  args:
+  - -c
+  - mongodump --version | grep "$BACKUP_TOOL_VERSION"
+  exitCode: 0
+# `mongorestore --version` returns ex below...
+# mongorestore version: 100.5.2
+# git version: e2842eb549308c16e070fb2e197d4631cfd085cb
+# Go version: go1.16.7
+#    os: linux
+#    arch: amd64
+#    compiler: gc
+- name: expect "mongorestore --version" includes "$BACKUP_TOOL_VERSION"
+  command: sh
+  args:
+  - -c
+  - mongorestore --version | grep "$BACKUP_TOOL_VERSION"
+  exitCode: 0

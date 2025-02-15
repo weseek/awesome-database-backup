@@ -1,4 +1,7 @@
 schemaVersion: 2.0.0
+containerRunOptions:
+  envVars:
+  - BACKUP_TOOL_VERSION
 commandTests:
 # ================================================================================
 # Path
@@ -79,3 +82,21 @@ commandTests:
   args: []
   expectedError: [".*required option.*not specified.*"]
   exitCode: 1
+
+# ----------
+# backup tool versions
+# ----------
+# `mysqldump --version` returns ex. "mysqldump  Ver 10.19 Distrib 10.5.28-MariaDB, for debian-linux-gnu (x86_64)"
+- name: expect "mysqldump --version" includes "${BACKUP_TOOL_VERSION}-MariaDB"
+  command: sh
+  args:
+  - -c
+  - mysqldump --version | grep -- "${BACKUP_TOOL_VERSION}-MariaDB"
+  exitCode: 0
+# `mysql --version` returns ex. "mysql  Ver 15.1 Distrib 10.5.28-MariaDB, for debian-linux-gnu (x86_64) using  EditLine wrapper"
+- name: expect "mysql --version" includes "${BACKUP_TOOL_VERSION}-MariaDB"
+  command: sh
+  args:
+  - -c
+  - mysql --version | grep -- "${BACKUP_TOOL_VERSION}-MariaDB"
+  exitCode: 0

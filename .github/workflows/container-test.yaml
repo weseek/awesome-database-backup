@@ -14,30 +14,58 @@ jobs:
     strategy:
       # Set same as container-publish.yaml
       matrix:
-        db_type:
-        - mongodb
-        - postgresql
-        - mariadb
-        - file
-        include:
+        db_tool:
+        # awesome-mongodb-backup
         # Valid versions can be found here https://www.mongodb.com/try/download/database-tools/releases/archive
         - db_type: mongodb
-          db_tool_version: 100.5.2
+          version: 100.5.4
+        - db_type: mongodb
+          version: 100.6.1
+        - db_type: mongodb
+          version: 100.7.5
+        - db_type: mongodb
+          version: 100.8.0
+        - db_type: mongodb
+          version: 100.9.5
+        - db_type: mongodb
+          version: 100.10.0
+        # awesome-postgresql-backup
         # Valid versions can be found here https://apt.postgresql.org/pub/repos/apt/dists/bullseye-pgdg/
         - db_type: postgresql
-          db_tool_version: 11
+          version: 10
+        - db_type: postgresql
+          version: 11
+        - db_type: postgresql
+          version: 12
+        - db_type: postgresql
+          version: 13
+        - db_type: postgresql
+          version: 14
+        - db_type: postgresql
+          version: 15
+        - db_type: postgresql
+          version: 16
+        - db_type: postgresql
+          version: 17
+        # awesome-mariadb-backup
         # Valid versions can be found here https://dlm.mariadb.com/rest/releases/mariadb_server/
         - db_type: mariadb
-          db_tool_version: 10.5.28
+          version: 10.5.28
+        - db_type: mariadb
+          version: 10.6.21
+        - db_type: mariadb
+          version: 10.11.11
+        # awesome-file-backup
+        - db_type: file
 
     steps:
     - uses: actions/checkout@v4
     - name: Set up metadata
       id: pkg_meta
       run: |
-        echo "package_scope=@awesome-database-backup/awesome-${{ matrix.db_type }}-backup" >> $GITHUB_OUTPUT
-        echo "package_path=apps/awesome-${{ matrix.db_type }}-backup" >> $GITHUB_OUTPUT
-        echo "package_image_name=weseek/awesome-${{ matrix.db_type }}-backup" >> $GITHUB_OUTPUT
+        echo "package_scope=@awesome-database-backup/awesome-${{ matrix.db_tool.db_type }}-backup" >> $GITHUB_OUTPUT
+        echo "package_path=apps/awesome-${{ matrix.db_tool.db_type }}-backup" >> $GITHUB_OUTPUT
+        echo "package_image_name=weseek/awesome-${{ matrix.db_tool.db_type }}-backup" >> $GITHUB_OUTPUT
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
     - name: Cache Docker layers
@@ -45,9 +73,10 @@ jobs:
       with:
         path: /tmp/.buildx-cache
         key:
-          ${{ runner.os }}-buildx-app-${{ matrix.db_type }}-${{ github.sha }}
+          ${{ runner.os }}-buildx-app-${{ matrix.db_tool.db_type }}-${{ matrix.db_tool.version }}-${{ github.sha }}
         restore-keys: |
-          ${{ runner.os }}-buildx-app-${{ matrix.db_type }}-
+          ${{ runner.os }}-buildx-app-${{ matrix.db_tool.db_type }}-${{ matrix.db_tool.version }}-
+          ${{ runner.os }}-buildx-app-${{ matrix.db_tool.db_type }}-
           ${{ runner.os }}-buildx-app-
     - name: Build container (No push)
       uses: docker/build-push-action@v5
@@ -59,8 +88,8 @@ jobs:
         build-args: |
           packageScope=${{ steps.pkg_meta.outputs.package_scope }}
           packagePath=${{ steps.pkg_meta.outputs.package_path }}
-          dbType=${{ matrix.db_type }}
-          dbToolVersion=${{ matrix.db_tool_version }}
+          dbType=${{ matrix.db_tool.db_type }}
+          dbToolVersion=${{ matrix.db_tool.version }}
         cache-from: type=local,src=/tmp/.buildx-cache
         cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
         tags: ${{ steps.pkg_meta.outputs.package_image_name }}:latest
@@ -75,4 +104,17 @@ jobs:
       uses: brpaz/structure-tests-action@1.2.0
       with:
         image: ${{ steps.pkg_meta.outputs.package_image_name }}:latest
-        configFile: ./docker/test/${{ matrix.db_type }}/structure-tests.yml
+        configFile: ./docker/test/${{ matrix.db_tool.db_type }}/structure-tests.yml
+      env:
+        BACKUP_TOOL_VERSION: ${{ matrix.db_tool.version }}
+
+  # In order to add a status check of the entire workflow as a condition in the ruleset, we define a job to be executed when the preceding job is successful.
+  # This is so that if the version of the DB tool is updated in the future, the rule set conditions will not need to be changed.
+  # You can only specify a job, and the job name is named by a combination of the matrix.
+  # (ex. container-test / (mariadb, 10.11.11)
+  check-all-tests:
+    needs: container-test
+    runs-on: ubuntu-latest
+    name: Container - Test is passed successfully
+    steps:
+    - run: echo "All tests passed successfully!"
