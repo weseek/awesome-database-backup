@@ -15,7 +15,7 @@ WORKDIR ${optDir}
 COPY . .
 
 ### "prune" command does not extract "bin" directory, so copy it
-RUN npx turbo@1 prune --filter="${packageFilter}" --docker \
+RUN npx turbo@2 prune --docker "${packageFilter}" \
     && cp --parents */*/bin/* out/json/
 
 
