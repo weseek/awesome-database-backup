@@ -8,14 +8,14 @@ FROM node:22.13.1-bullseye-slim AS base
 ##
 FROM base AS pruned-package
 
-ARG packageScope
+ARG packageFilter
 ENV optDir=/opt
 WORKDIR ${optDir}
 
 COPY . .
 
 ### "prune" command does not extract "bin" directory, so copy it
-RUN npx turbo@1 prune --scope="${packageScope}" --docker \
+RUN npx turbo@2 prune --docker "${packageFilter}" \
     && cp --parents */*/bin/* out/json/
 
 
@@ -39,7 +39,7 @@ RUN yarn --frozen-lockfile
 ##
 FROM base AS builder
 
-ARG packageScope
+ARG packageFilter
 ENV NODE_ENV=production
 ENV optDir=/opt
 WORKDIR ${optDir}
@@ -50,7 +50,7 @@ COPY --from=pruned-package --chown=node:node \
   ${optDir}/out/full/ ${optDir}/
 COPY .gitignore .gitignore
 
-RUN yarn run turbo run build --scope="${packageScope}" --include-dependencies --no-deps
+RUN yarn run turbo run build --filter="${packageFilter}..."
 
 
 ##
@@ -104,7 +104,7 @@ FROM tool-common AS file-tools
 FROM ${dbType:-file}-tools AS release
 
 ARG distDir="dist"
-ARG packageScope
+ARG packageFilter
 ARG packagePath
 ENV NODE_ENV=production
 ENV optDir=/opt

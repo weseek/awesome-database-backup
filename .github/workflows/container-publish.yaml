@@ -62,7 +62,7 @@ jobs:
     - name: Set up metadata
       id: pkg_meta
       run: |
-        echo "package_scope=@awesome-database-backup/awesome-${{ matrix.db_tool.db_type }}-backup" >> $GITHUB_OUTPUT
+        echo "package_filter=@awesome-database-backup/awesome-${{ matrix.db_tool.db_type }}-backup" >> $GITHUB_OUTPUT
         echo "package_path=apps/awesome-${{ matrix.db_tool.db_type }}-backup" >> $GITHUB_OUTPUT
         echo "package_repository=weseek/awesome-${{ matrix.db_tool.db_type }}-backup" >> $GITHUB_OUTPUT
     - name: Set up Docker Buildx
@@ -104,7 +104,7 @@ jobs:
         platforms: linux/amd64
         push: true
         build-args: |
-          packageScope=${{ steps.pkg_meta.outputs.package_scope }}
+          packageFilter=${{ steps.pkg_meta.outputs.package_filter }}
           packagePath=${{ steps.pkg_meta.outputs.package_path }}
           dbType=${{ matrix.db_tool.db_type }}
           dbToolVersion=${{ matrix.db_tool.version }}
