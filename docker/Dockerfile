@@ -1,7 +1,7 @@
 ARG dbType
 
 # You should set same Node.js version and Linux distribution as .devcontainer/Dockerfile
-FROM node:16.14.2-bullseye-slim AS base
+FROM node:22.13.1-bullseye-slim AS base
 
 ##
 ## Prepare a subset of this monorepo
