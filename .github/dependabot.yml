@@ -9,9 +9,6 @@ updates:
   commit-message:
     prefix: ci
     include: scope
-  ignore:
-  # See: https://github.com/bakunyo/git-pr-release-action/issues/15, https://github.com/samunohito/SimpleVolumeMixer/commit/2059044c71236509466cf9b1bb2d56d515274938
-  - dependency-name: bakunyo/git-pr-release-action
   labels:
   - github-actions
   - type/dependencies
