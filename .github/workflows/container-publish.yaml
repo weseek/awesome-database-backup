@@ -99,7 +99,7 @@ jobs:
           enable=${{ matrix.db_tool.version != '' }},type=raw,value=${{ matrix.db_tool.db_type }}-${{ matrix.db_tool.version }}-${{ steps.package-json.outputs.major }}
           enable=${{ matrix.db_tool.version != '' }},type=raw,value=${{ matrix.db_tool.db_type }}-${{ matrix.db_tool.version }}-${{ steps.package-json.outputs.major }}.${{ steps.package-json.outputs.minor }}
     - name: Build and push container
-      uses: docker/build-push-action@v5
+      uses: docker/build-push-action@v6
       with:
         context: .
         file: ./docker/Dockerfile
