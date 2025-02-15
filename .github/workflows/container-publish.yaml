@@ -52,6 +52,7 @@ jobs:
           version: 10.6.21
         - db_type: mariadb
           version: 10.11.11
+          isLatest: true
         # awesome-file-backup
         - db_type: file
           isLatest: true
