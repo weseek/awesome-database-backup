@@ -1,6 +1,6 @@
-import runStep from 'shipjs/src/step/runStep';
-import { print } from 'shipjs/src/util';
-import { bold, underline } from 'shipjs/src/color';
+import runStep from 'shipjs/src/step/runStep.js';
+import { print } from 'shipjs/src/util/index.js';
+import { bold, underline } from 'shipjs/src/color.js';
 
 export default () => runStep({}, () => {
   const indent = line => `\t${line}`;

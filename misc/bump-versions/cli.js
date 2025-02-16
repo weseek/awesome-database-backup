@@ -1,5 +1,5 @@
-import { print, parseArgs } from 'shipjs/src/util';
-import bumpVersions from './flow/bump-versions';
+import { print, parseArgs } from 'shipjs/src/util/index.js';
+import bumpVersions from './flow/bump-versions.js';
 
 export async function cli(argv) {
   const { fn, arg: argSpec } = bumpVersions;

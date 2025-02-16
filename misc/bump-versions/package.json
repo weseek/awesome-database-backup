@@ -12,6 +12,7 @@
   "bugs": {
     "url": "https://github.com/weseek/awesome-database-backup/issues"
   },
+  "type": "module",
   "main": "index.js",
   "bin": {
     "bump-version": "index.js"
@@ -19,7 +20,7 @@
   "scripts": {
   },
   "dependencies": {
-    "shipjs": "^0.24.4"
+    "shipjs": "^0.27.0"
   },
   "devDependencies": {
   },
