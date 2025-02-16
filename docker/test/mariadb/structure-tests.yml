@@ -36,13 +36,13 @@ commandTests:
   command: which
   args: ["bzip2"]
 
-- name: expect "which mysqldump" return valid path
+- name: expect "which mariadb-dump" return valid path
   command: which
-  args: ["mysqldump"]
+  args: ["mariadb-dump"]
 
-- name: expect "which mysql" return valid path
+- name: expect "which mariadb" return valid path
   command: which
-  args: ["mysql"]
+  args: ["mariadb"]
 
 # ================================================================================
 # Execution
@@ -86,17 +86,17 @@ commandTests:
 # ----------
 # backup tool versions
 # ----------
-# `mysqldump --version` returns ex. "mysqldump  Ver 10.19 Distrib 10.5.28-MariaDB, for debian-linux-gnu (x86_64)"
-- name: expect "mysqldump --version" includes "${BACKUP_TOOL_VERSION}-MariaDB"
+# `mariadb-dump --version` returns ex. "mariadb-dump  Ver 10.19 Distrib 10.5.28-MariaDB, for debian-linux-gnu (x86_64)"
+- name: expect "mariadb-dump --version" includes "${BACKUP_TOOL_VERSION}-MariaDB"
   command: sh
   args:
   - -c
-  - mysqldump --version | grep -- "${BACKUP_TOOL_VERSION}-MariaDB"
+  - mariadb-dump --version | grep -- "${BACKUP_TOOL_VERSION}-MariaDB"
   exitCode: 0
-# `mysql --version` returns ex. "mysql  Ver 15.1 Distrib 10.5.28-MariaDB, for debian-linux-gnu (x86_64) using  EditLine wrapper"
-- name: expect "mysql --version" includes "${BACKUP_TOOL_VERSION}-MariaDB"
+# `mariadb --version` returns ex. "mariadb  Ver 15.1 Distrib 10.5.28-MariaDB, for debian-linux-gnu (x86_64) using  EditLine wrapper"
+- name: expect "mariadb --version" includes "${BACKUP_TOOL_VERSION}-MariaDB"
   command: sh
   args:
   - -c
-  - mysql --version | grep -- "${BACKUP_TOOL_VERSION}-MariaDB"
+  - mariadb --version | grep -- "${BACKUP_TOOL_VERSION}-MariaDB"
   exitCode: 0
