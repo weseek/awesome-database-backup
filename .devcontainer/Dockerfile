@@ -32,7 +32,7 @@ RUN chown -R $USER_UID:$USER_GID /home/$USERNAME /awesome-database-backup;
 # Install tools
 ARG MongoToolVersion=100.5.2
 ARG PostgreSQLClientVersion=11
-ARG MariaDBClientVersion=10.11.11
+ARG MariaDBClientVersion=11.7.2
 ## bzip2, curl command
 RUN apt-get update \
       && apt-get install -y bzip2 curl \
