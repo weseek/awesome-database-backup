@@ -77,7 +77,7 @@ services:
     healthcheck:
       test:
       - CMD
-      - mysqladmin
+      - mariadb-admin
       - ping
       - -h
       - localhost
