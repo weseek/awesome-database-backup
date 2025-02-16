@@ -1,6 +1,6 @@
 {
   "name": "@awesome-database-backup/storage-service-clients",
-  "version": "0.2.8",
+  "version": "0.3.0",
   "description": "Storage service clients module of awesome-database-backup",
   "author": "Ryu Sato <ryu@weseek.co.jp>",
   "license": "MIT",
@@ -26,7 +26,7 @@
     "lint:fix": "eslint src --ext .ts --fix"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.85.0",
+    "@aws-sdk/client-s3": "^3.723.0",
     "@google-cloud/storage": "^5.19.4",
     "axios": "^0.27.2",
     "axios-retry": "^3.2.5",
@@ -39,11 +39,11 @@
     "tmp": "^0.2.1"
   },
   "devDependencies": {
-    "@awesome-database-backup/tsconfig": "^0.2.8",
+    "@awesome-database-backup/tsconfig": "^0.3.0",
     "@types/bunyan": "^1.8.8"
   },
   "engines": {
-    "node": ">= 16.14.2 < 17",
-    "yarn": ">= 1.22.4"
+    "node": ">= 22 < 23",
+    "yarn": ">= 1.22.22"
   }
 }

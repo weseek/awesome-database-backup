@@ -49,11 +49,12 @@ jobs:
         # awesome-mariadb-backup
         # Valid versions can be found here https://dlm.mariadb.com/rest/releases/mariadb_server/
         - db_type: mariadb
-          version: 10.5.28
+          version: 11.4.5
         - db_type: mariadb
-          version: 10.6.21
+          version: 11.7.2
         - db_type: mariadb
-          version: 10.11.11
+          version: 11.8.1
+          isLatest: true
         # awesome-file-backup
         - db_type: file
           isLatest: true
@@ -64,7 +65,7 @@ jobs:
     - name: Set up metadata
       id: pkg_meta
       run: |
-        echo "package_scope=@awesome-database-backup/awesome-${{ matrix.db_tool.db_type }}-backup" >> $GITHUB_OUTPUT
+        echo "package_filter=@awesome-database-backup/awesome-${{ matrix.db_tool.db_type }}-backup" >> $GITHUB_OUTPUT
         echo "package_path=apps/awesome-${{ matrix.db_tool.db_type }}-backup" >> $GITHUB_OUTPUT
         echo "package_repository=weseek/awesome-${{ matrix.db_tool.db_type }}-backup" >> $GITHUB_OUTPUT
     - name: Set up Docker Buildx
@@ -99,14 +100,14 @@ jobs:
           enable=${{ matrix.db_tool.version != '' }},type=raw,value=${{ matrix.db_tool.db_type }}-${{ matrix.db_tool.version }}-${{ steps.package-json.outputs.major }}
           enable=${{ matrix.db_tool.version != '' }},type=raw,value=${{ matrix.db_tool.db_type }}-${{ matrix.db_tool.version }}-${{ steps.package-json.outputs.major }}.${{ steps.package-json.outputs.minor }}
     - name: Build and push container
-      uses: docker/build-push-action@v5
+      uses: docker/build-push-action@v6
       with:
         context: .
         file: ./docker/Dockerfile
         platforms: linux/amd64
         push: true
         build-args: |
-          packageScope=${{ steps.pkg_meta.outputs.package_scope }}
+          packageFilter=${{ steps.pkg_meta.outputs.package_filter }}
           packagePath=${{ steps.pkg_meta.outputs.package_path }}
           dbType=${{ matrix.db_tool.db_type }}
           dbToolVersion=${{ matrix.db_tool.version }}

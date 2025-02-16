@@ -18,7 +18,7 @@ class MariaDBSQLRestoreCommand extends RestoreCommand {
   async restoreDB(sourcePath: string, userSpecifiedOption?: string): Promise<{ stdout: string, stderr: string }> {
     logger.info('restore MariaDB...');
     return exec(
-      `set -o pipefail; cat ${sourcePath} | mysql ${userSpecifiedOption}`,
+      `set -o pipefail; cat ${sourcePath} | mariadb ${userSpecifiedOption}`,
       { shell: '/bin/bash' },
     );
   }

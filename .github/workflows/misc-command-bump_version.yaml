@@ -32,7 +32,7 @@ jobs:
         ref: ${{ github.head_ref }}
     - uses: actions/setup-node@v4
       with:
-        node-version: "16.14.2"
+        node-version-file: package.json
         cache: "yarn"
     - run: yarn install
     - name: Bump up version

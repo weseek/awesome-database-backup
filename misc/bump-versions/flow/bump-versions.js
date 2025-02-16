@@ -1,13 +1,12 @@
 import semver from 'semver';
 import { loadConfig, getCurrentVersion, getReleaseType } from 'shipjs-lib';
 
-import printDryRunBanner from 'shipjs/src/step/printDryRunBanner';
-import confirmNextVersion from 'shipjs/src/step/prepare/confirmNextVersion';
-import updateVersion from 'shipjs/src/step/prepare/updateVersion';
-import updateVersionMonorepo from 'shipjs/src/step/prepare/updateVersionMonorepo';
-import installDependencies from 'shipjs/src/step/prepare/installDependencies';
+import printDryRunBanner from 'shipjs/src/step/printDryRunBanner.js';
+import confirmNextVersion from 'shipjs/src/step/prepare/confirmNextVersion.js';
+import updateVersion from 'shipjs/src/step/prepare/updateVersion.js';
+import updateVersionMonorepo from 'shipjs/src/step/prepare/updateVersionMonorepo.js';
 
-import printHelp from '../step/printHelp';
+import printHelp from '../step/printHelp.js';
 
 async function bumpVersions({
   help = false,
