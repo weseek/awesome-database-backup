@@ -1,7 +1,7 @@
 import { readFileSync, createWriteStream } from 'fs';
 import { basename } from 'path';
 import {
-  S3Client, S3ClientConfig,
+  S3Client,
   GetObjectCommand, GetObjectCommandInput,
   PutObjectCommand, PutObjectCommandInput,
   CopyObjectCommand, CopyObjectCommandInput,
@@ -13,9 +13,7 @@ import {
   IStorageServiceClient,
   listS3FilesOptions,
   S3URI,
-  S3StorageServiceClientConfig,
 } from './interfaces';
-import { configExistS3 } from './s3-config';
 
 /**
  * Client to manipulate S3 buckets
@@ -26,35 +24,9 @@ export class S3StorageServiceClient implements IStorageServiceClient {
 
   client: S3Client;
 
-  constructor(config: S3StorageServiceClientConfig) {
-    let s3ClientConfig: S3ClientConfig = {};
-    if (!configExistS3()) {
-      if (config.awsRegion == null || config.awsAccessKeyId == null || config.awsSecretAccessKey == null) {
-        throw new Error('If the configuration file does not exist, '
-                          + 'you will need to set "--aws-region", "--aws-access-key-id", and "--aws-secret-access-key".');
-      }
-      s3ClientConfig = Object.assign({
-        ...(
-          {
-            region: config.awsRegion,
-            credentials: {
-              accessKeyId: config.awsAccessKeyId,
-              secretAccessKey: config.awsSecretAccessKey,
-            },
-          }
-        ),
-        ...(
-          config.awsEndpointUrl != null
-            ? {
-              endpoint: config.awsEndpointUrl.toString(),
-            }
-            : {}
-        ),
-      });
-    }
-
+  constructor() {
     this.name = 'S3';
-    this.client = new S3Client(s3ClientConfig);
+    this.client = new S3Client();
   }
 
   async exists(url: string): Promise<boolean> {
