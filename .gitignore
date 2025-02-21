@@ -6,6 +6,9 @@ node_modules
 # ignore all coverage reports
 /apps/*/coverage
 /packages/*/coverage
+# ignore all junit reports
+/apps/*/reports
+/packages/*/reports
 # ignore logs
 yarn-error.log
 
