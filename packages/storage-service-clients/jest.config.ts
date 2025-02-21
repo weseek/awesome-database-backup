@@ -104,7 +104,6 @@ export default {
     process.env.CI ?
       { reporters: [
         'summary',
-        ['github-actions', {silent: false}],
       ] } :
       { reporters: [
         'default',
