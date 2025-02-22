@@ -46,17 +46,9 @@ jobs:
         # * https://github.com/nodejs/node/pull/56632
         NODE_OPTIONS: --no-deprecation
 
-    # - name: Test Report
-    #   # For bug, fix version
-    #   # see. https://github.com/dorny/test-reporter/issues/512#issuecomment-2550972841
-    #   uses: dorny/test-reporter@1a288b62f8b75c0f433cbfdbc2e4800fbae50bd7
-    #   if: success() || failure()      # run this step even if previous step failed
-    #   with:
-    #     name: JEST Tests              # Name of the check run which will be created
-    #     path: '(apps|packages)/**/reports/report.xml' # Path to test results
-    #     reporter: jest-junit          # Format of test results
     - name: Publish Test Report
       if: success() || failure()
       uses: ctrf-io/github-test-reporter@v1
       with:
         report-path: '**/ctrf/*.json'
+    - uses: ArtiomTr/jest-coverage-report-action@v2
