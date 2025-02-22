@@ -47,7 +47,9 @@ jobs:
         NODE_OPTIONS: --no-deprecation
 
     - name: Test Report
-      uses: dorny/test-reporter@v1
+      # For bug, fix version
+      # see. https://github.com/dorny/test-reporter/issues/512#issuecomment-2550972841
+      uses: dorny/test-reporter@1a288b62f8b75c0f433cbfdbc2e4800fbae50bd7
       if: success() || failure()      # run this step even if previous step failed
       with:
         name: JEST Tests              # Name of the check run which will be created
