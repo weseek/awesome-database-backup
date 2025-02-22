@@ -100,17 +100,10 @@ export default {
   // projects: undefined,
 
   // Use this configuration option to add custom reporters to Jest
-  ...(
-    process.env.CI ?
-      { reporters: [
-        'summary',
-        ['jest-ctrf-json-reporter', {}],
-      ] } :
-      { reporters: [
-        'default',
-        'summary',
-      ] }
-  ),
+  reporters: [
+    'summary',
+    ['jest-ctrf-json-reporter', {}],
+  ],
 
   // Automatically reset mock state before every test
   // resetMocks: false,
