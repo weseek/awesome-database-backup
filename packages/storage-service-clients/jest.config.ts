@@ -104,11 +104,11 @@ export default {
     process.env.CI ?
       { reporters: [
         'summary',
+        ['jest-ctrf-json-reporter', {}],
       ] } :
       { reporters: [
         'default',
         'summary',
-        ['jest-junit', {outputDirectory: 'reports', outputName: 'report.xml'}],
       ] }
   ),
 

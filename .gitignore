@@ -9,6 +9,8 @@ node_modules
 # ignore all junit reports
 /apps/*/reports
 /packages/*/reports
+# ignore all ctrf reports
+ctrf-report.json
 # ignore logs
 yarn-error.log
 
