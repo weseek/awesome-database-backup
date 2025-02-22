@@ -59,4 +59,4 @@ jobs:
       if: success() || failure()
       uses: ctrf-io/github-test-reporter@v1
       with:
-        report-path: '(apps|packages)/**/ctrf/*.json'
+        report-path: '**/ctrf/*.json'
