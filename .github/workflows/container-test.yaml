@@ -101,7 +101,7 @@ jobs:
         rm -rf /tmp/.buildx-cache
         mv /tmp/.buildx-cache-new /tmp/.buildx-cache
     - name: Run structure tests
-      uses: brpaz/structure-tests-action@1.2.0
+      uses: brpaz/structure-tests-action@1.4.0
       with:
         image: ${{ steps.pkg_meta.outputs.package_image_name }}:latest
         configFile: ./docker/test/${{ matrix.db_tool.db_type }}/structure-tests.yml
