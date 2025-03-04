@@ -17,6 +17,7 @@ describe('PruneCommand', () => {
     listFiles: jest.fn().mockResolvedValue([]),
     copyFile: jest.fn(),
     deleteFile: jest.fn(),
+    uploadStream: jest.fn(),
   };
 
   beforeEach(() => {
