@@ -200,6 +200,33 @@ export class S3StorageServiceClient implements IStorageServiceClient {
   }
 
   /**
+   * Upload a stream directly to S3
+   *
+   * This method allows streaming data directly to S3 without creating temporary files.
+   * Useful for large data transfers where you want to avoid disk I/O.
+   */
+  async uploadStream(stream: Readable, fileName: string, destinationUri: string): Promise<void> {
+    const destinationS3Uri = this._parseFilePath(destinationUri);
+    if (destinationS3Uri == null) throw new Error(`URI ${destinationS3Uri} is not correct S3's`);
+
+    // Collect stream data in buffer before uploading
+    const chunks: Buffer[] = [];
+    for await (const chunk of stream) {
+      chunks.push(Buffer.from(chunk));
+    }
+    const buffer = Buffer.concat(chunks);
+
+    const params: PutObjectCommandInput = {
+      Bucket: destinationS3Uri.bucket,
+      Key: [destinationS3Uri.key, fileName].join('/'),
+      Body: buffer,
+    };
+    const command = new PutObjectCommand(params);
+
+    await this.client.send(command);
+  }
+
+  /**
    * Parse S3's URI(start with "s3:")
    * If it is not S3's URL, return null.
    */

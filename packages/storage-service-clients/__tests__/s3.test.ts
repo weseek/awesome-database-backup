@@ -514,4 +514,52 @@ describe('S3StorageServiceClient', () => {
       });
     });
   });
+
+  describe('#uploadStream', () => {
+    const uploadDestinationUri = 's3://bucket-name/object-name';
+
+    describe('when requested S3 URI is invalid', () => {
+      const invalidUrl = 'invalid://bucket-name/object-name';
+
+      it('reject with throw error about invalid URI', async() => {
+        const stream = new Readable();
+        stream.push('test data');
+        stream.push(null); // End of stream
+
+        await expect(s3ServiceClient.uploadStream(stream, 'backupFileName', invalidUrl))
+          .rejects.toThrowError(`URI ${invalidUrl} is not correct S3's`);
+      });
+    });
+
+    describe('when requested S3 URI is valid', () => {
+      describe('when S3Client#send resolve', () => {
+        beforeEach(() => {
+          s3ServiceClient.client.send = jest.fn().mockResolvedValue(null);
+        });
+
+        it('resolve with undefined', async() => {
+          const stream = new Readable();
+          stream.push('test data');
+          stream.push(null); // End of stream
+
+          await expect(s3ServiceClient.uploadStream(stream, 'backupFileName', uploadDestinationUri)).resolves.toBe(undefined);
+          expect(s3ServiceClient.client.send).toHaveBeenCalled();
+        });
+      });
+
+      describe('when S3Client#send reject', () => {
+        beforeEach(() => {
+          s3ServiceClient.client.send = jest.fn().mockRejectedValue(new Error('some error'));
+        });
+
+        it('reject and throw Error', async() => {
+          const stream = new Readable();
+          stream.push('test data');
+          stream.push(null); // End of stream
+
+          await expect(s3ServiceClient.uploadStream(stream, 'backupFileName', uploadDestinationUri)).rejects.toThrowError('some error');
+        });
+      });
+    });
+  });
 });
