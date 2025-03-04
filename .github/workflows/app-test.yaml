@@ -48,7 +48,35 @@ jobs:
 
     - name: Publish Test Report
       if: success() || failure()
-      uses: ctrf-io/github-test-reporter@v1
+      uses: k1LoW/octocov-action@v1
       with:
-        report-path: '**/ctrf/*.json'
-    - uses: ArtiomTr/jest-coverage-report-action@v2
+        coverage:
+          paths:
+          - apps/file-backup/coverage/lcov.info
+          - apps/file-restore/coverage/lcov.info
+          - apps/list/coverage/lcov.info
+          - apps/mariadb-restore/coverage/lcov.info
+          - apps/mongodb-backup/coverage/lcov.info
+          - apps/mongodb-restore/coverage/lcov.info
+          - apps/postgresql-backup/coverage/lcov.info
+          - apps/postgresql-restore/coverage/lcov.info
+          - apps/prune/coverage/lcov.info
+          - packages/commands/coverage/lcov.info
+          - packages/storage-service-clients/coverage/lcov.info
+        codeToTestRatio:
+          code:
+          - '**/*.ts'
+          - '!**/*.test.ts'
+          test:
+          - '**/*.test.ts'
+        testExecutionTime:
+          if: true
+        diff:
+          datastores:
+          - artifact://${GITHUB_REPOSITORY}
+        body:
+          if: is_pull_request
+        report:
+          if: is_default_branch
+          datastores:
+          - artifact://${GITHUB_REPOSITORY}
