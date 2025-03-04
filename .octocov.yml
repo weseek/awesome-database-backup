@@ -15,15 +15,18 @@ codeToTestRatio:
   code:
   - '**/*.ts'
   - '!**/*.test.ts'
+  - '!**/*.d.ts'
   test:
   - '**/*.test.ts'
 testExecutionTime:
   if: true
+summary:
+comment:
+body:
+  if: is_pull_request
 diff:
   datastores:
   - artifact://${GITHUB_REPOSITORY}
-body:
-  if: is_pull_request
 report:
   if: is_default_branch
   datastores:

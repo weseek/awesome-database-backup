@@ -46,6 +46,11 @@ jobs:
         # * https://github.com/nodejs/node/pull/56632
         NODE_OPTIONS: --no-deprecation
 
-    - name: Publish Test Report
+    - name: Show test report to result of action
+      if: success() || failure()
+      uses: ctrf-io/github-test-reporter@v1
+      with:
+        report-path: '**/ctrf/*.json'
+    - name: Show coverage report follow the settings .octocov.yml
       if: success() || failure()
       uses: k1LoW/octocov-action@v1
