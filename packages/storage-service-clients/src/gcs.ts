@@ -1,5 +1,7 @@
 import { Storage, File } from '@google-cloud/storage';
 import { basename, join } from 'path';
+import { Readable } from 'stream';
+import { pipeline } from 'stream/promises';
 import {
   IStorageServiceClient,
   listGCSFilesOptions,
@@ -131,6 +133,28 @@ export class GCSStorageServiceClient implements IStorageServiceClient {
     const destinationFile = this.client.bucket(destinationGCSUri.bucket).file(destinationGCSUri.filepath);
 
     await sourceFile.copy(destinationFile);
+  }
+
+  /**
+   * Upload a stream directly to GCS
+   *
+   * This method allows streaming data directly to GCS without creating temporary files.
+   * Useful for large data transfers where you want to avoid disk I/O.
+   */
+  async uploadStream(stream: Readable, fileName: string, destinationUri: string): Promise<void> {
+    const destinationGCSUri = this._parseFilePath(destinationUri);
+    if (destinationGCSUri == null) throw new Error(`URI ${destinationUri} is not correct GCS's`);
+
+    const destinationBucket = this.client.bucket(destinationGCSUri.bucket);
+    const destination = join(destinationGCSUri.filepath, fileName);
+    const file = destinationBucket.file(destination);
+
+    const writeStream = file.createWriteStream({
+      resumable: false,
+      contentType: 'application/gzip',
+    });
+
+    await pipeline(stream, writeStream);
   }
 
   /**

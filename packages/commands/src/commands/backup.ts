@@ -4,6 +4,7 @@ import { Option } from 'commander';
 import axios from 'axios';
 import axiosRetry from 'axios-retry';
 import { EOL } from 'os';
+import { Readable } from 'stream';
 import { IBackupCommandOption } from './interfaces';
 import { StorageServiceClientCommand } from './common';
 import loggerFactory from '../logger/factory';
@@ -27,6 +28,11 @@ export class BackupCommand extends StorageServiceClientCommand {
     throw new Error('Method not implemented.');
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async dumpDBAsStream(_options: IBackupCommandOption): Promise<Readable> {
+    throw new Error('Method not implemented.');
+  }
+
   async processDBDumpFile(dbDumpFilePath: string): Promise<string> {
     // If you want to add compression or other processing to the DB dumped file, override the process.
     // By default, nothing is done.
@@ -34,10 +40,19 @@ export class BackupCommand extends StorageServiceClientCommand {
   }
 
   async execBackupAction(options: IBackupCommandOption): Promise<void> {
-    const backupOnceOrCronMode = options.cronmode
-      ? this.backupCronMode.bind(this)
-      : this.backupOnce.bind(this);
-    await backupOnceOrCronMode(options);
+    let backupMethod;
+
+    if (options.cronmode) {
+      backupMethod = this.backupCronMode.bind(this);
+    }
+    else if (options.useStream) {
+      backupMethod = this.backupOnceWithStream.bind(this);
+    }
+    else {
+      backupMethod = this.backupOnce.bind(this);
+    }
+
+    await backupMethod(options);
   }
 
   async backupOnce(options: IBackupCommandOption): Promise<void> {
@@ -51,6 +66,27 @@ export class BackupCommand extends StorageServiceClientCommand {
 
     const compressedFilePath = await this.processDBDumpFile(dbDumpFilePath);
     await this.storageServiceClient.copyFile(compressedFilePath, options.targetBucketUrl.toString());
+
+    await this.processEndOfBackupOnce(options);
+  }
+
+  /**
+   * Backup database using stream mode (no temporary files)
+   *
+   * This method streams the database dump directly to the storage service
+   * without creating temporary files on disk.
+   */
+  async backupOnceWithStream(options: IBackupCommandOption): Promise<void> {
+    if (this.storageServiceClient == null) throw new Error('URL scheme is not that of a supported provider.');
+
+    logger.info(`=== ${basename(__filename)} started at ${format(Date.now(), 'yyyy/MM/dd HH:mm:ss')} (stream mode) ===`);
+
+    const stream = await this.dumpDBAsStream(options);
+    await this.storageServiceClient.uploadStream(
+      stream,
+      `${options.backupfilePrefix}-${format(Date.now(), 'yyyyMMddHHmmss')}.gz`,
+      options.targetBucketUrl.toString(),
+    );
 
     await this.processEndOfBackupOnce(options);
   }
@@ -115,6 +151,14 @@ export class BackupCommand extends StorageServiceClientCommand {
           'pass options to backup tool exec (ex. "--host db.example.com --username admin")',
         )
           .env('BACKUP_TOOL_OPTIONS'),
+      )
+      .addOption(
+        new Option(
+          '--use-stream',
+          'Use streaming mode for backup (no temporary files)',
+        )
+          .default(false)
+          .env('USE_STREAM'),
       );
   }
 
