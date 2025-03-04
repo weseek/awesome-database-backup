@@ -26,6 +26,7 @@ Options:
   --cron-expression <CRON_EXPRESSION>                                      Cron expression (ex. CRON_EXPRESSION="0 4 * * *" if you want to run at 4:00 every day) (env: CRON_EXPRESSION)
   --healthcheck-url <HEALTHCHECK_URL>                                      URL that gets called after a successful backup (eg. https://healthchecks.io) (env: HEALTHCHECKS_URL)
   --backup-tool-options <OPTIONS_STRING>                                   pass options to backup tool exec (ex. "--host db.example.com --username admin") (env: BACKUP_TOOL_OPTIONS)
+  --use-stream                                                             Use streaming mode for backup (no temporary files) (env: USE_STREAM)
   -h, --help                                                               display help for command
 
 TIPS:
