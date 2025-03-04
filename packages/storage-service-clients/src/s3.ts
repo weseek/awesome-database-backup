@@ -207,7 +207,7 @@ export class S3StorageServiceClient implements IStorageServiceClient {
    */
   async uploadStream(stream: Readable, fileName: string, destinationUri: string): Promise<void> {
     const destinationS3Uri = this._parseFilePath(destinationUri);
-    if (destinationS3Uri == null) throw new Error(`URI ${destinationS3Uri} is not correct S3's`);
+    if (destinationS3Uri == null) throw new Error(`URI ${destinationUri} is not correct S3's`);
 
     // Collect stream data in buffer before uploading
     const chunks: Buffer[] = [];
