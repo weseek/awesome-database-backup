@@ -48,7 +48,7 @@ install_mongo_shell() {
 
 # Function to install mongo tools
 install_mongo_tools() {
-  local mongo_tool_version=${1:-"100.10.0"}
+  local mongo_tool_version=${1:?"mongo tool version is required"}
   local do_clean_apt=${2:-false}
   local do_clean_lists=${3:-false}
 
@@ -68,7 +68,7 @@ install_mongo_tools() {
 
 # Function to install PostgreSQL tools
 install_postgresql_tools() {
-  local postgresql_client_version=${1:-"17"}
+  local postgresql_client_version=${1:?"postgresql tool version is required"}
   local do_clean_apt=${2:-false}
   local do_clean_lists=${3:-false}
 
@@ -88,7 +88,7 @@ install_postgresql_tools() {
 
 # Function to install MariaDB tools
 install_mariadb_tools() {
-  local mariadb_client_version=${1:-"11.7.2"}
+  local mariadb_client_version=${1:?"mariadb tool version is required"}
   local do_clean_apt=${2:-false}
   local do_clean_lists=${3:-false}
 
