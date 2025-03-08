@@ -2,7 +2,7 @@ name: Set matrix of tool versions to be published
 
 runs:
   using: 'composite'
-  output:
+  outputs:
     toolPatterns: ${{ steps.set-matrix.outputs.value }}
   steps:
   - name: Set matrix of tool versions to be published
