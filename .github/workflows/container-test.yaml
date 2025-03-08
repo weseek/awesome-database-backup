@@ -8,56 +8,21 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  container-test:
+  set-matrix:
     runs-on: ubuntu-latest
+    outputs:
+      toolPatterns: ${{ steps.set-matrix.outputs.toolPatterns }}
+    steps:
+    - uses: actions/checkout@v4
+    - uses: ./.github/actions/set-tool-version-patterns
+      id: set-matrix
 
+  container-test:
+    needs: set-matrix
+    runs-on: ubuntu-latest
     strategy:
-      # Set same as container-publish.yaml
       matrix:
-        db_tool:
-        # awesome-mongodb-backup
-        # Valid versions can be found here https://www.mongodb.com/try/download/database-tools/releases/archive
-        - db_type: mongodb
-          version: 100.5.4
-        - db_type: mongodb
-          version: 100.6.1
-        - db_type: mongodb
-          version: 100.7.5
-        - db_type: mongodb
-          version: 100.8.0
-        - db_type: mongodb
-          version: 100.9.5
-        - db_type: mongodb
-          version: 100.10.0
-        # awesome-postgresql-backup
-        # Valid versions can be found here https://apt.postgresql.org/pub/repos/apt/dists/bullseye-pgdg/
-        - db_type: postgresql
-          version: 10
-        - db_type: postgresql
-          version: 11
-        - db_type: postgresql
-          version: 12
-        - db_type: postgresql
-          version: 13
-        - db_type: postgresql
-          version: 14
-        - db_type: postgresql
-          version: 15
-        - db_type: postgresql
-          version: 16
-        - db_type: postgresql
-          version: 17
-        # awesome-mariadb-backup
-        # Valid versions can be found here https://dlm.mariadb.com/rest/releases/mariadb_server/
-        - db_type: mariadb
-          version: 11.4.5
-        - db_type: mariadb
-          version: 11.7.2
-        - db_type: mariadb
-          version: 11.8.1
-        # awesome-file-backup
-        - db_type: file
-
+        db_tool: ${{ fromJson(needs.set-matrix.outputs.toolPatterns) }}
     steps:
     - uses: actions/checkout@v4
     - name: Set up metadata
@@ -66,40 +31,19 @@ jobs:
         echo "package_filter=@awesome-database-backup/awesome-${{ matrix.db_tool.db_type }}-backup" >> $GITHUB_OUTPUT
         echo "package_path=apps/awesome-${{ matrix.db_tool.db_type }}-backup" >> $GITHUB_OUTPUT
         echo "package_image_name=weseek/awesome-${{ matrix.db_tool.db_type }}-backup" >> $GITHUB_OUTPUT
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
-    - name: Cache Docker layers
-      uses: actions/cache@v4
-      with:
-        path: /tmp/.buildx-cache
-        key:
-          ${{ runner.os }}-buildx-app-${{ matrix.db_tool.db_type }}-${{ matrix.db_tool.version }}-${{ github.sha }}
-        restore-keys: |
-          ${{ runner.os }}-buildx-app-${{ matrix.db_tool.db_type }}-${{ matrix.db_tool.version }}-
-          ${{ runner.os }}-buildx-app-${{ matrix.db_tool.db_type }}-
-          ${{ runner.os }}-buildx-app-
+    # The "docker-container" driver is used
+    - uses: docker/setup-buildx-action@v3
     - name: Build container (No push)
       uses: docker/build-push-action@v6
       with:
-        context: .
         file: ./docker/Dockerfile
-        platforms: linux/amd64
-        load: true
         build-args: |
           packageFilter=${{ steps.pkg_meta.outputs.package_filter }}
           packagePath=${{ steps.pkg_meta.outputs.package_path }}
           dbType=${{ matrix.db_tool.db_type }}
           dbToolVersion=${{ matrix.db_tool.version }}
-        cache-from: type=local,src=/tmp/.buildx-cache
-        cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
         tags: ${{ steps.pkg_meta.outputs.package_image_name }}:latest
-    # ref: https://github.com/docker/build-push-action/blob/master/docs/advanced/cache.md#local-cache
-    # :warning: At the moment caches are copied over the existing cache so it [keeps growing](https://github.com/docker/build-push-action/issues/252).
-    # The `Move cache` step is used as a temporary fix (see https://github.com/moby/buildkit/issues/1896).
-    - name: Move cache
-      run: |
-        rm -rf /tmp/.buildx-cache
-        mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+        load: true # Save build result localy because of using cache by next steps
     - name: Run structure tests
       uses: brpaz/structure-tests-action@1.4.0
       with:
