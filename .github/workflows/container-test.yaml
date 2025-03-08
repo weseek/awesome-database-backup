@@ -11,7 +11,7 @@ jobs:
   set-matrix:
     runs-on: ubuntu-latest
     outputs:
-      toolPatterns: ${{ steps.set-matrix.outputs.result }}
+      toolPatterns: ${{ steps.set-matrix.outputs.toolPatterns }}
     steps:
     - uses: actions/checkout@v4
     - uses: ./.github/actions/set-tool-version-patterns
