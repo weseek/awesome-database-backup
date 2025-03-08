@@ -28,10 +28,11 @@ jobs:
           USER_UID=${{ steps.ids.outputs.uid }}
           USER_GID=${{ steps.ids.outputs.gid }}
         cache-from: type=gha
-        cache-to: type=gha
+        cache-to: |
+          type=local,dest=.container-cache/app
+          type=gha
     - name: Start all DBs and middle
-      run: |
-        docker compose -f .devcontainer/compose.yml build --build-arg USER_UID=${{ steps.ids.outputs.uid }} --build-arg USER_GID=${{ steps.ids.outputs.gid }}
+      run:
         docker compose -f .devcontainer/compose.yml up -d
     - name: Run test
       run:
