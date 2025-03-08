@@ -25,6 +25,8 @@ jobs:
           ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}
         restore-keys: |
           ${{ runner.os }}-build-${{ env.cache-name }}-
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
     - name: Build app container to caching
       uses: docker/build-push-action@v6
       with:
