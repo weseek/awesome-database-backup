@@ -77,6 +77,7 @@ jobs:
           packagePath=${{ steps.pkg_meta.outputs.package_path }}
           dbType=${{ matrix.db_tool.db_type }}
           dbToolVersion=${{ matrix.db_tool.version }}
+        tags: ${{ steps.pkg_meta.outputs.package_image_name }}:latest
     - name: Run structure tests
       uses: brpaz/structure-tests-action@1.4.0
       with:
