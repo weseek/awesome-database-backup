@@ -78,7 +78,7 @@ jobs:
           dbType=${{ matrix.db_tool.db_type }}
           dbToolVersion=${{ matrix.db_tool.version }}
         tags: ${{ steps.pkg_meta.outputs.package_image_name }}:latest
-        load: true
+        load: true # Save build result localy because of using cache by next steps
     - name: Run structure tests
       uses: brpaz/structure-tests-action@1.4.0
       with:
