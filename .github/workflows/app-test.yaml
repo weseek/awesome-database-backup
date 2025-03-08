@@ -31,9 +31,9 @@ jobs:
       uses: docker/build-push-action@v6
       with:
         file: .devcontainer/Dockerfile
-        build-args:
-        - USER_UID=$(id -u)
-        - USER_GID=$(id -g)
+        build-args: |
+          USER_UID=$(id -u)
+          USER_GID=$(id -g)
         cache-from: type=gha
         cache-to: type=gha
     - name: Start all DBs and middle
