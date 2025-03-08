@@ -1,0 +1,12 @@
+name: Set matrix of tool versions to be published
+
+runs:
+  using: 'composite'
+  output:
+    toolPatterns: ${{ steps.set-matrix.outputs.value }}
+  steps:
+  - name: Set matrix of tool versions to be published
+    uses: mikefarah/yq@master
+    id: set-matrix
+    run: |
+      yq -o json ./action.yaml >> $GITHUB_OUTPUT

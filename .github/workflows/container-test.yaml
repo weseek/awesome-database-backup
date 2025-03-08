@@ -8,56 +8,20 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  container-test:
+  set-matrix:
     runs-on: ubuntu-latest
+    outputs:
+      toolPatterns: ${{ steps.set-matrix.outputs.value }}
+    steps:
+    - uses: ./actions/set-tool-version-patterns
+      id: set-matrix
 
+  container-test:
+    needs: set-matrix
+    runs-on: ubuntu-latest
     strategy:
-      # Set same as container-publish.yaml
       matrix:
-        db_tool:
-        # awesome-mongodb-backup
-        # Valid versions can be found here https://www.mongodb.com/try/download/database-tools/releases/archive
-        - db_type: mongodb
-          version: 100.5.4
-        - db_type: mongodb
-          version: 100.6.1
-        - db_type: mongodb
-          version: 100.7.5
-        - db_type: mongodb
-          version: 100.8.0
-        - db_type: mongodb
-          version: 100.9.5
-        - db_type: mongodb
-          version: 100.10.0
-        # awesome-postgresql-backup
-        # Valid versions can be found here https://apt.postgresql.org/pub/repos/apt/dists/bullseye-pgdg/
-        - db_type: postgresql
-          version: 10
-        - db_type: postgresql
-          version: 11
-        - db_type: postgresql
-          version: 12
-        - db_type: postgresql
-          version: 13
-        - db_type: postgresql
-          version: 14
-        - db_type: postgresql
-          version: 15
-        - db_type: postgresql
-          version: 16
-        - db_type: postgresql
-          version: 17
-        # awesome-mariadb-backup
-        # Valid versions can be found here https://dlm.mariadb.com/rest/releases/mariadb_server/
-        - db_type: mariadb
-          version: 11.4.5
-        - db_type: mariadb
-          version: 11.7.2
-        - db_type: mariadb
-          version: 11.8.1
-        # awesome-file-backup
-        - db_type: file
-
+        db_tool: ${{ fromJson(needs.set-matrix.outputs.toolPatterns) }}
     steps:
     - uses: actions/checkout@v4
     - name: Set up metadata
