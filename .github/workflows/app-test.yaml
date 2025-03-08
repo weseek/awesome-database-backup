@@ -25,7 +25,7 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-build-${{ env.cache-name }}-
     - name: Build all DBs and middle
-      uses: docker/bake-action@v5
+      uses: docker/bake-action@v6
       env:
         TAG: ${{ steps.release-tag.outputs.tag }}
       with:
