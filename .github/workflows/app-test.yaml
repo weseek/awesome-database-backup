@@ -12,6 +12,7 @@ jobs:
   app-test:
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@v4
     # This step loads "node_modules" from the cache which contains the cache of Turborepo.
     # The "node_modules" will be mounted with the source code when `docker compose up` is executed.
     - name: Load cache "node_modules" which includes cahce of Turborepo
