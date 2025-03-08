@@ -110,7 +110,7 @@ install_aws_cli() {
   local do_clean_tmp=${1:-false}
 
   curl https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip -o /tmp/awscli.zip \
-    && unzip /tmp/awscli.zip -d /tmp \
+    && unzip -q /tmp/awscli.zip -d /tmp \
     && /tmp/aws/install
 
   if [ "$do_clean_tmp" = true ]; then
