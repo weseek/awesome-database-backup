@@ -15,8 +15,8 @@ jobs:
     - name: Get UID/GID
       id: ids
       run: |
-        echo "uid=$(id -u)" >> $USER_UID
-        echo "gid=$(id -g)" >> $USER_GID
+        echo "USER_UID=$(id -u)" >> $GITHUB_OUTPUT
+        echo "USER_GID=$(id -g)" >> $GITHUB_OUTPUT
     - uses: actions/checkout@v4
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
