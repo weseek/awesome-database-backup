@@ -34,6 +34,9 @@ jobs:
     - name: Start all DBs and middle
       run:
         docker compose -f .devcontainer/compose.yml up -d
+      env:
+        DOCKER_BUILDKIT: 1
+        COMPOSE_DOCKER_CLI_BUILD: 1
     - name: Run test
       run:
         docker compose -f .devcontainer/compose.yml exec -e NODE_OPTIONS -e CI -T -- node bash -c 'yarn install && yarn test'
