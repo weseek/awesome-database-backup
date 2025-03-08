@@ -2,8 +2,6 @@ name: Set matrix of tool versions to be published
 
 runs:
   using: 'composite'
-  outputs:
-    toolPatterns: ${{ steps.set-matrix.outputs.value }}
   steps:
   - name: Set matrix of tool versions to be published
     uses: mikefarah/yq@master
