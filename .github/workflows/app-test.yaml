@@ -23,7 +23,7 @@ jobs:
     - name: Build app container to caching
       uses: docker/build-push-action@v6
       with:
-        file: .devcontainer/Dockerfile
+        context: .devcontainer
         build-args: |
           USER_UID=${{ steps.ids.outputs.uid }}
           USER_GID=${{ steps.ids.outputs.gid }}
