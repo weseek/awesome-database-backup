@@ -1,6 +1,8 @@
 name: Set matrix of tool versions to be published
 outputs:
-  toolPatterns: ${{ steps.set-matrix.outputs.result }}
+  toolPatterns:
+    description: 'Array of tool versions to be published. Same as matrix.yaml but JSON format.'
+    value: ${{ steps.set-matrix.outputs.result }}
 runs:
   using: 'composite'
   steps:
