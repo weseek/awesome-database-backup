@@ -31,7 +31,7 @@ jobs:
       uses: docker/bake-action@v6
       with:
         source: '.'
-        files: 'devcontainer/compose.yml'
+        files: '.devcontainer/compose.yml'
         push: false
         load: true
         set: |
