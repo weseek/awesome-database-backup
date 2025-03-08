@@ -66,7 +66,7 @@ jobs:
         echo "package_filter=@awesome-database-backup/awesome-${{ matrix.db_tool.db_type }}-backup" >> $GITHUB_OUTPUT
         echo "package_path=apps/awesome-${{ matrix.db_tool.db_type }}-backup" >> $GITHUB_OUTPUT
         echo "package_image_name=weseek/awesome-${{ matrix.db_tool.db_type }}-backup" >> $GITHUB_OUTPUT
-    # The "docker-container" driver is used because of using cache
+    # The "docker-container" driver is used
     - uses: docker/setup-buildx-action@v3
     - name: Build container (No push)
       uses: docker/build-push-action@v6
