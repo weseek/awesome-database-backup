@@ -10,23 +10,6 @@ clean_apt_lists() {
   rm -rf /var/lib/apt/lists/*
 }
 
-# Function to install bzip2, curl
-install_bzip2_curl() {
-  local do_clean_apt=${1:-false}
-  local do_clean_lists=${2:-false}
-
-  apt-get update \
-    && apt-get install -y bzip2 curl
-
-  if [ "$do_clean_apt" = true ]; then
-    clean_apt
-  fi
-
-  if [ "$do_clean_lists" = true ]; then
-    clean_apt_lists
-  fi
-}
-
 # Function to install mongo shell
 install_mongo_shell() {
   local do_clean_apt=${1:-false}
