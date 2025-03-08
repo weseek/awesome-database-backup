@@ -7,4 +7,4 @@ runs:
     uses: mikefarah/yq@master
     id: set-matrix
     with:
-      cmd: yq -o json ./action.yaml
+      cmd: yq -o json ./matrix.yaml
