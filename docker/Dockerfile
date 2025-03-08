@@ -67,7 +67,7 @@ FROM tool-common AS mongodb-tools
 
 # YOU MUST SET dbToolVersion
 ARG dbToolVersion
-RUN --mount=type=bind,source=.devcontainer/build-support/install-functions.sh,dst=/tmp/install-functions.sh && \
+RUN --mount=type=bind,source=.devcontainer/build-support/install-functions.sh,dst=/tmp/install-functions.sh \
     . /tmp/install-functions.sh && \
     install_mongo_tools "${dbToolVersion}" && \
     clean_apt && clean_apt_lists
@@ -76,7 +76,7 @@ FROM tool-common AS postgresql-tools
 
 # YOU MUST SET dbToolVersion
 ARG dbToolVersion
-RUN --mount=type=bind,source=.devcontainer/build-support/install-functions.sh,dst=/tmp/install-functions.sh && \
+RUN --mount=type=bind,source=.devcontainer/build-support/install-functions.sh,dst=/tmp/install-functions.sh \
     . /tmp/install-functions.sh && \
     install_postgresql_tools "${dbToolVersion}" && \
     clean_apt && clean_apt_lists
@@ -85,7 +85,7 @@ FROM tool-common AS mariadb-tools
 
 # YOU MUST SET dbToolVersion
 ARG dbToolVersion
-RUN --mount=type=bind,source=.devcontainer/build-support/install-functions.sh,dst=/tmp/install-functions.sh && \
+RUN --mount=type=bind,source=.devcontainer/build-support/install-functions.sh,dst=/tmp/install-functions.sh \
     . /tmp/install-functions.sh && \
     install_mariadb_tools "${dbToolVersion}" && \
     clean_apt && clean_apt_lists
