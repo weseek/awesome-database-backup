@@ -25,6 +25,11 @@ jobs:
           ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}
         restore-keys: |
           ${{ runner.os }}-build-${{ env.cache-name }}-
+    - name: Build app container to caching
+      uses: docker/build-push-action
+      with:
+        cahce-from: type=gha
+        cahce-to: type=gha
     - name: Start all DBs and middle
       run: |
         docker compose -f .devcontainer/compose.yml -f .devcontainer/compose.override.test.yml build --build-arg USER_UID=$(id -u) --build-arg USER_GID=$(id -g)
