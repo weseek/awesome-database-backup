@@ -19,8 +19,7 @@ jobs:
         echo "gid=$(id -g)" >> $GITHUB_OUTPUT
     - uses: actions/checkout@v4
     # The "docker-container" driver is used because of using cache
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
+    - uses: docker/setup-buildx-action@v3
     # Store the App container image in the local and Github Action cache, respectively
     - name: Build app container to caching (No push)
       uses: docker/build-push-action@v6
