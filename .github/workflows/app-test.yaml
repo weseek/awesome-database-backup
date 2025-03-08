@@ -12,15 +12,6 @@ jobs:
   app-test:
     runs-on: ubuntu-latest
     steps:
-    # Increase workspace space
-    - name: Remove docker image
-      run: |
-        docker image prune --force --all
-    - uses: actions/checkout@v4
-    # Pull the latest image to build, and avoid caching pull-only images.
-    # (docker pull is faster than caching in most cases.)
-    - name: Pull Docker images
-      run: docker compose -f .devcontainer/compose.yml pull
     # This step loads "node_modules" from the cache which contains the cache of Turborepo.
     # The "node_modules" will be mounted with the source code when `docker compose up` is executed.
     - name: Load cache "node_modules" which includes cahce of Turborepo
@@ -33,10 +24,22 @@ jobs:
           ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}
         restore-keys: |
           ${{ runner.os }}-build-${{ env.cache-name }}-
+    - name: Build all DBs and middle
+      uses: docker/bake-action@v5
+      env:
+        TAG: ${{ steps.release-tag.outputs.tag }}
+      with:
+        source: '.'
+        files: './devcontainer/compose.yml'
+        push: false
+        load: true
+        set: |
+          target.args.USER_UID=$(id -u)
+          target.args.USER_GID=$(id -g)
+          *.cache-from=type=gha
+          *.cache-to=type=gha,mode=max
     - name: Start all DBs and middle
-      run: |
-        docker compose -f .devcontainer/compose.yml build --build-arg USER_UID=$(id -u) --build-arg USER_GID=$(id -g)
-        docker compose -f .devcontainer/compose.yml up -d
+      run: docker compose -f .devcontainer/compose.yml up -d
     - name: Run test
       run:
         docker compose -f .devcontainer/compose.yml exec -e NODE_OPTIONS -e CI -T -- node bash -c 'yarn install && yarn test'
