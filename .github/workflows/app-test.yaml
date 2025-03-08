@@ -25,13 +25,13 @@ jobs:
     - name: Build app container to caching
       uses: docker/build-push-action@v6
       with:
-        load: true
         context: .devcontainer
         build-args: |
           USER_UID=${{ steps.ids.outputs.uid }}
           USER_GID=${{ steps.ids.outputs.gid }}
-        cache-from: type=gha
-        cache-to: type=gha,mode=max
+        load: true                  # Save build result localy because of using cache by next steps
+        cache-from: type=gha        # Read layers from gha cache
+        cache-to: type=gha,mode=max # Save layers as much as possible to gha cache
     - name: Start all DBs and middle
       run: |
         docker compose -f .devcontainer/compose.yml build --build-arg USER_UID=${{ steps.ids.outputs.uid }} --build-arg USER_GID=${{ steps.ids.outputs.gid }}
