@@ -7,4 +7,4 @@ runs:
     uses: mikefarah/yq@master
     id: set-matrix
     with:
-      cmd: yq --output json .github/actions/set-tool-version-patterns/matrix.yaml
+      cmd: yq --output-format json .github/actions/set-tool-version-patterns/matrix.yaml
