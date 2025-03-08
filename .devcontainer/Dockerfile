@@ -36,8 +36,8 @@ COPY build-support/install-functions.sh /tmp/install-functions.sh
 ARG MongoToolVersion=100.10.0
 ARG PostgreSQLClientVersion=17
 ARG MariaDBClientVersion=11.7.2
-RUN apt-get update \
-    && apt-get install -y bzip2 curl \
+RUN apt-get update && \
+    apt-get install -y bzip2 curl && \
     . /tmp/install-functions.sh && \
     install_mongo_shell && \
     install_mongo_tools "${MongoToolVersion}" && \
