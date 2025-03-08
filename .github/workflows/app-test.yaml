@@ -27,17 +27,14 @@ jobs:
           ${{ runner.os }}-build-${{ env.cache-name }}-
     - name: Start all DBs and middle
       run: |
-        docker compose -f .devcontainer/compose.yml build \
-          --build-arg USER_UID=$(id -u) --build-arg USER_GID=$(id -g) \
-          --cache-from type=gha,mode=max
-          --cache-to type=gha
-        docker compose -f .devcontainer/compose.yml up -d
+        docker compose -f .devcontainer/compose.yml -f .devcontainer/compose.override.test.yml build --build-arg USER_UID=$(id -u) --build-arg USER_GID=$(id -g)
+        docker compose -f .devcontainer/compose.yml -f .devcontainer/compose.override.test.yml up -d
       env:
         DOCKER_BUILDKIT: 1
         COMPOSE_DOCKER_CLI_BUILD: 1
     - name: Run test
       run:
-        docker compose -f .devcontainer/compose.yml exec -e NODE_OPTIONS -e CI -T -- node bash -c 'yarn install && yarn test'
+        docker compose -f .devcontainer/compose.yml -f .devcontainer/compose.override.test.yml exec -e NODE_OPTIONS -e CI -T -- node bash -c 'yarn install && yarn test'
       env:
         # Temporarily ignore warnings
         # see:

@@ -1,0 +1,9 @@
+services:
+  node:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      cache_to:
+      - type=gha
+      cache_from:
+      - type=gha
