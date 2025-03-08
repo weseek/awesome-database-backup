@@ -29,8 +29,8 @@ jobs:
       uses: docker/build-push-action@v6
       with:
         file: .devcontainer/Dockerfile
-        cahce-from: type=gha
-        cahce-to: type=gha
+        cache-from: type=gha
+        cache-to: type=gha
     - name: Start all DBs and middle
       run: |
         docker compose -f .devcontainer/compose.yml -f .devcontainer/compose.override.test.yml build --build-arg USER_UID=$(id -u) --build-arg USER_GID=$(id -g)
