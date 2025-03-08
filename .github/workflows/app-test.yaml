@@ -12,6 +12,11 @@ jobs:
   app-test:
     runs-on: ubuntu-latest
     steps:
+    - name: Get UID/GID
+      id: ids
+      run: |
+        echo "uid=$(id -u)" >> $GITHUB_OUTPUT
+        echo "gid=$(id -g)" >> $GITHUB_OUTPUT
     - uses: actions/checkout@v4
     # This step loads "node_modules" from the cache which contains the cache of Turborepo.
     # The "node_modules" will be mounted with the source code when `docker compose up` is executed.
@@ -32,13 +37,13 @@ jobs:
       with:
         file: .devcontainer/Dockerfile
         build-args: |
-          USER_UID=$(id -u)
-          USER_GID=$(id -g)
+          USER_UID=${{ steps.ids.outputs.uid }}
+          USER_GID=${{ steps.ids.outputs.gid }}
         cache-from: type=gha
         cache-to: type=gha
     - name: Start all DBs and middle
       run: |
-        docker compose -f .devcontainer/compose.yml build --build-arg USER_UID=$(id -u) --build-arg USER_GID=$(id -g)
+        docker compose -f .devcontainer/compose.yml build --build-arg USER_UID=${{ steps.ids.outputs.uid }} --build-arg USER_GID=${{ steps.ids.outputs.gid }}
         docker compose -f .devcontainer/compose.yml up -d
       env:
         DOCKER_BUILDKIT: 1
