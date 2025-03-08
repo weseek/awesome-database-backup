@@ -14,7 +14,7 @@ jobs:
       toolPatterns: ${{ steps.set-matrix.outputs.value }}
     steps:
     - uses: actions/checkout@v4
-    - uses: ./actions/set-tool-version-patterns
+    - uses: .github/actions/set-tool-version-patterns
       id: set-matrix
 
   container-test:
