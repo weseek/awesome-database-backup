@@ -9,12 +9,6 @@
 - [FEATURE_3]
 - [FEATURE_4]
 
-## Installation
-
-```bash
-npm install @awesome-database-backup/[PACKAGE_NAME]
-```
-
 ## Usage
 
 ### Basic Usage

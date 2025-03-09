@@ -11,14 +11,6 @@
 
 ## Installation
 
-### Using npm
-
-```bash
-npm install @awesome-database-backup/[PACKAGE_NAME]
-```
-
-### Using Docker
-
 ```bash
 docker pull weseek/[PACKAGE_NAME]
 ```
