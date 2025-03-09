@@ -2,9 +2,26 @@
 
 Restore data stored in a file system from backuped file on Amazon S3 or Google Cloud Storage. You can set a custom S3 endpoint to use S3 based services like DigitalOcean Spaces instead of Amazon S3.
 
+## Features
+
+- Restore file system data from cloud storage (S3, GCS)
+- Support for S3-compatible services (DigitalOcean Spaces, etc.)
+- Support for various compression formats (.gz, .bz2, .tar)
+- Flexible restore options for different target locations
+
 ## Usage
 
-### How to restore
+### Basic Usage
+
+```bash
+restore --target-bucket-url s3://my-bucket/backups/backup-20220611170158.tar.gz \
+  --aws-region us-east-1 \
+  --aws-access-key-id YOUR_ACCESS_KEY_ID \
+  --aws-secret-access-key YOUR_SECRET_ACCESS_KEY \
+  --restore-tool-options "-C /path/to/restore"
+```
+
+### Options
 
 ```
 Usage: restore [options]
@@ -33,7 +50,7 @@ NOTICE:
 
 ### Examples
 
-Restore from Amazon S3:
+#### Restore from Amazon S3
 
 ```bash
 restore --target-bucket-url s3://my-bucket/backups/backup-20220611170158.tar.gz \
@@ -43,7 +60,7 @@ restore --target-bucket-url s3://my-bucket/backups/backup-20220611170158.tar.gz 
   --restore-tool-options "-C /path/to/restore"
 ```
 
-Restore from Google Cloud Storage:
+#### Restore from Google Cloud Storage
 
 ```bash
 restore --target-bucket-url gs://my-bucket/backups/backup-20220611170158.tar.gz \
@@ -52,14 +69,54 @@ restore --target-bucket-url gs://my-bucket/backups/backup-20220611170158.tar.gz 
   --restore-tool-options "-C /path/to/restore"
 ```
 
-## Authenticate storage service
+#### Using Environment Variables
 
-S3 or GCS authentication is required depending on the storage service used.
+```bash
+export TARGET_BUCKET_URL=s3://my-bucket/backups/backup-20220611170158.tar.gz
+export AWS_REGION=us-east-1
+export AWS_ACCESS_KEY_ID=YOUR_ACCESS_KEY_ID
+export AWS_SECRET_ACCESS_KEY=YOUR_SECRET_ACCESS_KEY
+export RESTORE_TOOL_OPTIONS="-C /path/to/restore"
 
-- For S3
-  - Set `AWS_REGION` and `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`
-- For GCS(*)
-  - Set `GCP_SERVICE_ACCOUNT_KEY_JSON_PATH` and `GCP_PROJECT_ID`, or `GCP_CLIENT_EMAIL` and `GCP_PRIVATE_KEY` and `GCP_PROJECT_ID`.  
-    For detail, see [service account authentication](https://cloud.google.com/docs/authentication/production).
+restore
+```
 
-(*) You can't use HMAC authentication to authenticate GCS. (https://github.com/googleapis/nodejs-storage/issues/117)
+#### Specifying Restore Options
+
+```bash
+# Restore to a specific directory
+restore --target-bucket-url s3://my-bucket/backups/backup-20220611170158.tar.gz \
+  --aws-region us-east-1 \
+  --aws-access-key-id YOUR_ACCESS_KEY_ID \
+  --aws-secret-access-key YOUR_SECRET_ACCESS_KEY \
+  --restore-tool-options "-C /path/to/restore"
+
+# Restore with verbose output
+restore --target-bucket-url s3://my-bucket/backups/backup-20220611170158.tar.gz \
+  --aws-region us-east-1 \
+  --aws-access-key-id YOUR_ACCESS_KEY_ID \
+  --aws-secret-access-key YOUR_SECRET_ACCESS_KEY \
+  --restore-tool-options "-C /path/to/restore -v"
+```
+
+## Authentication
+
+### For Amazon S3
+
+- Set `AWS_REGION` and `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`
+- For S3-compatible services, also set `AWS_ENDPOINT_URL`
+
+### For Google Cloud Storage
+
+- Set `GCP_SERVICE_ACCOUNT_KEY_JSON_PATH` and `GCP_PROJECT_ID`, or
+- Set `GCP_CLIENT_EMAIL` and `GCP_PRIVATE_KEY` and `GCP_PROJECT_ID`
+
+For details, see [service account authentication](https://cloud.google.com/docs/authentication/production).
+
+**Note**: You can't use HMAC authentication to authenticate GCS. (https://github.com/googleapis/nodejs-storage/issues/117)
+
+## Related Commands
+
+- [file-backup](../file-backup/README.md) - Backup file system data to cloud storage
+- [list](../list/README.md) - List backup files
+- [prune](../prune/README.md) - Delete old backup files

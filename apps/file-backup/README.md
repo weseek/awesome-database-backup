@@ -2,9 +2,26 @@
 
 Backup data stored in a file system and store to Amazon S3 or Google Cloud Storage. You can set a custom S3 endpoint to use S3 based services like DigitalOcean Spaces instead of Amazon S3.
 
+## Features
+
+- Backup file system data to cloud storage (S3, GCS)
+- Support for S3-compatible services (DigitalOcean Spaces, etc.)
+- Streaming mode for efficient large data transfers
+- Cron scheduling for automated backups
+
 ## Usage
 
-### How to backup
+### Basic Usage
+
+```bash
+backup --target-bucket-url s3://my-bucket/backups/ \
+  --aws-region us-east-1 \
+  --aws-access-key-id YOUR_ACCESS_KEY_ID \
+  --aws-secret-access-key YOUR_SECRET_ACCESS_KEY \
+  --backup-tool-options "-v /path/to/backup"
+```
+
+### Options
 
 ```
 Usage: backup [options]
@@ -32,12 +49,79 @@ NOTICE:
   You can pass tar options by set "--backup-tool-options". (ex. "-v /path/to/file")
 ```
 
-## Authenticate storage service
+### Examples
 
-S3 or GCS authentication is required depending on the storage service used.
+#### Backup to Amazon S3
 
-- For S3
-  - Set `AWS_REGION` and `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`
-- For GCS
-  - To use [service account authentication](https://cloud.google.com/docs/authentication/production), create JSON Web Key and set `GCP_SERVICE_JSON_PATH` and `GCP_PROJECT_ID`
-  - To use [HMAC authentication](https://cloud.google.com/storage/docs/authentication/hmackeys), set `GCP_ACCESS_KEY_ID`, `GCP_SECRET_ACCESS_KEY`, and `GCP_PROJECT_ID`
+```bash
+backup --target-bucket-url s3://my-bucket/backups/ \
+  --aws-region us-east-1 \
+  --aws-access-key-id YOUR_ACCESS_KEY_ID \
+  --aws-secret-access-key YOUR_SECRET_ACCESS_KEY \
+  --backup-tool-options "-v /path/to/backup"
+```
+
+#### Backup to Google Cloud Storage
+
+```bash
+backup --target-bucket-url gs://my-bucket/backups/ \
+  --gcp-project-id your-project-id \
+  --gcp-service-account-key-json-path /path/to/service-account-key.json \
+  --backup-tool-options "-v /path/to/backup"
+```
+
+#### Using Environment Variables
+
+```bash
+export TARGET_BUCKET_URL=s3://my-bucket/backups/
+export AWS_REGION=us-east-1
+export AWS_ACCESS_KEY_ID=YOUR_ACCESS_KEY_ID
+export AWS_SECRET_ACCESS_KEY=YOUR_SECRET_ACCESS_KEY
+export BACKUP_TOOL_OPTIONS="-v /path/to/backup"
+
+backup
+```
+
+#### Using Streaming Mode
+
+```bash
+backup --target-bucket-url s3://my-bucket/backups/ \
+  --aws-region us-east-1 \
+  --aws-access-key-id YOUR_ACCESS_KEY_ID \
+  --aws-secret-access-key YOUR_SECRET_ACCESS_KEY \
+  --backup-tool-options "-v /path/to/backup" \
+  --use-stream
+```
+
+#### Using Cron Mode
+
+```bash
+backup --target-bucket-url s3://my-bucket/backups/ \
+  --aws-region us-east-1 \
+  --aws-access-key-id YOUR_ACCESS_KEY_ID \
+  --aws-secret-access-key YOUR_SECRET_ACCESS_KEY \
+  --backup-tool-options "-v /path/to/backup" \
+  --cronmode "0 4 * * *"
+```
+
+## Authentication
+
+### For Amazon S3
+
+- Set `AWS_REGION` and `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`
+- For S3-compatible services, also set `AWS_ENDPOINT_URL`
+
+### For Google Cloud Storage
+
+- Set `GCP_SERVICE_ACCOUNT_KEY_JSON_PATH` and `GCP_PROJECT_ID`, or
+- Set `GCP_CLIENT_EMAIL` and `GCP_PRIVATE_KEY` and `GCP_PROJECT_ID`
+
+For details, see [service account authentication](https://cloud.google.com/docs/authentication/production).
+
+**Note**: You can't use HMAC authentication to authenticate GCS. (https://github.com/googleapis/nodejs-storage/issues/117)
+
+## Related Commands
+
+- [file-restore](../file-restore/README.md) - Restore file system data from backup
+- [list](../list/README.md) - List backup files
+- [prune](../prune/README.md) - Delete old backup files
