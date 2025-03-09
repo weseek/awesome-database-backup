@@ -1,5 +1,7 @@
 # Architecture
 
+This document describes the architecture of the awesome-database-backup project, including command structure, execution flow, storage service clients, Docker configuration, and CI/CD setup.
+
 ## Command Structure
 
 Each command (backup, restore, list, prune) is implemented by inheriting from common base classes:
@@ -226,3 +228,267 @@ Storage service clients support the following types of file operations:
      await this.client.send(command);
    }
    ```
+
+## Docker
+
+Docker images are created using multi-stage builds:
+
+### Multi-stage Build Configuration
+
+1. Base image: `node` with appropriate distribution
+   - **Note**: The OS distribution of the base image should match the distribution used in the development container to ensure compatibility
+
+2. Prune stage: Extract only necessary packages from the monorepo
+   ```dockerfile
+   FROM base AS pruned-package
+   ARG packageFilter
+   COPY . .
+   RUN npx turbo@2 prune --docker "${packageFilter}"
+   ```
+
+3. Dependency resolution stage: Install dependencies for required packages
+   ```dockerfile
+   FROM base AS deps-resolver
+   COPY --from=pruned-package --chown=node:node ${optDir}/out/json/ .
+   COPY --from=pruned-package --chown=node:node ${optDir}/out/yarn.lock ./yarn.lock
+   RUN yarn --frozen-lockfile
+   ```
+
+4. Build stage: Build the application
+   ```dockerfile
+   FROM base AS builder
+   ARG packageFilter
+   ENV NODE_ENV=production
+   COPY --from=deps-resolver --chown=node:node ${optDir}/ ${optDir}/
+   COPY --from=pruned-package --chown=node:node ${optDir}/out/full/ ${optDir}/
+   RUN yarn run turbo run build --filter="${packageFilter}..."
+   ```
+
+5. Tool stage: Install database-specific tools
+   ```dockerfile
+   FROM base AS tool-common
+   RUN apt-get update && apt-get install -y bzip2 curl ca-certificates gnupg
+
+   FROM tool-common AS mongodb-tools
+   ARG dbToolVersion
+   RUN . /tmp/install-functions.sh && install_mongo_tools "${dbToolVersion}"
+
+   FROM tool-common AS postgresql-tools
+   ARG dbToolVersion
+   RUN . /tmp/install-functions.sh && install_postgresql_tools "${dbToolVersion}"
+
+   FROM tool-common AS mariadb-tools
+   ARG dbToolVersion
+   RUN . /tmp/install-functions.sh && install_mariadb_tools "${dbToolVersion}"
+   ```
+
+6. Release stage: Create the final image
+   ```dockerfile
+   FROM ${dbType:-file}-tools AS release
+   ARG packagePath
+   ENV NODE_ENV=production
+   COPY --from=builder --chown=node:node ${optDir}/ ${appDir}/
+   COPY ./docker/entrypoint.sh ${appDir}/
+   ENTRYPOINT ["/app/entrypoint.sh"]
+   CMD ["backup", "list", "prune"]
+   ```
+
+### Building Docker Images
+
+Different images can be built for each database type:
+
+```bash
+# Build image for MongoDB backup
+docker build -t awesome-mongodb-backup \
+  --build-arg dbType=mongodb \
+  --build-arg dbToolVersion=100.10.0 \
+  --build-arg packageFilter=awesome-mongodb-backup \
+  --build-arg packagePath=apps/awesome-mongodb-backup \
+  -f docker/Dockerfile .
+
+# Build image for PostgreSQL backup
+docker build -t awesome-postgresql-backup \
+  --build-arg dbType=postgresql \
+  --build-arg dbToolVersion=17 \
+  --build-arg packageFilter=awesome-postgresql-backup \
+  --build-arg packagePath=apps/awesome-postgresql-backup \
+  -f docker/Dockerfile .
+
+# Build image for MariaDB backup
+docker build -t awesome-mariadb-backup \
+  --build-arg dbType=mariadb \
+  --build-arg dbToolVersion=11.7.2 \
+  --build-arg packageFilter=awesome-mariadb-backup \
+  --build-arg packagePath=apps/awesome-mariadb-backup \
+  -f docker/Dockerfile .
+```
+
+### Docker Image Usage Examples
+
+```bash
+# Run MongoDB backup
+docker run --rm \
+  -e TARGET_BUCKET_URL=s3://my-bucket/backups/ \
+  -e AWS_REGION=us-east-1 \
+  -e AWS_ACCESS_KEY_ID=your-access-key \
+  -e AWS_SECRET_ACCESS_KEY=your-secret-key \
+  -e BACKUP_TOOL_OPTIONS="--uri mongodb://mongo:27017/mydb" \
+  awesome-mongodb-backup backup
+
+# List backup files
+docker run --rm \
+  -e TARGET_BUCKET_URL=s3://my-bucket/backups/ \
+  -e AWS_REGION=us-east-1 \
+  -e AWS_ACCESS_KEY_ID=your-access-key \
+  -e AWS_SECRET_ACCESS_KEY=your-secret-key \
+  awesome-mongodb-backup list
+
+# Delete old backup files
+docker run --rm \
+  -e TARGET_BUCKET_URL=s3://my-bucket/backups/ \
+  -e AWS_REGION=us-east-1 \
+  -e AWS_ACCESS_KEY_ID=your-access-key \
+  -e AWS_SECRET_ACCESS_KEY=your-secret-key \
+  awesome-mongodb-backup prune
+```
+
+## CI/CD
+
+GitHub Actions are used to run the following workflows:
+
+### Application Test Workflow
+
+Defined in `.github/workflows/app-test.yaml`:
+
+```yaml
+name: Application - Test
+
+on:
+  push:
+    branches-ignore: [stable]
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  app-test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Get UID/GID
+      id: ids
+      run: |
+        echo "uid=$(id -u)" >> $GITHUB_OUTPUT
+        echo "gid=$(id -g)" >> $GITHUB_OUTPUT
+    - uses: actions/checkout@v4
+    # The "docker-container" driver is used because of using cache
+    - uses: docker/setup-buildx-action@v3
+    # Store the App container image in the local and Github Action cache, respectively
+    - name: Build app container to caching (No push)
+      uses: docker/build-push-action@v6
+      with:
+        context: .devcontainer
+        build-args: |
+          USER_UID=${{ steps.ids.outputs.uid }}
+          USER_GID=${{ steps.ids.outputs.gid }}
+        load: true
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+    - name: Start all DBs and middle
+      run: |
+        docker compose -f .devcontainer/compose.yml build --build-arg USER_UID=${{ steps.ids.outputs.uid }} --build-arg USER_GID=${{ steps.ids.outputs.gid }}
+        docker compose -f .devcontainer/compose.yml up -d
+    - name: Run test
+      run:
+        docker compose -f .devcontainer/compose.yml exec -e NODE_OPTIONS -e CI -T -- node bash -c 'yarn install && yarn test'
+    - name: Show test report to result of action
+      if: success() || failure()
+      uses: ctrf-io/github-test-reporter@v1
+      with:
+        report-path: '**/ctrf/*.json'
+    - name: Show coverage report follow the settings .octocov.yml
+      if: success() || failure()
+      uses: k1LoW/octocov-action@v1
+```
+
+### Container Test Workflow
+
+Defined in `.github/workflows/container-test.yaml`:
+
+```yaml
+name: Container - Test
+
+on:
+  push:
+    branches-ignore: [stable]
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  container-test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        db-type: [mongodb, postgresql, mariadb, file]
+    steps:
+    - uses: actions/checkout@v4
+    # The "docker-container" driver is used because of using cache
+    - uses: docker/setup-buildx-action@v3
+    # Build container image
+    - name: Build container image
+      uses: docker/build-push-action@v6
+      with:
+        context: .
+        file: docker/Dockerfile
+        build-args: |
+          dbType=${{ matrix.db-type }}
+          dbToolVersion=100.10.0
+          packageFilter=awesome-${{ matrix.db-type }}-backup
+          packagePath=apps/awesome-${{ matrix.db-type }}-backup
+        load: true
+        tags: awesome-${{ matrix.db-type }}-backup:test
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+    # Test container image
+    - name: Test container image
+      run: |
+        docker run --rm awesome-${{ matrix.db-type }}-backup:test --help
+```
+
+### Test Reports
+
+Test results are output in the following formats:
+
+1. Jest Test Report:
+   - When the CI environment variable is set (in CI environments), test reports are created in `**/ctrf/*.json` format
+   - When the CI environment variable is not set (local development), only test summaries are displayed in the console
+   - The ctrf-io/github-test-reporter action is used to display these reports in GitHub Actions
+
+2. Coverage Report: Generated according to `.octocov.yml` settings
+   - Displayed using k1LoW/octocov-action
+
+### Workflow Features
+
+1. Concurrency control
+   ```yaml
+   concurrency:
+     group: ${{ github.workflow }}-${{ github.ref }}
+     cancel-in-progress: true
+   ```
+   - Prevents multiple workflows from running for the same branch
+   - Cancels in-progress workflows when new commits are pushed
+
+2. Cache utilization
+   ```yaml
+   cache-from: type=gha
+   cache-to: type=gha,mode=max
+   ```
+   - Uses GitHub Actions cache to reduce build time
+
+3. Matrix builds
+   ```yaml
+   strategy:
+     matrix:
+       db-type: [mongodb, postgresql, mariadb, file]
+   ```
+   - Runs tests in parallel for multiple database types
