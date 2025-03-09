@@ -76,6 +76,7 @@ docker run --rm \
 | `AWS_ACCESS_KEY_ID` | Your IAM Access Key ID |
 | `AWS_SECRET_ACCESS_KEY` | Your IAM Secret Access Key |
 | `AWS_ENDPOINT_URL` | URL to send the request to (for S3-compatible services) |
+| `GCP_ENDPOINT_URL` | URL to send the request to for GCP |
 | `GCP_PROJECT_ID` | GCP Project ID |
 | `GCP_SERVICE_ACCOUNT_KEY_JSON_PATH` | JSON file path to your GCP Service Account Key |
 | `GCP_CLIENT_EMAIL` | GCP Client Email |
@@ -84,6 +85,7 @@ docker run --rm \
 | `RESTORE_TOOL_OPTIONS` | Options to pass to tar command for restore (e.g., "-C /path/to/restore") |
 | `BACKUPFILE_PREFIX` | Prefix of backup file (default: "backup") |
 | `CRON_EXPRESSION` | Cron expression for scheduled backups (e.g., "0 4 * * *" for daily at 4:00 AM) |
+| `HEALTHCHECK_URL` | URL that gets called after a successful backup (e.g., https://healthchecks.io) |
 | `USE_STREAM` | Set to "true" to use streaming mode for backup (no temporary files) |
 | `TZ` | Timezone for timestamps (default: UTC) |
 
