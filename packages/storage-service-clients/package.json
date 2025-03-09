@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.723.0",
+    "@aws-sdk/credential-providers": "^3.758.0",
     "@google-cloud/storage": "^5.19.4",
     "axios": "^0.27.2",
     "axios-retry": "^3.2.5",
