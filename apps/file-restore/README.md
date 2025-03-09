@@ -30,7 +30,27 @@ TIPS:
 NOTICE:
   You can pass tar options by set "--restore-tool-options". (ex. "-C /path/to/restore")
 ```
-★TBD
+
+### Examples
+
+Restore from Amazon S3:
+
+```bash
+restore --target-bucket-url s3://my-bucket/backups/backup-20220611170158.tar.gz \
+  --aws-region us-east-1 \
+  --aws-access-key-id YOUR_ACCESS_KEY_ID \
+  --aws-secret-access-key YOUR_SECRET_ACCESS_KEY \
+  --restore-tool-options "-C /path/to/restore"
+```
+
+Restore from Google Cloud Storage:
+
+```bash
+restore --target-bucket-url gs://my-bucket/backups/backup-20220611170158.tar.gz \
+  --gcp-project-id your-project-id \
+  --gcp-service-account-key-json-path /path/to/service-account-key.json \
+  --restore-tool-options "-C /path/to/restore"
+```
 
 ## Authenticate storage service
 
@@ -38,6 +58,8 @@ S3 or GCS authentication is required depending on the storage service used.
 
 - For S3
   - Set `AWS_REGION` and `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`
-- For GCS
-  - To use [service account authentication](https://cloud.google.com/docs/authentication/production), create JSON Web Key and set `GCP_SERVICE_JSON_PATH` and `GCP_PROJECT_ID`
-  - To use [HMAC authentication](https://cloud.google.com/storage/docs/authentication/hmackeys), set `GCP_ACCESS_KEY_ID`, `GCP_SECRET_ACCESS_KEY`, and `GCP_PROJECT_ID`
+- For GCS(*)
+  - Set `GCP_SERVICE_ACCOUNT_KEY_JSON_PATH` and `GCP_PROJECT_ID`, or `GCP_CLIENT_EMAIL` and `GCP_PRIVATE_KEY` and `GCP_PROJECT_ID`.  
+    For detail, see [service account authentication](https://cloud.google.com/docs/authentication/production).
+
+(*) You can't use HMAC authentication to authenticate GCS. (https://github.com/googleapis/nodejs-storage/issues/117)
