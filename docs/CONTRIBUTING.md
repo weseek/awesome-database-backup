@@ -1,6 +1,8 @@
 # Contribution
 
-## Abstraction
+This document provides guidelines for contributing to the awesome-database-backup project.
+
+## Introduction
 
 First, thank you very much for your contributions! :tada:
 
@@ -12,13 +14,13 @@ You can write issues and PRs in English or Japanese.
 
 ### Posting Pull Requests
 
-* Make sure to post PRs which based on latest master branch.
+* Make sure to post PRs based on the latest master branch.
 * Please make sure to pass the test suite before posting your PR.
     * Run `yarn test`
 
-# Coding Rules
+## Coding Rules
 
-## 1. Command Implementation
+### Command Implementation
 
 When implementing a command for a new database:
 
@@ -49,7 +51,7 @@ When implementing a command for a new database:
    }
    ```
 
-## 2. Storage Service Client
+### Storage Service Client
 
 When implementing a new storage service client:
 
@@ -88,7 +90,7 @@ When implementing a new storage service client:
    }
    ```
 
-## 3. Option Definition
+### Option Definition
 
 Command options are defined as interfaces:
 
@@ -100,7 +102,7 @@ export interface INewCommandOption extends ICommonCommandOption {
 }
 ```
 
-## 4. Error Handling
+### Error Handling
 
 Catch errors appropriately and log them:
 
@@ -114,7 +116,7 @@ try {
 }
 ```
 
-# Testing
+## Testing
 
 Each command must have corresponding tests:
 
@@ -132,7 +134,7 @@ describe('NewDBBackupCommand', () => {
 });
 ```
 
-## Test Patterns
+### Test Patterns
 
 Tests should cover the following patterns:
 
@@ -178,7 +180,7 @@ Tests should cover the following patterns:
 
 4. Test for when special options like stream mode are specified
 
-## Test Utilities
+### Test Utilities
 
 Test utility packages are available:
 
@@ -191,3 +193,71 @@ Test utility packages are available:
   - Preparation of test databases
   - Insertion of test data
   - Providing connection information
+
+## Versioning
+
+For version management, use the `bump-version` script:
+
+```bash
+# Increase patch version
+npm run bump-version:patch
+
+# Increase minor version
+npm run bump-version:minor
+
+# Increase major version
+npm run bump-version:major
+```
+
+### Versioning Mechanism
+
+Versioning is implemented in the `misc/bump-versions` package:
+
+1. Version update flow:
+   - Update the version in `package.json` for each package
+   - Update dependency versions
+   - Create commit and tag
+
+2. Configuration file: `.bump-versionsrc.js`
+   ```javascript
+   module.exports = {
+     // Packages to update versions for
+     packages: [
+       'apps/*',
+       'packages/*',
+     ],
+     // Commit message after version update
+     commitMessage: 'chore: bump version to %s',
+     // Tag after version update
+     tagName: 'v%s',
+   };
+   ```
+
+3. Semantic versioning:
+   - Patch version (x.y.Z): Bug fixes and small changes
+   - Minor version (x.Y.z): Backward-compatible feature additions
+   - Major version (X.y.z): Backward-incompatible changes
+
+### Release Process
+
+1. Work on development branch
+   - Implement feature additions or bug fixes
+   - Run tests to verify functionality
+
+2. Update version
+   ```bash
+   # Update version according to the type of change
+   npm run bump-version:patch  # or :minor, :major
+   ```
+
+3. Merge to release branch
+   - Merge to `stable` branch
+   - Verify that CI tests pass
+
+4. Create release tag
+   - Use tag automatically created during version update
+   - Or manually create tag: `git tag v0.3.2`
+
+5. Create release notes
+   - Use GitHub Releases
+   - Document major changes
