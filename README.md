@@ -20,4 +20,4 @@ Refer to the "README" corresponding to the database you are using.
 
 # How to contribute
 
-see. [CONTRIBUTING](./CONTRIBUTING.md)
+see. [CONTRIBUTING](./docs/CONTRIBUTING.md)
