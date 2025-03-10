@@ -1,3 +1,4 @@
+import { Readable } from 'stream';
 import { listS3FilesOptions } from './method-options/s3';
 import { listGCSFilesOptions } from './method-options/gcs';
 
@@ -8,6 +9,7 @@ export interface IStorageServiceClient {
   listFiles(url: string, optionsRequired?: listS3FilesOptions | listGCSFilesOptions): Promise<string[]>,
   deleteFile(url: string): Promise<void>,
   copyFile(copySource: string, copyDestination: string): Promise<void>,
+  uploadStream(stream: Readable, fileName: string, destinationUri: string): Promise<void>,
 }
 
 export * from './config/gcs';

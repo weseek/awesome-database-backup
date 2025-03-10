@@ -2,10 +2,25 @@
 
 Prune backuped files from Amazon S3 or Google Cloud Storage. You can set a custom S3 endpoint to use S3 based services like DigitalOcean Spaces instead of Amazon S3.
 
+## Features
+
+- Delete old backup files from cloud storage (S3, GCS)
+- Support for S3-compatible services (DigitalOcean Spaces, etc.)
+- Configurable retention policy
+- Automatic cleanup based on file age
+
 ## Usage
 
+### Basic Usage
 
-### How to prune
+```bash
+prune --target-bucket-url s3://my-bucket/backups/ \
+  --aws-region us-east-1 \
+  --aws-access-key-id YOUR_ACCESS_KEY_ID \
+  --aws-secret-access-key YOUR_SECRET_ACCESS_KEY
+```
+
+### Options
 
 ```
 Usage: prune [options]
@@ -28,14 +43,86 @@ Options:
   -h, --help                                                               display help for command
 ```
 
-## Authenticate storage service
+### Examples
 
-S3 or GCS authentication is required depending on the storage service used.
+#### Prune Files from Amazon S3
 
-- For S3
-  - Set `AWS_REGION` and `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`
-- For GCS(*)
-  - Set `GCP_SERVICE_JSON_PATH`, or `GCP_CLIENT_EMAIL` and `GCP_PRIVATE_KEY`.  
-    For detail, see [service account authentication](https://cloud.google.com/docs/authentication/production).
+```bash
+prune --target-bucket-url s3://my-bucket/backups/ \
+  --aws-region us-east-1 \
+  --aws-access-key-id YOUR_ACCESS_KEY_ID \
+  --aws-secret-access-key YOUR_SECRET_ACCESS_KEY
+```
 
-(*) You can't use HMAC authentication to authenticate GCS. (https://github.com/googleapis/nodejs-storage/issues/117)
+#### Prune Files from Google Cloud Storage
+
+```bash
+prune --target-bucket-url gs://my-bucket/backups/ \
+  --gcp-project-id your-project-id \
+  --gcp-service-account-key-json-path /path/to/service-account-key.json
+```
+
+#### Using Environment Variables
+
+```bash
+export TARGET_BUCKET_URL=s3://my-bucket/backups/
+export AWS_REGION=us-east-1
+export AWS_ACCESS_KEY_ID=YOUR_ACCESS_KEY_ID
+export AWS_SECRET_ACCESS_KEY=YOUR_SECRET_ACCESS_KEY
+
+prune
+```
+
+#### Customizing Retention Policy
+
+```bash
+# Keep more recent backups
+prune --target-bucket-url s3://my-bucket/backups/ \
+  --aws-region us-east-1 \
+  --aws-access-key-id YOUR_ACCESS_KEY_ID \
+  --aws-secret-access-key YOUR_SECRET_ACCESS_KEY \
+  --delete-divide 5 \
+  --delete-target-days-left 7
+
+# Only delete very old backups
+prune --target-bucket-url s3://my-bucket/backups/ \
+  --aws-region us-east-1 \
+  --aws-access-key-id YOUR_ACCESS_KEY_ID \
+  --aws-secret-access-key YOUR_SECRET_ACCESS_KEY \
+  --delete-target-days-left 30
+```
+
+## Retention Policy
+
+The prune command uses a retention policy to determine which backup files to delete:
+
+- `--delete-divide`: Divides the backup files into groups. Default is 3, meaning it keeps 1/3 of the files and deletes 2/3.
+- `--delete-target-days-left`: Only considers files older than this many days. Default is 4, meaning it only deletes files that are at least 4 days old.
+
+For example, with the default settings:
+- Files less than 4 days old are always kept
+- Of the files 4+ days old, 1/3 are kept and 2/3 are deleted
+
+This approach ensures you keep more recent backups while still maintaining some historical backups.
+
+## Authentication
+
+### For Amazon S3
+
+- Set `AWS_REGION` and `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`
+- For S3-compatible services, also set `AWS_ENDPOINT_URL`
+
+### For Google Cloud Storage
+
+- Set `GCP_SERVICE_ACCOUNT_KEY_JSON_PATH` and `GCP_PROJECT_ID`, or
+- Set `GCP_CLIENT_EMAIL` and `GCP_PRIVATE_KEY` and `GCP_PROJECT_ID`
+
+For details, see [service account authentication](https://cloud.google.com/docs/authentication/production).
+
+**Note**: You can't use HMAC authentication to authenticate GCS. (https://github.com/googleapis/nodejs-storage/issues/117)
+
+## Related Commands
+
+- [file-backup](../file-backup/README.md) - Backup file system data to cloud storage
+- [file-restore](../file-restore/README.md) - Restore file system data from backup
+- [list](../list/README.md) - List backup files

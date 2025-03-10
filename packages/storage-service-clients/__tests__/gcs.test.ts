@@ -1,3 +1,4 @@
+import { Readable } from 'stream';
 import { GCSURI, GCSStorageServiceClientConfig } from '../src/interfaces';
 import GCSStorageServiceClient from '../src/gcs';
 
@@ -478,6 +479,81 @@ describe('GCSStorageServiceClient', () => {
 
       it('reject and throw Error', async() => {
         await expect(gcsServiceClient.copyFileOnRemote(copySource, copyDestination)).rejects.toThrowError();
+      });
+    });
+  });
+
+  describe('#uploadStream', () => {
+    const uploadDestinationUri = 'gs://bucket-name/object-name';
+
+    describe('when requested GCS URI is invalid', () => {
+      const invalidUri = 'invalid://bucket-name/object-name';
+
+      it('reject with throw error about invalid URI', async() => {
+        const stream = new Readable();
+        stream.push('test data');
+        stream.push(null); // End of stream
+
+        await expect(gcsServiceClient.uploadStream(stream, 'backupFileName', invalidUri))
+          .rejects.toThrowError(`URI ${invalidUri} is not correct GCS's`);
+      });
+    });
+
+    describe('when requested GCS URI is valid', () => {
+      describe('when pipeline resolves', () => {
+        beforeEach(() => {
+          const writeStreamMock = jest.fn();
+          const fileMock = {
+            createWriteStream: jest.fn().mockReturnValue(writeStreamMock),
+          };
+          const bucketMock = {
+            file: jest.fn().mockReturnValue(fileMock),
+          };
+          gcsServiceClient.client.bucket = jest.fn().mockReturnValue(bucketMock);
+
+          // Mock the pipeline function
+          jest.spyOn(require('stream/promises'), 'pipeline').mockResolvedValue(undefined);
+        });
+
+        afterEach(() => {
+          jest.restoreAllMocks();
+        });
+
+        it('resolve with undefined', async() => {
+          const stream = new Readable();
+          stream.push('test data');
+          stream.push(null); // End of stream
+
+          await expect(gcsServiceClient.uploadStream(stream, 'backupFileName', uploadDestinationUri)).resolves.toBe(undefined);
+        });
+      });
+
+      describe('when pipeline rejects', () => {
+        beforeEach(() => {
+          const writeStreamMock = jest.fn();
+          const fileMock = {
+            createWriteStream: jest.fn().mockReturnValue(writeStreamMock),
+          };
+          const bucketMock = {
+            file: jest.fn().mockReturnValue(fileMock),
+          };
+          gcsServiceClient.client.bucket = jest.fn().mockReturnValue(bucketMock);
+
+          // Mock the pipeline function to reject
+          jest.spyOn(require('stream/promises'), 'pipeline').mockRejectedValue(new Error('stream error'));
+        });
+
+        afterEach(() => {
+          jest.restoreAllMocks();
+        });
+
+        it('reject and throw Error', async() => {
+          const stream = new Readable();
+          stream.push('test data');
+          stream.push(null); // End of stream
+
+          await expect(gcsServiceClient.uploadStream(stream, 'backupFileName', uploadDestinationUri)).rejects.toThrowError('stream error');
+        });
       });
     });
   });

@@ -67,33 +67,28 @@ FROM tool-common AS mongodb-tools
 
 # YOU MUST SET dbToolVersion
 ARG dbToolVersion
-RUN apt-get update \
-      && curl https://fastdl.mongodb.org/tools/db/mongodb-database-tools-debian10-x86_64-${dbToolVersion}.deb -o mongodb-database-tools.deb \
-      && apt-get install -y ./mongodb-database-tools.deb \
-      && apt-get clean \
-      && rm -rf /var/lib/apt/lists/* \
-      && rm ./mongodb-database-tools.deb
+RUN --mount=type=bind,source=.devcontainer/build-support/install-functions.sh,dst=/tmp/install-functions.sh \
+    . /tmp/install-functions.sh && \
+    install_mongo_tools "${dbToolVersion}" && \
+    clean_apt && clean_apt_lists
 
 FROM tool-common AS postgresql-tools
 
 # YOU MUST SET dbToolVersion
 ARG dbToolVersion
-RUN echo "deb http://apt.postgresql.org/pub/repos/apt $(cat /etc/os-release | grep VERSION_CODENAME | cut -d = -f 2)-pgdg main" > /etc/apt/sources.list.d/pgdg.list \
-      && curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - \
-      && apt-get update \
-      && apt-get install -y postgresql-common postgresql-client-${dbToolVersion} --no-install-recommends \
-      && apt-get clean \
-      && rm -rf /var/lib/apt/lists/*
+RUN --mount=type=bind,source=.devcontainer/build-support/install-functions.sh,dst=/tmp/install-functions.sh \
+    . /tmp/install-functions.sh && \
+    install_postgresql_tools "${dbToolVersion}" && \
+    clean_apt && clean_apt_lists
 
 FROM tool-common AS mariadb-tools
 
 # YOU MUST SET dbToolVersion
 ARG dbToolVersion
-RUN curl -sSL https://downloads.mariadb.com/MariaDB/mariadb_repo_setup | bash -s -- --mariadb-server-version=${dbToolVersion} \
-      && apt-get update \
-      && apt-get install -y mariadb-common mariadb-client --no-install-recommends \
-      && apt-get clean \
-      && rm -rf /var/lib/apt/lists/*
+RUN --mount=type=bind,source=.devcontainer/build-support/install-functions.sh,dst=/tmp/install-functions.sh \
+    . /tmp/install-functions.sh && \
+    install_mariadb_tools "${dbToolVersion}" && \
+    clean_apt && clean_apt_lists
 
 FROM tool-common AS file-tools
 

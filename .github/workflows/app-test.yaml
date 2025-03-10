@@ -11,34 +11,32 @@ jobs:
   app-test:
     runs-on: ubuntu-latest
     steps:
-    # Increase workspace space
-    - name: Remove docker image
+    - name: Get UID/GID
+      id: ids
       run: |
-        docker image prune --force --all
+        echo "uid=$(id -u)" >> $GITHUB_OUTPUT
+        echo "gid=$(id -g)" >> $GITHUB_OUTPUT
     - uses: actions/checkout@v4
-    # Pull the latest image to build, and avoid caching pull-only images.
-    # (docker pull is faster than caching in most cases.)
-    - name: Pull Docker images
-      run: docker compose -f .devcontainer/compose.yml pull
-    # This step loads "node_modules" from the cache which contains the cache of Turborepo.
-    # The "node_modules" will be mounted with the source code when `docker compose up` is executed.
-    - name: Load cache "node_modules" which includes cahce of Turborepo
-      uses: actions/cache@v4
-      env:
-        cache-name: cache-node-modules
+    # The "docker-container" driver is used because of using cache
+    - uses: docker/setup-buildx-action@v3
+    # Store the App container image in the local and Github Action cache, respectively
+    - name: Build app container to caching (No push)
+      uses: docker/build-push-action@v6
       with:
-        path: node_modules
-        key:
-          ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-build-${{ env.cache-name }}-
+        context: .devcontainer
+        build-args: |
+          USER_UID=${{ steps.ids.outputs.uid }}
+          USER_GID=${{ steps.ids.outputs.gid }}
+        load: true                  # Save build result localy because of using cache by next steps
+        cache-from: type=gha        # Read layers from gha cache
+        cache-to: type=gha,mode=max # Save layers as much as possible to gha cache
     - name: Start all DBs and middle
       run: |
-        docker compose -f .devcontainer/compose.yml build --build-arg USER_UID=$(id -u) --build-arg USER_GID=$(id -g)
+        docker compose -f .devcontainer/compose.yml build --build-arg USER_UID=${{ steps.ids.outputs.uid }} --build-arg USER_GID=${{ steps.ids.outputs.gid }}
         docker compose -f .devcontainer/compose.yml up -d
     - name: Run test
       run:
-        docker compose -f .devcontainer/compose.yml exec -e NODE_OPTIONS -T -- node bash -c 'yarn install && yarn test'
+        docker compose -f .devcontainer/compose.yml exec -e NODE_OPTIONS -e CI -T -- node bash -c 'yarn install && yarn test'
       env:
         # Temporarily ignore warnings
         # see:
@@ -46,4 +44,11 @@ jobs:
         # * https://github.com/nodejs/node/pull/56632
         NODE_OPTIONS: --no-deprecation
 
-    # [TODO] Coverage report
+    - name: Show test report to result of action
+      if: success() || failure()
+      uses: ctrf-io/github-test-reporter@v1
+      with:
+        report-path: '**/ctrf/*.json'
+    - name: Show coverage report follow the settings .octocov.yml
+      if: success() || failure()
+      uses: k1LoW/octocov-action@v1
