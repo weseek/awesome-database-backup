@@ -1,15 +1,8 @@
-import {
-  S3StorageServiceClientConfig,
-  GCSStorageServiceClientConfig,
-} from '@awesome-database-backup/storage-service-clients';
-
 /* Common command option types */
 export type ICommonCommandOption =
   {
     targetBucketUrl: URL,
-  }
-  & S3StorageServiceClientConfig
-  & GCSStorageServiceClientConfig;
+  };
 
 /* Backup command option types */
 export interface IBackupCommandOption extends ICommonCommandOption {
