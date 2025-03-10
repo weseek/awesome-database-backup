@@ -122,6 +122,55 @@ volumes:
   mariadb_data:
 ```
 
+#### Kubernetes Example
+
+```yaml
+# Create a Kubernetes service account
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: backup-service-account
+  namespace: default
+---
+# Create a CronJob that uses the service account
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: mariadb-backup-job
+  namespace: default
+spec:
+  schedule: "0 2 * * *"  # Run at 2 AM every day
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: backup-service-account
+          containers:
+          - name: backup
+            image: weseek/awesome-mariadb-backup
+            env:
+            - name: TARGET_BUCKET_URL
+              value: s3://my-bucket/backups/
+            - name: AWS_REGION
+              value: us-east-1
+            - name: AWS_ROLE_ARN
+              value: "arn:aws:iam::123456789012:role/my-backup-role"
+            - name: AWS_WEB_IDENTITY_TOKEN_FILE
+              value: "/var/run/secrets/tokens/aws-token"
+            - name: BACKUP_TOOL_OPTIONS
+              value: --host mariadb --user root --all-databases
+            volumeMounts:
+            - name: token-volume
+              mountPath: /var/run/secrets/tokens
+          volumes:
+          - name: token-volume
+            projected:
+              sources:
+              - serviceAccountToken:
+                  path: aws-token
+          restartPolicy: OnFailure
+```
+
 ## Timezone Settings
 
 Timezone is not set as default so time-stamp show UTC.
