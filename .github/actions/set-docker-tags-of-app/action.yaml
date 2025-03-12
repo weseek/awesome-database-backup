@@ -1,19 +1,16 @@
-name: Set docker meta of app
+name: Set docker tags of app
 
 inputs:
   db-type:
-    type: string
-    optional: false
+    required: true
   db-tool-version:
-    type: string
-    optional: false
+    required: true
   is-latest-tag:
-    type: boolean
-    optional: false
-    default: false
+    required: true
+    default: ''
   registry:
     type: string
-    optional: true
+    required: false
     default: docker.io
 outputs:
   image:
@@ -24,7 +21,7 @@ outputs:
     value: ${{ steps.meta.outputs.tags }}
 
 runs:
-  using: 'composite'
+  using: composite
   steps:
   - name: Set image
     id: set-image
