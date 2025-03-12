@@ -144,6 +144,13 @@ Storage service clients provide operations for cloud storage services such as S3
      - Uses AWS SDK for JavaScript
      - Supports S3-compatible services (e.g., DigitalOcean Spaces)
      - Custom endpoint URL configuration is possible
+     - Supports multiple authentication methods:
+       - Explicit credentials (access key and secret key)
+       - AWS configuration files (~/.aws/config and ~/.aws/credentials)
+       - Environment variables (AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)
+       - AWS STS with WebIdentity tokens (for Kubernetes service accounts)
+       - EC2 instance profiles
+       - ECS container credentials
    - `GCSStorageServiceClient`: Client for GCS
      - Uses Google Cloud Storage Node.js client library
      - Supports service account authentication

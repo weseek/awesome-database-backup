@@ -5,9 +5,14 @@ import S3StorageServiceClient from '../src/s3';
 afterEach(() => {
   jest.resetModules();
   jest.dontMock('@aws-sdk/client-s3');
+  jest.dontMock('@aws-sdk/credential-providers');
   jest.dontMock('fs');
   jest.dontMock('stream');
-  jest.dontMock('../src/s3-config');
+  delete process.env.AWS_REGION;
+  delete process.env.AWS_ACCESS_KEY_ID;
+  delete process.env.AWS_SECRET_ACCESS_KEY;
+  delete process.env.AWS_ROLE_ARN;
+  delete process.env.AWS_WEB_IDENTITY_TOKEN_FILE;
 });
 
 // You can call mock functions with "beforeAll" to execute before set "s3ServiceClient" variable.
@@ -29,79 +34,116 @@ describe('S3StorageServiceClient', () => {
   };
 
   describe('constructor', () => {
-    describe('when config file exists', () => {
+    const fromNodeProviderChainMock = jest.fn().mockReturnValue({});
+    const S3ClientMock = jest.fn();
+
+    beforeEach(() => {
+      jest.resetModules();
+      jest.doMock('@aws-sdk/credential-providers', () => ({
+        fromNodeProviderChain: fromNodeProviderChainMock,
+      }));
+      jest.doMock('@aws-sdk/client-s3', () => ({
+        ...(jest.requireActual('@aws-sdk/client-s3') as any),
+        S3Client: S3ClientMock,
+      }));
+    });
+
+    describe('when config is empty', () => {
       const config: S3StorageServiceClientConfig = {};
 
-      beforeEach(() => {
-        jest.resetModules();
-        jest.doMock('../src/s3-config', () => ({
-          configExistS3: jest.fn().mockReturnValue(true),
-        }));
-      });
-
-      it('return undefined', () => {
+      it('initializes S3Client with default settings', () => {
         const s3 = require('../src/s3');
-        expect(new s3.S3StorageServiceClient(config).constructor.name).toBe('S3StorageServiceClient');
+        expect(() => new s3.S3StorageServiceClient(config)).not.toThrow();
+        expect(S3ClientMock).toHaveBeenCalledWith({
+          credentials: {},
+        });
+        expect(fromNodeProviderChainMock).toHaveBeenCalled();
       });
     });
 
-    describe('when config file does not exists', () => {
-      const S3ClientMock = jest.fn();
+    describe('when config has region', () => {
+      const config: S3StorageServiceClientConfig = {
+        awsRegion: 'us-east-1',
+      };
 
+      it('sets region in S3Client config', () => {
+        const s3 = require('../src/s3');
+        expect(() => new s3.S3StorageServiceClient(config)).not.toThrow();
+        expect(S3ClientMock).toHaveBeenCalledWith({
+          region: 'us-east-1',
+          credentials: {},
+        });
+        expect(fromNodeProviderChainMock).toHaveBeenCalled();
+      });
+    });
+
+    describe('when config has credentials', () => {
+      const config: S3StorageServiceClientConfig = {
+        awsRegion: 'us-east-1',
+        awsAccessKeyId: 'test-access-key',
+        awsSecretAccessKey: 'test-secret-key',
+      };
+
+      it('uses credentials directly in S3Client config', () => {
+        const s3 = require('../src/s3');
+        expect(() => new s3.S3StorageServiceClient(config)).not.toThrow();
+        expect(S3ClientMock).toHaveBeenCalledWith({
+          region: 'us-east-1',
+          credentials: {
+            accessKeyId: 'test-access-key',
+            secretAccessKey: 'test-secret-key',
+          },
+        });
+        expect(fromNodeProviderChainMock).not.toHaveBeenCalled();
+      });
+    });
+
+    describe('when config has endpoint URL', () => {
+      const config: S3StorageServiceClientConfig = {
+        awsRegion: 'us-east-1',
+        awsEndpointUrl: new URL('https://custom-endpoint.example.com'),
+      };
+
+      it('includes endpoint in S3Client config', () => {
+        const s3 = require('../src/s3');
+        expect(() => new s3.S3StorageServiceClient(config)).not.toThrow();
+        expect(S3ClientMock).toHaveBeenCalledWith({
+          region: 'us-east-1',
+          endpoint: 'https://custom-endpoint.example.com/',
+          credentials: {},
+        });
+        expect(fromNodeProviderChainMock).toHaveBeenCalled();
+      });
+    });
+
+    describe('when using STS with WebIdentity token', () => {
       beforeEach(() => {
-        jest.resetModules();
-        jest.doMock('../src/s3-config', () => ({
-          configExistS3: jest.fn().mockReturnValue(false),
-        }));
-        jest.doMock('@aws-sdk/client-s3', () => ({
-          ...(jest.requireActual('@aws-sdk/client-s3') as any),
-          S3Client: S3ClientMock,
-        }));
+        // Set environment variables for STS
+        process.env.AWS_ROLE_ARN = 'arn:aws:iam::123456789012:role/test-role';
+        process.env.AWS_WEB_IDENTITY_TOKEN_FILE = '/path/to/token/file';
       });
 
-      describe('when config is empty', () => {
-        const config: S3StorageServiceClientConfig = {};
+      it('uses NodeProviderChain for credentials', () => {
+        const s3 = require('../src/s3');
+        expect(() => new s3.S3StorageServiceClient({})).not.toThrow();
+        expect(S3ClientMock).toHaveBeenCalledWith({
+          credentials: {},
+        });
+        expect(fromNodeProviderChainMock).toHaveBeenCalled();
+      });
+    });
 
-        it('throw error', () => {
-          const s3 = require('../src/s3');
-          expect(() => new s3.S3StorageServiceClient(config))
-            .toThrowError(new Error(
-              'If the configuration file does not exist, '
-                + 'you will need to set "--aws-region", "--aws-access-key-id", and "--aws-secret-access-key".',
-            ));
+    describe('when S3Client initialization fails', () => {
+      beforeEach(() => {
+        S3ClientMock.mockImplementation(() => {
+          throw new Error('S3Client initialization error');
         });
       });
 
-      describe('when config is valid without "awsEndpointUrl"', () => {
-        const config: S3StorageServiceClientConfig = s3BareMinimumConfig;
-
-        it('throw error', () => {
-          const s3 = require('../src/s3');
-          expect(new s3.S3StorageServiceClient(config).constructor.name).toBe('S3StorageServiceClient');
-          expect(S3ClientMock).toBeCalledWith({
-            region: 'validRegion',
-            credentials: {
-              accessKeyId: 'validAccessKeyId',
-              secretAccessKey: 'validSecretAccessKey',
-            },
-          });
-        });
-      });
-
-      describe('when config is valid with "awsEndpointUrl"', () => {
-        const config: S3StorageServiceClientConfig = s3BareMinimumConfig;
-
-        it('call constructor of Storage class with args', () => {
-          const s3 = require('../src/s3');
-          expect(new s3.S3StorageServiceClient(config).constructor.name).toBe('S3StorageServiceClient');
-          expect(S3ClientMock).toBeCalledWith({
-            region: 'validRegion',
-            credentials: {
-              accessKeyId: 'validAccessKeyId',
-              secretAccessKey: 'validSecretAccessKey',
-            },
-          });
-        });
+      it('throws the error', () => {
+        const s3 = require('../src/s3');
+        expect(() => new s3.S3StorageServiceClient({}))
+          .toThrow('S3Client initialization error');
       });
     });
   });
