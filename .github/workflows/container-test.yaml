@@ -11,11 +11,11 @@ jobs:
   set-matrix:
     runs-on: ubuntu-latest
     outputs:
-      toolPatterns: ${{ steps.set-matrix.outputs.toolPatterns }}
+      toolPatterns: ${{ steps.set-tool-version-patterns.outputs.toolPatterns }}
     steps:
     - uses: actions/checkout@v4
     - uses: ./.github/actions/set-tool-version-patterns
-      id: set-matrix
+      id: set-tool-version-patterns
 
   container-test:
     needs: set-matrix
@@ -30,7 +30,12 @@ jobs:
       run: |
         echo "package_filter=@awesome-database-backup/awesome-${{ matrix.db_tool.db_type }}-backup" >> $GITHUB_OUTPUT
         echo "package_path=apps/awesome-${{ matrix.db_tool.db_type }}-backup" >> $GITHUB_OUTPUT
-        echo "package_image_name=weseek/awesome-${{ matrix.db_tool.db_type }}-backup" >> $GITHUB_OUTPUT
+    - uses: ./.github/actions/set-docker-tags-of-app
+      id: docker-meta
+      with:
+        db-type: ${{ matrix.db_tool.db_type }}
+        db-tool-version: ${{ matrix.db_tool.version }}
+        is-latest-tag: true
     # The "docker-container" driver is used
     - uses: docker/setup-buildx-action@v3
     - name: Build container (No push)
@@ -42,12 +47,12 @@ jobs:
           packagePath=${{ steps.pkg_meta.outputs.package_path }}
           dbType=${{ matrix.db_tool.db_type }}
           dbToolVersion=${{ matrix.db_tool.version }}
-        tags: ${{ steps.pkg_meta.outputs.package_image_name }}:latest
+        tags: ${{ steps.docker-meta.outputs.image }}:latest
         load: true # Save build result localy because of using cache by next steps
     - name: Run structure tests
       uses: brpaz/structure-tests-action@1.4.0
       with:
-        image: ${{ steps.pkg_meta.outputs.package_image_name }}:latest
+        image: ${{ steps.docker-meta.outputs.image }}:latest
         configFile: ./docker/test/${{ matrix.db_tool.db_type }}/structure-tests.yml
       env:
         BACKUP_TOOL_VERSION: ${{ matrix.db_tool.version }}
