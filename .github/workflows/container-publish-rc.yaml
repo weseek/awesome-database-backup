@@ -1,7 +1,8 @@
-# Publish a container image which built app of the master branch so that it can be tried out before release
+# Publish a container image which built app of the target branch so that it can be tried out before release
 name: Container - Publish RC
 
 on:
+  workflow_dispatch:
   push:
     branches: [master]
 
