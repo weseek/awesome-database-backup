@@ -25,6 +25,7 @@ runs:
   steps:
   - name: Set image
     id: set-image
+    shell: bash
     run: |
       echo "image=${{ inputs.registry }}/weseek/awesome-${{ inputs.db-type }}-backup" >> $GITHUB_OUTPUT
   - uses: xile611/read-package-version-action@v2.1
