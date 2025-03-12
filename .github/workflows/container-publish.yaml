@@ -1,6 +1,8 @@
+# Publish a container image which built app of the target branch to Docker hub
 name: Container - Publish
 
 on:
+  workflow_dispatch:
   release:
     types: [published]
 

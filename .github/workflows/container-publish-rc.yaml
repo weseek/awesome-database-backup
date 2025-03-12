@@ -1,4 +1,4 @@
-# Publish a container image which built app of the target branch so that it can be tried out before release
+# Publish a container image which built app of the target branch to Github Packages so that it can be tried out before release
 name: Container - Publish RC
 
 on:
