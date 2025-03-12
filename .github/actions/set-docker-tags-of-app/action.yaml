@@ -11,10 +11,10 @@ inputs:
   registry:
     type: string
     required: false
-    default: docker.io
+    default: ''
 outputs:
   image:
-    description: Container image name
+    description: Container image name (ex. )
     value: ${{ steps.set-image.outputs.image }}
   tags:
     description: Docker tags (see. https://github.com/docker/metadata-action?tab=readme-ov-file#outputs)
@@ -27,7 +27,12 @@ runs:
     id: set-image
     shell: bash
     run: |
-      echo "image=${{ inputs.registry }}/weseek/awesome-${{ inputs.db-type }}-backup" >> $GITHUB_OUTPUT
+      if [ -n "${{ inputs.registry }}" ]; then
+        image_name="${{ inputs.registry }}/weseek/awesome-${{ inputs.db-type }}-backup"
+      else
+        image_name="weseek/awesome-${{ inputs.db-type }}-backup"
+      fi
+      echo "image=$image_name" >> $GITHUB_OUTPUT
   - uses: xile611/read-package-version-action@v2.1
     id: package-json
   - uses: docker/metadata-action@v5
