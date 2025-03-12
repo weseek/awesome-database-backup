@@ -558,8 +558,6 @@ describe('S3StorageServiceClient', () => {
   });
 
   describe('#uploadStream', () => {
-    const uploadDestinationUri = 's3://bucket-name/object-name';
-
     describe('when requested S3 URI is invalid', () => {
       const invalidUrl = 'invalid://bucket-name/object-name';
 
@@ -574,6 +572,8 @@ describe('S3StorageServiceClient', () => {
     });
 
     describe('when requested S3 URI is valid', () => {
+      const uploadDestinationUri = 's3://bucket-name/object-name';
+
       describe('when S3Client#send resolve', () => {
         beforeEach(() => {
           s3ServiceClient.client.send = jest.fn().mockResolvedValue(null);
@@ -601,6 +601,30 @@ describe('S3StorageServiceClient', () => {
 
           await expect(s3ServiceClient.uploadStream(stream, 'backupFileName', uploadDestinationUri)).rejects.toThrowError('some error');
         });
+      });
+    });
+
+    describe('when requested S3 UI end without object name', () => {
+      const uploadDestinationUri = 's3://bucket-name/';
+      let capturedCommand: any;
+
+      beforeEach(() => {
+        s3ServiceClient.client.send = jest.fn().mockImplementation(async(command) => {
+          capturedCommand = command;
+          return null;
+        });
+      });
+
+      it('called with expected command', async() => {
+        const stream = new Readable();
+        stream.push('test data');
+        stream.push(null); // End of stream
+
+        await s3ServiceClient.uploadStream(stream, 'backupFileName', uploadDestinationUri);
+        expect(capturedCommand.input).toEqual(expect.objectContaining({
+          Bucket: 'bucket-name',
+          Key: 'backupFileName',
+        }));
       });
     });
   });

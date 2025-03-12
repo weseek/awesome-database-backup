@@ -215,7 +215,7 @@ export class S3StorageServiceClient implements IStorageServiceClient {
 
     const params: PutObjectCommandInput = {
       Bucket: destinationS3Uri.bucket,
-      Key: [destinationS3Uri.key, fileName].join('/'),
+      Key: [destinationS3Uri.key, fileName].filter(it => it).join('/'),
       Body: buffer,
     };
     const command = new PutObjectCommand(params);
