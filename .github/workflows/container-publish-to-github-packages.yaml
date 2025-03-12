@@ -1,10 +1,10 @@
-# Publish a container image which built app of the target branch to Docker hub
-name: Container - Publish
+# Publish a container image which built app of the target branch to Github Packages so that it can be tried out before release
+name: Container - Publish to Github Packages
 
 on:
   workflow_dispatch:
-  release:
-    types: [published]
+  push:
+    branches: [master]
 
 jobs:
   set-matrix:
@@ -19,6 +19,11 @@ jobs:
   container-publish:
     needs: set-matrix
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
     strategy:
       matrix:
         db_tool: ${{ fromJson(needs.set-matrix.outputs.toolPatterns) }}
@@ -35,13 +40,15 @@ jobs:
       with:
         db-type: ${{ matrix.db_tool.db_type }}
         db-tool-version: ${{ matrix.db_tool.version }}
-        is-latest-tag: true
+        registry: ghcr.io
     - uses: docker/login-action@v3
       with:
-        username: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
-        password: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+        registry: ghcr.io
     - uses: docker/setup-buildx-action@v3
     - name: Build and push container
+      id: push
       uses: docker/build-push-action@v6
       with:
         context: .
@@ -54,20 +61,19 @@ jobs:
           dbType=${{ matrix.db_tool.db_type }}
           dbToolVersion=${{ matrix.db_tool.version }}
         tags: ${{ steps.docker-meta.outputs.tags }}
-
-    - name: Update Docker hub's description
-      uses: peter-evans/dockerhub-description@v4.0.0
-      env:
-        DOCKERHUB_USERNAME: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
-        DOCKERHUB_PASSWORD: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
-        DOCKERHUB_REPOSITORY: ${{ steps.docker-meta.outputs.image }}
-        README_FILEPATH: ${{ steps.pkg-meta.outputs.package_path }}/README.md
+    - name: Generate artifact attestation
+      uses: actions/attest-build-provenance@v2
+      with:
+        subject-name: ${{ steps.docker-meta.outputs.image }}
+        subject-digest: ${{ steps.push.outputs.digest }}
+        push-to-registry: true
 
   container-publish-slack-notification:
     needs: container-publish
     runs-on: ubuntu-latest
     steps:
-    - name: Slack Notification
+    - if: failure()
+      name: Slack Notification
       uses: weseek/ghaction-release-slack-notification@master
       with:
         channel: '#srv'
