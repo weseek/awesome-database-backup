@@ -28,9 +28,9 @@ runs:
     shell: bash
     run: |
       if [ -n "${{ inputs.registry }}" ]; then
-        image_name="${{ inputs.registry }}/weseek/awesome-${{ inputs.db-type }}-backup"
+        image_name="${{ inputs.registry }}/${{ github.repository_owner }}/awesome-${{ inputs.db-type }}-backup"
       else
-        image_name="weseek/awesome-${{ inputs.db-type }}-backup"
+        image_name="${{ github.repository_owner }}/awesome-${{ inputs.db-type }}-backup"
       fi
       echo "image=$image_name" >> $GITHUB_OUTPUT
   - uses: xile611/read-package-version-action@v2.1
