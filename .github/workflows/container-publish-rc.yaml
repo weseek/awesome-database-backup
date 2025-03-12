@@ -18,6 +18,11 @@ jobs:
   container-publish:
     needs: set-matrix
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
     strategy:
       matrix:
         db_tool: ${{ fromJson(needs.set-matrix.outputs.toolPatterns) }}
@@ -25,7 +30,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Set up metadata
-      id: pkg_meta
+      id: pkg-meta
       run: |
         echo "package_filter=@awesome-database-backup/awesome-${{ matrix.db_tool.db_type }}-backup" >> $GITHUB_OUTPUT
         echo "package_path=apps/awesome-${{ matrix.db_tool.db_type }}-backup" >> $GITHUB_OUTPUT
@@ -35,12 +40,14 @@ jobs:
         db-type: ${{ matrix.db_tool.db_type }}
         db-tool-version: ${{ matrix.db_tool.version }}
         registry: ghcr.io
-    - name: Login to ghcr.io registry
-      run:
-        echo ${{ secrets.DOCKER_REGISTRY_PASSWORD }} |
-          docker login ghcr.io --username ${{ secrets.DOCKER_REGISTRY_USERNAME }} --password-stdin
+    - uses: docker/login-action@v3
+      with:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+        registry: ghcr.io
     - uses: docker/setup-buildx-action@v3
     - name: Build and push container
+      id: push
       uses: docker/build-push-action@v6
       with:
         context: .
@@ -48,11 +55,17 @@ jobs:
         platforms: linux/amd64
         push: true
         build-args: |
-          packageFilter=${{ steps.pkg_meta.outputs.package_filter }}
-          packagePath=${{ steps.pkg_meta.outputs.package_path }}
+          packageFilter=${{ steps.pkg-meta.outputs.package_filter }}
+          packagePath=${{ steps.pkg-meta.outputs.package_path }}
           dbType=${{ matrix.db_tool.db_type }}
           dbToolVersion=${{ matrix.db_tool.version }}
         tags: ${{ steps.docker-meta.outputs.tags }}
+    - name: Generate artifact attestation
+      uses: actions/attest-build-provenance@v2
+      with:
+        subject-name: ${{ steps.docker-meta.outputs.image }}
+        subject-digest: ${{ steps.push.outputs.digest }}
+        push-to-registry: true
 
   container-publish-slack-notification:
     needs: container-publish
