@@ -72,12 +72,12 @@ describe('BackupCommand', () => {
       const options = s3BareMinimumOptions;
 
       beforeEach(() => {
-        command.backupOnce = jest.fn().mockResolvedValue(undefined);
+        command.backupOnceWithStream = jest.fn().mockResolvedValue(undefined);
       });
 
-      it('call backupOnce()', async() => {
+      it('call backupOnceWithStream()', async() => {
         await expect(command.execBackupAction(options)).resolves.toBe(undefined);
-        expect(command.backupOnce).toBeCalled();
+        expect(command.backupOnceWithStream).toBeCalled();
       });
     });
 

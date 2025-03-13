@@ -50,7 +50,8 @@ describe('backup', () => {
         --aws-access-key-id ${s3ClientConfig.credentials.accessKeyId} \
         --aws-secret-access-key ${s3ClientConfig.credentials.secretAccessKey} \
         --backup-tool-options "--uri ${mongodbURI}" \
-        --target-bucket-url ${testS3BucketURI}`;
+        --target-bucket-url ${testS3BucketURI} \
+        --save-with-tempfile`;
 
       it('backup mongo in bucket', async() => {
         expect(await exec(commandLine)).toEqual({
@@ -72,7 +73,6 @@ describe('backup', () => {
         --aws-access-key-id ${s3ClientConfig.credentials.accessKeyId} \
         --aws-secret-access-key ${s3ClientConfig.credentials.secretAccessKey} \
         --backup-tool-options "--uri ${mongodbURI}" \
-        --use-stream \
         --target-bucket-url ${testS3BucketURI}`;
 
       it('backup mongo in bucket using stream mode', async() => {
@@ -97,7 +97,8 @@ describe('backup', () => {
         --gcp-client-email ${storageConfig.credentials.client_email} \
         --gcp-private-key ${storageConfig.credentials.private_key} \
         --backup-tool-options "--uri ${mongodbURI}" \
-        --target-bucket-url ${testGCSBucketURI}/`;
+        --target-bucket-url ${testGCSBucketURI}/ \
+        --save-with-tempfile`;
 
       it('backup mongo in bucket', async() => {
         expect((await listFileNamesInTestGCSBucket()).length).toBe(0);
@@ -121,7 +122,6 @@ describe('backup', () => {
         --gcp-client-email ${storageConfig.credentials.client_email} \
         --gcp-private-key ${storageConfig.credentials.private_key} \
         --backup-tool-options "--uri ${mongodbURI}" \
-        --use-stream \
         --target-bucket-url ${testGCSBucketURI}/`;
 
       it('backup mongo in bucket using stream mode', async() => {
