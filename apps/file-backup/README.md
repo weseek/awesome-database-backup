@@ -42,7 +42,7 @@ Options:
   --cronmode <CRON_EXPRESSION>                                             Run `backup` as cron mode. In Cron mode, `backup` will be executed periodically.(ex. CRON_EXPRESSION="0 4 * * *" if you want to run at 4:00 every day) (env: CRON_EXPRESSION)
   --healthcheck-url <HEALTHCHECK_URL>                                      URL that gets called after a successful backup (eg. https://healthchecks.io) (env: HEALTHCHECKS_URL)
   --backup-tool-options <OPTIONS_STRING>                                   pass options to backup tool exec (ex. "--host db.example.com --username admin") (env: BACKUP_TOOL_OPTIONS)
-  --use-stream                                                             Use streaming mode for backup (no temporary files) (env: USE_STREAM)
+  --save-with-tempfile                                                     Save backup file with temporary file name before processing it. (env: SAVE_WITH_TEMPFILE)
   -h, --help                                                               display help for command
 
 NOTICE:
@@ -82,7 +82,7 @@ export BACKUP_TOOL_OPTIONS="-v /path/to/backup"
 backup
 ```
 
-#### Using Streaming Mode
+#### Using Tempfile Mode
 
 ```bash
 backup --target-bucket-url s3://my-bucket/backups/ \
@@ -90,7 +90,7 @@ backup --target-bucket-url s3://my-bucket/backups/ \
   --aws-access-key-id YOUR_ACCESS_KEY_ID \
   --aws-secret-access-key YOUR_SECRET_ACCESS_KEY \
   --backup-tool-options "-v /path/to/backup" \
-  --use-stream
+  --save-with-tempfile
 ```
 
 #### Using Cron Mode
