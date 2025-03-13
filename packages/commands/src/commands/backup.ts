@@ -45,11 +45,11 @@ export class BackupCommand extends StorageServiceClientCommand {
     if (options.cronmode) {
       backupMethod = this.backupCronMode.bind(this);
     }
-    else if (options.useStream) {
-      backupMethod = this.backupOnceWithStream.bind(this);
+    else if (options.saveWithTemplate) {
+      backupMethod = this.backupOnce.bind(this);
     }
     else {
-      backupMethod = this.backupOnce.bind(this);
+      backupMethod = this.backupOnceWithStream.bind(this);
     }
 
     await backupMethod(options);
@@ -154,11 +154,11 @@ export class BackupCommand extends StorageServiceClientCommand {
       )
       .addOption(
         new Option(
-          '--use-stream',
-          'Use streaming mode for backup (no temporary files)',
+          '--save-with-tempfile',
+          'Save backup file with temporary file name before processing it.',
         )
           .default(false)
-          .env('USE_STREAM'),
+          .env('SAVE_WITH_TEMPFILE'),
       );
   }
 
