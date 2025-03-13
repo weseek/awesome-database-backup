@@ -604,7 +604,7 @@ describe('S3StorageServiceClient', () => {
       });
     });
 
-    describe('when requested S3 UI end without object name', () => {
+    describe('when requested S3 URI end without object name', () => {
       const uploadDestinationUri = 's3://bucket-name/';
       let capturedCommand: any;
 
@@ -624,6 +624,30 @@ describe('S3StorageServiceClient', () => {
         expect(capturedCommand.input).toEqual(expect.objectContaining({
           Bucket: 'bucket-name',
           Key: 'backupFileName',
+        }));
+      });
+    });
+
+    describe('when requested S3 URI contains object name and end with slash', () => {
+      const uploadDestinationUri = 's3://bucket-name/object-name/';
+      let capturedCommand: any;
+
+      beforeEach(() => {
+        s3ServiceClient.client.send = jest.fn().mockImplementation(async(command) => {
+          capturedCommand = command;
+          return null;
+        });
+      });
+
+      it('called with expected command', async() => {
+        const stream = new Readable();
+        stream.push('test data');
+        stream.push(null); // End of stream
+
+        await s3ServiceClient.uploadStream(stream, 'backupFileName', uploadDestinationUri);
+        expect(capturedCommand.input).toEqual(expect.objectContaining({
+          Bucket: 'bucket-name',
+          Key: 'object-name/backupFileName',
         }));
       });
     });

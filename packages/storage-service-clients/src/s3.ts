@@ -10,6 +10,7 @@ import {
 } from '@aws-sdk/client-s3';
 import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
 import { promises as StreamPromises, Readable } from 'stream';
+import path from 'node:path';
 import {
   IStorageServiceClient,
   listS3FilesOptions,
@@ -187,7 +188,7 @@ export class S3StorageServiceClient implements IStorageServiceClient {
 
   async copyFileOnRemote(sourceS3Uri: S3URI, destinationS3Uri: S3URI): Promise<void> {
     const params: CopyObjectCommandInput = {
-      CopySource: [sourceS3Uri.bucket, sourceS3Uri.key].join('/'),
+      CopySource: path.join(sourceS3Uri.bucket, sourceS3Uri.key),
       Bucket: destinationS3Uri.bucket,
       Key: destinationS3Uri.key,
     };
@@ -215,7 +216,7 @@ export class S3StorageServiceClient implements IStorageServiceClient {
 
     const params: PutObjectCommandInput = {
       Bucket: destinationS3Uri.bucket,
-      Key: [destinationS3Uri.key, fileName].filter(it => it).join('/'),
+      Key: path.join(destinationS3Uri.key, fileName),
       Body: buffer,
     };
     const command = new PutObjectCommand(params);
