@@ -2,6 +2,12 @@ import { Readable } from 'stream';
 import { GCSURI, GCSStorageServiceClientConfig } from '../src/interfaces';
 import GCSStorageServiceClient from '../src/gcs';
 
+afterEach(() => {
+  jest.resetModules();
+  jest.dontMock('@google-cloud/storage');
+  delete process.env.GOOGLE_APPLICATION_CREDENTIALS;
+});
+
 describe('GCSStorageServiceClient', () => {
   let gcsServiceClient: GCSStorageServiceClient;
 
@@ -38,6 +44,30 @@ describe('GCSStorageServiceClient', () => {
         expect(StorageMock).toBeCalledWith({
           projectId: 'validProjectId',
           keyFilename: '/path/to/file',
+        });
+      });
+    });
+
+    describe('when using GOOGLE_APPLICATION_CREDENTIALS env', () => {
+      const StorageMock = jest.fn();
+      const config = {
+        gcpProjectId: 'validProjectId',
+      };
+
+      beforeEach(() => {
+        jest.resetModules();
+        jest.doMock('@google-cloud/storage', () => ({
+          Storage: StorageMock,
+        }));
+        // Set environment variables for ADC
+        process.env.GOOGLE_APPLICATION_CREDENTIALS = '/path/to/credential/file';
+      });
+
+      it('call constractur of Storage with only project ID', () => {
+        const gcs = require('../src/gcs');
+        expect(() => new gcs.GCSStorageServiceClient(config)).not.toThrow();
+        expect(StorageMock).toHaveBeenCalledWith({
+          projectId: 'validProjectId',
         });
       });
     });
