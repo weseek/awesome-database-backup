@@ -15,20 +15,6 @@ describe('GCSStorageServiceClient', () => {
       });
     });
 
-    describe('when config is only set validProjectId', () => {
-      const config: GCSStorageServiceClientConfig = {
-        gcpProjectId: 'validProjectId',
-      };
-
-      it('throw error', () => {
-        expect(() => new GCSStorageServiceClient(config))
-          .toThrowError(new Error(
-            'If you does not set "--gcp-service-account-key-json-path", '
-            + 'you will need to set all of "--gcp-client-email" and "--gcp-private-key".',
-          ));
-      });
-    });
-
     describe('when config is valid with "gcpServiceAccountKeyJsonPath" is set', () => {
       const StorageMock = jest.fn();
       const config = {
@@ -50,6 +36,7 @@ describe('GCSStorageServiceClient', () => {
 
       it('call constructor of Storage class with args', () => {
         expect(StorageMock).toBeCalledWith({
+          projectId: 'validProjectId',
           keyFilename: '/path/to/file',
         });
       });
