@@ -86,6 +86,7 @@ docker run --rm \
 | `BACKUPFILE_PREFIX` | Prefix of backup file (default: "backup") |
 | `CRON_EXPRESSION` | Cron expression for scheduled backups (e.g., "0 4 * * *" for daily at 4:00 AM) |
 | `HEALTHCHECK_URL` | URL that gets called after a successful backup (e.g., https://healthchecks.io) |
+| `GOOGLE_APPLICATION_CREDENTIALS` | Path to JSON credentials configuration file of Application Default Credentials(ADC) for your external identity |
 | `USE_STREAM` | Set to "true" to use streaming mode for backup (no temporary files) |
 | `TZ` | Timezone for timestamps (default: UTC) |
 
@@ -158,6 +159,11 @@ spec:
           restartPolicy: OnFailure
 ```
 #### Kubernetes Example (Use GCS)
+
+Prerequisite:
+
+- Prepare IAM users with read/write permissions to GCS with WorkloadIdentityFederation
+  - https://cloud.google.com/iam/docs/workload-identity-federation
 
 ```yaml
 # Create a Kubernetes service account
