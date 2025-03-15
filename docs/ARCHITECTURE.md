@@ -154,6 +154,7 @@ Storage service clients provide operations for cloud storage services such as S3
    - `GCSStorageServiceClient`: Client for GCS
      - Uses Google Cloud Storage Node.js client library
      - Supports service account authentication
+     - Supports Application Default Credentials
 
 3. Factory pattern:
    - `storageServiceClientFactory`: Creates appropriate client based on URL scheme
