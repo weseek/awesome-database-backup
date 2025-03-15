@@ -1,5 +1,7 @@
-import { Storage, File } from '@google-cloud/storage';
+import { Storage, File, type StorageOptions } from '@google-cloud/storage';
 import { basename, join } from 'path';
+import { Readable } from 'stream';
+import { pipeline } from 'stream/promises';
 import {
   IStorageServiceClient,
   listGCSFilesOptions,
@@ -17,33 +19,29 @@ export class GCSStorageServiceClient implements IStorageServiceClient {
   client: Storage;
 
   constructor(config: GCSStorageServiceClientConfig) {
+    const storageconfig: StorageOptions = {};
+
     if (config.gcpProjectId == null) {
       throw new Error('You will need to set "--gcp-project-id".');
     }
-    if (config.gcpServiceAccountKeyJsonPath == null && (config.gcpClientEmail == null || config.gcpPrivateKey == null)) {
-      throw new Error('If you does not set "--gcp-service-account-key-json-path", '
-                        + 'you will need to set all of "--gcp-client-email" and "--gcp-private-key".');
-    }
 
-    const storageconfig = Object.assign(
-      config.gcpServiceAccountKeyJsonPath
-        ? {
-          keyFilename: config.gcpServiceAccountKeyJsonPath,
-        }
-        : {
-          projectId: config.gcpProjectId,
-          credentials: {
-            client_email: config.gcpClientEmail,
-            // [MEMO] Converting escaped characters because newline codes cannot be entered in the commander argument.
-            private_key: config.gcpPrivateKey?.replace(/\\n/g, '\n'),
-          },
-        },
-      config.gcpEndpointUrl
-        ? {
-          apiEndpoint: config.gcpEndpointUrl.toString(),
-        }
-        : {},
-    );
+    // Set project ID
+    storageconfig.projectId = config.gcpProjectId;
+    // Set endpoint if specified
+    if (config.gcpEndpointUrl) {
+      storageconfig.apiEndpoint = config.gcpEndpointUrl.toString();
+    }
+    // Set credentials if specified
+    if (config.gcpServiceAccountKeyJsonPath) {
+      storageconfig.keyFilename = config.gcpServiceAccountKeyJsonPath;
+    }
+    if (config.gcpClientEmail && config.gcpPrivateKey) {
+      storageconfig.credentials = {
+        client_email: config.gcpClientEmail,
+        // [MEMO] Converting escaped characters because newline codes cannot be entered in the commander argument.
+        private_key: config.gcpPrivateKey?.replace(/\\n/g, '\n'),
+      };
+    }
 
     this.name = 'GCS';
     this.client = new Storage(storageconfig);
@@ -131,6 +129,28 @@ export class GCSStorageServiceClient implements IStorageServiceClient {
     const destinationFile = this.client.bucket(destinationGCSUri.bucket).file(destinationGCSUri.filepath);
 
     await sourceFile.copy(destinationFile);
+  }
+
+  /**
+   * Upload a stream directly to GCS
+   *
+   * This method allows streaming data directly to GCS without creating temporary files.
+   * Useful for large data transfers where you want to avoid disk I/O.
+   */
+  async uploadStream(stream: Readable, fileName: string, destinationUri: string): Promise<void> {
+    const destinationGCSUri = this._parseFilePath(destinationUri);
+    if (destinationGCSUri == null) throw new Error(`URI ${destinationUri} is not correct GCS's`);
+
+    const destinationBucket = this.client.bucket(destinationGCSUri.bucket);
+    const destination = join(destinationGCSUri.filepath, fileName);
+    const file = destinationBucket.file(destination);
+
+    const writeStream = file.createWriteStream({
+      resumable: false,
+      contentType: 'application/gzip',
+    });
+
+    await pipeline(stream, writeStream);
   }
 
   /**

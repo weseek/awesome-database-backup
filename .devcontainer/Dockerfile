@@ -29,55 +29,19 @@ RUN if [ "$USER_GID" != "1000" ] || [ "$USER_UID" != "1000" ]; then \
     fi
 RUN chown -R $USER_UID:$USER_GID /home/$USERNAME /awesome-database-backup;
 
+# Setup installer function
+COPY build-support/install-functions.sh /tmp/install-functions.sh
+
 # Install tools
 ARG MongoToolVersion=100.10.0
 ARG PostgreSQLClientVersion=17
 ARG MariaDBClientVersion=11.7.2
-## bzip2, curl command
-RUN apt-get update \
-      && apt-get install -y bzip2 curl \
-      && apt-get clean \
-      && rm -rf /var/lib/apt/lists/*
-## mongo shell
-RUN apt-get update \
-      && curl https://downloads.mongodb.com/compass/mongodb-mongosh_1.3.1_amd64.deb -o mongodb-mongosh.deb \
-      && apt-get install -y ./mongodb-mongosh.deb \
-      && apt-get clean \
-      && rm -rf /var/lib/apt/lists/* \
-      && rm ./mongodb-mongosh.deb
-## mongo tools
-RUN apt-get update \
-      && curl https://fastdl.mongodb.org/tools/db/mongodb-database-tools-debian10-x86_64-${MongoToolVersion}.deb -o mongodb-database-tools.deb \
-      && apt-get install -y ./mongodb-database-tools.deb \
-      && apt-get clean \
-      && rm -rf /var/lib/apt/lists/* \
-      && rm ./mongodb-database-tools.deb
-## PostgreSQL tools
-RUN echo "deb http://apt.postgresql.org/pub/repos/apt $(cat /etc/os-release | grep VERSION_CODENAME | cut -d = -f 2)-pgdg main" > /etc/apt/sources.list.d/pgdg.list \
-      && curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - \
-      && apt-get update \
-      && apt-get install -y postgresql-common postgresql-client-${PostgreSQLClientVersion} --no-install-recommends \
-      && apt-get clean \
-      && rm -rf /var/lib/apt/lists/*
-## MariaDB tools
-RUN curl -sSL https://downloads.mariadb.com/MariaDB/mariadb_repo_setup | bash -s -- --mariadb-server-version=${MariaDBClientVersion} \
-      && apt-get update \
-      && apt-get install -y mariadb-common mariadb-client --no-install-recommends \
-      && apt-get clean \
-      && rm -rf /var/lib/apt/lists/*
-## File tools
-### nothing to do
-
-## AWS cli
-RUN curl https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip -o /tmp/awscli.zip \
-      && unzip /tmp/awscli.zip -d /tmp \
-      && /tmp/aws/install \
-      && rm /tmp/awscli.zip
-## Google cloud CLI (also gsutil)
-## ref: https://cloud.google.com/sdk/docs?hl=en#install_the_latest_cloud_tools_version_cloudsdk_current_version
-RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" >> /etc/apt/sources.list.d/google-cloud-sdk.list \
-      && curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key --keyring /usr/share/keyrings/cloud.google.gpg add - \
-      && apt-get update \
-      && apt-get install -y google-cloud-cli \
-      && apt-get clean \
-      && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && \
+    apt-get install -y bzip2 curl && \
+    . /tmp/install-functions.sh && \
+    install_mongo_shell && \
+    install_mongo_tools "${MongoToolVersion}" && \
+    install_postgresql_tools "${PostgreSQLClientVersion}" && \
+    install_mariadb_tools "${MariaDBClientVersion}" && \
+    install_aws_cli && \
+    install_gcloud_cli

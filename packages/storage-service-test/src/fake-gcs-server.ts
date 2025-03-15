@@ -9,10 +9,13 @@ import { storageConfig, testGCSBucketName } from './config/fake-gcs-server';
 const storage = new Storage(storageConfig);
 
 export async function cleanTestGCSBucket(): Promise<void> {
-  await storage.createBucket(testGCSBucketName);
-  await storage.bucket(testGCSBucketName).deleteFiles({ force: true });
-  await storage.bucket(testGCSBucketName).delete({ ignoreNotFound: true });
-  await storage.createBucket(testGCSBucketName);
+  const [exists] = await storage.bucket(testGCSBucketName).exists();
+  if (exists) {
+    await storage.bucket(testGCSBucketName).deleteFiles({ force: true });
+  }
+  else {
+    await storage.createBucket(testGCSBucketName);
+  }
 }
 
 export async function uploadPGFixtureToTestGCSBucket(fixtureName: string): Promise<void> {

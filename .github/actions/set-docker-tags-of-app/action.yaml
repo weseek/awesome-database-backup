@@ -1,0 +1,58 @@
+name: Set docker tags of app
+
+inputs:
+  db-type:
+    required: true
+  db-tool-version:
+    required: true
+  is-latest-tag:
+    required: true
+    default: ''
+  registry:
+    type: string
+    required: false
+    default: ''
+outputs:
+  image:
+    description: Container image name (ex. )
+    value: ${{ steps.set-image.outputs.image }}
+  tags:
+    description: Docker tags (see. https://github.com/docker/metadata-action?tab=readme-ov-file#outputs)
+    value: ${{ steps.meta.outputs.tags }}
+
+runs:
+  using: composite
+  steps:
+  - name: Set image
+    id: set-image
+    shell: bash
+    run: |
+      if [ -n "${{ inputs.registry }}" ]; then
+        image_name="${{ inputs.registry }}/${{ github.repository_owner }}/awesome-${{ inputs.db-type }}-backup"
+      else
+        image_name="${{ github.repository_owner }}/awesome-${{ inputs.db-type }}-backup"
+      fi
+      echo "image=$image_name" >> $GITHUB_OUTPUT
+  - uses: xile611/read-package-version-action@v2.1
+    id: package-json
+  - uses: docker/metadata-action@v5
+    id: meta
+    with:
+      images: ${{ steps.set-image.outputs.image }}
+      # awesome-mongodb-backup:latest                ... latest version of awesome-mongodb-backup and latest version of DB tool
+      # awesome-mongodb-backup:1                     ... specified major version of awesome-mongodb-backup and latest version of DB tool
+      # awesome-mongodb-backup:1.2                   ... specified minor version of awesome-mongodb-backup and latest version of DB tool
+      # awesome-mongodb-backup:1.2.3                 ... specified patch version of awesome-mongodb-backup and latest version of DB tool
+      # awesome-mongodb-backup:1.2.3-mongodb-100.5.4 ... specified patch version of awesome-mongodb-backup and latest version of DB tool (except when DB tool version does not exist)
+      # awesome-mongodb-backup:mongodb-100.5.4       ... specified version of DB tool version and latest version of awesome-mongodb-backup (except when DB tool version does not exist)
+      # awesome-mongodb-backup:mongodb-100.5.4-1     ... specified version of DB tool version and major version of awesome-mongodb-backup (except when DB tool version does not exist)
+      # awesome-mongodb-backup:mongodb-100.5.4-1.2   ... specified version of DB tool version and minor version of awesome-mongodb-backup (except when DB tool version does not exist)
+      tags: |
+        enable=${{ inputs.is-latest-tag != '' }},type=raw,value=latest
+        type=raw,value=${{ steps.package-json.outputs.major }}
+        type=raw,value=${{ steps.package-json.outputs.major }}.${{ steps.package-json.outputs.minor }}
+        type=raw,value=${{ steps.package-json.outputs.full }}
+        enable=${{ inputs.db-tool-version != '' }},type=raw,value=${{ steps.package-json.outputs.full }}-${{ inputs.db-type }}-${{ inputs.db-tool-version }}
+        enable=${{ inputs.db-tool-version != '' }},type=raw,value=${{ inputs.db-type }}-${{ inputs.db-tool-version }}
+        enable=${{ inputs.db-tool-version != '' }},type=raw,value=${{ inputs.db-type }}-${{ inputs.db-tool-version }}-${{ steps.package-json.outputs.major }}
+        enable=${{ inputs.db-tool-version != '' }},type=raw,value=${{ inputs.db-type }}-${{ inputs.db-tool-version }}-${{ steps.package-json.outputs.major }}.${{ steps.package-json.outputs.minor }}

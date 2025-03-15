@@ -2,11 +2,12 @@ name: Misc - Remove cache
 
 on:
   workflow_dispatch:
-  workflow_run:
-    workflows:
-    - Application - Test
-    types:
-    - completed
+  # [MEMO] ignore temporary
+  # workflow_run:
+  #   workflows:
+  #   - Application - Test
+  #   types:
+  #   - completed
 
 jobs:
   misc-remove_cache:

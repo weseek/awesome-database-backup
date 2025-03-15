@@ -8,14 +8,15 @@ import {
   DeleteObjectCommand, DeleteObjectCommandInput,
   ListObjectsCommand,
 } from '@aws-sdk/client-s3';
+import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
 import { promises as StreamPromises, Readable } from 'stream';
+import path from 'node:path';
 import {
   IStorageServiceClient,
   listS3FilesOptions,
   S3URI,
   S3StorageServiceClientConfig,
 } from './interfaces';
-import { configExistS3 } from './s3-config';
 
 /**
  * Client to manipulate S3 buckets
@@ -27,30 +28,27 @@ export class S3StorageServiceClient implements IStorageServiceClient {
   client: S3Client;
 
   constructor(config: S3StorageServiceClientConfig) {
-    let s3ClientConfig: S3ClientConfig = {};
-    if (!configExistS3()) {
-      if (config.awsRegion == null || config.awsAccessKeyId == null || config.awsSecretAccessKey == null) {
-        throw new Error('If the configuration file does not exist, '
-                          + 'you will need to set "--aws-region", "--aws-access-key-id", and "--aws-secret-access-key".');
-      }
-      s3ClientConfig = Object.assign({
-        ...(
-          {
-            region: config.awsRegion,
-            credentials: {
-              accessKeyId: config.awsAccessKeyId,
-              secretAccessKey: config.awsSecretAccessKey,
-            },
-          }
-        ),
-        ...(
-          config.awsEndpointUrl != null
-            ? {
-              endpoint: config.awsEndpointUrl.toString(),
-            }
-            : {}
-        ),
-      });
+    const s3ClientConfig: S3ClientConfig = {};
+
+    // Set region if specified
+    if (config.awsRegion) {
+      s3ClientConfig.region = config.awsRegion;
+    }
+    // Set endpoint if specified
+    if (config.awsEndpointUrl) {
+      s3ClientConfig.endpoint = config.awsEndpointUrl.toString();
+    }
+    // Set credentials
+    if (config.awsAccessKeyId && config.awsSecretAccessKey) {
+      // If explicit credentials are provided, use them directly
+      s3ClientConfig.credentials = {
+        accessKeyId: config.awsAccessKeyId,
+        secretAccessKey: config.awsSecretAccessKey,
+      };
+    }
+    else {
+      // Otherwise use the credential provider chain
+      s3ClientConfig.credentials = fromNodeProviderChain();
     }
 
     this.name = 'S3';
@@ -190,11 +188,38 @@ export class S3StorageServiceClient implements IStorageServiceClient {
 
   async copyFileOnRemote(sourceS3Uri: S3URI, destinationS3Uri: S3URI): Promise<void> {
     const params: CopyObjectCommandInput = {
-      CopySource: [sourceS3Uri.bucket, sourceS3Uri.key].join('/'),
+      CopySource: path.join(sourceS3Uri.bucket, sourceS3Uri.key),
       Bucket: destinationS3Uri.bucket,
       Key: destinationS3Uri.key,
     };
     const command = new CopyObjectCommand(params);
+
+    await this.client.send(command);
+  }
+
+  /**
+   * Upload a stream directly to S3
+   *
+   * This method allows streaming data directly to S3 without creating temporary files.
+   * Useful for large data transfers where you want to avoid disk I/O.
+   */
+  async uploadStream(stream: Readable, fileName: string, destinationUri: string): Promise<void> {
+    const destinationS3Uri = this._parseFilePath(destinationUri);
+    if (destinationS3Uri == null) throw new Error(`URI ${destinationUri} is not correct S3's`);
+
+    // Collect stream data in buffer before uploading
+    const chunks: Buffer[] = [];
+    for await (const chunk of stream) {
+      chunks.push(Buffer.from(chunk));
+    }
+    const buffer = Buffer.concat(chunks);
+
+    const params: PutObjectCommandInput = {
+      Bucket: destinationS3Uri.bucket,
+      Key: path.join(destinationS3Uri.key, fileName),
+      Body: buffer,
+    };
+    const command = new PutObjectCommand(params);
 
     await this.client.send(command);
   }
