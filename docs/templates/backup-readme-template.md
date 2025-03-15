@@ -43,10 +43,10 @@
 [ENV_VARS_EXAMPLE]
 ```
 
-#### Using Streaming Mode
+#### Using Tempfile Mode
 
 ```bash
-[STREAMING_EXAMPLE]
+[TEMPFILE_EXAMPLE]
 ```
 
 #### Using Cron Mode
