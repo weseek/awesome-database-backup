@@ -84,6 +84,7 @@ docker run --rm \
 | `BACKUPFILE_PREFIX` | Prefix of backup file (default: "backup") |
 | `CRON_EXPRESSION` | Cron expression for scheduled backups (e.g., "0 4 * * *" for daily at 4:00 AM) |
 | `HEALTHCHECK_URL` | URL that gets called after a successful backup (e.g., https://healthchecks.io) |
+| `GOOGLE_APPLICATION_CREDENTIALS` | Path to JSON credentials configuration file of Application Default Credentials(ADC) for your external identity |
 | `USE_STREAM` | Set to "true" to use streaming mode for backup (no temporary files) |
 | `TZ` | Timezone for timestamps (default: UTC) |
 
@@ -119,7 +120,7 @@ volumes:
   mongodb_data:
 ```
 
-#### Kubernetes Example
+#### Kubernetes Example (Use S3)
 
 ```yaml
 # Create a Kubernetes service account
@@ -165,6 +166,79 @@ spec:
               sources:
               - serviceAccountToken:
                   path: aws-token
+          restartPolicy: OnFailure
+```
+
+#### Kubernetes Example (Use GCS)
+
+Prerequisite:
+
+- Prepare IAM users with read/write permissions to GCS with WorkloadIdentityFederation
+  - https://cloud.google.com/iam/docs/workload-identity-federation
+
+```yaml
+# Create a Kubernetes service account
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: backup-service-account
+  namespace: default
+---
+# Create a CronJob that uses the service account
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: file-backup-job
+  namespace: default
+spec:
+  schedule: "0 2 * * *"  # Run at 2 AM every day
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: backup-service-account
+          initContainers:
+          - name: issue-token
+            image: gcr.io/google.com/cloudsdktool/google-cloud-cli:stable
+            command:
+            - sh
+            - -c
+            - |
+              gcloud iam workload-identity-pools create-cred-config \
+                projects/123456789012/locations/global/workloadIdentityPools/my-pool-name/providers/my-provider-name \
+                --output-file=/var/run/secrets/gcloud/config/federation.json \
+                --credential-source-file=/var/run/secrets/tokens/gcs-token
+              gcloud auth login --cred-file=/var/run/secrets/gcloud/config/federation.json
+            volumeMounts:
+            - name: token-volume
+              mountPath: /var/run/secrets/tokens
+            - name: gcloud-config
+              mountPath: /var/run/secrets/gcloud/config
+          containers:
+          - name: backup
+            image: weseek/awesome-file-backup
+            env:
+            - name: TARGET_BUCKET_URL
+              value: gcs://my-bucket/backups/
+            - name: GCP_PROJECT_ID
+              value: gcs-temp
+            - name: GOOGLE_APPLICATION_CREDENTIALS
+              value: /var/run/secrets/gcloud/config/federation.json
+            - name: BACKUP_TOOL_OPTIONS
+              value: -v /data
+            volumeMounts:
+              - name: token-volume
+                mountPath: /var/run/secrets/tokens
+              - name: gcloud-config
+                mountPath: /var/run/secrets/gcloud/config
+          volumes:
+          - name: token-volume
+            projected:
+              sources:
+                - serviceAccountToken:
+                    path: gcs-token
+          - name: gcloud-config
+            emptyDir: {}
           restartPolicy: OnFailure
 ```
 

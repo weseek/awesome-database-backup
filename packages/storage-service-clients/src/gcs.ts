@@ -1,4 +1,4 @@
-import { Storage, File } from '@google-cloud/storage';
+import { Storage, File, type StorageOptions } from '@google-cloud/storage';
 import { basename, join } from 'path';
 import { Readable } from 'stream';
 import { pipeline } from 'stream/promises';
@@ -19,33 +19,29 @@ export class GCSStorageServiceClient implements IStorageServiceClient {
   client: Storage;
 
   constructor(config: GCSStorageServiceClientConfig) {
+    const storageconfig: StorageOptions = {};
+
     if (config.gcpProjectId == null) {
       throw new Error('You will need to set "--gcp-project-id".');
     }
-    if (config.gcpServiceAccountKeyJsonPath == null && (config.gcpClientEmail == null || config.gcpPrivateKey == null)) {
-      throw new Error('If you does not set "--gcp-service-account-key-json-path", '
-                        + 'you will need to set all of "--gcp-client-email" and "--gcp-private-key".');
-    }
 
-    const storageconfig = Object.assign(
-      config.gcpServiceAccountKeyJsonPath
-        ? {
-          keyFilename: config.gcpServiceAccountKeyJsonPath,
-        }
-        : {
-          projectId: config.gcpProjectId,
-          credentials: {
-            client_email: config.gcpClientEmail,
-            // [MEMO] Converting escaped characters because newline codes cannot be entered in the commander argument.
-            private_key: config.gcpPrivateKey?.replace(/\\n/g, '\n'),
-          },
-        },
-      config.gcpEndpointUrl
-        ? {
-          apiEndpoint: config.gcpEndpointUrl.toString(),
-        }
-        : {},
-    );
+    // Set project ID
+    storageconfig.projectId = config.gcpProjectId;
+    // Set endpoint if specified
+    if (config.gcpEndpointUrl) {
+      storageconfig.apiEndpoint = config.gcpEndpointUrl.toString();
+    }
+    // Set credentials if specified
+    if (config.gcpServiceAccountKeyJsonPath) {
+      storageconfig.keyFilename = config.gcpServiceAccountKeyJsonPath;
+    }
+    if (config.gcpClientEmail && config.gcpPrivateKey) {
+      storageconfig.credentials = {
+        client_email: config.gcpClientEmail,
+        // [MEMO] Converting escaped characters because newline codes cannot be entered in the commander argument.
+        private_key: config.gcpPrivateKey?.replace(/\\n/g, '\n'),
+      };
+    }
 
     this.name = 'GCS';
     this.client = new Storage(storageconfig);

@@ -2,6 +2,13 @@ import { Readable } from 'stream';
 import { GCSURI, GCSStorageServiceClientConfig } from '../src/interfaces';
 import GCSStorageServiceClient from '../src/gcs';
 
+afterEach(() => {
+  jest.restoreAllMocks();
+  jest.resetModules();
+  jest.dontMock('@google-cloud/storage');
+  delete process.env.GOOGLE_APPLICATION_CREDENTIALS;
+});
+
 describe('GCSStorageServiceClient', () => {
   let gcsServiceClient: GCSStorageServiceClient;
 
@@ -11,21 +18,7 @@ describe('GCSStorageServiceClient', () => {
 
       it('throw error', () => {
         expect(() => new GCSStorageServiceClient(config))
-          .toThrowError(new Error('You will need to set "--gcp-project-id".'));
-      });
-    });
-
-    describe('when config is only set validProjectId', () => {
-      const config: GCSStorageServiceClientConfig = {
-        gcpProjectId: 'validProjectId',
-      };
-
-      it('throw error', () => {
-        expect(() => new GCSStorageServiceClient(config))
-          .toThrowError(new Error(
-            'If you does not set "--gcp-service-account-key-json-path", '
-            + 'you will need to set all of "--gcp-client-email" and "--gcp-private-key".',
-          ));
+          .toThrow(new Error('You will need to set "--gcp-project-id".'));
       });
     });
 
@@ -41,16 +34,38 @@ describe('GCSStorageServiceClient', () => {
         jest.doMock('@google-cloud/storage', () => ({
           Storage: StorageMock,
         }));
-        const gcs = require('../src/gcs');
-        gcsServiceClient = new gcs.GCSStorageServiceClient(config);
-      });
-      afterEach(() => {
-        jest.dontMock('@google-cloud/storage');
       });
 
       it('call constructor of Storage class with args', () => {
-        expect(StorageMock).toBeCalledWith({
+        const gcs = require('../src/gcs');
+        expect(() => new gcs.GCSStorageServiceClient(config)).not.toThrow();
+        expect(StorageMock).toHaveBeenCalledWith({
+          projectId: 'validProjectId',
           keyFilename: '/path/to/file',
+        });
+      });
+    });
+
+    describe('when using GOOGLE_APPLICATION_CREDENTIALS env', () => {
+      const StorageMock = jest.fn();
+      const config = {
+        gcpProjectId: 'validProjectId',
+      };
+
+      beforeEach(() => {
+        jest.resetModules();
+        jest.doMock('@google-cloud/storage', () => ({
+          Storage: StorageMock,
+        }));
+        // Set environment variables for ADC
+        process.env.GOOGLE_APPLICATION_CREDENTIALS = '/path/to/credential/file';
+      });
+
+      it('call constractur of Storage with only project ID', () => {
+        const gcs = require('../src/gcs');
+        expect(() => new gcs.GCSStorageServiceClient(config)).not.toThrow();
+        expect(StorageMock).toHaveBeenCalledWith({
+          projectId: 'validProjectId',
         });
       });
     });
@@ -69,15 +84,12 @@ describe('GCSStorageServiceClient', () => {
         jest.doMock('@google-cloud/storage', () => ({
           Storage: StorageMock,
         }));
-        const gcs = require('../src/gcs');
-        gcsServiceClient = new gcs.GCSStorageServiceClient(config);
-      });
-      afterEach(() => {
-        jest.dontMock('@google-cloud/storage');
       });
 
       it('call constructor of Storage class with args', () => {
-        expect(StorageMock).toBeCalledWith({
+        const gcs = require('../src/gcs');
+        expect(() => new gcs.GCSStorageServiceClient(config)).not.toThrow();
+        expect(StorageMock).toHaveBeenCalledWith({
           credentials: Object({
             client_email: 'validClientEmail',
             private_key: 'validPrivateKey',
@@ -174,7 +186,7 @@ describe('GCSStorageServiceClient', () => {
           });
 
           it('reject with throw exception', async() => {
-            await expect(gcsServiceClient.listFiles(url)).rejects.toThrowError('Bucket#getFiles return null');
+            await expect(gcsServiceClient.listFiles(url)).rejects.toThrow('Bucket#getFiles return null');
           });
         });
 
@@ -187,7 +199,7 @@ describe('GCSStorageServiceClient', () => {
           });
 
           it('reject with throw exception', async() => {
-            await expect(gcsServiceClient.listFiles(url)).rejects.toThrowError();
+            await expect(gcsServiceClient.listFiles(url)).rejects.toThrow();
           });
         });
       });
@@ -245,7 +257,7 @@ describe('GCSStorageServiceClient', () => {
           });
 
           it('reject with throw exception', async() => {
-            await expect(gcsServiceClient.listFiles(url, options)).rejects.toThrowError();
+            await expect(gcsServiceClient.listFiles(url, options)).rejects.toThrow();
           });
         });
 
@@ -258,7 +270,7 @@ describe('GCSStorageServiceClient', () => {
           });
 
           it('reject with throw exception', async() => {
-            await expect(gcsServiceClient.listFiles(url, options)).rejects.toThrowError();
+            await expect(gcsServiceClient.listFiles(url, options)).rejects.toThrow();
           });
         });
       });
@@ -268,7 +280,7 @@ describe('GCSStorageServiceClient', () => {
       const url = 'http://hostname/';
 
       it('reject with throw exception', async() => {
-        await expect(gcsServiceClient.listFiles(url)).rejects.toThrowError();
+        await expect(gcsServiceClient.listFiles(url)).rejects.toThrow();
       });
     });
   });
@@ -306,7 +318,7 @@ describe('GCSStorageServiceClient', () => {
         });
 
         it('reject and throw Error', async() => {
-          await expect(gcsServiceClient.deleteFile(url)).rejects.toThrowError();
+          await expect(gcsServiceClient.deleteFile(url)).rejects.toThrow();
         });
       });
     });
@@ -315,7 +327,7 @@ describe('GCSStorageServiceClient', () => {
       const url = 'http://hostname/';
 
       it('reject and throw Error', async() => {
-        await expect(gcsServiceClient.deleteFile(url)).rejects.toThrowError();
+        await expect(gcsServiceClient.deleteFile(url)).rejects.toThrow();
       });
     });
   });
@@ -373,7 +385,7 @@ describe('GCSStorageServiceClient', () => {
           gcpClientEmail: 'validClientEmail',
           gcpPrivateKey: 'validPrivateKey',
         });
-        await expect(gcsServiceClient.copyFile('s3://bucket-name/object-name1', 's3://bucket-name/object-name2')).rejects.toThrowError();
+        await expect(gcsServiceClient.copyFile('s3://bucket-name/object-name1', 's3://bucket-name/object-name2')).rejects.toThrow();
       });
     });
   });
@@ -404,7 +416,7 @@ describe('GCSStorageServiceClient', () => {
       });
 
       it('reject and throw Error', async() => {
-        await expect(gcsServiceClient.uploadFile(uploadSource, uploadDestination)).rejects.toThrowError();
+        await expect(gcsServiceClient.uploadFile(uploadSource, uploadDestination)).rejects.toThrow();
       });
     });
   });
@@ -441,7 +453,7 @@ describe('GCSStorageServiceClient', () => {
       });
 
       it('reject and throw Error', async() => {
-        await expect(gcsServiceClient.downloadFile(downloadSource, downloadDestination)).rejects.toThrowError();
+        await expect(gcsServiceClient.downloadFile(downloadSource, downloadDestination)).rejects.toThrow();
       });
     });
   });
@@ -478,7 +490,7 @@ describe('GCSStorageServiceClient', () => {
       });
 
       it('reject and throw Error', async() => {
-        await expect(gcsServiceClient.copyFileOnRemote(copySource, copyDestination)).rejects.toThrowError();
+        await expect(gcsServiceClient.copyFileOnRemote(copySource, copyDestination)).rejects.toThrow();
       });
     });
   });
@@ -495,7 +507,7 @@ describe('GCSStorageServiceClient', () => {
         stream.push(null); // End of stream
 
         await expect(gcsServiceClient.uploadStream(stream, 'backupFileName', invalidUri))
-          .rejects.toThrowError(`URI ${invalidUri} is not correct GCS's`);
+          .rejects.toThrow(`URI ${invalidUri} is not correct GCS's`);
       });
     });
 
@@ -513,10 +525,6 @@ describe('GCSStorageServiceClient', () => {
 
           // Mock the pipeline function
           jest.spyOn(require('stream/promises'), 'pipeline').mockResolvedValue(undefined);
-        });
-
-        afterEach(() => {
-          jest.restoreAllMocks();
         });
 
         it('resolve with undefined', async() => {
@@ -543,16 +551,12 @@ describe('GCSStorageServiceClient', () => {
           jest.spyOn(require('stream/promises'), 'pipeline').mockRejectedValue(new Error('stream error'));
         });
 
-        afterEach(() => {
-          jest.restoreAllMocks();
-        });
-
         it('reject and throw Error', async() => {
           const stream = new Readable();
           stream.push('test data');
           stream.push(null); // End of stream
 
-          await expect(gcsServiceClient.uploadStream(stream, 'backupFileName', uploadDestinationUri)).rejects.toThrowError('stream error');
+          await expect(gcsServiceClient.uploadStream(stream, 'backupFileName', uploadDestinationUri)).rejects.toThrow('stream error');
         });
       });
     });
@@ -571,9 +575,6 @@ describe('GCSStorageServiceClient', () => {
       describe('and when match() return null', () => {
         beforeEach(() => {
           jest.spyOn(String.prototype, 'match').mockReturnValue(null);
-        });
-        afterEach(() => {
-          jest.restoreAllMocks();
         });
 
         it('return null', () => {
