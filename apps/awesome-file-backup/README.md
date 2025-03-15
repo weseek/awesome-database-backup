@@ -87,7 +87,7 @@ docker run --rm \
 | `CRON_EXPRESSION` | Cron expression for scheduled backups (e.g., "0 4 * * *" for daily at 4:00 AM) |
 | `HEALTHCHECK_URL` | URL that gets called after a successful backup (e.g., https://healthchecks.io) |
 | `GOOGLE_APPLICATION_CREDENTIALS` | Path to JSON credentials configuration file of Application Default Credentials(ADC) for your external identity |
-| `USE_STREAM` | Set to "true" to use streaming mode for backup (no temporary files) |
+| `SAVE_WITH_TEMPFILE` | Set to "true" to save backup file with temporary file name before processing it |
 | `TZ` | Timezone for timestamps (default: UTC) |
 
 #### Docker Compose Example
