@@ -25,23 +25,62 @@ Options:
   --cronmode <CRON_EXPRESSION>                                             Run `backup` as cron mode. In Cron mode, `backup` will be executed periodically.(ex. CRON_EXPRESSION="0 4 * * *" if you want to run at 4:00 every day) (env: CRON_EXPRESSION)
   --healthcheck-url <HEALTHCHECK_URL>                                      URL that gets called after a successful backup (eg. https://healthchecks.io) (env: HEALTHCHECKS_URL)
   --backup-tool-options <OPTIONS_STRING>                                   pass options to backup tool exec (ex. "--host db.example.com --username admin") (env: BACKUP_TOOL_OPTIONS)
+  --save-with-tempfile                                                     Save backup file with temporary file name before processing it. (env: SAVE_WITH_TEMPFILE)
   -h, --help                                                               display help for command
 
 NOTICE:
   You can pass mongoDB options by set "--backup-tool-options". (ex. "--host db.example.com --username admin")
 ```
 
-## Authenticate storage service
+## Authentication
 
-S3 or GCS authentication is required depending on the storage service used.
+### Amazon S3 Authentication
 
-- For S3
-  - Set `AWS_REGION` and `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`
-- For GCS(*)
-  - Set `GCP_SERVICE_JSON_PATH`, or `GCP_CLIENT_EMAIL` and `GCP_PRIVATE_KEY`.  
-    For detail, see [service account authentication](https://cloud.google.com/docs/authentication/production).
+You can authenticate with Amazon S3 using one of the following methods:
 
-(*) You can't use HMAC authentication to authenticate GCS. (https://github.com/googleapis/nodejs-storage/issues/117)
+1. **Environment Variables**:
+   - `AWS_REGION`: AWS Region
+   - `AWS_ACCESS_KEY_ID`: Your IAM Access Key ID
+   - `AWS_SECRET_ACCESS_KEY`: Your IAM Secret Access Key
+   - `AWS_ENDPOINT_URL`: URL to send the request to (for S3-compatible services)
+
+2. **Command Line Options**:
+   - `--aws-region`: AWS Region
+   - `--aws-access-key-id`: Your IAM Access Key ID
+   - `--aws-secret-access-key`: Your IAM Secret Access Key
+   - `--aws-endpoint-url`: URL to send the request to (for S3-compatible services)
+
+3. **AWS STS with Web Identity Federation** (for Kubernetes environments):
+   - `AWS_ROLE_ARN`: ARN of the role to assume
+   - `AWS_WEB_IDENTITY_TOKEN_FILE`: Path to the web identity token file
+
+The authentication process uses the AWS SDK's credential provider chain, which looks for credentials in the following order:
+1. Environment variables
+2. Shared credentials file (~/.aws/credentials)
+3. ECS container credentials
+4. EC2 instance profile credentials
+5. Web Identity Token credentials
+
+### Google Cloud Storage Authentication
+
+You can authenticate with Google Cloud Storage using one of the following methods:
+
+1. **Environment Variables**:
+   - `GCP_PROJECT_ID`: GCP Project ID
+   - `GCP_SERVICE_ACCOUNT_KEY_JSON_PATH`: JSON file path to your GCP Service Account Key
+   - `GCP_CLIENT_EMAIL`: GCP Client Email
+   - `GCP_PRIVATE_KEY`: GCP Private Key
+   - `GCP_ENDPOINT_URL`: URL to send the request to for GCP
+   - `GOOGLE_APPLICATION_CREDENTIALS`: Path to JSON credentials configuration file of Application Default Credentials(ADC) for your external identity
+
+2. **Command Line Options**:
+   - `--gcp-project-id`: GCP Project ID
+   - `--gcp-service-account-key-json-path`: JSON file path to your GCP Service Account Key
+   - `--gcp-client-email`: GCP Client Email
+   - `--gcp-private-key`: GCP Private Key
+   - `--gcp-endpoint-url`: URL to send the request to for GCP
+
+**Important Note**: You can't use HMAC authentication to authenticate GCS. Use service account authentication instead by setting `GCP_SERVICE_ACCOUNT_KEY_JSON_PATH`, or `GCP_CLIENT_EMAIL` and `GCP_PRIVATE_KEY`.
 
 # Migrate from [weseek/mongodb-awesome-backup](https://github.com/weseek/mongodb-awesome-backup)
 
@@ -59,13 +98,6 @@ Change the following environment variables.
 | `CRONMODE` | - **NO SETTINGS REQURIED** (Only `CRON_EXPRESSION` needs to be set) |
 | `AWSCLIOPT` | - **DISABLED** |
 | `GCSCLIOPT` | - **DISABLED** |
-
-### Use service account authentication
-
-You can't use HMAC authentication to authenticate GCS. (https://github.com/googleapis/nodejs-storage/issues/117)
-
-So, you need to use [service account authentication](https://cloud.google.com/docs/authentication/production).
-Set `GCP_SERVICE_JSON_PATH`, or `GCP_CLIENT_EMAIL` and `GCP_PRIVATE_KEY`.
 
 ### Set proper timezone
 

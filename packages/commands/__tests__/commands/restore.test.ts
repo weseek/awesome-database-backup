@@ -17,6 +17,7 @@ describe('RestoreCommand', () => {
     listFiles: jest.fn().mockResolvedValue([]),
     copyFile: jest.fn(),
     deleteFile: jest.fn(),
+    uploadStream: jest.fn(),
   };
   // Default mock of restoreDB()
   const restoreDBFuncMock = jest.fn().mockReturnValue({ stdout: '', stderr: '' });

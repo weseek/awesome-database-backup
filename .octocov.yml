@@ -1,0 +1,33 @@
+coverage:
+  paths:
+  - apps/file-backup/coverage/lcov.info
+  - apps/file-restore/coverage/lcov.info
+  - apps/list/coverage/lcov.info
+  - apps/mariadb-restore/coverage/lcov.info
+  - apps/mongodb-backup/coverage/lcov.info
+  - apps/mongodb-restore/coverage/lcov.info
+  - apps/postgresql-backup/coverage/lcov.info
+  - apps/postgresql-restore/coverage/lcov.info
+  - apps/prune/coverage/lcov.info
+  - packages/commands/coverage/lcov.info
+  - packages/storage-service-clients/coverage/lcov.info
+codeToTestRatio:
+  code:
+  - '**/*.ts'
+  - '!**/*.test.ts'
+  - '!**/*.d.ts'
+  test:
+  - '**/*.test.ts'
+testExecutionTime:
+  if: true
+summary:
+comment:
+body:
+  if: is_pull_request
+diff:
+  datastores:
+  - artifact://${GITHUB_REPOSITORY}
+report:
+  if: is_default_branch
+  datastores:
+  - artifact://${GITHUB_REPOSITORY}

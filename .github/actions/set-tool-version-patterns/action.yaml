@@ -1,0 +1,13 @@
+name: Set matrix of tool versions to be published
+outputs:
+  toolPatterns:
+    description: 'Array of tool versions to be published. Same as matrix.yaml but JSON format.'
+    value: ${{ steps.set-matrix.outputs.result }}
+runs:
+  using: composite
+  steps:
+  - name: Set matrix of tool versions to be published
+    uses: mikefarah/yq@master
+    id: set-matrix
+    with:
+      cmd: yq --exit-status --output-format json .github/actions/set-tool-version-patterns/matrix.yaml
