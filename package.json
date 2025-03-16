@@ -1,6 +1,6 @@
 {
   "name": "@awesome-database-backup/awesome-database-backup",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "private": true,
   "workspaces": [
     "apps/*",
