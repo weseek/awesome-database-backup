@@ -1,18 +1,16 @@
+import {
+  vi, afterEach, describe, beforeAll, beforeEach, it, expect,
+  type MockInstance,
+} from 'vitest';
 import { ICommonCommandOption } from '@awesome-database-backup/commands';
 
 afterEach(() => {
-  jest.resetModules();
-  jest.dontMock('@aws-sdk/client-s3');
-  jest.dontMock('@google-cloud/storage');
+  vi.resetModules();
 });
 
 describe('storageServiceClientFactory()', () => {
   describe('when "StorageServiceClientType" is "S3"', () => {
     const storageProviderType = 'S3';
-
-    beforeEach(() => {
-      jest.dontMock('@aws-sdk/client-s3');
-    });
 
     describe('when valid S3 options are specified', () => {
       const options: ICommonCommandOption = {
@@ -22,8 +20,8 @@ describe('storageServiceClientFactory()', () => {
         awsSecretAccessKey: 'valid-key',
       };
 
-      it('return S3StorageServiceClient calss', () => {
-        const { storageServiceClientFactory } = require('../src/factory');
+      it('return S3StorageServiceClient calss', async() => {
+        const { storageServiceClientFactory } = await import('../src/factory');
         expect(storageServiceClientFactory(storageProviderType, options).constructor.name).toBe('S3StorageServiceClient');
       });
     });
@@ -33,7 +31,7 @@ describe('storageServiceClientFactory()', () => {
     const storageProviderType = 'GCS';
 
     beforeEach(() => {
-      jest.doMock('@google-cloud/storage');
+      vi.doMock('@google-cloud/storage');
     });
 
     describe('when valid GCS options are specified', () => {
@@ -44,8 +42,8 @@ describe('storageServiceClientFactory()', () => {
         gcpPrivateKey: 'valid-key',
       };
 
-      it('call generateS3ServiceClient', () => {
-        const { storageServiceClientFactory } = require('../src/factory');
+      it('call generateS3ServiceClient', async() => {
+        const { storageServiceClientFactory } = await import('../src/factory');
         expect(storageServiceClientFactory(storageProviderType, options).constructor.name).toBe('GCSStorageServiceClient');
       });
     });
