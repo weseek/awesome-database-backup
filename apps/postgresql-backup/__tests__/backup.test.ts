@@ -1,3 +1,6 @@
+import {
+  describe, beforeEach, it, expect,
+} from 'vitest';
 import { exec as execOriginal } from 'child_process';
 import { promisify } from 'util';
 import {

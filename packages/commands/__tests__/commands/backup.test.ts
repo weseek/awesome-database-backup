@@ -1,55 +1,45 @@
+import {
+  vi, afterEach, describe, beforeAll, beforeEach, it, expect,
+  type MockInstance,
+} from 'vitest';
 import { IStorageServiceClient } from '@awesome-database-backup/storage-service-clients';
-import { BackupCommand, IBackupCommandOption } from '../../src/commands/backup';
+import type { BackupCommand, IBackupCommandOption } from '../../src/commands/backup';
 
 describe('BackupCommand', () => {
   let command: BackupCommand;
-
+  let axiosSpy: MockInstance;
   // Default mock of logger
   const loggerMock = {
-    info: jest.fn(),
-    warn: jest.fn(),
-    error: jest.fn(),
+    info: vi.fn(),
+    warn: vi.fn(),
+    error: vi.fn(),
   };
-  // Default mock of axios
-  // You can overridden in "beforeAll" before test execution.
-  let axiosGetMock = jest.fn().mockResolvedValue(undefined);
-  // Default mock of dumpDB
-  const dumpDBFuncMock = jest.fn().mockReturnValue({ stdout: '', stderr: '' });
   // Default mock of storageServiceClient
   const storageServiceClientMock: IStorageServiceClient = {
     name: '',
-    exists: jest.fn(),
-    listFiles: jest.fn().mockResolvedValue([]),
-    copyFile: jest.fn(),
-    deleteFile: jest.fn(),
-    uploadStream: jest.fn(),
+    exists: vi.fn(),
+    listFiles: vi.fn().mockResolvedValue([]),
+    copyFile: vi.fn(),
+    deleteFile: vi.fn(),
+    uploadStream: vi.fn(),
   };
 
-  beforeEach(() => {
-    jest.resetModules();
+  beforeEach(async() => {
+    vi.resetModules();
 
     // Mock Logger
-    jest.doMock('universal-bunyan', () => {
+    vi.doMock('universal-bunyan', () => {
       return {
-        ...(jest.requireActual('universal-bunyan') as any),
+        ...(vi.importActual('universal-bunyan') as any),
         createLogger: () => loggerMock,
       };
     });
 
-    // Mock axios
-    jest.doMock('axios', () => {
-      return {
-        ...(jest.requireActual('axios') as any),
-        get: axiosGetMock,
-      };
-    });
+    const axios = require('axios');
+    axiosSpy = vi.spyOn(axios, 'get');
 
-    const backup = require('../../src/commands/backup');
+    const backup = await import('../../src/commands/backup');
     command = new backup.BackupCommand();
-  });
-  afterEach(() => {
-    jest.dontMock('universal-bunyan');
-    jest.dontMock('axios');
   });
 
   const s3BareMinimumOptions: IBackupCommandOption = {
@@ -72,7 +62,7 @@ describe('BackupCommand', () => {
       const options = s3BareMinimumOptions;
 
       beforeEach(() => {
-        command.backupOnceWithStream = jest.fn().mockResolvedValue(undefined);
+        command.backupOnceWithStream = vi.fn().mockResolvedValue(undefined);
       });
 
       it('call backupOnceWithStream()', async() => {
@@ -81,14 +71,14 @@ describe('BackupCommand', () => {
       });
     });
 
-    describe('when cromode is present', () => {
+    describe('when cronmode is present', () => {
       const options: IBackupCommandOption = {
         ...s3BareMinimumOptions,
         cronmode: '* * * * *',
       };
 
       beforeEach(() => {
-        command.backupCronMode = jest.fn().mockResolvedValue(undefined);
+        command.backupCronMode = vi.fn().mockResolvedValue(undefined);
       });
 
       it('call backupCronMode()', async() => {
@@ -100,7 +90,7 @@ describe('BackupCommand', () => {
 
   describe('backupOnce', () => {
     beforeEach(() => {
-      command.dumpDB = dumpDBFuncMock;
+      command.dumpDB = vi.fn().mockReturnValue({ stdout: '', stderr: '' });
     });
 
     describe('when options are valid, but "storageServiceClient" is not set in advance', () => {
@@ -125,49 +115,49 @@ describe('BackupCommand', () => {
       describe('and when "healthchecksUrl" is empty', () => {
         const options = s3BareMinimumOptions;
 
-        beforeAll(() => {
-          axiosGetMock = jest.fn().mockResolvedValue(undefined);
+        beforeEach(() => {
+          axiosSpy.mockResolvedValue(undefined);
         });
 
         it('return undefined and call dumpDB(), but does not call axios.get()', async() => {
           await expect(command.backupOnce(options)).resolves.toBe(undefined);
           expect(command.dumpDB).toBeCalled();
-          expect(axiosGetMock).toBeCalledTimes(0);
+          expect(axiosSpy).toBeCalledTimes(0);
         });
       });
 
-      describe('and when "healthcheckUrl" is present which can get successfully', () => {
+      describe('and when "healthchecksUrl" is present which can get successfully', () => {
         const options: IBackupCommandOption = {
           ...s3BareMinimumOptions,
           healthchecksUrl: new URL('http://example.com/'),
         };
 
-        beforeAll(() => {
-          axiosGetMock = jest.fn().mockResolvedValue(undefined);
+        beforeEach(() => {
+          axiosSpy.mockResolvedValue(undefined);
+          command.processEndOfBackupOnce = vi.fn().mockResolvedValue(undefined);
         });
 
-        it('return undefined and call dumpDB() and call axios.get() with "healthcheckUrl"', async() => {
+        it('return undefined and call dumpDB() and processEndOfBackupOnce() with options', async() => {
           await expect(command.backupOnce(options)).resolves.toBe(undefined);
           expect(command.dumpDB).toBeCalled();
-          expect(axiosGetMock).toBeCalledWith(options.healthchecksUrl?.toString());
+          expect(command.processEndOfBackupOnce).toBeCalledWith(options);
         });
       });
 
-      describe('and when "healthcheckUrl" is present which cannot get with error', () => {
+      describe('and when "healthchecksUrl" is present which cannot get with error', () => {
         const options: IBackupCommandOption = {
           ...s3BareMinimumOptions,
           healthchecksUrl: new URL('http://example.com/'),
         };
 
-        beforeAll(() => {
-          axiosGetMock = jest.fn().mockRejectedValue(new Error('cannot get'));
+        beforeEach(() => {
+          command.processEndOfBackupOnce = vi.fn().mockResolvedValue(undefined);
         });
 
-        it('return undefined and call dumpDB() and call axios.get() with error and call logging', async() => {
+        it('return undefined and call dumpDB() and processEndOfBackupOnce() with options', async() => {
           await expect(command.backupOnce(options)).resolves.toBe(undefined);
           expect(command.dumpDB).toBeCalled();
-          expect(axiosGetMock).toBeCalledWith(options.healthchecksUrl?.toString());
-          expect(loggerMock.warn).toBeCalledWith('Cannot access to URL for health check. Error: cannot get');
+          expect(command.processEndOfBackupOnce).toBeCalledWith(options);
         });
       });
     });
@@ -180,24 +170,24 @@ describe('BackupCommand', () => {
     };
 
     beforeEach(() => {
-      jest.useFakeTimers();
-      command.backupOnce = jest.fn();
+      vi.useFakeTimers();
+      command.backupOnce = vi.fn();
       command.storageServiceClient = storageServiceClientMock;
     });
-    afterEach(() => jest.useRealTimers());
+    afterEach(() => vi.useRealTimers());
 
     it('call backupOnce() at specified time', () => {
       command.backupCronMode(options);
 
       expect(command.backupOnce).toHaveBeenCalledTimes(0);
-      jest.advanceTimersByTime(1000 * 60);
+      vi.advanceTimersByTime(1000 * 60);
       expect(command.backupOnce).toHaveBeenCalledTimes(1);
     });
   });
 
   describe('addBackupOptions', () => {
     beforeEach(() => {
-      jest.spyOn(command, 'addOption');
+      vi.spyOn(command, 'addOption');
     });
 
     it('call addOption()', () => {
@@ -208,14 +198,58 @@ describe('BackupCommand', () => {
 
   describe('setBackupAction', () => {
     beforeEach(() => {
-      jest.spyOn(command, 'saveStorageClientInAdvance');
-      jest.spyOn(command, 'action');
+      vi.spyOn(command, 'saveStorageClientInAdvance');
+      vi.spyOn(command, 'action');
     });
 
     it('call saveStorageClientInAdvance() and action()', () => {
       command.setBackupAction();
       expect(command.saveStorageClientInAdvance).toBeCalled();
       expect(command.action).toBeCalled();
+    });
+  });
+
+  describe('processEndOfBackupOnce', () => {
+    describe('when healthchecksUrl is empty', () => {
+      const options = s3BareMinimumOptions;
+
+      it('return undefined and does not call axios.get()', async() => {
+        await expect(command.processEndOfBackupOnce(options)).resolves.toBe(undefined);
+        expect(axiosSpy).not.toBeCalled();
+      });
+    });
+
+    describe('when healthchecksUrl is present which can get successfully', () => {
+      const options: IBackupCommandOption = {
+        ...s3BareMinimumOptions,
+        healthchecksUrl: new URL('http://example.com/'),
+      };
+
+      beforeEach(() => {
+        axiosSpy.mockResolvedValue(undefined);
+      });
+
+      it('return undefined and call axios.get() with healthchecksUrl', async() => {
+        await expect(command.processEndOfBackupOnce(options)).resolves.toBe(undefined);
+        expect(axiosSpy).toBeCalledWith(options.healthchecksUrl?.toString());
+      });
+    });
+
+    describe('when healthchecksUrl is present which cannot get with error', () => {
+      const options: IBackupCommandOption = {
+        ...s3BareMinimumOptions,
+        healthchecksUrl: new URL('http://example.com/'),
+      };
+
+      beforeEach(() => {
+        axiosSpy.mockRejectedValue(new Error('cannot get'));
+      });
+
+      it('return undefined and call axios.get() with error and call logging', async() => {
+        await expect(command.processEndOfBackupOnce(options)).resolves.toBe(undefined);
+        expect(axiosSpy).toBeCalledWith(options.healthchecksUrl?.toString());
+        expect(loggerMock.warn).toBeCalledWith('Cannot access to URL for health check. Error: cannot get');
+      });
     });
   });
 });

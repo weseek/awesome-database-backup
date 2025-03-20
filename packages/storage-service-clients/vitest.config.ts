@@ -1,0 +1,22 @@
+import { defineConfig } from 'vitest/config';
+
+export default defineConfig({
+  test: {
+    globals: false,
+    environment: 'node',
+    include: ['**/__tests__/**/*.test.ts'],
+    clearMocks: true,
+    coverage: {
+      provider: 'v8',
+      enabled: true,
+      reporter: ['text', 'json', 'html'],
+      reportsDirectory: './coverage',
+    },
+    ...(process.env.CI
+      ? {
+        reporters: ['vitest-ctrf-json-reporter'],
+      }
+      : {}),
+    testTimeout: 20000,
+  },
+});
