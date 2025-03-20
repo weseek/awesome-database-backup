@@ -8298,6 +8298,11 @@ vite-node@3.0.8:
   optionalDependencies:
     fsevents "~2.3.3"
 
+vitest-ctrf-json-reporter@^0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/vitest-ctrf-json-reporter/-/vitest-ctrf-json-reporter-0.0.2.tgz#1645bd946c42a378e9a72c0f7da376ed82f816ba"
+  integrity sha512-Z+f9hV+tcmS/MP+FucG9LQnBlEMKdAlZuDEFsOgiO22jvvegWWn8Q0htFyi4f0DDdJYJ1L4w4eh4SshlRGHHjA==
+
 vitest-mock-extended@^3.0.1:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/vitest-mock-extended/-/vitest-mock-extended-3.0.1.tgz#8c55aebbb60ab0999d86e9fa696ca0fc75ce0976"
