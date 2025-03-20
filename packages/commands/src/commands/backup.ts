@@ -45,7 +45,7 @@ export class BackupCommand extends StorageServiceClientCommand {
     if (options.cronmode) {
       backupMethod = this.backupCronMode.bind(this);
     }
-    else if (options.saveWithTemplate) {
+    else if (options.saveWithTempfile) {
       backupMethod = this.backupOnce.bind(this);
     }
     else {
