@@ -34,7 +34,7 @@
   },
   "scripts": {
     "build": "turbo run build",
-    "test": "turbo run test --concurrency='100%'",
+    "test": "turbo run test --concurrency=1",
     "lint": "turbo run lint",
     "rimraf": "rimraf",
     "clean": "npm run rimraf **/coverage **/.turbo apps/*/dist packages/*/dist misc/*/dist",
