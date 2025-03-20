@@ -1,6 +1,5 @@
 import {
-  vi, afterEach, describe, beforeAll, beforeEach, it, expect,
-  type MockInstance,
+  vi, afterEach, describe, beforeEach, it, expect,
 } from 'vitest';
 import { ICommonCommandOption } from '@awesome-database-backup/commands';
 
