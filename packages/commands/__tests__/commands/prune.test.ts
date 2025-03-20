@@ -1,3 +1,6 @@
+import {
+  vi, describe, beforeEach, it, expect,
+} from 'vitest';
 import { IStorageServiceClient } from '@awesome-database-backup/storage-service-clients';
 import { PruneCommand, IPruneCommandOption } from '../../src/commands/prune';
 
@@ -6,36 +9,33 @@ describe('PruneCommand', () => {
 
   // Default mock of logger
   const loggerMock = {
-    info: jest.fn(),
-    warn: jest.fn(),
-    error: jest.fn(),
+    info: vi.fn(),
+    warn: vi.fn(),
+    error: vi.fn(),
   };
   // Default mock of StorageServiceClient
   const gcsClientMock: IStorageServiceClient = {
     name: 'GCS',
-    exists: jest.fn(),
-    listFiles: jest.fn().mockResolvedValue([]),
-    copyFile: jest.fn(),
-    deleteFile: jest.fn(),
-    uploadStream: jest.fn(),
+    exists: vi.fn(),
+    listFiles: vi.fn().mockResolvedValue([]),
+    copyFile: vi.fn(),
+    deleteFile: vi.fn(),
+    uploadStream: vi.fn(),
   };
 
-  beforeEach(() => {
-    jest.resetModules();
+  beforeEach(async() => {
+    vi.resetModules();
 
     // Mock Logger
-    jest.doMock('universal-bunyan', () => {
+    vi.doMock('universal-bunyan', () => {
       return {
-        ...(jest.requireActual('universal-bunyan') as any),
+        ...(vi.importActual('universal-bunyan') as any),
         createLogger: () => loggerMock,
       };
     });
 
-    const prune = require('../../src/commands/prune');
+    const prune = await import('../../src/commands/prune');
     command = new prune.PruneCommand();
-  });
-  afterEach(() => {
-    jest.dontMock('universal-bunyan');
   });
 
   const gcsBareMinumumOptions: IPruneCommandOption = {
@@ -75,7 +75,7 @@ describe('PruneCommand', () => {
         beforeEach(() => {
           command.storageServiceClient = {
             ...gcsClientMock,
-            listFiles: jest.fn().mockResolvedValue(['file1']),
+            listFiles: vi.fn().mockResolvedValue(['file1']),
           };
         });
 
@@ -104,7 +104,7 @@ describe('PruneCommand', () => {
 
   describe('addPruneOptions', () => {
     beforeEach(() => {
-      jest.spyOn(command, 'addOption');
+      vi.spyOn(command, 'addOption');
     });
 
     it('call addOption()', () => {
@@ -115,8 +115,8 @@ describe('PruneCommand', () => {
 
   describe('setPruneAction', () => {
     beforeEach(() => {
-      jest.spyOn(command, 'saveStorageClientInAdvance');
-      jest.spyOn(command, 'action');
+      vi.spyOn(command, 'saveStorageClientInAdvance');
+      vi.spyOn(command, 'action');
     });
 
     it('call action()', () => {
