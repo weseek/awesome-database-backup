@@ -1,3 +1,6 @@
+import {
+  vi, describe, beforeEach, it, expect,
+} from 'vitest';
 import { IStorageServiceClient } from '@awesome-database-backup/storage-service-clients';
 import { RestoreCommand, IRestoreCommandOption } from '../../src/commands/restore';
 
@@ -6,40 +9,37 @@ describe('RestoreCommand', () => {
 
   // Default mock of logger
   const loggerMock = {
-    info: jest.fn(),
-    warn: jest.fn(),
-    error: jest.fn(),
+    info: vi.fn(),
+    warn: vi.fn(),
+    error: vi.fn(),
   };
   // Default mock of StorageServiceClient
   const gcsClientMock: IStorageServiceClient = {
     name: 'GCS',
-    exists: jest.fn(),
-    listFiles: jest.fn().mockResolvedValue([]),
-    copyFile: jest.fn(),
-    deleteFile: jest.fn(),
-    uploadStream: jest.fn(),
+    exists: vi.fn(),
+    listFiles: vi.fn().mockResolvedValue([]),
+    copyFile: vi.fn(),
+    deleteFile: vi.fn(),
+    uploadStream: vi.fn(),
   };
   // Default mock of restoreDB()
-  const restoreDBFuncMock = jest.fn().mockReturnValue({ stdout: '', stderr: '' });
+  const restoreDBFuncMock = vi.fn().mockReturnValue({ stdout: '', stderr: '' });
   // Default mock of processBackupFile()
-  const processBackupFileMock = jest.fn().mockResolvedValue('path');
+  const processBackupFileMock = vi.fn().mockResolvedValue('path');
 
-  beforeEach(() => {
-    jest.resetModules();
+  beforeEach(async() => {
+    vi.resetModules();
 
     // Mock Logger
-    jest.doMock('universal-bunyan', () => {
+    vi.doMock('universal-bunyan', () => {
       return {
-        ...(jest.requireActual('universal-bunyan') as any),
+        ...(vi.importActual('universal-bunyan') as any),
         createLogger: () => loggerMock,
       };
     });
 
-    const restore = require('../../src/commands/restore');
+    const restore = await import('../../src/commands/restore');
     command = new restore.RestoreCommand();
-  });
-  afterEach(() => {
-    jest.dontMock('universal-bunyan');
   });
 
   const gcsBareMinumumOptions: IRestoreCommandOption = {
@@ -91,7 +91,7 @@ describe('RestoreCommand', () => {
 
   describe('addRestoreOptions', () => {
     beforeEach(() => {
-      jest.spyOn(command, 'addOption');
+      vi.spyOn(command, 'addOption');
     });
 
     it('call addOption()', () => {
@@ -102,8 +102,8 @@ describe('RestoreCommand', () => {
 
   describe('setRestoreAction', () => {
     beforeEach(() => {
-      jest.spyOn(command, 'saveStorageClientInAdvance');
-      jest.spyOn(command, 'action');
+      vi.spyOn(command, 'saveStorageClientInAdvance');
+      vi.spyOn(command, 'action');
     });
 
     it('call action()', () => {
