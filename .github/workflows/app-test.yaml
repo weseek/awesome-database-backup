@@ -51,4 +51,4 @@ jobs:
         report-path: '**/vitest-ctrf/*.json'
     - name: Report coverage follow the settings .octocov.yml
       if: success() || failure()
-      uses: .github/actions/report-coverage
+      uses: ./.github/actions/report-coverage
