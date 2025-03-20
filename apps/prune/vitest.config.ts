@@ -14,10 +14,7 @@ export default defineConfig({
     },
     ...(process.env.CI
       ? {
-        reporters: [
-          'default',
-          'json',
-        ],
+        reporters: ['vitest-ctrf-json-reporter'],
       }
       : {}),
     testTimeout: 20000,
