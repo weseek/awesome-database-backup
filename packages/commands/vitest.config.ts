@@ -17,6 +17,7 @@ export default defineConfig({
         reporters: ['vitest-ctrf-json-reporter'],
       }
       : {}),
-    testTimeout: 20000,
+    testTimeout: 30000, // dumpDB() require long time
+    hookTimeout: 30000, // dumpDB() require long time
   },
 });
