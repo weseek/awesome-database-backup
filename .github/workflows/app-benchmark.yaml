@@ -1,14 +1,17 @@
-name: Profile backup exec
+name: Application - Benchmark
 
 on:
   push:
 
 jobs:
-  profile:
+  benchmark:
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
-
+    services:
+      fake-gcs-server:
+        image: fsouza/fake-gcs-server:1.52.1
+        options: '--scheme http --public-host fake-gcs-server --external-url http://fake-gcs-server/4443'
     steps:
     - uses: actions/checkout@v4
     - name: Collect Workflow Telemetry
