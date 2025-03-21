@@ -2299,13 +2299,6 @@
     estree-walker "^3.0.3"
     magic-string "^0.30.17"
 
-"@vitest/pretty-format@3.0.8":
-  version "3.0.8"
-  resolved "https://registry.yarnpkg.com/@vitest/pretty-format/-/pretty-format-3.0.8.tgz#89f6111d141142689871f5a4e62ad679bb6b6357"
-  integrity sha512-BNqwbEyitFhzYMYHUVbIvepOyeQOSFA/NeJMIP9enMntkkxLgOcgABH6fjyXG85ipTgvero6noreavGIqfJcIg==
-  dependencies:
-    tinyrainbow "^2.0.0"
-
 "@vitest/pretty-format@3.0.9", "@vitest/pretty-format@^3.0.9":
   version "3.0.9"
   resolved "https://registry.yarnpkg.com/@vitest/pretty-format/-/pretty-format-3.0.9.tgz#d9c88fe64b4edcdbc88e5bd92c39f9cc8d40930d"
@@ -2338,25 +2331,16 @@
     tinyspy "^3.0.2"
 
 "@vitest/ui@^3.0.8":
-  version "3.0.8"
-  resolved "https://registry.yarnpkg.com/@vitest/ui/-/ui-3.0.8.tgz#7eb38960a8cf9cc10c1de407575e316562b99680"
-  integrity sha512-MfTjaLU+Gw/lYorgwFZ06Cym+Mj9hPfZh/Q91d4JxyAHiicAakPTvS7zYCSHF+5cErwu2PVBe1alSjuh6L/UiA==
+  version "3.0.9"
+  resolved "https://registry.yarnpkg.com/@vitest/ui/-/ui-3.0.9.tgz#f617c67ef80cecac5271fedd92ee8c7dc5a248d7"
+  integrity sha512-FpZD4aIv/qNpwkV3XbLV6xldWFHMgoNWAJEgg5GmpObmAOLAErpYjew9dDwXdYdKOS3iZRKdwI+P3JOJcYeUBg==
   dependencies:
-    "@vitest/utils" "3.0.8"
+    "@vitest/utils" "3.0.9"
     fflate "^0.8.2"
     flatted "^3.3.3"
     pathe "^2.0.3"
     sirv "^3.0.1"
     tinyglobby "^0.2.12"
-    tinyrainbow "^2.0.0"
-
-"@vitest/utils@3.0.8":
-  version "3.0.8"
-  resolved "https://registry.yarnpkg.com/@vitest/utils/-/utils-3.0.8.tgz#289277fbd8e733dff69cfa993c34665415c9b66b"
-  integrity sha512-nkBC3aEhfX2PdtQI/QwAWp8qZWwzASsU4Npbcd5RdMPBSSLCpkZp52P3xku3s3uA0HIEhGvEcF8rNkBsz9dQ4Q==
-  dependencies:
-    "@vitest/pretty-format" "3.0.8"
-    loupe "^3.1.3"
     tinyrainbow "^2.0.0"
 
 "@vitest/utils@3.0.9":
@@ -4045,12 +4029,7 @@ flat-cache@^3.0.4:
     flatted "^3.1.0"
     rimraf "^3.0.2"
 
-flatted@^3.1.0:
-  version "3.2.4"
-  resolved "https://registry.yarnpkg.com/flatted/-/flatted-3.2.4.tgz#28d9969ea90661b5134259f312ab6aa7929ac5e2"
-  integrity sha512-8/sOawo8tJ4QOBX8YlQBMxL8+RLZfxMQOif9o0KUKTNTjMYElWPE0r/m5VNFxTRd0NSw8qSy8dajrwX4RYI1Hw==
-
-flatted@^3.3.3:
+flatted@^3.1.0, flatted@^3.3.3:
   version "3.3.3"
   resolved "https://registry.yarnpkg.com/flatted/-/flatted-3.3.3.tgz#67c8fad95454a7c7abebf74bb78ee74a44023358"
   integrity sha512-GX+ysw4PBCz0PzosHDepZGANEuFCMLrnRTiEy9McGjmkCQYwRq4A/X786G/fjM/+OjsWSU1ZrY5qyARZmO/uwg==
