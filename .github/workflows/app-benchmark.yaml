@@ -11,7 +11,8 @@ jobs:
     services:
       fake-gcs-server:
         image: fsouza/fake-gcs-server:1.52.1
-        options: '--scheme http --public-host fake-gcs-server --external-url http://fake-gcs-server/4443'
+        options: >-
+          --entrypoint "/bin/fake-gcs-server --scheme http --public-host fake-gcs-server --external-url http://fake-gcs-server/4443"
     steps:
     - uses: actions/checkout@v4
     - name: Collect Workflow Telemetry
