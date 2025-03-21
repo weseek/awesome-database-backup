@@ -32,12 +32,10 @@ jobs:
     - run: yarn install
     - name: Configure fake-gcs-server
       run: >-
-        curl --insecure -v -X PUT -H "Content-Type: application/json" -d
-        '{
-          "schema": "http",
-          "publicHost": "fake-gcs-server",
-          "externalUrl": "http://fake-gcs-server:4443"
-        }'
-        https://fake-gcs-server:4443/_internal/config
+        npx node-fetch-cli
+        put https://fake-gcs-server:4443/_internal/config
+        --insecure
+        --header "Content-Type: application/json"
+        --body '{"schema":"http","publicHost":"fake-gcs-server","externalUrl":"http://fake-gcs-server:4443"}'
     - name: Run performance test
       run: yarn run test:performance
