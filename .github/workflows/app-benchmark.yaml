@@ -12,7 +12,7 @@ jobs:
       fake-gcs-server:
         image: fsouza/fake-gcs-server:1.52.1
         options: >-
-          --entrypoint "/bin/fake-gcs-server --scheme http --public-host fake-gcs-server --external-url http://fake-gcs-server/4443"
+          --health-cmd "wget -q -S -O - --no-check-certificate https://localhost:4443/_internal/healthcheck"
     steps:
     - uses: actions/checkout@v4
     - name: Collect Workflow Telemetry
@@ -27,5 +27,14 @@ jobs:
         node-version-file: package.json
         cache: "yarn"
     - run: yarn install
+    - name: Configure fake-gcs-server
+      run: >-
+        curl --insecure -v -X PUT -H "Content-Type: application/json" -d
+          '{
+            "schema": "http",
+            "publicHost": "fake-gcs-server",
+            "externalUrl": "http://fake-gcs-serve:4443"
+          }'
+          https://fake-gcs-server:4443/_internal/config
     - name: Run performance test
       run: yarn run test:performance
