@@ -24,6 +24,7 @@
   },
   "devDependencies": {
     "@aws-sdk/client-s3": "^3.85.0",
-    "@google-cloud/storage": "^5.19.4"
+    "@google-cloud/storage": "^5.19.4",
+    "ky":"^1.7.5"
   }
 }

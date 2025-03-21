@@ -1,3 +1,4 @@
+import ky from 'ky';
 import { Storage } from '@google-cloud/storage';
 import { createPGBackup } from '@awesome-database-backup/postgresql-test';
 import { createMongoDBBackup } from '@awesome-database-backup/mongodb-test';
@@ -7,6 +8,13 @@ import { basename } from 'path';
 import { storageConfig, testGCSBucketName } from './config/fake-gcs-server';
 
 const storage = new Storage(storageConfig);
+
+// ref. https://github.com/fsouza/fake-gcs-server/blob/93a13ba5c1ce7896f8129f190ca3324d4cba7990/examples/node/README.md
+export async function initFakeGCSServer(): Promise<void> {
+  await ky.put(`${storageConfig.apiEndpoint}/_internal/config`, {
+    json: { externalUrl: storageConfig.apiEndpoint },
+  });
+}
 
 export async function cleanTestGCSBucket(): Promise<void> {
   const [exists] = await storage.bucket(testGCSBucketName).exists();
