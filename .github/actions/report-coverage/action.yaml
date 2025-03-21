@@ -1,0 +1,22 @@
+name: Report coverage follow the settings .octocov.yml
+
+runs:
+  using: composite
+  steps:
+  - name: Show coverage report follow the settings .octocov.yml
+    uses: k1LoW/octocov-action@v1
+
+  # Error workflow if report file defined in .octocov.yml does not exist
+  - name: Get coverage report paths
+    id: get_coverage_report_paths
+    uses: mikefarah/yq@v4
+    with:
+      cmd: yq '.coverage.paths | join(" ")' .octocov.yml
+  - name: Fail if report is missing
+    shell: bash
+    run: |
+      for REPORT in ${{ steps.get_coverage_report_paths.outputs.result }}; do
+        if [ ! -f "$REPORT" ]; then
+          echo "::error $REPORT is missing"
+        fi
+      done

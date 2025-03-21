@@ -17,7 +17,7 @@ export interface IBackupCommandOption extends ICommonCommandOption {
   cronmode?: string,
   healthchecksUrl?: URL,
   backupToolOptions?: string,
-  saveWithTemplate?: boolean,
+  saveWithTempfile?: boolean,
 }
 
 /* Restore command option types */
