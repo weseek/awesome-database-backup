@@ -13,7 +13,7 @@ jobs:
       fake-gcs-server:
         image: fsouza/fake-gcs-server:1.52.1
         ports:
-          4443:4443
+        - 4443:4443
         options: >-
           --health-cmd "wget -q -S -O - --no-check-certificate https://localhost:4443/_internal/healthcheck"
     steps:
