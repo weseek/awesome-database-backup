@@ -38,12 +38,13 @@ jobs:
           method:'PUT',
           headers:{'Content-Type':'application/json'},
           body:JSON.stringify({
-            schema:'http',
             publicHost:'fake-gcs-server',
-            externalUrl:'http://fake-gcs-server:4443'
+            externalUrl:'https://fake-gcs-server:4443'
           })
         })
         .then(r=>console.log(r.text()))
         .catch(console.error)"
     - name: Run performance test
       run: yarn run test:performance
+      env:
+        GCP_ENDPOINT_URL: https://fake-gcs-server:4443
