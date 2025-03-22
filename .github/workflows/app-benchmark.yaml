@@ -39,3 +39,4 @@ jobs:
       env:
         GCP_ENDPOINT_URL: https://localhost:4443
         NODE_TLS_REJECT_UNAUTHORIZED: 0
+        NODE_OPTIONS: '--max-old-space-size=200'
