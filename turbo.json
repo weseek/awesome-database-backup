@@ -12,13 +12,15 @@
       "dependsOn": [],
       "outputs": [
         "coverage/**"
-      ]
+      ],
+      "env": ["*"]
     },
     "lint": {
       "outputs": []
     },
     "test:performance": {
-      "cache": false
+      "cache": false,
+      "env": ["*"]
     }
   }
 }
