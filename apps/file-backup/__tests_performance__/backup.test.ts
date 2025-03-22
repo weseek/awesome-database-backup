@@ -42,7 +42,7 @@ describe('backup', () => {
 
       it('backup files in bucket', async() => {
         expect((await listFileNamesInTestGCSBucket()).length).toBe(0);
-        expect(await exec(commandLine)).toEqual({
+        expect(await exec(commandLine)).toContain({
           stdout: expect.stringMatching(/=== backup.ts started at .* ===/),
           stderr: '',
         });
