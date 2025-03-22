@@ -5,9 +5,9 @@ on:
 
 jobs:
   benchmark:
-    permissions:
-      actions: read
-      pull-requests: write
+    # permissions:
+    #   actions: read
+    #   pull-requests: write
     runs-on: ubuntu-latest
     services:
       fake-gcs-server:
