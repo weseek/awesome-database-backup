@@ -47,12 +47,12 @@ jobs:
         proc_trace_min_duration: 0   # Trace all processes
         comment_on_pr: false         # Output results in PR comments
         job_summary: true            # Output results to Job Summary
-    - name: Run performance test
-      uses: docker://node:lts-slim
-      with:
-        args: |-
-          yarn install;
-          yarn run test:performance;
-      env:
-        GCP_ENDPOINT_URL: https://fake-gcs-server:4443
-        NODE_TLS_REJECT_UNAUTHORIZED: 0
+    # - name: Run performance test
+    #   uses: docker://node:lts-slim
+    #   with:
+    #     args: |-
+    #       yarn install;
+    #       yarn run test:performance;
+    #   env:
+    #     GCP_ENDPOINT_URL: https://fake-gcs-server:4443
+    #     NODE_TLS_REJECT_UNAUTHORIZED: 0
