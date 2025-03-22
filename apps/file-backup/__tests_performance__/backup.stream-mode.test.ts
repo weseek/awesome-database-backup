@@ -27,7 +27,7 @@ describe('[backup][stream mode]', () => {
   beforeEach(initFakeGCSServer);
   beforeEach(cleanTestGCSBucket);
   beforeEach(() => {
-    prepareLargeTestFile(1024);
+    prepareLargeTestFile(10240);
   });
 
   const commandLine = `${execBackupCommand} \
