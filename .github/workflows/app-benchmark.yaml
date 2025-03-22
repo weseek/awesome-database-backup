@@ -6,6 +6,7 @@ on:
 jobs:
   benchmark:
     permissions:
+      actions: read
       pull-requests: write
     runs-on: ubuntu-latest
     services:
@@ -50,8 +51,8 @@ jobs:
       uses: docker://node:lts-slim
       with:
         args: |-
-          yarn install
-          yarn run test:performance
+          yarn install;
+          yarn run test:performance;
       env:
         GCP_ENDPOINT_URL: https://fake-gcs-server:4443
         NODE_TLS_REJECT_UNAUTHORIZED: 0
