@@ -1,4 +1,3 @@
-import ky from 'ky';
 import { Storage } from '@google-cloud/storage';
 import { createPGBackup } from '@awesome-database-backup/postgresql-test';
 import { createMongoDBBackup } from '@awesome-database-backup/mongodb-test';
@@ -11,8 +10,12 @@ const storage = new Storage(storageConfig);
 
 // ref. https://github.com/fsouza/fake-gcs-server/blob/93a13ba5c1ce7896f8129f190ca3324d4cba7990/examples/node/README.md
 export async function initFakeGCSServer(): Promise<void> {
-  await ky.put(`${storageConfig.apiEndpoint}/_internal/config`, {
-    json: { externalUrl: storageConfig.apiEndpoint },
+  await fetch(`${storageConfig.apiEndpoint}/_internal/config`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      externalUrl: storageConfig.apiEndpoint,
+    }),
   });
 }
 
