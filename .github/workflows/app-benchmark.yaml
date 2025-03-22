@@ -45,7 +45,7 @@ jobs:
     - name: Run performance test
       uses: docker://node:lts-slim
       with:
-        command: bash
+        entrypoint: bash
         args: >-
           -c "
           yarn install;
