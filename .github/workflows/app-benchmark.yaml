@@ -9,6 +9,9 @@ jobs:
       actions: read
       pull-requests: write
     runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        test: [10, 12, 14]
     services:
       fake-gcs-server:
         image: fsouza/fake-gcs-server:1.52.1
@@ -17,7 +20,7 @@ jobs:
         options: >-
           --health-cmd "wget -q -S -O - --no-check-certificate https://localhost:4443/_internal/healthcheck"
     steps:
-    - name: Collect Workflow Telemetry
+    - name: Collect Workflow Telemetry [${{ matrix.test }}]
       uses: ryu-sato/workflow-telemetry-action@refs/heads/fix/enable-to-filter-github-action-runner
       with:
         metric_frequency: 5          # Collection interval (seconds)
@@ -32,7 +35,7 @@ jobs:
         cache: "yarn"
     - run: yarn install
     - name: Run performance test
-      run: yarn run test:performance
+      run: yarn run test:performance [${{ matrix.test }}]
       env:
         GCP_ENDPOINT_URL: https://localhost:4443
         NODE_TLS_REJECT_UNAUTHORIZED: 0
