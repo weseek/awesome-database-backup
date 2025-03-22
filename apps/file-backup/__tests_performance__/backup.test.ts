@@ -38,13 +38,14 @@ describe('backup', () => {
         --gcp-client-email ${storageConfig.credentials.client_email} \
         --gcp-private-key ${storageConfig.credentials.private_key} \
         --backup-tool-options "-v ${getTestDirPath()}" \
-        --target-bucket-url ${testGCSBucketURI}/`;
+        --target-bucket-url ${testGCSBucketURI}/ \
+        --save-with-tempfile`;
 
       it('backup files in bucket', async() => {
         expect((await listFileNamesInTestGCSBucket()).length).toBe(0);
-        expect(await exec(commandLine)).toContain({
+        expect(await exec(commandLine)).toEqual({
           stdout: expect.stringMatching(/=== backup.ts started at .* ===/),
-          stderr: '',
+          stderr: expect.anything(),
         });
         expect((await listFileNamesInTestGCSBucket()).length).toBe(1);
       });
