@@ -41,7 +41,7 @@ jobs:
     - name: Create bucket "gs://performance-test"
       run: >-
         node -e "
-        fetch('https://localhost:4443//storage/v1/b',{
+        fetch('https://localhost:4443/storage/v1/b',{
           method:'POST',
           headers:{'Content-Type':'application/json'},
           body:JSON.stringify({
