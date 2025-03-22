@@ -34,8 +34,8 @@ jobs:
         node-version-file: package.json
         cache: "yarn"
     - run: yarn install
-    - name: Run performance test
-      run: yarn run test:performance [${{ matrix.test }}]
+    - name: Run performance test [${{ matrix.test }}]
+      run: yarn run test:performance
       env:
         GCP_ENDPOINT_URL: https://localhost:4443
         NODE_TLS_REJECT_UNAUTHORIZED: 0
