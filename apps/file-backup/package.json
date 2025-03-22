@@ -29,9 +29,9 @@
     "//test:performance:tempfile_mode": "cross-env NODE_ENV=test VITEST_ENV=performance vitest run --passWithNoTests --testNamePattern '\\[tempfile mode\\]'",
     "//test:performance:stream_mode": "cross-env NODE_ENV=test VITEST_ENV=performance vitest run --passWithNoTests --testNamePattern '\\[stream mode\\]'",
     "pretest:performance:tempfile_mode": "dd if=/dev/random of=/tmp/256mb bs=1M count=256",
-    "test:performance:tempfile_mode": "node dist/apps/file-backup/src/backup.js --gcp-endpoint-url http://fake-gcs-server:4443 --gcp-project-id valid_project_id --gcp-client-email valid@example.com --gcp-private-key valid_private_key --backup-tool-options \"-v /tmp/256mb\" --target-bucket-url gs://test-performance --save-with-tempfile",
+    "test:performance:tempfile_mode": "node dist/apps/file-backup/src/backup.js --gcp-project-id valid_project_id --gcp-client-email valid@example.com --gcp-private-key valid_private_key --backup-tool-options \"-v /tmp/256mb\" --target-bucket-url gs://test-performance --save-with-tempfile",
     "pretest:performance:stream_mode":  "dd if=/dev/random of=/tmp/256mb bs=1M count=256",
-    "test:performance:stream_mode": "node dist/apps/file-backup/src/backup.js --gcp-endpoint-url http://fake-gcs-server:4443 --gcp-project-id valid_project_id --gcp-client-email valid@example.com --gcp-private-key valid_private_key --backup-tool-options \"-v /tmp/256mb\" --target-bucket-url gs://test-performance",
+    "test:performance:stream_mode": "node dist/apps/file-backup/src/backup.js --gcp-project-id valid_project_id --gcp-client-email valid@example.com --gcp-private-key valid_private_key --backup-tool-options \"-v /tmp/256mb\" --target-bucket-url gs://test-performance",
     "lint": "eslint src --ext .ts",
     "lint:fix": "eslint src --ext .ts --fix"
   },
