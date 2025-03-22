@@ -45,7 +45,7 @@ class FileBackupCommand extends BackupCommand {
     logger.info('archive files as stream...');
 
     // Execute tar command with stdout as a pipe
-    const tar = spawn(`tar -zc ${options.backupToolOptions || ''}`, { shell: false, stdio: ['ignore', 'pipe', 'pipe'] });
+    const tar = spawn(`tar -zc ${options.backupToolOptions || ''}`, { shell: true, stdio: ['ignore', 'pipe', 'pipe'] });
 
     // Log stderr output
     tar.stderr.on('data', (data) => {
