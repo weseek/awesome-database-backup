@@ -148,7 +148,7 @@ export class GCSStorageServiceClient implements IStorageServiceClient {
     const writeStream = file.createWriteStream({
       resumable: true,
       contentType: 'application/gzip',
-      chunkSize: 1 * 1024 * 1024, // 1MB chunks
+      chunkSize: 64 * 1024 * 1024, // 64MB chunks
     });
 
     // only set highWaterMark to limit stream
