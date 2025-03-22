@@ -26,32 +26,53 @@ jobs:
         job_summary: true            # Output results to Job Summary
 
     - uses: actions/checkout@v4
-    - name: Configure fake-gcs-server
-      uses: docker://node:lts-slim
-      with:
-        args: >-
-          node -e "
-          fetch('https://fake-gcs-server:4443/_internal/config',{
-            method:'PUT',
-            headers:{'Content-Type':'application/json'},
-            body:JSON.stringify({
-              publicHost:'fake-gcs-server',
-              externalUrl:'https://fake-gcs-server:4443'
-            })
-          })
-          .then(r=>console.log(r.text()))
-          .catch(console.error)"
-      env:
-        NODE_TLS_REJECT_UNAUTHORIZED: 0
+    # - name: Configure fake-gcs-server
+    #   uses: docker://node:lts-slim
+    #   with:
+    #     args: >-
+    #       node -e "
+    #       fetch('https://fake-gcs-server:4443/_internal/config',{
+    #         method:'PUT',
+    #         headers:{'Content-Type':'application/json'},
+    #         body:JSON.stringify({
+    #           publicHost:'fake-gcs-server',
+    #           externalUrl:'https://fake-gcs-server:4443'
+    #         })
+    #       })
+    #       .then(r=>console.log(r.text()))
+    #       .catch(console.error)"
+    #   env:
+    #     NODE_TLS_REJECT_UNAUTHORIZED: 0
+    # - name: Configure fake-gcs-server
+    #   run: >-
+    #     node -e "
+    #     fetch('https://localhost:4443/_internal/config',{
+    #       method:'PUT',
+    #       headers:{'Content-Type':'application/json'},
+    #       body:JSON.stringify({
+    #         publicHost:'localhost',
+    #         externalUrl:'https://localhost:4443'
+    #       })
+    #     })
+    #     .then(r=>console.log(r.text()))
+    #     .catch(console.error)"
+    #   env:
+    #     NODE_TLS_REJECT_UNAUTHORIZED: 0
+    # - name: Run performance test
+    #   uses: docker://node:lts-slim
+    #   with:
+    #     entrypoint: bash
+    #     args: >-
+    #       -c "
+    #       yarn install;
+    #       yarn run test:performance;
+    #       "
+    #   env:
+    #     GCP_ENDPOINT_URL: https://fake-gcs-server:4443
+    #     NODE_TLS_REJECT_UNAUTHORIZED: 0
+    - run: yarn install
     - name: Run performance test
-      uses: docker://node:lts-slim
-      with:
-        entrypoint: bash
-        args: >-
-          -c "
-          yarn install;
-          yarn run test:performance;
-          "
+      run: yarn run test:performance
       env:
-        GCP_ENDPOINT_URL: https://fake-gcs-server:4443
+        GCP_ENDPOINT_URL: https://localhost:4443
         NODE_TLS_REJECT_UNAUTHORIZED: 0
