@@ -146,7 +146,7 @@ export class GCSStorageServiceClient implements IStorageServiceClient {
     const file = destinationBucket.file(destination);
 
     const writeStream = file.createWriteStream({
-      resumable: false,
+      resumable: true,
       contentType: 'application/gzip',
     });
 
