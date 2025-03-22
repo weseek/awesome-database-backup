@@ -26,6 +26,10 @@ jobs:
         job_summary: true            # Output results to Job Summary
 
     - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version-file: package.json
+        cache: "yarn"
     # - name: Configure fake-gcs-server
     #   uses: docker://node:lts-slim
     #   with:
