@@ -6,7 +6,8 @@
       ],
       "outputs": [
         "dist/**"
-      ]
+      ],
+      "env": ["*"]
     },
     "test": {
       "dependsOn": [],
@@ -16,7 +17,8 @@
       "env": ["*"]
     },
     "lint": {
-      "outputs": []
+      "outputs": [],
+      "env": ["*"]
     },
     "test:performance": {
       "cache": false,
