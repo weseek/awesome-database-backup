@@ -83,7 +83,7 @@ class FileBackupCommand extends BackupCommand {
       await tar.create(
         {
           ...tarOptions,
-          highWaterMark: 1024 * 1024, // 1MB buffer size
+          highWaterMark: 16 * 1024, // 16KB buffer size
           noResume: true, // Enable backpressure handling
           file: dbDumpFilePath,
         },
@@ -121,7 +121,7 @@ class FileBackupCommand extends BackupCommand {
       const stream = tar.create(
         {
           ...tarOptions,
-          highWaterMark: 1024 * 1024, // 1MB buffer size
+          highWaterMark: 16 * 1024, // 16KB buffer size
           noResume: true, // Enable backpressure handling
           // Don't specify 'file' option to get a stream
         },
