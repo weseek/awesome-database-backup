@@ -16,7 +16,7 @@ jobs:
         - 4443:4443
         options: >-
           --health-cmd "wget -q -S -O - --no-check-certificate https://localhost:4443/_internal/healthcheck"
-    container: node:ltm-slim
+    container: node:lts-slim
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
