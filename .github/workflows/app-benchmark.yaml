@@ -38,21 +38,6 @@ jobs:
       with:
         node-version-file: package.json
         cache: "yarn"
-    - name: Configure fake-gcs-server
-      run: >-
-        node -e "
-        fetch('https://localhost:4443/_internal/config',{
-          method:'PUT',
-          headers:{'Content-Type':'application/json'},
-          body:JSON.stringify({
-            publicHost:'localhost',
-            externalUrl:'https://localhost:4443'
-          })
-        })
-        .then(r=>console.log(r.text()))
-        .catch(console.error)"
-      env:
-        NODE_TLS_REJECT_UNAUTHORIZED: 0
     - run: yarn install
     - run: yarn build --filter "@awesome-database-backup/file-backup"
     - name: Run performance test - ${{ matrix.run-script-name }}
