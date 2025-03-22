@@ -77,10 +77,14 @@ class FileBackupCommand extends BackupCommand {
       // Parse tar options
       const { options: tarOptions, files } = this.parseTarOptions(options.backupToolOptions || '');
 
-      // Create archive
+      // Create archive with memory usage control
+      // highWaterMark: Controls the internal buffer size to reduce memory usage
+      // noResume: true: Enables proper backpressure handling - pauses when destination can't keep up
       await tar.create(
         {
           ...tarOptions,
+          highWaterMark: 1024 * 1024, // 1MB buffer size
+          noResume: true, // Enable backpressure handling
           file: dbDumpFilePath,
         },
         files,
@@ -111,10 +115,14 @@ class FileBackupCommand extends BackupCommand {
       // Parse tar options
       const { options: tarOptions, files } = this.parseTarOptions(options.backupToolOptions || '');
 
-      // Create tar stream
+      // Create tar stream with memory usage control
+      // highWaterMark: Controls the internal buffer size to reduce memory usage
+      // noResume: true: Enables proper backpressure handling - pauses when destination can't keep up
       const stream = tar.create(
         {
           ...tarOptions,
+          highWaterMark: 1024 * 1024, // 1MB buffer size
+          noResume: true, // Enable backpressure handling
           // Don't specify 'file' option to get a stream
         },
         files,
