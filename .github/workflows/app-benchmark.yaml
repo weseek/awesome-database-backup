@@ -26,7 +26,7 @@ jobs:
     - name: Collect Workflow Telemetry - ${{ matrix.run-script-name }}
       uses: ryu-sato/workflow-telemetry-action@refs/heads/fix/enable-to-filter-github-action-runner
       with:
-        metric_frequency: 5          # Collection interval (seconds)
+        metric_frequency: 1          # Collection interval (seconds)
         proc_trace_min_duration: 0   # Trace all processes
         comment_on_pr: false         # Output results in PR comments
         job_summary: true            # Output results to Job Summary
