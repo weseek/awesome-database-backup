@@ -26,7 +26,8 @@
     "ts-node-dev": "cross-env NODE_ENV=development ts-node-dev -r tsconfig-paths/register",
     "//// Cannot run in parallel due to shared S3, GCS mock": "",
     "test": "cross-env NODE_ENV=test vitest run --passWithNoTests",
-    "test:performance": "cross-env NODE_ENV=test VITEST_ENV=performance vitest run --passWithNoTests",
+    "test:performance:tempfile_mode": "cross-env NODE_ENV=test VITEST_ENV=performance vitest run --passWithNoTests --testNamePattern '\\[tempfile mode\\]'",
+    "test:performance:stream_mode": "cross-env NODE_ENV=test VITEST_ENV=performance vitest run --passWithNoTests --testNamePattern '\\[stream mode\\]'",
     "lint": "eslint src --ext .ts",
     "lint:fix": "eslint src --ext .ts --fix"
   },

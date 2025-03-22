@@ -20,7 +20,11 @@
       "outputs": [],
       "env": ["*"]
     },
-    "test:performance": {
+    "test:performance:stream_mode": {
+      "cache": false,
+      "env": ["*"]
+    },
+    "test:performance:tempfile_mode": {
       "cache": false,
       "env": ["*"]
     }
