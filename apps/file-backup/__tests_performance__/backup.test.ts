@@ -38,8 +38,7 @@ describe('backup', () => {
         --gcp-client-email ${storageConfig.credentials.client_email} \
         --gcp-private-key ${storageConfig.credentials.private_key} \
         --backup-tool-options "-v ${getTestDirPath()}" \
-        --target-bucket-url ${testGCSBucketURI}/ \
-        --save-with-tempfile`;
+        --target-bucket-url ${testGCSBucketURI}/`;
 
       it('backup files in bucket', async() => {
         expect((await listFileNamesInTestGCSBucket()).length).toBe(0);
