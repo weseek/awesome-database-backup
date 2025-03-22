@@ -35,7 +35,8 @@
   "scripts": {
     "build": "turbo run build",
     "test": "turbo run test --concurrency=1",
-    "test:performance": "turbo run test:performance",
+    "test:performance:stream_mode": "turbo run test:performance:stream_mode",
+    "test:performance:tempfile_mode": "turbo run test:performance:tempfile_mode",
     "lint": "turbo run lint",
     "rimraf": "rimraf",
     "clean": "npm run rimraf **/coverage **/.turbo apps/*/dist packages/*/dist misc/*/dist",
