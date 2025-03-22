@@ -23,7 +23,7 @@ jobs:
     #     cache: "yarn"
     # - run: yarn install
     - name: Configure fake-gcs-server
-      uses: node:lts-slim
+      uses: docker://node:lts-slim
       with:
         args: >-
           node -e "
@@ -47,7 +47,7 @@ jobs:
         comment_on_pr: false         # Output results in PR comments
         job_summary: true            # Output results to Job Summary
     - name: Run performance test
-      uses: node:lts-slim
+      uses: docker://node:lts-slim
       with:
         args: |-
           yarn install
