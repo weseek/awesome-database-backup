@@ -9,6 +9,8 @@ jobs:
       actions: read
       pull-requests: write
     runs-on: ubuntu-22.04
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
     strategy:
       matrix:
         run-script-name:
