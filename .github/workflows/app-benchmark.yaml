@@ -43,7 +43,7 @@ jobs:
       with:
         metric_frequency: 5          # Collection interval (seconds)
         proc_trace_min_duration: 0   # Trace all processes
-        comment_on_pr: true          # Output results in PR comments
+        comment_on_pr: false         # Output results in PR comments
         job_summary: true            # Output results to Job Summary
     - name: Run performance test
       run: yarn run test:performance
