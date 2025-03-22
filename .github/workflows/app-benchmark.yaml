@@ -37,7 +37,7 @@ jobs:
         node-version-file: package.json
         cache: "yarn"
     - run: yarn install
-    - run: yarn build
+    - run: yarn build --filter "@awesome-database-backup/file-backup"
     - name: Run performance test - ${{ matrix.run-script-name }}
       run: yarn run ${{ matrix.run-script-name }}
       env:
