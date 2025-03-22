@@ -1,6 +1,6 @@
 import { Storage, File, type StorageOptions } from '@google-cloud/storage';
 import { basename, join } from 'path';
-import { Readable } from 'stream';
+import { Readable, Transform } from 'stream';
 import { pipeline } from 'stream/promises';
 import {
   IStorageServiceClient,
@@ -150,7 +150,16 @@ export class GCSStorageServiceClient implements IStorageServiceClient {
       contentType: 'application/gzip',
     });
 
-    await pipeline(stream, writeStream);
+    // only set highWaterMark to limit stream
+    const rateAdjuster = new Transform({
+      highWaterMark: 1 * 1024,
+      transform(chunk: any, _encoding: any, callback: () => void) {
+        this.push(chunk);
+        callback();
+      },
+    });
+
+    await pipeline(stream, rateAdjuster, writeStream);
   }
 
   /**
