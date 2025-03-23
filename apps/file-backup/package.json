@@ -40,8 +40,7 @@
     "bunyan": "^1.8.15",
     "universal-bunyan": "^0.9.2",
     "browser-bunyan": "^1.6.3",
-    "tmp": "^0.2.1",
-    "tar": "^7.4.3"
+    "tmp": "^0.2.1"
   },
   "devDependencies": {
     "@awesome-database-backup/tsconfig": "^0.3.2",
