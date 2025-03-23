@@ -146,8 +146,11 @@ export class GCSStorageServiceClient implements IStorageServiceClient {
     const file = destinationBucket.file(destination);
 
     const writeStream = file.createWriteStream({
-      resumable: false,
+      resumable: true,
       contentType: 'application/gzip',
+      // 128MB chunks. (MUST BE A MULTIPLE OF 256 KiB, and 8MiB or more recommended)
+      // ref. https://cloud.google.com/storage/docs/performing-resumable-uploads?#chunked-upload
+      chunkSize: 128 * 1024 * 1024,
     });
 
     await pipeline(stream, writeStream);
