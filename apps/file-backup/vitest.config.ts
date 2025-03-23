@@ -4,9 +4,8 @@ export default defineConfig({
   test: {
     globals: false,
     environment: 'node',
-    clearMocks: true,
     include: ['**/__tests__/**/*.test.ts'],
-    testTimeout: 20000,
+    clearMocks: true,
     coverage: {
       provider: 'v8',
       enabled: true,
@@ -18,5 +17,6 @@ export default defineConfig({
         reporters: ['vitest-ctrf-json-reporter'],
       }
       : {}),
+    testTimeout: 20000,
   },
 });
