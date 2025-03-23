@@ -10,6 +10,7 @@ import {
   listFileNamesInTestS3Bucket,
   storageConfig,
   testGCSBucketURI,
+  initFakeGCSServer,
   cleanTestGCSBucket,
   listFileNamesInTestGCSBucket,
 } from '@awesome-database-backup/storage-service-test';
@@ -90,6 +91,7 @@ describe('backup', () => {
   });
 
   describe('when valid GCS options are specified', () => {
+    beforeEach(initFakeGCSServer);
     beforeEach(cleanTestGCSBucket);
     beforeEach(prepareTestFile);
 
@@ -115,6 +117,7 @@ describe('backup', () => {
   });
 
   describe('when valid GCS options with stream mode are specified', () => {
+    beforeEach(initFakeGCSServer);
     beforeEach(cleanTestGCSBucket);
     beforeEach(prepareTestFile);
 

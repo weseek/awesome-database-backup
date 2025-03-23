@@ -10,6 +10,7 @@ import {
   uploadMongoDBFixtureToTestS3Bucket,
   storageConfig,
   testGCSBucketURI,
+  initFakeGCSServer,
   cleanTestGCSBucket,
   uploadMongoDBFixtureToTestGCSBucket,
 } from '@awesome-database-backup/storage-service-test';
@@ -80,6 +81,7 @@ describe('restore', () => {
       --restore-tool-options "--uri ${mongodbURI}" \
       --target-bucket-url ${objectURI}`;
 
+    beforeEach(initFakeGCSServer);
     beforeEach(cleanTestGCSBucket);
     beforeEach(dropTestMongoDB);
     beforeEach(async() => {

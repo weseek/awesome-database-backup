@@ -10,6 +10,7 @@ import {
   uploadPGFixtureToTestS3Bucket,
   storageConfig,
   testGCSBucketURI,
+  initFakeGCSServer,
   cleanTestGCSBucket,
   uploadPGFixtureToTestGCSBucket,
 } from '@awesome-database-backup/storage-service-test';
@@ -81,6 +82,7 @@ describe('restore', () => {
       --gcp-private-key ${storageConfig.credentials.private_key} \
       --restore-tool-options "--host ${postgresqlConfig.host} --username ${postgresqlConfig.user} --port ${postgresqlConfig.port}" \
       --target-bucket-url ${objectURI}`;
+    beforeEach(initFakeGCSServer);
     beforeEach(cleanTestGCSBucket);
     beforeEach(cleanTestPG);
     beforeEach(async() => {
