@@ -13,6 +13,7 @@ import {
   listFileNamesInTestS3Bucket,
   storageConfig,
   testGCSBucketURI,
+  initFakeGCSServer,
   cleanTestGCSBucket,
   uploadPGFixtureToTestGCSBucket,
   listFileNamesInTestGCSBucket,
@@ -72,6 +73,7 @@ describe('prune', () => {
   });
 
   describe('when valid GCS options are specified', () => {
+    beforeEach(initFakeGCSServer);
     beforeEach(cleanTestGCSBucket);
 
     describe('and when prune options show pruning files everyday', () => {

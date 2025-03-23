@@ -10,6 +10,7 @@ import {
   uploadPGFixtureToTestS3Bucket,
   storageConfig,
   testGCSBucketURI,
+  initFakeGCSServer,
   cleanTestGCSBucket,
   uploadPGFixtureToTestGCSBucket,
 } from '@awesome-database-backup/storage-service-test';
@@ -67,6 +68,7 @@ describe('list', () => {
       --gcp-private-key ${storageConfig.credentials.private_key} \
       --target-bucket-url ${testGCSBucketURI}/`;
 
+    beforeEach(initFakeGCSServer);
     beforeEach(cleanTestGCSBucket);
     beforeEach(async() => {
       await uploadPGFixtureToTestGCSBucket('backup-20220327224212');

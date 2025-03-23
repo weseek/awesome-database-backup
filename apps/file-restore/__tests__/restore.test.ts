@@ -10,6 +10,7 @@ import {
   uploadFileFixtureToTestS3Bucket,
   storageConfig,
   testGCSBucketURI,
+  initFakeGCSServer,
   cleanTestGCSBucket,
   uploadFileFixtureToTestGCSBucket,
 } from '@awesome-database-backup/storage-service-test';
@@ -77,6 +78,7 @@ describe('restore', () => {
       --gcp-client-email ${storageConfig.credentials.client_email} \
       --gcp-private-key ${storageConfig.credentials.private_key} \
       --target-bucket-url ${objectURI}`;
+    beforeEach(initFakeGCSServer);
     beforeEach(cleanTestGCSBucket);
     beforeEach(clearTestDir);
     beforeEach(async() => {
