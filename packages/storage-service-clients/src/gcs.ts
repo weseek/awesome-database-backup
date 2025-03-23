@@ -63,7 +63,7 @@ export class GCSStorageServiceClient implements IStorageServiceClient {
 
     const targetBucket = this.client.bucket(gcsUri.bucket);
     // getFiles() return like "[[File1],[File2],...]", so removed the outermost array
-    const [matchedFiles]: File[][] = await targetBucket.getFiles({ prefix: gcsUri.filepath });
+    const [matchedFiles] = await targetBucket.getFiles({ prefix: gcsUri.filepath });
     if (matchedFiles == null) throw new Error('Bucket#getFiles return null');
 
     let files = matchedFiles;
