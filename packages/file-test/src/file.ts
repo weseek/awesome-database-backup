@@ -1,14 +1,14 @@
 import { v4 as uuidv4 } from 'uuid';
 import { join } from 'path';
 import { readdirSync, writeFileSync } from 'fs';
-import { exec as execOriginal } from 'child_process';
+import { execFile as execFileOriginal } from 'child_process';
 import { promisify } from 'util';
 import tempDir from './temp-dir';
 
 const tar = require('tar');
 const tmp = require('tmp');
 
-const exec = promisify(execOriginal);
+const execFile = promisify(execFileOriginal);
 
 export const testFileName = `dummy-${uuidv4()}`;
 
@@ -30,7 +30,7 @@ export async function prepareTestFile(): Promise<void> {
 
 export async function prepareLargeTestFile(sizeInMB = 256): Promise<void> {
   const filePath = getTestFilePath();
-  await exec(`dd if=/dev/random of=${filePath} bs=1M count=${sizeInMB}`);
+  await execFile('dd', ['if=/dev/random', `of=${filePath}`, 'bs=1M', `count=${sizeInMB}`]);
 }
 
 export async function listFileNamesInTestDir(): Promise<Array<string>> {
