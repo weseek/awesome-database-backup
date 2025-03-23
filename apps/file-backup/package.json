@@ -26,8 +26,6 @@
     "ts-node-dev": "cross-env NODE_ENV=development ts-node-dev -r tsconfig-paths/register",
     "//// Cannot run in parallel due to shared S3, GCS mock": "",
     "test": "cross-env NODE_ENV=test vitest run --passWithNoTests",
-    "//test:performance:tempfile_mode": "cross-env NODE_ENV=test VITEST_ENV=performance vitest run --passWithNoTests --testNamePattern '\\[tempfile mode\\]'",
-    "//test:performance:stream_mode": "cross-env NODE_ENV=test VITEST_ENV=performance vitest run --passWithNoTests --testNamePattern '\\[stream mode\\]'",
     "pretest:performance:tempfile_mode": "dd if=/dev/random of=/tmp/big-file bs=1M count=1024",
     "test:performance:tempfile_mode": "node dist/apps/file-backup/src/backup.js --gcp-project-id valid_project_id --gcp-client-email valid@example.com --gcp-private-key valid_private_key --backup-tool-options \"-v /tmp/big-file\" --target-bucket-url gs://test-performance --save-with-tempfile",
     "pretest:performance:stream_mode":  "dd if=/dev/random of=/tmp/big-file bs=1M count=1024",
