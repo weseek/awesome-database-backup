@@ -155,6 +155,7 @@ export class GCSStorageServiceClient implements IStorageServiceClient {
 
     // only set highWaterMark to limit stream
     const rateAdjuster = new Transform({
+      highWaterMark: 32 * 1024 * 1024,
       transform(chunk: any, _encoding: any, callback: () => void) {
         this.push(chunk);
         callback();
