@@ -56,7 +56,7 @@ jobs:
     - run: yarn build --filter "@awesome-database-backup/file-backup"
     - run: ulimit -v 200000
     - name: Run performance test - ${{ matrix.run-script-name }}
-      run: yarn run ${{ matrix.run-script-name }}
+      run: yarn run ${{ matrix.run-script-name }} --filter "@awesome-database-backup/file-backup"
       env:
         GCP_ENDPOINT_URL: https://localhost:4443
         NODE_TLS_REJECT_UNAUTHORIZED: 0
