@@ -182,7 +182,7 @@ export class GCSStorageServiceClient implements IStorageServiceClient {
     const BLOCK_SIZE = 256 * 1024;
     const MIN_SIZE = 8 * 1024 * 1024;
 
-    return Math.max(Math.floor(totalHeapSize * 0.7 / BLOCK_SIZE) * BLOCK_SIZE, MIN_SIZE);
+    return Math.max(Math.floor(totalHeapSize * 0.5 / BLOCK_SIZE) * BLOCK_SIZE, MIN_SIZE);
   }
 
 }
