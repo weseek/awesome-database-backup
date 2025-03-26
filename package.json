@@ -39,7 +39,7 @@
     "test:performance:tempfile_mode": "turbo run test:performance:tempfile_mode",
     "lint": "turbo run lint",
     "rimraf": "rimraf",
-    "clean": "npm run rimraf **/coverage **/.turbo apps/*/dist packages/*/dist misc/*/dist",
+    "clean": "npm run rimraf **/coverage **/vitest-ctrf **/.turbo apps/*/dist packages/*/dist misc/*/dist",
     "bump-version": "bump-version",
     "bump-version:major": "npm run bump-version -- -i major",
     "bump-version:minor": "npm run bump-version -- -i minor",
