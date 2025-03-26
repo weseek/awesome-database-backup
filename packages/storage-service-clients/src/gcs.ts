@@ -2,6 +2,7 @@ import { Storage, File, type StorageOptions } from '@google-cloud/storage';
 import { basename, join } from 'path';
 import { Readable } from 'stream';
 import { pipeline } from 'stream/promises';
+import { getHeapStatistics } from 'v8';
 import {
   IStorageServiceClient,
   listGCSFilesOptions,
@@ -148,9 +149,7 @@ export class GCSStorageServiceClient implements IStorageServiceClient {
     const writeStream = file.createWriteStream({
       resumable: true,
       contentType: 'application/gzip',
-      // 128MB chunks. (MUST BE A MULTIPLE OF 256 KiB, and 8MiB or more recommended)
-      // ref. https://cloud.google.com/storage/docs/performing-resumable-uploads?#chunked-upload
-      chunkSize: 128 * 1024 * 1024,
+      chunkSize: this._chunkSizeCalculatedFromHeapSize(),
     });
 
     await pipeline(stream, writeStream);
@@ -173,6 +172,17 @@ export class GCSStorageServiceClient implements IStorageServiceClient {
       return { bucket, filepath };
     }
     return null;
+  }
+
+  private _chunkSizeCalculatedFromHeapSize() {
+    const { total_heap_size: totalHeapSize } = getHeapStatistics();
+
+    // MUST BE A MULTIPLE OF 256 KiB, and 8MiB or more recommended
+    // ref. https://cloud.google.com/storage/docs/performing-resumable-uploads?#chunked-upload
+    const BLOCK_SIZE = 256 * 1024;
+    const MIN_SIZE = 8 * 1024 * 1024;
+
+    return Math.max(Math.floor(totalHeapSize * 0.7 / BLOCK_SIZE) * BLOCK_SIZE, MIN_SIZE);
   }
 
 }
