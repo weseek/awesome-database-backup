@@ -1,50 +1,44 @@
 {
   "tasks": {
     "build": {
+      "cache": true,
       "dependsOn": [
         "^build"
       ],
       "outputs": [
         "dist/**"
       ],
-      "env": ["*"]
+      "env": ["!*"]
     },
     "test": {
+      "cache": true,
       "dependsOn": [],
       "outputs": [
-        "coverage/**"
+        "coverage/**",
+        "vitest-ctrf/**"
       ],
       "env": ["*"]
     },
     "lint": {
+      "cache": false,
       "outputs": [],
       "env": ["*"]
     },
     "test:performance:stream_mode": {
       "cache": false,
-      "env": ["*"],
       "dependsOn": [
-        {
-          "target": "build",
-          "cache": true
-        }
+        "build"
       ],
-      "outputs": [
-        "dist/**"
-      ]
+      "outputs": [],
+      "env": ["*"]
     },
     "test:performance:tempfile_mode": {
       "cache": false,
-      "env": ["*"],
       "dependsOn": [
-        {
-          "target": "build",
-          "cache": true
-        }
+        "build"
       ],
-      "outputs": [
-        "dist/**"
-      ]
+      "outputs": [],
+      "env": ["*"]
     }
   }
 }
