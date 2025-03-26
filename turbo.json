@@ -24,7 +24,10 @@
       "cache": false,
       "env": ["*"],
       "dependsOn": [
-        "build"
+        {
+          "target": "build",
+          "cache": true
+        }
       ],
       "outputs": [
         "dist/**"
@@ -34,7 +37,10 @@
       "cache": false,
       "env": ["*"],
       "dependsOn": [
-        "build"
+        {
+          "target": "build",
+          "cache": true
+        }
       ],
       "outputs": [
         "dist/**"
