@@ -16,6 +16,11 @@ jobs:
         run-script-name:
         - test:performance:tempfile_mode
         - test:performance:stream_mode
+        node-js-heap-size:
+        - 200
+        - 400
+        - 800
+        - 1600
       fail-fast: false
     services:
       fake-gcs-server:
@@ -60,4 +65,4 @@ jobs:
       env:
         GCP_ENDPOINT_URL: https://localhost:4443
         NODE_TLS_REJECT_UNAUTHORIZED: 0
-        NODE_OPTIONS: '--max-old-space-size=200'
+        NODE_OPTIONS: '--max-old-space-size=${{ matrix.node-js-heap-size }}'
