@@ -5,7 +5,7 @@
 import { format } from 'date-fns';
 import { BackupCommand, IBackupCommandOption } from '@awesome-database-backup/commands';
 import { join } from 'path';
-import { Readable } from 'stream';
+import { PassThrough, Readable } from 'stream';
 import * as tar from 'tar';
 import loggerFactory from './logger/factory';
 
@@ -118,7 +118,7 @@ class FileBackupCommand extends BackupCommand {
           // Don't specify 'file' option to get a stream
         },
         files,
-      ) as unknown as Readable;
+      );
 
       // Handle stream errors
       stream.on('error', (error: any) => {
@@ -126,7 +126,10 @@ class FileBackupCommand extends BackupCommand {
         throw error;
       });
 
-      return stream;
+      // Convert tar.Pack format to stream.Readable instance for @aws-sdk/lib-storage
+      return stream.pipe(new PassThrough({
+        highWaterMark: 0,
+      }));
     }
     catch (error: any) {
       logger.error(`Error creating archive stream: ${error.message}`);
