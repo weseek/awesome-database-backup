@@ -1,9 +1,9 @@
+import { Upload } from '@aws-sdk/lib-storage';
 import { readFileSync, createWriteStream } from 'fs';
 import { basename } from 'path';
 import {
   S3Client, S3ClientConfig,
   GetObjectCommand, GetObjectCommandInput,
-  PutObjectCommand, PutObjectCommandInput,
   CopyObjectCommand, CopyObjectCommandInput,
   DeleteObjectCommand, DeleteObjectCommandInput,
   ListObjectsCommand,
@@ -159,16 +159,20 @@ export class S3StorageServiceClient implements IStorageServiceClient {
   }
 
   async uploadFile(sourceFilePath: string, destinationS3Uri: S3URI): Promise<void> {
-    const params: PutObjectCommandInput = {
-      Bucket: destinationS3Uri.bucket,
-      Key: (destinationS3Uri.key === '' || destinationS3Uri.key.endsWith('/'))
-        ? (destinationS3Uri.key + basename(sourceFilePath))
-        : destinationS3Uri.key,
-      Body: readFileSync(sourceFilePath),
-    };
-    const command = new PutObjectCommand(params);
+    const parallelUploads3 = new Upload({
+      client: this.client,
+      queueSize: 4,
+      leavePartsOnError: false,
+      params: {
+        Bucket: destinationS3Uri.bucket,
+        Key: (destinationS3Uri.key === '' || destinationS3Uri.key.endsWith('/'))
+          ? (destinationS3Uri.key + basename(sourceFilePath))
+          : destinationS3Uri.key,
+        Body: readFileSync(sourceFilePath),
+      },
+    });
 
-    await this.client.send(command);
+    await parallelUploads3.done();
   }
 
   async downloadFile(sourceS3Uri: S3URI, destinationFilePath: string): Promise<void> {
@@ -207,21 +211,18 @@ export class S3StorageServiceClient implements IStorageServiceClient {
     const destinationS3Uri = this._parseFilePath(destinationUri);
     if (destinationS3Uri == null) throw new Error(`URI ${destinationUri} is not correct S3's`);
 
-    // Collect stream data in buffer before uploading
-    const chunks: Buffer[] = [];
-    for await (const chunk of stream) {
-      chunks.push(Buffer.from(chunk));
-    }
-    const buffer = Buffer.concat(chunks);
+    const parallelUploads3 = new Upload({
+      client: this.client,
+      queueSize: 4,
+      leavePartsOnError: false,
+      params: {
+        Bucket: destinationS3Uri.bucket,
+        Key: path.join(destinationS3Uri.key, fileName),
+        Body: stream,
+      },
+    });
 
-    const params: PutObjectCommandInput = {
-      Bucket: destinationS3Uri.bucket,
-      Key: path.join(destinationS3Uri.key, fileName),
-      Body: buffer,
-    };
-    const command = new PutObjectCommand(params);
-
-    await this.client.send(command);
+    await parallelUploads3.done();
   }
 
   /**
