@@ -43,7 +43,7 @@ jobs:
       with:
         node-version-file: package.json
         cache: "yarn"
-    - name: Create bucket "gs://performance-test"
+    - name: Create bucket "gs://test-performance"
       run: >-
         node -e "
         fetch('https://localhost:4443/storage/v1/b',{
@@ -106,8 +106,8 @@ jobs:
       with:
         node-version-file: package.json
         cache: "yarn"
-    - name: Create bucket "s3://performance-test"
-      run: aws --endpoint-url http://localhost:9000/ s3 mb s3://performance-test
+    - name: Create bucket "s3://test-performance"
+      run: aws --endpoint-url http://localhost:9000/ s3 mb s3://test-performance
       env:
         AWS_ACCESS_KEY_ID: minioadmin
         AWS_SECRET_ACCESS_KEY: minioadmin
