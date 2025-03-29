@@ -26,6 +26,14 @@
     "ts-node-dev": "cross-env NODE_ENV=development ts-node-dev -r tsconfig-paths/register",
     "//// Cannot run in parallel due to shared S3, GCS mock": "",
     "test": "cross-env NODE_ENV=test vitest run --passWithNoTests",
+    "pretest:performance:tempfile_mode:gcs": "dd if=/dev/random of=/tmp/big-file bs=1M count=1024",
+    "test:performance:tempfile_mode:gcs": "node dist/apps/file-backup/src/backup.js --gcp-project-id valid_project_id --gcp-client-email valid@example.com --gcp-private-key valid_private_key --backup-tool-options \"-v /tmp/big-file\" --target-bucket-url gs://test-performance --save-with-tempfile",
+    "pretest:performance:tempfile_mode:s3": "dd if=/dev/random of=/tmp/big-file bs=1M count=1024",
+    "test:performance:tempfile_mode:s3": "node dist/apps/file-backup/src/backup.js --aws-region us-east-1 --aws-access-key-id minioadmin --aws-secret-access-key minioadmin --backup-tool-options \"-v /tmp/big-file\" --target-bucket-url s3://test-performance --save-with-tempfile",
+    "pretest:performance:stream_mode:gcs":  "dd if=/dev/random of=/tmp/big-file bs=1M count=1024",
+    "test:performance:stream_mode:gcs": "node dist/apps/file-backup/src/backup.js --gcp-project-id valid_project_id --gcp-client-email valid@example.com --gcp-private-key valid_private_key --backup-tool-options \"-v /tmp/big-file\" --target-bucket-url gs://test-performance",
+    "pretest:performance:stream_mode:s3":  "dd if=/dev/random of=/tmp/big-file bs=1M count=1024",
+    "test:performance:stream_mode:s3": "node dist/apps/file-backup/src/backup.js --aws-region us-east-1 --aws-access-key-id minioadmin --aws-secret-access-key minioadmin --backup-tool-options \"-v /tmp/big-file\" --target-bucket-url s3://test-performance",
     "lint": "eslint src --ext .ts",
     "lint:fix": "eslint src --ext .ts --fix"
   },
@@ -34,7 +42,8 @@
     "bunyan": "^1.8.15",
     "universal-bunyan": "^0.9.2",
     "browser-bunyan": "^1.6.3",
-    "tmp": "^0.2.1"
+    "tmp": "^0.2.1",
+    "tar": "^7.4.3"
   },
   "devDependencies": {
     "@awesome-database-backup/tsconfig": "^0.3.2",
