@@ -13,13 +13,13 @@ import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
 import { promises as StreamPromises, Readable } from 'stream';
 import { getHeapStatistics } from 'v8';
 import path from 'node:path';
+import { PassThrough } from 'node:stream';
 import {
   IStorageServiceClient,
   listS3FilesOptions,
   S3URI,
   S3StorageServiceClientConfig,
 } from './interfaces';
-import { PassThrough } from 'node:stream';
 
 /**
  * Client to manipulate S3 buckets
@@ -231,7 +231,7 @@ export class S3StorageServiceClient implements IStorageServiceClient {
       params: {
         Bucket: destinationS3Uri.bucket,
         Key: path.join(destinationS3Uri.key, fileName),
-        Body: adjuster,
+        Body: stream.pipe(adjuster),
       },
     });
 
