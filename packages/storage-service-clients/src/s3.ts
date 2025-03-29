@@ -19,6 +19,7 @@ import {
   S3URI,
   S3StorageServiceClientConfig,
 } from './interfaces';
+import { PassThrough } from 'node:stream';
 
 /**
  * Client to manipulate S3 buckets
@@ -217,6 +218,11 @@ export class S3StorageServiceClient implements IStorageServiceClient {
     const destinationS3Uri = this._parseFilePath(destinationUri);
     if (destinationS3Uri == null) throw new Error(`URI ${destinationUri} is not correct S3's`);
 
+    const highWaterMark = this._partSizeCalculatedFromHeapSize() * this._queueSizeCalculatedFromCPU();
+    const adjuster = new PassThrough({
+      highWaterMark,
+    });
+
     const parallelUploads3 = new Upload({
       client: this.client,
       queueSize: this._queueSizeCalculatedFromCPU(),
@@ -225,7 +231,7 @@ export class S3StorageServiceClient implements IStorageServiceClient {
       params: {
         Bucket: destinationS3Uri.bucket,
         Key: path.join(destinationS3Uri.key, fileName),
-        Body: stream,
+        Body: adjuster,
       },
     });
 
