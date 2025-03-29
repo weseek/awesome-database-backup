@@ -92,7 +92,7 @@ jobs:
         env:
           MINIO_ROOT_USER: minioadmin
           MINIO_ROOT_PASSWORD: minioadmin
-          MINIO_HTTP_TRACE: /opt/bitnami/minio/log/minio.log
+          MINIO_HTTP_TRACE: /opt/bitnami/minio/log/minio-http.log
     steps:
     - name: Collect Workflow Telemetry - ${{ matrix.run-script-name }}
       uses: ryu-sato/workflow-telemetry-action@refs/heads/fix/some-problem
