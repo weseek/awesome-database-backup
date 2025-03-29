@@ -73,7 +73,7 @@ jobs:
     # Need to match the requirements of workflow-telemetry-action
     runs-on: ubuntu-22.04
     strategy:
-      max-parallel: 1
+      # max-parallel: 1
       matrix:
         run-script-name:
         - test:performance:tempfile_mode:s3
