@@ -35,8 +35,10 @@
   "scripts": {
     "build": "turbo run build",
     "test": "turbo run test --concurrency=1",
-    "test:performance:stream_mode": "turbo run test:performance:stream_mode",
-    "test:performance:tempfile_mode": "turbo run test:performance:tempfile_mode",
+    "test:performance:tempfile_mode:gcs": "turbo run test:performance:tempfile_mode:gcs",
+    "test:performance:tempfile_mode:s3": "turbo run test:performance:tempfile_mode:s3",
+    "test:performance:stream_mode:gcs": "turbo run test:performance:stream_mode:gcs",
+    "test:performance:stream_mode:s3": "turbo run test:performance:stream_mode:s3",
     "lint": "turbo run lint",
     "rimraf": "rimraf",
     "clean": "npm run rimraf **/coverage **/vitest-ctrf **/.turbo apps/*/dist packages/*/dist misc/*/dist",
