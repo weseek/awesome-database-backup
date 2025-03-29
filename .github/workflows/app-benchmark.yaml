@@ -101,19 +101,30 @@ jobs:
         proc_trace_min_duration: 0   # Trace all processes
         comment_on_pr: false         # Output results in PR comments
         job_summary: true            # Output results to Job Summary
+
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
       with:
         node-version-file: package.json
         cache: "yarn"
-    - name: Create bucket "s3://test-performance"
-      run: aws --endpoint-url http://localhost:9000/ s3 mb s3://test-performance
-      env:
-        AWS_ACCESS_KEY_ID: minioadmin
-        AWS_SECRET_ACCESS_KEY: minioadmin
-        AWS_DEFAULT_REGION: us-east-1
-    - name: Use forcePathStyle
-      run: aws configure set forcePathStyle true
+    # - name: Create bucket "s3://test-performance"
+    #   run: aws --endpoint-url http://localhost:9000/ s3 mb s3://test-performance
+    #   env:
+    #     AWS_ACCESS_KEY_ID: minioadmin
+    #     AWS_SECRET_ACCESS_KEY: minioadmin
+    #     AWS_DEFAULT_REGION: us-east-1
+
+    - name: Configure minio
+      uses: docker.io/minio/mc
+      with:
+        entrypoint: >
+          /bin/sh -c "
+          until (/usr/bin/mc alias set  --resolve localhost:minio myminio http://localhost:9000 minioadmin minioadmin) do echo '...waiting...' && sleep 1; done;
+          /usr/bin/mc mb myminio/test-performance;
+          exit 0;
+          "
+    # - name: Use forcePathStyle
+    #   run: aws configure set forcePathStyle true
     - run: yarn install
     - run: yarn build --filter "@awesome-database-backup/file-backup"
     - name: Run performance test - ${{ matrix.run-script-name }}
