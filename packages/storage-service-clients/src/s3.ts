@@ -40,6 +40,10 @@ export class S3StorageServiceClient implements IStorageServiceClient {
     if (config.awsEndpointUrl) {
       s3ClientConfig.endpoint = config.awsEndpointUrl.toString();
     }
+    // Set forcePathStyle if specified (DEPRECATED, but useful to access minio in path mode)
+    if (config.awsForcePathStyle) {
+      s3ClientConfig.forcePathStyle = true;
+    }
     // Set credentials
     if (config.awsAccessKeyId && config.awsSecretAccessKey) {
       // If explicit credentials are provided, use them directly
@@ -55,7 +59,6 @@ export class S3StorageServiceClient implements IStorageServiceClient {
 
     this.name = 'S3';
     this.client = new S3Client(s3ClientConfig);
-    console.log(this.client);
   }
 
   async exists(url: string): Promise<boolean> {

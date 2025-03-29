@@ -45,6 +45,10 @@ export class StorageServiceClientCommand extends Command {
         new Option('--aws-secret-access-key <AWS_SECRET_ACCESS_KEY>', 'Your IAM Secret Access Key')
           .env('AWS_SECRET_ACCESS_KEY'),
       )
+      .addOption(
+        new Option('--aws-force-path-style', 'Enable forcePathStyle. This option is deprecated')
+          .env('AWS_FORCE_PATH_STYLE'),
+      )
       /* GCS options */
       .addOption(
         new Option('--gcp-endpoint-url <GCP_ENDPOINT_URL>', 'URL to send the request to')
