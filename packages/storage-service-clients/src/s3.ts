@@ -280,11 +280,11 @@ export class S3StorageServiceClient implements IStorageServiceClient {
   private _queueSizeCalculatedFromCPU() {
     // MUST BE A LESS THAN 10,000
     // see. https://docs.aws.amazon.com/AmazonS3/latest/userguide/qfacts.html
-    const MIN_SIZE = 10000;
+    const MAX_SIZE = 10000;
 
     const calculatedSize = os.cpus().length * 2;
     logger.debug(`Calculated queue size: ${calculatedSize}`);
-    return Math.min(calculatedSize, MIN_SIZE);
+    return Math.min(calculatedSize, MAX_SIZE);
   }
 
 }
