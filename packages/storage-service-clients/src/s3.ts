@@ -20,6 +20,9 @@ import {
   S3URI,
   S3StorageServiceClientConfig,
 } from './interfaces';
+import loggerFactory from './logger/factory';
+
+const logger = loggerFactory('storage-service-clients');
 
 /**
  * Client to manipulate S3 buckets
@@ -219,6 +222,7 @@ export class S3StorageServiceClient implements IStorageServiceClient {
     if (destinationS3Uri == null) throw new Error(`URI ${destinationUri} is not correct S3's`);
 
     const highWaterMark = this._partSizeCalculatedFromHeapSize() * this._queueSizeCalculatedFromCPU();
+    logger.debug(`Create PassThrough with highWaterMark: ${highWaterMark}(bytes)`);
     const adjuster = new PassThrough({
       highWaterMark,
     });
@@ -269,6 +273,7 @@ export class S3StorageServiceClient implements IStorageServiceClient {
     const MAX_SIZE = 5 * 1024 * 1024 * 1024;
 
     const calculatedSize = Math.floor(totalHeapSize * 0.5 / this._queueSizeCalculatedFromCPU());
+    logger.debug(`Calculated part size: ${calculatedSize}(bytes)`);
     return Math.min(Math.max(calculatedSize, MIN_SIZE), MAX_SIZE);
   }
 
@@ -278,6 +283,7 @@ export class S3StorageServiceClient implements IStorageServiceClient {
     const MIN_SIZE = 10000;
 
     const calculatedSize = os.cpus().length * 2;
+    logger.debug(`Calculated queue size: ${calculatedSize}`);
     return Math.min(calculatedSize, MIN_SIZE);
   }
 
