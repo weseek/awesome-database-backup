@@ -30,7 +30,7 @@ export class S3StorageServiceClient implements IStorageServiceClient {
   client: S3Client;
 
   constructor(config: S3StorageServiceClientConfig) {
-    const s3ClientConfig: S3ClientConfig = {};
+    const s3ClientConfig: S3ClientConfig = { forcePathStyle: true };
 
     // Set region if specified
     if (config.awsRegion) {
@@ -55,6 +55,7 @@ export class S3StorageServiceClient implements IStorageServiceClient {
 
     this.name = 'S3';
     this.client = new S3Client(s3ClientConfig);
+    console.log(this.client);
   }
 
   async exists(url: string): Promise<boolean> {
@@ -225,6 +226,7 @@ export class S3StorageServiceClient implements IStorageServiceClient {
       },
     });
 
+    console.log(`Uploding ${JSON.stringify(parallelUploads3)}...`);
     parallelUploads3.on('httpUploadProgress', (progress) => {
       console.log(progress);
     });
