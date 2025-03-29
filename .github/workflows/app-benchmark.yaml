@@ -80,6 +80,9 @@ jobs:
         - test:performance:stream_mode:s3
         node-js-heap-size:
         - 200
+        - 400
+        - 800
+        - 1600
       fail-fast: false
     services:
       minio:
