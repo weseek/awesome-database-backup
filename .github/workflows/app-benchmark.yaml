@@ -101,7 +101,8 @@ jobs:
         proc_trace_min_duration: 0   # Trace all processes
         comment_on_pr: false         # Output results in PR comments
         job_summary: true            # Output results to Job Summary
-
+    - name: Set up dnsx to use s3 client with default style (access `s3://BUCKET/FILE` by `http://BUCKET.s3.DOMAIN/FILE`)
+      run: echo "127.0.0.1 minio s3.minio performance-test.s3.minio" | sudo tee -a /etc/hosts
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
       with:
@@ -118,5 +119,5 @@ jobs:
     - name: Run performance test - ${{ matrix.run-script-name }}
       run: yarn run ${{ matrix.run-script-name }} --filter "@awesome-database-backup/file-backup"
       env:
-        AWS_ENDPOINT_URL: http://localhost:9000
+        AWS_ENDPOINT_URL: http://minio:9000
         NODE_OPTIONS: '--max-old-space-size=${{ matrix.node-js-heap-size }}'
