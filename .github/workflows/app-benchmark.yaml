@@ -117,8 +117,9 @@ jobs:
     - name: Configure minio
       uses: docker://minio/mc
       with:
-        entrypoint: >
-          /bin/sh -c "
+        entrypoint: /bin/sh
+        args: >-
+          -c "
           until (/usr/bin/mc alias set  --resolve localhost:minio myminio http://localhost:9000 minioadmin minioadmin) do echo '...waiting...' && sleep 1; done;
           /usr/bin/mc mb myminio/test-performance;
           exit 0;
