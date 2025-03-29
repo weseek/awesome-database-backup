@@ -221,15 +221,20 @@ export class S3StorageServiceClient implements IStorageServiceClient {
     const destinationS3Uri = this._parseFilePath(destinationUri);
     if (destinationS3Uri == null) throw new Error(`URI ${destinationUri} is not correct S3's`);
 
-    const highWaterMark = this._partSizeCalculatedFromHeapSize() * this._queueSizeCalculatedFromCPU();
+    const highWaterMark = this._bufferSizeCalculatedFromHeapSize();
     logger.debug(`Create PassThrough with highWaterMark: ${highWaterMark}(bytes)`);
     const adjuster = new PassThrough({
       highWaterMark,
     });
 
+    const queueSize = Math.min(
+      this._queueSizeCalculatedFromCPU(),
+      Math.floor(this._bufferSizeCalculatedFromHeapSize() / this._partSizeCalculatedFromHeapSize()),
+    );
+    logger.info(`Uploading stream to S3 with queue size: ${queueSize}, part size: ${this._partSizeCalculatedFromHeapSize()}`);
     const parallelUploads3 = new Upload({
       client: this.client,
-      queueSize: this._queueSizeCalculatedFromCPU(),
+      queueSize,
       partSize: this._partSizeCalculatedFromHeapSize(),
       leavePartsOnError: false,
       params: {
@@ -264,17 +269,23 @@ export class S3StorageServiceClient implements IStorageServiceClient {
     return null;
   }
 
-  private _partSizeCalculatedFromHeapSize() {
-    const { total_heap_size: totalHeapSize } = getHeapStatistics();
+  private _bufferSizeCalculatedFromHeapSize() {
+    const { heap_size_limit: heapSizeLimit } = getHeapStatistics();
 
+    const calculatedSize = Math.floor(heapSizeLimit * 0.4);
+    logger.debug(`Calculated buffer size: ${calculatedSize}(bytes), heapSizeLimit: ${heapSizeLimit}(bytes)`);
+    return calculatedSize;
+  }
+
+  private _partSizeCalculatedFromHeapSize() {
     // MUST BE A BETWEEN FROM 5MiB to 5GiB
     // ref. https://docs.aws.amazon.com/AmazonS3/latest/userguide/qfacts.html
     const MIN_SIZE = 5 * 1024 * 1024;
     const MAX_SIZE = 5 * 1024 * 1024 * 1024;
 
-    const calculatedSize = Math.floor(totalHeapSize * 0.5 / this._queueSizeCalculatedFromCPU());
-    logger.debug(`Calculated part size: ${calculatedSize}(bytes)`);
-    return Math.min(Math.max(calculatedSize, MIN_SIZE), MAX_SIZE);
+    const calculatedSize = Math.min(Math.max(this._bufferSizeCalculatedFromHeapSize() / this._queueSizeCalculatedFromCPU(), MIN_SIZE), MAX_SIZE);
+    logger.debug(`Calculated part size: ${calculatedSize}(bytes) [MIN: ${MIN_SIZE}, MAX: ${MAX_SIZE}]`);
+    return calculatedSize;
   }
 
   private _queueSizeCalculatedFromCPU() {
@@ -282,9 +293,10 @@ export class S3StorageServiceClient implements IStorageServiceClient {
     // see. https://docs.aws.amazon.com/AmazonS3/latest/userguide/qfacts.html
     const MAX_SIZE = 10000;
 
-    const calculatedSize = os.cpus().length * 2;
-    logger.debug(`Calculated queue size: ${calculatedSize}`);
-    return Math.min(calculatedSize, MAX_SIZE);
+    const cpuCount = os.cpus().length;
+    const calculatedSize = Math.min(cpuCount, MAX_SIZE);
+    logger.debug(`Calculated queue size: ${calculatedSize}, cpu count: ${cpuCount}(vCPU)`);
+    return calculatedSize;
   }
 
 }

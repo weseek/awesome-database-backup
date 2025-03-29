@@ -178,14 +178,14 @@ export class GCSStorageServiceClient implements IStorageServiceClient {
   }
 
   private _chunkSizeCalculatedFromHeapSize() {
-    const { total_heap_size: totalHeapSize } = getHeapStatistics();
+    const { heap_size_limit: heapSizeLimit } = getHeapStatistics();
 
     // MUST BE A MULTIPLE OF 256 KiB, and 8MiB or more recommended
     // ref. https://cloud.google.com/storage/docs/performing-resumable-uploads?#chunked-upload
     const BLOCK_SIZE = 256 * 1024;
     const MIN_SIZE = 8 * 1024 * 1024;
 
-    const calculatedChunkSize = totalHeapSize * 0.5 / BLOCK_SIZE;
+    const calculatedChunkSize = heapSizeLimit * 0.5 / BLOCK_SIZE;
     logger.debug(`Calculated chunk size: ${calculatedChunkSize}`);
     return Math.max(Math.floor(calculatedChunkSize) * BLOCK_SIZE, MIN_SIZE);
   }
