@@ -47,6 +47,7 @@ export class StorageServiceClientCommand extends Command {
       )
       .addOption(
         new Option('--aws-force-path-style', 'Enable forcePathStyle. This option is deprecated')
+          .default(false)
           .env('AWS_FORCE_PATH_STYLE'),
       )
       /* GCS options */
