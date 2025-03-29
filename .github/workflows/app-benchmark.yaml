@@ -8,6 +8,7 @@ jobs:
     permissions:
       actions: read
       pull-requests: write
+    # Need to match the requirements of workflow-telemetry-action
     runs-on: ubuntu-22.04
     strategy:
       max-parallel: 1

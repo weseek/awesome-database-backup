@@ -1,3 +1,4 @@
+import os from 'os';
 import { Upload } from '@aws-sdk/lib-storage';
 import { readFileSync, createWriteStream } from 'fs';
 import { basename } from 'path';
@@ -10,6 +11,7 @@ import {
 } from '@aws-sdk/client-s3';
 import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
 import { promises as StreamPromises, Readable } from 'stream';
+import { getHeapStatistics } from 'v8';
 import path from 'node:path';
 import {
   IStorageServiceClient,
@@ -213,7 +215,8 @@ export class S3StorageServiceClient implements IStorageServiceClient {
 
     const parallelUploads3 = new Upload({
       client: this.client,
-      queueSize: 4,
+      queueSize: this._queueSizeCalculatedFromCPU(),
+      partSize: this._partSizeCalculatedFromHeapSize(),
       leavePartsOnError: false,
       params: {
         Bucket: destinationS3Uri.bucket,
@@ -222,6 +225,9 @@ export class S3StorageServiceClient implements IStorageServiceClient {
       },
     });
 
+    parallelUploads3.on('httpUploadProgress', (progress) => {
+      console.log(progress);
+    });
     await parallelUploads3.done();
   }
 
@@ -245,6 +251,27 @@ export class S3StorageServiceClient implements IStorageServiceClient {
       }
     }
     return null;
+  }
+
+  private _partSizeCalculatedFromHeapSize() {
+    const { total_heap_size: totalHeapSize } = getHeapStatistics();
+
+    // MUST BE A BETWEEN FROM 5MiB to 5GiB
+    // ref. https://docs.aws.amazon.com/AmazonS3/latest/userguide/qfacts.html
+    const MIN_SIZE = 5 * 1024 * 1024;
+    const MAX_SIZE = 5 * 1024 * 1024 * 1024;
+
+    const calculatedSize = Math.floor(totalHeapSize * 0.5 / this._queueSizeCalculatedFromCPU());
+    return Math.min(Math.max(calculatedSize, MIN_SIZE), MAX_SIZE);
+  }
+
+  private _queueSizeCalculatedFromCPU() {
+    // MUST BE A LESS THAN 10,000
+    // see. https://docs.aws.amazon.com/AmazonS3/latest/userguide/qfacts.html
+    const MIN_SIZE = 10000;
+
+    const calculatedSize = os.cpus().length * 2;
+    return Math.min(calculatedSize, MIN_SIZE);
   }
 
 }
