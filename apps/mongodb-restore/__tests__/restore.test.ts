@@ -1,3 +1,6 @@
+import {
+  describe, beforeEach, it, expect,
+} from 'vitest';
 import { exec as execOriginal } from 'child_process';
 import { promisify } from 'util';
 import {
@@ -7,6 +10,7 @@ import {
   uploadMongoDBFixtureToTestS3Bucket,
   storageConfig,
   testGCSBucketURI,
+  initFakeGCSServer,
   cleanTestGCSBucket,
   uploadMongoDBFixtureToTestGCSBucket,
 } from '@awesome-database-backup/storage-service-test';
@@ -77,6 +81,7 @@ describe('restore', () => {
       --restore-tool-options "--uri ${mongodbURI}" \
       --target-bucket-url ${objectURI}`;
 
+    beforeEach(initFakeGCSServer);
     beforeEach(cleanTestGCSBucket);
     beforeEach(dropTestMongoDB);
     beforeEach(async() => {

@@ -1,11 +1,13 @@
+import {
+  vi, afterEach, describe, beforeEach, it, expect,
+} from 'vitest';
 import { Readable } from 'stream';
 import { GCSURI, GCSStorageServiceClientConfig } from '../src/interfaces';
-import GCSStorageServiceClient from '../src/gcs';
+import { type GCSStorageServiceClient } from '../src/gcs';
 
 afterEach(() => {
-  jest.restoreAllMocks();
-  jest.resetModules();
-  jest.dontMock('@google-cloud/storage');
+  vi.restoreAllMocks();
+  vi.resetModules();
   delete process.env.GOOGLE_APPLICATION_CREDENTIALS;
 });
 
@@ -16,28 +18,29 @@ describe('GCSStorageServiceClient', () => {
     describe('when config is empty', () => {
       const config: GCSStorageServiceClientConfig = {};
 
-      it('throw error', () => {
+      it('throw error', async() => {
+        const { GCSStorageServiceClient } = await import('../src/gcs');
         expect(() => new GCSStorageServiceClient(config))
           .toThrow(new Error('You will need to set "--gcp-project-id".'));
       });
     });
 
     describe('when config is valid with "gcpServiceAccountKeyJsonPath" is set', () => {
-      const StorageMock = jest.fn();
+      const StorageMock = vi.fn();
       const config = {
         gcpProjectId: 'validProjectId',
         gcpServiceAccountKeyJsonPath: '/path/to/file',
       };
 
       beforeEach(() => {
-        jest.resetModules();
-        jest.doMock('@google-cloud/storage', () => ({
+        vi.resetModules();
+        vi.doMock('@google-cloud/storage', () => ({
           Storage: StorageMock,
         }));
       });
 
-      it('call constructor of Storage class with args', () => {
-        const gcs = require('../src/gcs');
+      it('call constructor of Storage class with args', async() => {
+        const gcs = await import('../src/gcs');
         expect(() => new gcs.GCSStorageServiceClient(config)).not.toThrow();
         expect(StorageMock).toHaveBeenCalledWith({
           projectId: 'validProjectId',
@@ -47,22 +50,22 @@ describe('GCSStorageServiceClient', () => {
     });
 
     describe('when using GOOGLE_APPLICATION_CREDENTIALS env', () => {
-      const StorageMock = jest.fn();
+      const StorageMock = vi.fn();
       const config = {
         gcpProjectId: 'validProjectId',
       };
 
       beforeEach(() => {
-        jest.resetModules();
-        jest.doMock('@google-cloud/storage', () => ({
+        vi.resetModules();
+        vi.doMock('@google-cloud/storage', () => ({
           Storage: StorageMock,
         }));
         // Set environment variables for ADC
         process.env.GOOGLE_APPLICATION_CREDENTIALS = '/path/to/credential/file';
       });
 
-      it('call constractur of Storage with only project ID', () => {
-        const gcs = require('../src/gcs');
+      it('call constractur of Storage with only project ID', async() => {
+        const gcs = await import('../src/gcs');
         expect(() => new gcs.GCSStorageServiceClient(config)).not.toThrow();
         expect(StorageMock).toHaveBeenCalledWith({
           projectId: 'validProjectId',
@@ -71,7 +74,7 @@ describe('GCSStorageServiceClient', () => {
     });
 
     describe('when config is valid with "gcpEndpointUrl" is set', () => {
-      const StorageMock = jest.fn();
+      const StorageMock = vi.fn();
       const config = {
         gcpProjectId: 'validProjectId',
         gcpClientEmail: 'validClientEmail',
@@ -80,14 +83,14 @@ describe('GCSStorageServiceClient', () => {
       };
 
       beforeEach(() => {
-        jest.resetModules();
-        jest.doMock('@google-cloud/storage', () => ({
+        vi.resetModules();
+        vi.doMock('@google-cloud/storage', () => ({
           Storage: StorageMock,
         }));
       });
 
-      it('call constructor of Storage class with args', () => {
-        const gcs = require('../src/gcs');
+      it('call constructor of Storage class with args', async() => {
+        const gcs = await import('../src/gcs');
         expect(() => new gcs.GCSStorageServiceClient(config)).not.toThrow();
         expect(StorageMock).toHaveBeenCalledWith({
           credentials: Object({
@@ -101,7 +104,10 @@ describe('GCSStorageServiceClient', () => {
     });
   });
 
-  beforeEach(() => {
+  beforeEach(async() => {
+    vi.resetModules();
+
+    const { GCSStorageServiceClient } = await import('../src/gcs');
     gcsServiceClient = new GCSStorageServiceClient({
       gcpProjectId: 'validProjectId',
       gcpClientEmail: 'validClientEmail',
@@ -114,7 +120,7 @@ describe('GCSStorageServiceClient', () => {
 
     describe('when listFiles() return object key list which include target object', () => {
       beforeEach(() => {
-        gcsServiceClient.listFiles = jest.fn().mockResolvedValueOnce(['object-name']);
+        gcsServiceClient.listFiles = vi.fn().mockResolvedValueOnce(['object-name']);
       });
 
       it('return true', async() => {
@@ -124,7 +130,7 @@ describe('GCSStorageServiceClient', () => {
 
     describe('when listFiles() reject', () => {
       beforeEach(() => {
-        gcsServiceClient.listFiles = jest.fn().mockRejectedValue(undefined);
+        gcsServiceClient.listFiles = vi.fn().mockRejectedValue(undefined);
       });
 
       it('reject', async() => {
@@ -141,9 +147,9 @@ describe('GCSStorageServiceClient', () => {
         describe('when Bucket#getFiles response exact matched files', () => {
           beforeEach(() => {
             const bucketMock = {
-              getFiles: jest.fn().mockResolvedValue([[{ name: 'object-name' }]]),
+              getFiles: vi.fn().mockResolvedValue([[{ name: 'object-name' }]]),
             };
-            gcsServiceClient.client.bucket = jest.fn().mockReturnValue(bucketMock);
+            gcsServiceClient.client.bucket = vi.fn().mockReturnValue(bucketMock);
           });
 
           it('return matched files', async() => {
@@ -154,9 +160,9 @@ describe('GCSStorageServiceClient', () => {
         describe('when Bucket#getFiles response not exact matched files', () => {
           beforeEach(() => {
             const bucketMock = {
-              getFiles: jest.fn().mockResolvedValue([[{ name: 'unmatched-object-name' }]]),
+              getFiles: vi.fn().mockResolvedValue([[{ name: 'unmatched-object-name' }]]),
             };
-            gcsServiceClient.client.bucket = jest.fn().mockReturnValue(bucketMock);
+            gcsServiceClient.client.bucket = vi.fn().mockReturnValue(bucketMock);
           });
 
           it('return empty files', async() => {
@@ -167,9 +173,9 @@ describe('GCSStorageServiceClient', () => {
         describe('when Bucket#getFiles response prefix matched files', () => {
           beforeEach(() => {
             const bucketMock = {
-              getFiles: jest.fn().mockResolvedValue([[{ name: 'object-name1' }]]),
+              getFiles: vi.fn().mockResolvedValue([[{ name: 'object-name1' }]]),
             };
-            gcsServiceClient.client.bucket = jest.fn().mockReturnValue(bucketMock);
+            gcsServiceClient.client.bucket = vi.fn().mockReturnValue(bucketMock);
           });
 
           it('return empty files', async() => {
@@ -180,9 +186,9 @@ describe('GCSStorageServiceClient', () => {
         describe('when Bucket#getFiles response [null]', () => {
           beforeEach(() => {
             const bucketMock = {
-              getFiles: jest.fn().mockResolvedValue([null]),
+              getFiles: vi.fn().mockResolvedValue([null]),
             };
-            gcsServiceClient.client.bucket = jest.fn().mockReturnValue(bucketMock);
+            gcsServiceClient.client.bucket = vi.fn().mockReturnValue(bucketMock);
           });
 
           it('reject with throw exception', async() => {
@@ -193,9 +199,9 @@ describe('GCSStorageServiceClient', () => {
         describe('when Bucket#getFiles reject', () => {
           beforeEach(() => {
             const bucketMock = {
-              getFiles: jest.fn().mockRejectedValue(new Error('some error')),
+              getFiles: vi.fn().mockRejectedValue(new Error('some error')),
             };
-            gcsServiceClient.client.bucket = jest.fn().mockReturnValue(bucketMock);
+            gcsServiceClient.client.bucket = vi.fn().mockReturnValue(bucketMock);
           });
 
           it('reject with throw exception', async() => {
@@ -212,9 +218,9 @@ describe('GCSStorageServiceClient', () => {
         describe('when Bucket#getFiles response exact matched files', () => {
           beforeEach(() => {
             const bucketMock = {
-              getFiles: jest.fn().mockResolvedValue([[{ name: 'object-name' }]]),
+              getFiles: vi.fn().mockResolvedValue([[{ name: 'object-name' }]]),
             };
-            gcsServiceClient.client.bucket = jest.fn().mockReturnValue(bucketMock);
+            gcsServiceClient.client.bucket = vi.fn().mockReturnValue(bucketMock);
           });
 
           it('return matched files', async() => {
@@ -225,9 +231,9 @@ describe('GCSStorageServiceClient', () => {
         describe('when Bucket#getFiles response not exact matched files', () => {
           beforeEach(() => {
             const bucketMock = {
-              getFiles: jest.fn().mockResolvedValue([[{ name: 'unmatched-object-name' }]]),
+              getFiles: vi.fn().mockResolvedValue([[{ name: 'unmatched-object-name' }]]),
             };
-            gcsServiceClient.client.bucket = jest.fn().mockReturnValue(bucketMock);
+            gcsServiceClient.client.bucket = vi.fn().mockReturnValue(bucketMock);
           });
 
           it('return empty files', async() => {
@@ -238,9 +244,9 @@ describe('GCSStorageServiceClient', () => {
         describe('when Bucket#getFiles response prefix matched files', () => {
           beforeEach(() => {
             const bucketMock = {
-              getFiles: jest.fn().mockResolvedValue([[{ name: 'object-name1' }]]),
+              getFiles: vi.fn().mockResolvedValue([[{ name: 'object-name1' }]]),
             };
-            gcsServiceClient.client.bucket = jest.fn().mockReturnValue(bucketMock);
+            gcsServiceClient.client.bucket = vi.fn().mockReturnValue(bucketMock);
           });
 
           it('return prefix matched files', async() => {
@@ -251,9 +257,9 @@ describe('GCSStorageServiceClient', () => {
         describe('when Bucket#getFiles response [null]', () => {
           beforeEach(() => {
             const bucketMock = {
-              getFiles: jest.fn().mockResolvedValue([null]),
+              getFiles: vi.fn().mockResolvedValue([null]),
             };
-            gcsServiceClient.client.bucket = jest.fn().mockReturnValue(bucketMock);
+            gcsServiceClient.client.bucket = vi.fn().mockReturnValue(bucketMock);
           });
 
           it('reject with throw exception', async() => {
@@ -264,9 +270,9 @@ describe('GCSStorageServiceClient', () => {
         describe('when Bucket#getFiles reject', () => {
           beforeEach(() => {
             const bucketMock = {
-              getFiles: jest.fn().mockRejectedValue(new Error('some error')),
+              getFiles: vi.fn().mockRejectedValue(new Error('some error')),
             };
-            gcsServiceClient.client.bucket = jest.fn().mockReturnValue(bucketMock);
+            gcsServiceClient.client.bucket = vi.fn().mockReturnValue(bucketMock);
           });
 
           it('reject with throw exception', async() => {
@@ -292,12 +298,12 @@ describe('GCSStorageServiceClient', () => {
       describe('when File#delete success', () => {
         beforeEach(() => {
           const fileMock = {
-            delete: jest.fn().mockResolvedValue(undefined),
+            delete: vi.fn().mockResolvedValue(undefined),
           };
           const bucketMock = {
-            file: jest.fn().mockReturnValue(fileMock),
+            file: vi.fn().mockReturnValue(fileMock),
           };
-          gcsServiceClient.client.bucket = jest.fn().mockReturnValue(bucketMock);
+          gcsServiceClient.client.bucket = vi.fn().mockReturnValue(bucketMock);
         });
 
         it('resolve with undfined', async() => {
@@ -308,13 +314,13 @@ describe('GCSStorageServiceClient', () => {
       describe('when File#delete fail', () => {
         beforeEach(() => {
           const fileMock = {
-            delete: jest.fn().mockRejectedValue(new Error('some error')),
+            delete: vi.fn().mockRejectedValue(new Error('some error')),
           };
           const bucketMock = {
-            file: jest.fn().mockReturnValue(fileMock),
+            file: vi.fn().mockReturnValue(fileMock),
           };
 
-          gcsServiceClient.client.bucket = jest.fn().mockReturnValue(bucketMock);
+          gcsServiceClient.client.bucket = vi.fn().mockReturnValue(bucketMock);
         });
 
         it('reject and throw Error', async() => {
@@ -336,7 +342,7 @@ describe('GCSStorageServiceClient', () => {
     describe("when copySource is local file path and copyDestination is GCS's URI", () => {
       const copySource = '/path/to/file';
       const copyDestination = 'gs://bucket-name/object-name';
-      const uploadFileMock = jest.fn().mockResolvedValue(undefined);
+      const uploadFileMock = vi.fn().mockResolvedValue(undefined);
 
       beforeEach(async() => {
         gcsServiceClient.uploadFile = uploadFileMock;
@@ -351,7 +357,7 @@ describe('GCSStorageServiceClient', () => {
     describe("when copySource is GCS's URI and copyDestination is local file path", () => {
       const copySource = 'gs://bucket-name/object-name';
       const copyDestination = '/path/to/file';
-      const downloadFileMock = jest.fn().mockResolvedValue(undefined);
+      const downloadFileMock = vi.fn().mockResolvedValue(undefined);
 
       beforeEach(async() => {
         gcsServiceClient.downloadFile = downloadFileMock;
@@ -366,7 +372,7 @@ describe('GCSStorageServiceClient', () => {
     describe("when copySource and copyDestination are both GCS's URI", () => {
       const copySource = 'gs://bucket-name/object-name1';
       const copyDestination = 'gs://bucket-name/object-name2';
-      const copyFileOnRemoteMock = jest.fn().mockResolvedValue(undefined);
+      const copyFileOnRemoteMock = vi.fn().mockResolvedValue(undefined);
 
       beforeEach(async() => {
         gcsServiceClient.copyFileOnRemote = copyFileOnRemoteMock;
@@ -380,11 +386,11 @@ describe('GCSStorageServiceClient', () => {
 
     describe('when copySource and copyDestination are invalid', () => {
       it('reject and throw Error', async() => {
-        const gcsServiceClient = new GCSStorageServiceClient({
-          gcpProjectId: 'validProjectId',
-          gcpClientEmail: 'validClientEmail',
-          gcpPrivateKey: 'validPrivateKey',
-        });
+        // const gcsServiceClient = new GCSStorageServiceClient({
+        //   gcpProjectId: 'validProjectId',
+        //   gcpClientEmail: 'validClientEmail',
+        //   gcpPrivateKey: 'validPrivateKey',
+        // });
         await expect(gcsServiceClient.copyFile('s3://bucket-name/object-name1', 's3://bucket-name/object-name2')).rejects.toThrow();
       });
     });
@@ -397,9 +403,9 @@ describe('GCSStorageServiceClient', () => {
     describe('when File#upload resolve', () => {
       beforeEach(() => {
         const bucketMock = {
-          upload: jest.fn().mockResolvedValue(undefined),
+          upload: vi.fn().mockResolvedValue(undefined),
         };
-        gcsServiceClient.client.bucket = jest.fn().mockReturnValue(bucketMock);
+        gcsServiceClient.client.bucket = vi.fn().mockReturnValue(bucketMock);
       });
 
       it('resolve with undfined', async() => {
@@ -410,9 +416,9 @@ describe('GCSStorageServiceClient', () => {
     describe('when File#upload reject', () => {
       beforeEach(() => {
         const bucketMock = {
-          upload: jest.fn().mockRejectedValue(new Error('some error')),
+          upload: vi.fn().mockRejectedValue(new Error('some error')),
         };
-        gcsServiceClient.client.bucket = jest.fn().mockReturnValue(bucketMock);
+        gcsServiceClient.client.bucket = vi.fn().mockReturnValue(bucketMock);
       });
 
       it('reject and throw Error', async() => {
@@ -428,12 +434,12 @@ describe('GCSStorageServiceClient', () => {
     describe('when File#download resolve', () => {
       beforeEach(() => {
         const fileMock = {
-          download: jest.fn().mockResolvedValue(undefined),
+          download: vi.fn().mockResolvedValue(undefined),
         };
         const bucketMock = {
-          file: jest.fn().mockReturnValue(fileMock),
+          file: vi.fn().mockReturnValue(fileMock),
         };
-        gcsServiceClient.client.bucket = jest.fn().mockReturnValue(bucketMock);
+        gcsServiceClient.client.bucket = vi.fn().mockReturnValue(bucketMock);
       });
 
       it('resolve with undefined', async() => {
@@ -444,12 +450,12 @@ describe('GCSStorageServiceClient', () => {
     describe('when GCSStorageServiceClient#send reject', () => {
       beforeEach(() => {
         const fileMock = {
-          download: jest.fn().mockRejectedValue(new Error('some error')),
+          download: vi.fn().mockRejectedValue(new Error('some error')),
         };
         const bucketMock = {
-          file: jest.fn().mockReturnValue(fileMock),
+          file: vi.fn().mockReturnValue(fileMock),
         };
-        gcsServiceClient.client.bucket = jest.fn().mockReturnValue(bucketMock);
+        gcsServiceClient.client.bucket = vi.fn().mockReturnValue(bucketMock);
       });
 
       it('reject and throw Error', async() => {
@@ -465,12 +471,12 @@ describe('GCSStorageServiceClient', () => {
     describe('when File#copy resolve', () => {
       beforeEach(() => {
         const fileMock = {
-          copy: jest.fn().mockResolvedValue(undefined),
+          copy: vi.fn().mockResolvedValue(undefined),
         };
         const bucketMock = {
-          file: jest.fn().mockReturnValue(fileMock),
+          file: vi.fn().mockReturnValue(fileMock),
         };
-        gcsServiceClient.client.bucket = jest.fn().mockReturnValue(bucketMock);
+        gcsServiceClient.client.bucket = vi.fn().mockReturnValue(bucketMock);
       });
 
       it('resolve with undefined', async() => {
@@ -481,12 +487,12 @@ describe('GCSStorageServiceClient', () => {
     describe('when File#copy reject', () => {
       beforeEach(() => {
         const fileMock = {
-          copy: jest.fn().mockRejectedValue(new Error('some error')),
+          copy: vi.fn().mockRejectedValue(new Error('some error')),
         };
         const bucketMock = {
-          file: jest.fn().mockReturnValue(fileMock),
+          file: vi.fn().mockReturnValue(fileMock),
         };
-        gcsServiceClient.client.bucket = jest.fn().mockReturnValue(bucketMock);
+        gcsServiceClient.client.bucket = vi.fn().mockReturnValue(bucketMock);
       });
 
       it('reject and throw Error', async() => {
@@ -512,19 +518,16 @@ describe('GCSStorageServiceClient', () => {
     });
 
     describe('when requested GCS URI is valid', () => {
-      describe('when pipeline resolves', () => {
+      describe('when write stream resolves', () => {
         beforeEach(() => {
-          const writeStreamMock = jest.fn();
+          const writeStreamMock = vi.fn().mockResolvedValue(undefined);
           const fileMock = {
-            createWriteStream: jest.fn().mockReturnValue(writeStreamMock),
+            createWriteStream: vi.fn().mockReturnValue(writeStreamMock),
           };
           const bucketMock = {
-            file: jest.fn().mockReturnValue(fileMock),
+            file: vi.fn().mockReturnValue(fileMock),
           };
-          gcsServiceClient.client.bucket = jest.fn().mockReturnValue(bucketMock);
-
-          // Mock the pipeline function
-          jest.spyOn(require('stream/promises'), 'pipeline').mockResolvedValue(undefined);
+          gcsServiceClient.client.bucket = vi.fn().mockReturnValue(bucketMock);
         });
 
         it('resolve with undefined', async() => {
@@ -536,19 +539,16 @@ describe('GCSStorageServiceClient', () => {
         });
       });
 
-      describe('when pipeline rejects', () => {
+      describe('when write stream rejects', () => {
         beforeEach(() => {
-          const writeStreamMock = jest.fn();
+          const writeStreamMock = vi.fn().mockRejectedValue(new Error('stream error'));
           const fileMock = {
-            createWriteStream: jest.fn().mockReturnValue(writeStreamMock),
+            createWriteStream: vi.fn().mockReturnValue(writeStreamMock),
           };
           const bucketMock = {
-            file: jest.fn().mockReturnValue(fileMock),
+            file: vi.fn().mockReturnValue(fileMock),
           };
-          gcsServiceClient.client.bucket = jest.fn().mockReturnValue(bucketMock);
-
-          // Mock the pipeline function to reject
-          jest.spyOn(require('stream/promises'), 'pipeline').mockRejectedValue(new Error('stream error'));
+          gcsServiceClient.client.bucket = vi.fn().mockReturnValue(bucketMock);
         });
 
         it('reject and throw Error', async() => {
@@ -574,7 +574,7 @@ describe('GCSStorageServiceClient', () => {
 
       describe('and when match() return null', () => {
         beforeEach(() => {
-          jest.spyOn(String.prototype, 'match').mockReturnValue(null);
+          vi.spyOn(String.prototype, 'match').mockReturnValue(null);
         });
 
         it('return null', () => {

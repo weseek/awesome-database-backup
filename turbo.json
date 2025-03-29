@@ -1,21 +1,60 @@
 {
   "tasks": {
     "build": {
+      "cache": true,
       "dependsOn": [
         "^build"
       ],
       "outputs": [
         "dist/**"
-      ]
+      ],
+      "env": ["!*"]
     },
     "test": {
+      "cache": true,
       "dependsOn": [],
       "outputs": [
-        "coverage/**"
-      ]
+        "coverage/**",
+        "vitest-ctrf/**"
+      ],
+      "env": ["*"]
     },
     "lint": {
-      "outputs": []
+      "cache": false,
+      "outputs": [],
+      "env": ["*"]
+    },
+    "test:performance:tempfile_mode:gcs": {
+      "cache": false,
+      "dependsOn": [
+        "build"
+      ],
+      "outputs": [],
+      "env": ["*"]
+    },
+    "test:performance:tempfile_mode:s3": {
+      "cache": false,
+      "dependsOn": [
+        "build"
+      ],
+      "outputs": [],
+      "env": ["*"]
+    },
+    "test:performance:stream_mode:gcs": {
+      "cache": false,
+      "dependsOn": [
+        "build"
+      ],
+      "outputs": [],
+      "env": ["*"]
+    },
+    "test:performance:stream_mode:s3": {
+      "cache": false,
+      "dependsOn": [
+        "build"
+      ],
+      "outputs": [],
+      "env": ["*"]
     }
   }
 }

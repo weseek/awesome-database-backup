@@ -3,5 +3,6 @@ export interface S3StorageServiceClientConfig {
   awsRegion?: string,
   awsAccessKeyId?: string,
   awsSecretAccessKey?: string,
+  awsForcePathStyle?: boolean,
 }
 export default S3StorageServiceClientConfig;
