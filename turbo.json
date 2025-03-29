@@ -24,7 +24,7 @@
       "outputs": [],
       "env": ["*"]
     },
-    "test:performance:stream_mode": {
+    "test:performance:tempfile_mode:gcs": {
       "cache": false,
       "dependsOn": [
         "build"
@@ -32,7 +32,23 @@
       "outputs": [],
       "env": ["*"]
     },
-    "test:performance:tempfile_mode": {
+    "test:performance:tempfile_mode:s3": {
+      "cache": false,
+      "dependsOn": [
+        "build"
+      ],
+      "outputs": [],
+      "env": ["*"]
+    },
+    "test:performance:stream_mode:gcs": {
+      "cache": false,
+      "dependsOn": [
+        "build"
+      ],
+      "outputs": [],
+      "env": ["*"]
+    },
+    "test:performance:stream_mode:s3": {
       "cache": false,
       "dependsOn": [
         "build"
