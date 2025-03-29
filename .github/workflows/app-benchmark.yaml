@@ -83,11 +83,12 @@ jobs:
       fail-fast: false
     services:
       minio:
-        image: minio/minio:RELEASE.2025-02-07T23-21-09Z
+        # set same version as minio/minio:RELEASE.2025-02-07T23-21-09Z
+        image: bitnami/minio:2025.2.7
         ports:
         - 9000:9000
         options: >-
-          --health-cmd "curl http://localhost:9000/minio/health/live" server /data
+          --health-cmd "curl http://localhost:9000/minio/health/live"
         env:
           MINIO_ACCESS_KEY: minioadmin
           MINIO_SECRET_KEY: minioadmin
