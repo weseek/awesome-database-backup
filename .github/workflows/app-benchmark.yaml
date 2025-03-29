@@ -108,6 +108,10 @@ jobs:
         cache: "yarn"
     - name: Create bucket "s3://performance-test"
       run: aws --endpoint-url http://localhost:9000/ s3 mb s3://performance-test
+      env:
+        AWS_ACCESS_KEY_ID: minioadmin
+        AWS_SECRET_ACCESS_KEY: minioadmin
+        AWS_DEFAULT_REGION: us-east-1
     - run: yarn install
     - run: yarn build --filter "@awesome-database-backup/file-backup"
     - name: Run performance test - ${{ matrix.run-script-name }}
