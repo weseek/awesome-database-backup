@@ -229,10 +229,6 @@ export class S3StorageServiceClient implements IStorageServiceClient {
       },
     });
 
-    console.log(`Uploding ${JSON.stringify(parallelUploads3)}...`);
-    parallelUploads3.on('httpUploadProgress', (progress) => {
-      console.log(progress);
-    });
     await parallelUploads3.done();
   }
 
