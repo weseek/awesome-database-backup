@@ -90,8 +90,8 @@ jobs:
         options: >-
           --health-cmd "curl http://localhost:9000/minio/health/live"
         env:
-          MINIO_SERVER_ACCESS_KEY: minioadmin
-          MINIO_SERVER_SECRET_KEY: minioadmin
+          MINIO_ROOT_USER: minioadmin
+          MINIO_ROOT_PASSWORD: minioadmin
     steps:
     - name: Collect Workflow Telemetry - ${{ matrix.run-script-name }}
       uses: ryu-sato/workflow-telemetry-action@refs/heads/fix/some-problem
