@@ -92,7 +92,6 @@ jobs:
         env:
           MINIO_ROOT_USER: minioadmin
           MINIO_ROOT_PASSWORD: minioadmin
-          MINIO_SERVER_URL: http://s3.minio:9000
           MINIO_HTTP_TRACE: /opt/bitnami/minio/log/minio-http.log
     steps:
     - name: Collect Workflow Telemetry - ${{ matrix.run-script-name }}
@@ -102,8 +101,6 @@ jobs:
         proc_trace_min_duration: 0   # Trace all processes
         comment_on_pr: false         # Output results in PR comments
         job_summary: true            # Output results to Job Summary
-    - name: Set up dnsx to use s3 client with default style (access `s3://BUCKET/FILE` by `http://BUCKET.FQDN_OF_ENDPOINT/FILE`)
-      run: echo "127.0.0.1 minio s3.minio test-performance.s3.minio" | sudo tee -a /etc/hosts
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
       with:
@@ -115,10 +112,12 @@ jobs:
         AWS_ACCESS_KEY_ID: minioadmin
         AWS_SECRET_ACCESS_KEY: minioadmin
         AWS_DEFAULT_REGION: us-east-1
+    - name: Use forcePathStyle
+      run: aws configure set forcePathStyle true
     - run: yarn install
     - run: yarn build --filter "@awesome-database-backup/file-backup"
     - name: Run performance test - ${{ matrix.run-script-name }}
       run: yarn run ${{ matrix.run-script-name }} --filter "@awesome-database-backup/file-backup"
       env:
-        AWS_ENDPOINT_URL: http://s3.minio:9000
+        AWS_ENDPOINT_URL: http://localhost:9000
         NODE_OPTIONS: '--max-old-space-size=${{ matrix.node-js-heap-size }}'
