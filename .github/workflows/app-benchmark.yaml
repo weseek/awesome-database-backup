@@ -115,7 +115,7 @@ jobs:
     #     AWS_DEFAULT_REGION: us-east-1
 
     - name: Configure minio
-      uses: docker.io/minio/mc
+      uses: docker://minio/mc
       with:
         entrypoint: >
           /bin/sh -c "
