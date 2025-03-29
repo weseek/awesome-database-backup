@@ -92,6 +92,7 @@ jobs:
         env:
           MINIO_ROOT_USER: minioadmin
           MINIO_ROOT_PASSWORD: minioadmin
+          MINIO_SERVER_URL: http://minio:9000
           MINIO_HTTP_TRACE: /opt/bitnami/minio/log/minio-http.log
     steps:
     - name: Collect Workflow Telemetry - ${{ matrix.run-script-name }}
