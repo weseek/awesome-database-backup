@@ -30,7 +30,7 @@ export class S3StorageServiceClient implements IStorageServiceClient {
   client: S3Client;
 
   constructor(config: S3StorageServiceClientConfig) {
-    const s3ClientConfig: S3ClientConfig = { forcePathStyle: true };
+    const s3ClientConfig: S3ClientConfig = {};
 
     // Set region if specified
     if (config.awsRegion) {
