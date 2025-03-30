@@ -9,6 +9,8 @@ services:
     tty: true
     environment:
       TZ: Asia/Tokyo
+      GCP_ENDPOINT_URL: http://fake-gcs-server:4443
+      AWS_ENDPOINT_URL: http://s3.minio:9000
     networks:
       default:
       test:
