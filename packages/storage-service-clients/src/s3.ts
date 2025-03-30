@@ -273,7 +273,7 @@ export class S3StorageServiceClient implements IStorageServiceClient {
     const { total_available_size: totalAvailableSize } = getHeapStatistics();
 
     const calculatedSize = Math.floor(totalAvailableSize * 0.5);
-    logger.debug(`Calculated buffer size: ${calculatedSize}(bytes), heapSizeLimit: ${totalAvailableSize}(bytes)`);
+    logger.debug(`Calculated buffer size: ${calculatedSize}(bytes), totalAvailableSize: ${totalAvailableSize}(bytes)`);
     return calculatedSize;
   }
 
