@@ -13,7 +13,6 @@ import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
 import { promises as StreamPromises, Readable } from 'stream';
 import { getHeapStatistics } from 'v8';
 import path from 'node:path';
-import { PassThrough } from 'node:stream';
 import {
   IStorageServiceClient,
   listS3FilesOptions,
