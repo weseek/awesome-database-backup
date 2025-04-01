@@ -48,7 +48,7 @@ jobs:
       if: success() || failure()
       uses: ctrf-io/github-test-reporter@v1
       with:
-        report-path: '**/ctrf/*.json'
-    - name: Show coverage report follow the settings .octocov.yml
+        report-path: '**/vitest-ctrf/*.json'
+    - name: Report coverage follow the settings .octocov.yml
       if: success() || failure()
-      uses: k1LoW/octocov-action@v1
+      uses: ./.github/actions/report-coverage

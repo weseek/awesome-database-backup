@@ -1,0 +1,127 @@
+name: Application - Benchmark
+
+on:
+  push:
+
+jobs:
+  benchmark-with-gcs:
+    permissions:
+      actions: read
+      pull-requests: write
+    # Need to match the requirements of workflow-telemetry-action
+    runs-on: ubuntu-22.04
+    strategy:
+      max-parallel: 1
+      matrix:
+        run-script-name:
+        - test:performance:tempfile_mode:gcs
+        - test:performance:stream_mode:gcs
+        node-js-heap-size:
+        - 200
+        - 400
+        - 800
+        - 1600
+      fail-fast: false
+    services:
+      fake-gcs-server:
+        image: fsouza/fake-gcs-server:1.52.1
+        ports:
+        - 4443:4443
+        options: >-
+          --health-cmd "wget -q -S -O - --no-check-certificate https://localhost:4443/_internal/healthcheck"
+    steps:
+    - name: Collect Workflow Telemetry - ${{ matrix.run-script-name }}
+      uses: ryu-sato/workflow-telemetry-action@refs/heads/fix/some-problem
+      with:
+        metric_frequency: 1          # Collection interval (seconds)
+        proc_trace_min_duration: 0   # Trace all processes
+        comment_on_pr: false         # Output results in PR comments
+        job_summary: true            # Output results to Job Summary
+
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version-file: package.json
+        cache: "yarn"
+    - name: Create bucket "gs://test-performance"
+      run: >-
+        node -e "
+        fetch('https://localhost:4443/storage/v1/b',{
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({
+            name:'test-performance'
+          })
+        })
+        .then(r=>console.log(r.text()))
+        .catch(console.error)"
+      env:
+        NODE_TLS_REJECT_UNAUTHORIZED: 0
+    - run: yarn install
+    - run: yarn build --filter "@awesome-database-backup/file-backup"
+    - name: Run performance test - ${{ matrix.run-script-name }}
+      run: yarn run ${{ matrix.run-script-name }} --filter "@awesome-database-backup/file-backup"
+      env:
+        GCP_ENDPOINT_URL: https://localhost:4443
+        NODE_TLS_REJECT_UNAUTHORIZED: 0
+        NODE_OPTIONS: '--max-old-space-size=${{ matrix.node-js-heap-size }}'
+
+  benchmark-with-s3:
+    permissions:
+      actions: read
+      pull-requests: write
+    # Need to match the requirements of workflow-telemetry-action
+    runs-on: ubuntu-22.04
+    strategy:
+      max-parallel: 1
+      matrix:
+        run-script-name:
+        - test:performance:tempfile_mode:s3
+        - test:performance:stream_mode:s3
+        node-js-heap-size:
+        - 200
+        - 400
+        - 800
+        - 1600
+      fail-fast: false
+    services:
+      minio:
+        # set same version as minio/minio:RELEASE.2025-02-07T23-21-09Z
+        image: bitnami/minio:2025.2.7
+        ports:
+        - 9000:9000
+        options: >-
+          --health-cmd "curl http://localhost:9000/minio/health/live"
+        env:
+          MINIO_ROOT_USER: minioadmin
+          MINIO_ROOT_PASSWORD: minioadmin
+          MINIO_HTTP_TRACE: /opt/bitnami/minio/log/minio-http.log
+    steps:
+    - name: Collect Workflow Telemetry - ${{ matrix.run-script-name }}
+      uses: ryu-sato/workflow-telemetry-action@refs/heads/fix/some-problem
+      with:
+        metric_frequency: 1          # Collection interval (seconds)
+        proc_trace_min_duration: 0   # Trace all processes
+        comment_on_pr: false         # Output results in PR comments
+        job_summary: true            # Output results to Job Summary
+
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version-file: package.json
+        cache: "yarn"
+    - name: Create bucket "s3://test-performance"
+      run: aws --endpoint-url http://localhost:9000/ s3 mb s3://test-performance
+      env:
+        AWS_ACCESS_KEY_ID: minioadmin
+        AWS_SECRET_ACCESS_KEY: minioadmin
+        AWS_DEFAULT_REGION: us-east-1
+
+    - run: yarn install
+    - run: yarn build --filter "@awesome-database-backup/file-backup"
+    - name: Run performance test - ${{ matrix.run-script-name }}
+      run: yarn run ${{ matrix.run-script-name }} --filter "@awesome-database-backup/file-backup"
+      env:
+        AWS_ENDPOINT_URL: http://localhost:9000
+        AWS_FORCE_PATH_STYLE: true
+        NODE_OPTIONS: '--max-old-space-size=${{ matrix.node-js-heap-size }}'

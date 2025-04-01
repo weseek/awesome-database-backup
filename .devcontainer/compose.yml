@@ -9,6 +9,8 @@ services:
     tty: true
     environment:
       TZ: Asia/Tokyo
+      GCP_ENDPOINT_URL: http://fake-gcs-server:4443
+      AWS_ENDPOINT_URL: http://s3.minio:9000
     networks:
       default:
       test:
@@ -111,6 +113,10 @@ services:
     - http
     - --public-host
     - fake-gcs-server
+    # Must be set up with apiEndpoint
+    # see. https://github.com/fsouza/fake-gcs-server/blob/93a13ba5c1ce7896f8129f190ca3324d4cba7990/examples/node/README.md
+    - --external-url
+    - http://fake-gcs-server:4443
     networks:
       test:
         ipv4_address: 172.16.2.3

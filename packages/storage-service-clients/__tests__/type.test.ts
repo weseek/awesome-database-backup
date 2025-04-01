@@ -1,3 +1,6 @@
+import {
+  describe, it, expect,
+} from 'vitest';
 import { getStorageServiceClientType } from '../src/types';
 
 describe('getStorageServiceClientType()', () => {

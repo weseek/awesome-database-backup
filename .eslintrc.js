@@ -3,15 +3,12 @@ module.exports = {
   extends: [
     'weseek',
     'weseek/typescript',
-    'plugin:jest/recommended',
+    "plugin:@vitest/legacy-recommended",
   ],
-  env: {
-    'jest/globals': true,
-  },
   globals: {
   },
   plugins: [
-    'jest',
+    '@vitest',
   ],
   rules: {
     'import/prefer-default-export': 'off',
@@ -26,10 +23,6 @@ module.exports = {
         FunctionDeclaration: { body: 1, parameters: 2 },
         FunctionExpression: { body: 1, parameters: 2 },
       },
-    ],
-    'jest/no-standalone-expect': [
-      'error',
-      { additionalTestBlockFunctions: ['each.test'] },
     ],
     'no-multi-str': 'off',
   },

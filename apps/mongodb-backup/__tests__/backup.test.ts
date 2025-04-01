@@ -1,3 +1,6 @@
+import {
+  describe, beforeEach, it, expect,
+} from 'vitest';
 import { exec as execOriginal } from 'child_process';
 import { promisify } from 'util';
 import {
@@ -7,6 +10,7 @@ import {
   listFileNamesInTestS3Bucket,
   storageConfig,
   testGCSBucketURI,
+  initFakeGCSServer,
   cleanTestGCSBucket,
   listFileNamesInTestGCSBucket,
 } from '@awesome-database-backup/storage-service-test';
@@ -87,6 +91,7 @@ describe('backup', () => {
   });
 
   describe('when valid GCS options are specified', () => {
+    beforeEach(initFakeGCSServer);
     beforeEach(cleanTestGCSBucket);
     beforeEach(prepareTestMongoDB);
 
@@ -112,6 +117,7 @@ describe('backup', () => {
   });
 
   describe('when valid GCS options with stream mode are specified', () => {
+    beforeEach(initFakeGCSServer);
     beforeEach(cleanTestGCSBucket);
     beforeEach(prepareTestMongoDB);
 

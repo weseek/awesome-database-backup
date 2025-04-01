@@ -1,3 +1,6 @@
+import {
+  describe, beforeEach, it, expect,
+} from 'vitest';
 import { exec as execOriginal } from 'child_process';
 import { promisify } from 'util';
 import { format } from 'date-fns';
@@ -10,6 +13,7 @@ import {
   listFileNamesInTestS3Bucket,
   storageConfig,
   testGCSBucketURI,
+  initFakeGCSServer,
   cleanTestGCSBucket,
   uploadPGFixtureToTestGCSBucket,
   listFileNamesInTestGCSBucket,
@@ -69,6 +73,7 @@ describe('prune', () => {
   });
 
   describe('when valid GCS options are specified', () => {
+    beforeEach(initFakeGCSServer);
     beforeEach(cleanTestGCSBucket);
 
     describe('and when prune options show pruning files everyday', () => {

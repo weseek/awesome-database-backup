@@ -1,15 +1,17 @@
+import os from 'os';
+import { Upload } from '@aws-sdk/lib-storage';
 import { readFileSync, createWriteStream } from 'fs';
 import { basename } from 'path';
 import {
   S3Client, S3ClientConfig,
   GetObjectCommand, GetObjectCommandInput,
-  PutObjectCommand, PutObjectCommandInput,
   CopyObjectCommand, CopyObjectCommandInput,
   DeleteObjectCommand, DeleteObjectCommandInput,
   ListObjectsCommand,
 } from '@aws-sdk/client-s3';
 import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
 import { promises as StreamPromises, Readable } from 'stream';
+import { getHeapStatistics } from 'v8';
 import path from 'node:path';
 import {
   IStorageServiceClient,
@@ -17,6 +19,9 @@ import {
   S3URI,
   S3StorageServiceClientConfig,
 } from './interfaces';
+import loggerFactory from './logger/factory';
+
+const logger = loggerFactory('storage-service-clients');
 
 /**
  * Client to manipulate S3 buckets
@@ -37,6 +42,10 @@ export class S3StorageServiceClient implements IStorageServiceClient {
     // Set endpoint if specified
     if (config.awsEndpointUrl) {
       s3ClientConfig.endpoint = config.awsEndpointUrl.toString();
+    }
+    // Set forcePathStyle if specified (DEPRECATED, but useful to access minio in path mode)
+    if (config.awsForcePathStyle) {
+      s3ClientConfig.forcePathStyle = true;
     }
     // Set credentials
     if (config.awsAccessKeyId && config.awsSecretAccessKey) {
@@ -159,16 +168,20 @@ export class S3StorageServiceClient implements IStorageServiceClient {
   }
 
   async uploadFile(sourceFilePath: string, destinationS3Uri: S3URI): Promise<void> {
-    const params: PutObjectCommandInput = {
-      Bucket: destinationS3Uri.bucket,
-      Key: (destinationS3Uri.key === '' || destinationS3Uri.key.endsWith('/'))
-        ? (destinationS3Uri.key + basename(sourceFilePath))
-        : destinationS3Uri.key,
-      Body: readFileSync(sourceFilePath),
-    };
-    const command = new PutObjectCommand(params);
+    const parallelUploads3 = new Upload({
+      client: this.client,
+      queueSize: 4,
+      leavePartsOnError: false,
+      params: {
+        Bucket: destinationS3Uri.bucket,
+        Key: (destinationS3Uri.key === '' || destinationS3Uri.key.endsWith('/'))
+          ? (destinationS3Uri.key + basename(sourceFilePath))
+          : destinationS3Uri.key,
+        Body: readFileSync(sourceFilePath),
+      },
+    });
 
-    await this.client.send(command);
+    await parallelUploads3.done();
   }
 
   async downloadFile(sourceS3Uri: S3URI, destinationFilePath: string): Promise<void> {
@@ -207,21 +220,24 @@ export class S3StorageServiceClient implements IStorageServiceClient {
     const destinationS3Uri = this._parseFilePath(destinationUri);
     if (destinationS3Uri == null) throw new Error(`URI ${destinationUri} is not correct S3's`);
 
-    // Collect stream data in buffer before uploading
-    const chunks: Buffer[] = [];
-    for await (const chunk of stream) {
-      chunks.push(Buffer.from(chunk));
-    }
-    const buffer = Buffer.concat(chunks);
+    const queueSize = Math.min(
+      this._queueSizeCalculatedFromCPU(),
+      Math.floor(this._bufferSizeCalculatedFromHeapSize() / this._partSizeCalculatedFromHeapSize()),
+    );
+    logger.info(`Uploading stream to S3 with queue size: ${queueSize}, part size: ${this._partSizeCalculatedFromHeapSize()}`);
+    const parallelUploads3 = new Upload({
+      client: this.client,
+      queueSize,
+      partSize: this._partSizeCalculatedFromHeapSize(),
+      leavePartsOnError: false,
+      params: {
+        Bucket: destinationS3Uri.bucket,
+        Key: path.join(destinationS3Uri.key, fileName),
+        Body: stream,
+      },
+    });
 
-    const params: PutObjectCommandInput = {
-      Bucket: destinationS3Uri.bucket,
-      Key: path.join(destinationS3Uri.key, fileName),
-      Body: buffer,
-    };
-    const command = new PutObjectCommand(params);
-
-    await this.client.send(command);
+    await parallelUploads3.done();
   }
 
   /**
@@ -244,6 +260,36 @@ export class S3StorageServiceClient implements IStorageServiceClient {
       }
     }
     return null;
+  }
+
+  private _bufferSizeCalculatedFromHeapSize() {
+    const { total_available_size: totalAvailableSize } = getHeapStatistics();
+
+    const calculatedSize = Math.floor(totalAvailableSize * 0.5);
+    logger.debug(`Calculated buffer size: ${calculatedSize}(bytes), totalAvailableSize: ${totalAvailableSize}(bytes)`);
+    return calculatedSize;
+  }
+
+  private _partSizeCalculatedFromHeapSize() {
+    // MUST BE A BETWEEN FROM 5MiB to 5GiB
+    // ref. https://docs.aws.amazon.com/AmazonS3/latest/userguide/qfacts.html
+    const MIN_SIZE = 5 * 1024 * 1024;
+    const MAX_SIZE = 5 * 1024 * 1024 * 1024;
+
+    const calculatedSize = Math.min(Math.max(this._bufferSizeCalculatedFromHeapSize() / this._queueSizeCalculatedFromCPU(), MIN_SIZE), MAX_SIZE);
+    logger.debug(`Calculated part size: ${calculatedSize}(bytes) [MIN: ${MIN_SIZE}, MAX: ${MAX_SIZE}]`);
+    return calculatedSize;
+  }
+
+  private _queueSizeCalculatedFromCPU() {
+    // MUST BE A LESS THAN 10,000
+    // see. https://docs.aws.amazon.com/AmazonS3/latest/userguide/qfacts.html
+    const MAX_SIZE = 10000;
+
+    const cpuCount = os.cpus().length;
+    const calculatedSize = Math.min(cpuCount, MAX_SIZE);
+    logger.debug(`Calculated queue size: ${calculatedSize}, cpu count: ${cpuCount}(vCPU)`);
+    return calculatedSize;
   }
 
 }

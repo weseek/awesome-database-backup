@@ -2,12 +2,16 @@ import { Storage, File, type StorageOptions } from '@google-cloud/storage';
 import { basename, join } from 'path';
 import { Readable } from 'stream';
 import { pipeline } from 'stream/promises';
+import { getHeapStatistics } from 'v8';
 import {
   IStorageServiceClient,
   listGCSFilesOptions,
   GCSURI,
   GCSStorageServiceClientConfig,
 } from './interfaces';
+import loggerFactory from './logger/factory';
+
+const logger = loggerFactory('storage-service-clients');
 
 /**
  * Client to manipulate GCS buckets
@@ -63,7 +67,7 @@ export class GCSStorageServiceClient implements IStorageServiceClient {
 
     const targetBucket = this.client.bucket(gcsUri.bucket);
     // getFiles() return like "[[File1],[File2],...]", so removed the outermost array
-    const [matchedFiles]: File[][] = await targetBucket.getFiles({ prefix: gcsUri.filepath });
+    const [matchedFiles] = await targetBucket.getFiles({ prefix: gcsUri.filepath });
     if (matchedFiles == null) throw new Error('Bucket#getFiles return null');
 
     let files = matchedFiles;
@@ -146,8 +150,9 @@ export class GCSStorageServiceClient implements IStorageServiceClient {
     const file = destinationBucket.file(destination);
 
     const writeStream = file.createWriteStream({
-      resumable: false,
+      resumable: true,
       contentType: 'application/gzip',
+      chunkSize: this._chunkSizeCalculatedFromHeapSize(),
     });
 
     await pipeline(stream, writeStream);
@@ -170,6 +175,19 @@ export class GCSStorageServiceClient implements IStorageServiceClient {
       return { bucket, filepath };
     }
     return null;
+  }
+
+  private _chunkSizeCalculatedFromHeapSize() {
+    const { total_available_size: totalAvailableSize } = getHeapStatistics();
+
+    // MUST BE A MULTIPLE OF 256 KiB, and 8MiB or more recommended
+    // ref. https://cloud.google.com/storage/docs/performing-resumable-uploads?#chunked-upload
+    const BLOCK_SIZE = 256 * 1024;
+    const MIN_SIZE = 8 * 1024 * 1024;
+
+    const calculatedChunkSize = totalAvailableSize * 0.5 / BLOCK_SIZE;
+    logger.debug(`Calculated chunk size: ${calculatedChunkSize}`);
+    return Math.max(Math.floor(calculatedChunkSize) * BLOCK_SIZE, MIN_SIZE);
   }
 
 }
