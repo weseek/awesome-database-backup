@@ -7672,9 +7672,9 @@ vitest-ctrf-json-reporter@^0.0.2:
   integrity sha512-Z+f9hV+tcmS/MP+FucG9LQnBlEMKdAlZuDEFsOgiO22jvvegWWn8Q0htFyi4f0DDdJYJ1L4w4eh4SshlRGHHjA==
 
 vitest-mock-extended@^3.0.1:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/vitest-mock-extended/-/vitest-mock-extended-3.0.1.tgz#8c55aebbb60ab0999d86e9fa696ca0fc75ce0976"
-  integrity sha512-VI7CRRvIi+MbAsqdGTxp3K+eiY7BR1zrVflZ5DBrFUXPjRZRgxXajlYdNyIu3v1bb5ZfdLANXwZ9i/RfVMfS6A==
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/vitest-mock-extended/-/vitest-mock-extended-3.1.0.tgz#d4e23f4bbc18d07c4ab928b861e74414c942c974"
+  integrity sha512-vCM0VkuocOUBwwqwV7JB7YStw07pqeKvEIrZnR8l3PtwYi6rAAJAyJACeC1UYNfbQWi85nz7EdiXWBFI5hll2g==
   dependencies:
     ts-essentials ">=10.0.0"
 
