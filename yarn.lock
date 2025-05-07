@@ -2309,9 +2309,9 @@
   integrity sha512-Gj7cI7z+98M282Tqmp2K5EIsoouUEzbBJhQQzDE3jSIRk6r9gsz0oUokqIUR4u1R3dMHo0pDHM7sNOHyhulypw==
 
 "@types/pg@^8.6.5":
-  version "8.12.0"
-  resolved "https://registry.yarnpkg.com/@types/pg/-/pg-8.12.0.tgz#d0f3bf131ae3ee54c510fb3c9cfcedb493b5106c"
-  integrity sha512-a9Z11ecnpNPFu2iT4Qo9SSYgM2r1l4UqLIQ454zhCDRzxqOh/vsi57FFovbc64oBGPBotXw5cRhUQtJEHCb/OA==
+  version "8.15.0"
+  resolved "https://registry.yarnpkg.com/@types/pg/-/pg-8.15.0.tgz#a11bffa2277cab3d091d6024edb507aff4f21b5c"
+  integrity sha512-JFxVIO0hZCbQXQGbRBQjbRWNCG3CujfEUBD4Ny2l0QqDyE0vqAPiMSyx0AIszMS0KdLZxz2GxZUUF3FBUXhOXA==
   dependencies:
     "@types/node" "*"
     pg-protocol "*"
