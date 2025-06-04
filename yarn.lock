@@ -2122,9 +2122,9 @@
   integrity sha512-zuVdFrMJiuCDQUMCzQaD6KL28MjnqqN8XnAqiEq9PNm/hCPTSGfrXCOfwj1ow4LFb/tNymJPwsNbVePc1xFqrQ==
 
 "@vitest/coverage-v8@^3.0.8":
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/@vitest/coverage-v8/-/coverage-v8-3.2.0.tgz#62d155c7a593b585e77c8860f5f67b678fa7457b"
-  integrity sha512-HjgvaokAiHxRMI5ioXl4WmgAi4zQtKtnltOOlmpzUqApdcTTZrZJAastbbRGydtiqwtYLFaIb6Jpo3PzowZ0cg==
+  version "3.2.1"
+  resolved "https://registry.yarnpkg.com/@vitest/coverage-v8/-/coverage-v8-3.2.1.tgz#462f9529564619ff5dfefb43a7b612ef89e0664c"
+  integrity sha512-6dy0uF/0BE3jpUW9bFzg0V2S4F7XVaZHL/7qma1XANvHPQGoJuc3wtx911zSoAgUnpfvcLVK1vancNJ95d+uxQ==
   dependencies:
     "@ampproject/remapping" "^2.3.0"
     "@bcoe/v8-coverage" "^1.0.2"
