@@ -129,9 +129,9 @@
     tslib "^2.6.2"
 
 "@aws-sdk/client-s3@^3.723.0", "@aws-sdk/client-s3@^3.85.0":
-  version "3.823.0"
-  resolved "https://registry.yarnpkg.com/@aws-sdk/client-s3/-/client-s3-3.823.0.tgz#4a60880fafee1f3b3b3aea4162292fa1ac753300"
-  integrity sha512-cTp1Lkyv5NuHr6aUin5FCARY02o2jiOcRKnWnAahEQrlvgzOAe4SrjjOVVTH67wHdcB9zGeNDNCK/132+zaRow==
+  version "3.824.0"
+  resolved "https://registry.yarnpkg.com/@aws-sdk/client-s3/-/client-s3-3.824.0.tgz#26393eb058c2edb8a44479d476dacebbe09677e9"
+  integrity sha512-7neTQIdSVP/F4RTWG5T87LDpB955iQD6lxg9nJ00fdkIPczDcRtAEXow44NjF4fEdpQ1A9jokUtBSVE+GMXZ/A==
   dependencies:
     "@aws-crypto/sha1-browser" "5.2.0"
     "@aws-crypto/sha256-browser" "5.2.0"
@@ -149,7 +149,7 @@
     "@aws-sdk/middleware-ssec" "3.821.0"
     "@aws-sdk/middleware-user-agent" "3.823.0"
     "@aws-sdk/region-config-resolver" "3.821.0"
-    "@aws-sdk/signature-v4-multi-region" "3.823.0"
+    "@aws-sdk/signature-v4-multi-region" "3.824.0"
     "@aws-sdk/types" "3.821.0"
     "@aws-sdk/util-endpoints" "3.821.0"
     "@aws-sdk/util-user-agent-browser" "3.821.0"
@@ -584,10 +584,10 @@
     "@smithy/util-middleware" "^4.0.4"
     tslib "^2.6.2"
 
-"@aws-sdk/signature-v4-multi-region@3.823.0":
-  version "3.823.0"
-  resolved "https://registry.yarnpkg.com/@aws-sdk/signature-v4-multi-region/-/signature-v4-multi-region-3.823.0.tgz#f18de514bf0168ed582b329f2fd6e546b1503239"
-  integrity sha512-FAvtmR7G0ppNLa4O2yN8koFYUmUmPuL60UBIFrVb3BBeZvBIFLln69lB8EGtTBpAvVbxknudRZCzYtnOhE4QXg==
+"@aws-sdk/signature-v4-multi-region@3.824.0":
+  version "3.824.0"
+  resolved "https://registry.yarnpkg.com/@aws-sdk/signature-v4-multi-region/-/signature-v4-multi-region-3.824.0.tgz#0879adeb2d69045c66805faa0285c96bb2606a64"
+  integrity sha512-HBjuWeN6Z1pvJjUvGXdMNLwEypKKB4km6zXj9jsbOOwP8NTL6J5rY+JmlX/mfBTmvzmI0kMu2bxlQ4ME2CIRbA==
   dependencies:
     "@aws-sdk/middleware-sdk-s3" "3.823.0"
     "@aws-sdk/types" "3.821.0"
