@@ -371,9 +371,9 @@
     tslib "^2.6.2"
 
 "@aws-sdk/credential-providers@^3.186.0", "@aws-sdk/credential-providers@^3.758.0":
-  version "3.830.0"
-  resolved "https://registry.yarnpkg.com/@aws-sdk/credential-providers/-/credential-providers-3.830.0.tgz#dbd3aab15a3a425dccc31be905ae0acb58d43d2e"
-  integrity sha512-Q16Yf52L9QWsRhaaG/Q6eUkUWGUrbKTM2ba8at8ZZ8tsGaKO5pYgXUTErxB1bin11S6JszinbLqUf9G9oUExxA==
+  version "3.834.0"
+  resolved "https://registry.yarnpkg.com/@aws-sdk/credential-providers/-/credential-providers-3.834.0.tgz#3badc63c6429b60fd76b5a80f091ee3933de6c4b"
+  integrity sha512-ORIWCrLuqJnJg0fuI0rPhwaeuzqnIIJsbSkg1WV2XuiOpWXwLC/CfzhAbelQAv07/sRywZMnKqws0OOWg/ieYg==
   dependencies:
     "@aws-sdk/client-cognito-identity" "3.830.0"
     "@aws-sdk/core" "3.826.0"
