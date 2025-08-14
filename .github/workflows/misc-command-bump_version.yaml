@@ -27,7 +27,7 @@ jobs:
       if: >
         ! contains(fromJSON('["patch", "minor", "major"]'), env.UP_RANGE)
       run: echo 'invalid up range'; exit 1
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
       with:
         ref: ${{ github.head_ref }}
     - uses: actions/setup-node@v4

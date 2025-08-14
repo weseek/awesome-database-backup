@@ -12,7 +12,7 @@ jobs:
     outputs:
       toolPatterns: ${{ steps.set-tool-version-patterns.outputs.toolPatterns }}
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
     - uses: ./.github/actions/set-tool-version-patterns
       id: set-tool-version-patterns
 
@@ -29,7 +29,7 @@ jobs:
         db_tool: ${{ fromJson(needs.set-matrix.outputs.toolPatterns) }}
       fail-fast: false
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
     - name: Set up metadata
       id: pkg-meta
       run: |
