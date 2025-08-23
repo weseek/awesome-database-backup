@@ -297,6 +297,10 @@ spec:
 Timezone is not set as default so time-stamp show UTC.
 If you want to change it, set the `TZ` environment variable. (see. https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
 
+## DB tool version and compatibility
+
+Please ensure that the DB version and backup tool version are compatible. (see. https://github.com/weseek/awesome-database-backup/wiki/DB-tool-version-and-compatibility)
+
 ## Migration from Previous Versions
 
 If you are migrating from [weseek/mongodb-awesome-backup](https://github.com/weseek/mongodb-awesome-backup), you need to change the following environment variables:
@@ -329,6 +333,13 @@ For more details, see:
    - Default timezone of weseek/mongodb-awesome-backup is "Asia/Tokyo"
    - Default timezone of awesome-mongodb-backup is not set (UTC)
    - Set the `TZ` environment variable to change timezone
+
+## How to Contribute
+
+If you have any issues or PRs, please contact us here.
+For details on how to contribute, please refer to the URL below.
+
+https://github.com/weseek/awesome-database-backup
 
 ## Related Projects
 
