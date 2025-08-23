@@ -304,6 +304,13 @@ If you want to change it, set the `TZ` environment variable. (see. https://en.wi
 
 Please ensure that the DB version and backup tool version are compatible. (see. https://github.com/weseek/awesome-database-backup/wiki/DB-tool-version-and-compatibility)
 
+## How to Contribute
+
+If you have any issues or PRs, please contact us here.
+For details on how to contribute, please refer to the URL below.
+
+https://github.com/weseek/awesome-database-backup
+
 ## Migration from Previous Versions
 
 If you are migrating from [weseek/mariadb-awesome-backup](https://github.com/weseek/mariadb-awesome-backup), you need to change the following environment variables:
