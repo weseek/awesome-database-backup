@@ -300,6 +300,10 @@ spec:
 Timezone is not set as default so time-stamp show UTC.
 If you want to change it, set the `TZ` environment variable. (see. https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
 
+## DB tool version and compatibility
+
+Please ensure that the DB version and backup tool version are compatible. (see. https://github.com/weseek/awesome-database-backup/wiki/DB-tool-version-and-compatibility)
+
 ## Migration from Previous Versions
 
 If you are migrating from [weseek/mariadb-awesome-backup](https://github.com/weseek/mariadb-awesome-backup), you need to change the following environment variables:
