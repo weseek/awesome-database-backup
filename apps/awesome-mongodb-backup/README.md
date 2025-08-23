@@ -336,7 +336,7 @@ For more details, see:
 
 ## How to Contribute
 
-If you have any issues or PR, please contact us here.
+If you have any issues or PRs, please contact us here.
 For details on how to contribute, please refer to the URL below.
 
 https://github.com/weseek/awesome-database-backup
