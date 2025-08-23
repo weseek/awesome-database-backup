@@ -334,6 +334,13 @@ For more details, see:
    - Default timezone of awesome-mongodb-backup is not set (UTC)
    - Set the `TZ` environment variable to change timezone
 
+## How to Contribute
+
+If you have any issues or PR, please contact us here.
+For details on how to contribute, please refer to the URL below.
+
+https://github.com/weseek/awesome-database-backup
+
 ## Related Projects
 
 - [awesome-mongodb-backup](../awesome-mongodb-backup/README.md)

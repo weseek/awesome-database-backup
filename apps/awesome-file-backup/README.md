@@ -286,6 +286,13 @@ spec:
 Timezone is not set as default so time-stamp show UTC.
 If you want to change it, set the `TZ` environment variable. (see. https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
 
+## How to Contribute
+
+If you have any issues or PR, please contact us here.
+For details on how to contribute, please refer to the URL below.
+
+https://github.com/weseek/awesome-database-backup
+
 ## Migration from Previous Versions
 
 See follows

@@ -305,6 +305,13 @@ If you want to change it, set the `TZ` environment variable. (see. https://en.wi
 
 Please ensure that the DB version and backup tool version are compatible. (see. https://github.com/weseek/awesome-database-backup/wiki/DB-tool-version-and-compatibility)
 
+## How to Contribute
+
+If you have any issues or PR, please contact us here.
+For details on how to contribute, please refer to the URL below.
+
+https://github.com/weseek/awesome-database-backup
+
 ## Related Projects
 
 - [awesome-mongodb-backup](../awesome-mongodb-backup/README.md)
