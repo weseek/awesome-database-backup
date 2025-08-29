@@ -62,7 +62,7 @@ jobs:
           dbToolVersion=${{ matrix.db_tool.version }}
         tags: ${{ steps.docker-meta.outputs.tags }}
     - name: Generate artifact attestation
-      uses: actions/attest-build-provenance@v2
+      uses: actions/attest-build-provenance@v3
       with:
         subject-name: ${{ steps.docker-meta.outputs.image }}
         subject-digest: ${{ steps.push.outputs.digest }}
