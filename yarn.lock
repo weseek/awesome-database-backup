@@ -564,13 +564,13 @@
     tslib "^2.6.2"
 
 "@aws-sdk/lib-storage@^3.777.0":
-  version "3.888.0"
-  resolved "https://registry.yarnpkg.com/@aws-sdk/lib-storage/-/lib-storage-3.888.0.tgz#d39ee4403282784fc0eea032661f3f657a402326"
-  integrity sha512-UCZsVxjnQ6QpVWI1ZiNGmxfd1+8YBNbriQJ5lssR2IudQt5ThGhamGkwoYBmFV4iwhmgIT2fn5+gErugFZuUhw==
+  version "3.890.0"
+  resolved "https://registry.yarnpkg.com/@aws-sdk/lib-storage/-/lib-storage-3.890.0.tgz#9667becf3d1201cc8dad02eea0acadb2f9ab23ed"
+  integrity sha512-WG2kpV5XBUkyT7GFd+uO0kNrLw/ZMEdVqhfnM040R3v04WHhxe3ufTfHd7MCCh4fgQ96jJOBxYD2q0PXFD70hg==
   dependencies:
-    "@smithy/abort-controller" "^4.0.5"
-    "@smithy/middleware-endpoint" "^4.2.1"
-    "@smithy/smithy-client" "^4.6.1"
+    "@smithy/abort-controller" "^4.1.1"
+    "@smithy/middleware-endpoint" "^4.2.2"
+    "@smithy/smithy-client" "^4.6.2"
     buffer "5.6.0"
     events "3.3.0"
     stream-browserify "3.0.0"
@@ -1686,7 +1686,7 @@
     "@types/node" ">=8.9.0"
     axios "^0.21.1"
 
-"@smithy/abort-controller@^4.0.5", "@smithy/abort-controller@^4.1.1":
+"@smithy/abort-controller@^4.1.1":
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/@smithy/abort-controller/-/abort-controller-4.1.1.tgz#9b3872ab6b2c061486175c281dadc0a853260533"
   integrity sha512-vkzula+IwRvPR6oKQhMYioM3A/oX/lFCZiwuxkQbRhqJS2S4YRY2k7k/SyR2jMf3607HLtbEwlRxi0ndXHMjRg==
