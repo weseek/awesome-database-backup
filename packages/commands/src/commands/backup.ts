@@ -23,6 +23,11 @@ const logger = loggerFactory('backup');
  */
 export class BackupCommand extends StorageServiceClientCommand {
 
+  /**
+   * Backup filename for cache (ES private field; access from child classes also prohibited)
+   */
+  #backupFileName?: string;
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async dumpDB(_options: IBackupCommandOption): Promise<{ stdout: string, stderr: string, dbDumpFilePath: string }> {
     throw new Error('Method not implemented.');
@@ -82,9 +87,10 @@ export class BackupCommand extends StorageServiceClientCommand {
     logger.info(`=== ${basename(__filename)} started at ${format(Date.now(), 'yyyy/MM/dd HH:mm:ss')} (stream mode) ===`);
 
     const stream = await this.dumpDBAsStream(options);
+    const backupFileName = this.getBackupFileName(options);
     await this.storageServiceClient.uploadStream(
       stream,
-      `${options.backupfilePrefix}-${format(Date.now(), 'yyyyMMddHHmmss')}.gz`,
+      backupFileName,
       options.targetBucketUrl.toString(),
     );
 
@@ -166,6 +172,39 @@ export class BackupCommand extends StorageServiceClientCommand {
     return this
       .saveStorageClientInAdvance()
       .action(this.execBackupAction);
+  }
+
+  /**
+   * Get backup file name.
+   * The name should contain a certain timestamp to prune old files later.
+   * @returns backup file name
+   */
+  private getBackupFileName(options: IBackupCommandOption): string {
+    // Generate cache keys
+    const prefix = options.backupfilePrefix;
+    const ext = this.getBackupFileExtension();
+
+    // If an existing cache exists and the prefix/extension matches, reuse it.
+    if (
+      this.#backupFileName != null
+      && this.#backupFileName.startsWith(`${prefix}-`)
+      && this.#backupFileName.endsWith(`.${ext}`)
+    ) {
+      return this.#backupFileName;
+    }
+
+    // generate new backup file name
+    this.#backupFileName = `${prefix}-${format(Date.now(), 'yyyyMMddHHmmss')}.${ext}`;
+    return this.#backupFileName;
+  }
+
+  /**
+   * Get backup file extension.
+   * Override this method in each DB-specific command to set correct extension.
+   * @returns backup file extension
+   */
+  private getBackupFileExtension(): string {
+    throw new Error('Method not implemented.');
   }
 
 }
