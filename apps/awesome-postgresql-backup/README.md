@@ -131,7 +131,7 @@ You can authenticate with Google Cloud Storage using one of the following method
 | `GCP_SERVICE_ACCOUNT_KEY_JSON_PATH` | JSON file path to your GCP Service Account Key |
 | `GCP_CLIENT_EMAIL` | GCP Client Email |
 | `GCP_PRIVATE_KEY` | GCP Private Key |
-| `BACKUP_TOOL_OPTIONS` | Options to pass to pg_dump command (e.g., "--host postgres --username postgres --dbname mydb") |
+| `BACKUP_TOOL_OPTIONS` | Options to pass to pg_dumpall command (e.g., "--host postgres --username postgres --dbname mydb") |
 | `RESTORE_TOOL_OPTIONS` | Options to pass to pg_restore command (e.g., "--host postgres --username postgres --dbname mydb") |
 | `PGPASSWORD` | PostgreSQL password (alternative to specifying password in BACKUP/RESTORE_TOOL_OPTIONS) |
 | `BACKUPFILE_PREFIX` | Prefix of backup file (default: "backup") |
