@@ -204,7 +204,7 @@ export class BackupCommand extends StorageServiceClientCommand {
    * @returns backup file extension
    */
   getBackupFileExtension(): string {
-    throw new Error('Method not implemented.');
+    return '';
   }
 
 }
