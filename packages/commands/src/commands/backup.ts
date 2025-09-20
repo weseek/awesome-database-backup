@@ -26,7 +26,7 @@ export class BackupCommand extends StorageServiceClientCommand {
   /**
    * Backup filename for cache (ES private field; access from child classes also prohibited)
    */
-  #backupFileName?: string;
+  private backupFileName?: string;
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async dumpDB(_options: IBackupCommandOption): Promise<{ stdout: string, stderr: string, dbDumpFilePath: string }> {
@@ -179,23 +179,23 @@ export class BackupCommand extends StorageServiceClientCommand {
    * The name should contain a certain timestamp to prune old files later.
    * @returns backup file name
    */
-  private getBackupFileName(options: IBackupCommandOption): string {
+  getBackupFileName(options: IBackupCommandOption): string {
     // Generate cache keys
     const prefix = options.backupfilePrefix;
     const ext = this.getBackupFileExtension();
 
     // If an existing cache exists and the prefix/extension matches, reuse it.
     if (
-      this.#backupFileName != null
-      && this.#backupFileName.startsWith(`${prefix}-`)
-      && this.#backupFileName.endsWith(`.${ext}`)
+      this.backupFileName != null
+      && this.backupFileName.startsWith(`${prefix}-`)
+      && this.backupFileName.endsWith(`.${ext}`)
     ) {
-      return this.#backupFileName;
+      return this.backupFileName;
     }
 
     // generate new backup file name
-    this.#backupFileName = `${prefix}-${format(Date.now(), 'yyyyMMddHHmmss')}.${ext}`;
-    return this.#backupFileName;
+    this.backupFileName = `${prefix}-${format(Date.now(), 'yyyyMMddHHmmss')}.${ext}`;
+    return this.backupFileName;
   }
 
   /**
@@ -203,7 +203,7 @@ export class BackupCommand extends StorageServiceClientCommand {
    * Override this method in each DB-specific command to set correct extension.
    * @returns backup file extension
    */
-  private getBackupFileExtension(): string {
+  getBackupFileExtension(): string {
     throw new Error('Method not implemented.');
   }
 

@@ -22,6 +22,10 @@ class FileBackupCommand extends BackupCommand {
     tmp.setGracefulCleanup();
   }
 
+  getBackupFileExtension(): string {
+    return 'tar.gz';
+  }
+
   /**
    * Parse tar options from command line string
    *
@@ -65,7 +69,7 @@ class FileBackupCommand extends BackupCommand {
   async dumpDB(options: IBackupCommandOption):
       Promise<{ stdout: string, stderr: string, dbDumpFilePath: string }> {
     const tmpdir = tmp.dirSync({ unsafeCleanup: true });
-    const dbDumpFilePath = join(tmpdir.name, `${options.backupfilePrefix}-${format(Date.now(), 'yyyyMMddHHmmss')}.gz`);
+    const dbDumpFilePath = join(tmpdir.name, this.getBackupFileName(options));
 
     logger.info(`backup ${dbDumpFilePath}...`);
     logger.info('archive files...');

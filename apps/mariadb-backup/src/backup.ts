@@ -24,10 +24,14 @@ class MariaDBBackupCommand extends BackupCommand {
     tmp.setGracefulCleanup();
   }
 
+  getBackupFileExtension(): string {
+    return 'bz2';
+  }
+
   async dumpDB(options: IBackupCommandOption):
       Promise<{ stdout: string, stderr: string, dbDumpFilePath: string }> {
     const tmpdir = tmp.dirSync({ unsafeCleanup: true });
-    const dbDumpFilePath = join(tmpdir.name, `${options.backupfilePrefix}-${format(Date.now(), 'yyyyMMddHHmmss')}.bz2`);
+    const dbDumpFilePath = join(tmpdir.name, this.getBackupFileName(options));
 
     logger.info(`backup ${dbDumpFilePath}...`);
     logger.info('dump MariaDB...');

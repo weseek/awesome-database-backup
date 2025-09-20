@@ -24,10 +24,14 @@ class MongoDBBackupCommand extends BackupCommand {
     tmp.setGracefulCleanup();
   }
 
+  getBackupFileExtension(): string {
+    return 'gz';
+  }
+
   async dumpDB(options: IBackupCommandOption):
       Promise<{ stdout: string, stderr: string, dbDumpFilePath: string }> {
     const tmpdir = tmp.dirSync({ unsafeCleanup: true });
-    const dbDumpFilePath = join(tmpdir.name, `${options.backupfilePrefix}-${format(Date.now(), 'yyyyMMddHHmmss')}.gz`);
+    const dbDumpFilePath = join(tmpdir.name, this.getBackupFileName(options));
 
     logger.info(`backup ${dbDumpFilePath}...`);
     logger.info('dump MongoDB...');
