@@ -25,7 +25,7 @@ class MariaDBBackupCommand extends BackupCommand {
   }
 
   getBackupFileExtension(): string {
-    return 'bz2';
+    return '.bz2';
   }
 
   async dumpDB(options: IBackupCommandOption):

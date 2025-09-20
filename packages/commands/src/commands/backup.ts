@@ -194,7 +194,7 @@ export class BackupCommand extends StorageServiceClientCommand {
     }
 
     // generate new backup file name
-    this.backupFileName = `${prefix}-${format(Date.now(), 'yyyyMMddHHmmss')}.${ext}`;
+    this.backupFileName = `${prefix}-${format(Date.now(), 'yyyyMMddHHmmss')}${ext}`;
     return this.backupFileName;
   }
 

@@ -23,7 +23,7 @@ class FileBackupCommand extends BackupCommand {
   }
 
   getBackupFileExtension(): string {
-    return 'tar.gz';
+    return '.tar.gz';
   }
 
   /**

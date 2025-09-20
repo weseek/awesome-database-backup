@@ -25,7 +25,7 @@ class MongoDBBackupCommand extends BackupCommand {
   }
 
   getBackupFileExtension(): string {
-    return 'gz';
+    return '.gz';
   }
 
   async dumpDB(options: IBackupCommandOption):
