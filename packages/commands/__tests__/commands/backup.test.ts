@@ -252,4 +252,13 @@ describe('BackupCommand', () => {
       });
     });
   });
+
+  describe('getBackupFileName', () => {
+    it('should return the same file name for the same options (cache works)', async() => {
+      const options = { backupfilePrefix: 'backup', targetBucketUrl: new URL('s3://bucket') };
+      const name1 = command.getBackupFileName(options);
+      const name2 = command.getBackupFileName(options);
+      expect(name1).toBe(name2);
+    });
+  });
 });

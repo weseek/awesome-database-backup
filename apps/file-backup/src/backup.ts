@@ -2,7 +2,6 @@
  * An executable file that stores files to a storage service.
  * Execute with --help to see usage instructions.
  */
-import { format } from 'date-fns';
 import { BackupCommand, IBackupCommandOption } from '@awesome-database-backup/commands';
 import { join } from 'path';
 import { PassThrough, Readable } from 'stream';
@@ -20,6 +19,10 @@ class FileBackupCommand extends BackupCommand {
     super();
 
     tmp.setGracefulCleanup();
+  }
+
+  getBackupFileExtension(): string {
+    return '.tar.gz';
   }
 
   /**
@@ -65,7 +68,7 @@ class FileBackupCommand extends BackupCommand {
   async dumpDB(options: IBackupCommandOption):
       Promise<{ stdout: string, stderr: string, dbDumpFilePath: string }> {
     const tmpdir = tmp.dirSync({ unsafeCleanup: true });
-    const dbDumpFilePath = join(tmpdir.name, `${options.backupfilePrefix}-${format(Date.now(), 'yyyyMMddHHmmss')}.gz`);
+    const dbDumpFilePath = join(tmpdir.name, this.getBackupFileName(options));
 
     logger.info(`backup ${dbDumpFilePath}...`);
     logger.info('archive files...');
