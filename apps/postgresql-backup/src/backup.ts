@@ -2,7 +2,6 @@
  * An executable file that stores backups for Postgresql to a storage service.
  * Execute with --help to see usage instructions.
  */
-import { format } from 'date-fns';
 import { exec as execOriginal, spawn } from 'child_process';
 import { BackupCommand, IBackupCommandOption } from '@awesome-database-backup/commands';
 import { join } from 'path';
