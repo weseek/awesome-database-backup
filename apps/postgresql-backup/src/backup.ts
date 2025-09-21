@@ -2,7 +2,6 @@
  * An executable file that stores backups for Postgresql to a storage service.
  * Execute with --help to see usage instructions.
  */
-import { format } from 'date-fns';
 import { exec as execOriginal, spawn } from 'child_process';
 import { BackupCommand, IBackupCommandOption } from '@awesome-database-backup/commands';
 import { join } from 'path';
@@ -24,10 +23,14 @@ class PostgreSQLBackupCommand extends BackupCommand {
     tmp.setGracefulCleanup();
   }
 
+  getBackupFileExtension(): string {
+    return '.bz2';
+  }
+
   async dumpDB(options: IBackupCommandOption):
       Promise<{ stdout: string, stderr: string, dbDumpFilePath: string }> {
     const tmpdir = tmp.dirSync({ unsafeCleanup: true });
-    const dbDumpFilePath = join(tmpdir.name, `${options.backupfilePrefix}-${format(Date.now(), 'yyyyMMddHHmmss')}.bz2`);
+    const dbDumpFilePath = join(tmpdir.name, this.getBackupFileName(options));
 
     logger.info(`backup ${dbDumpFilePath}...`);
     logger.info('dump PostgreSQL...');
