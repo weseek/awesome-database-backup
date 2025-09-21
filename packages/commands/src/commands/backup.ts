@@ -184,13 +184,12 @@ export class BackupCommand extends StorageServiceClientCommand {
     const prefix = options.backupfilePrefix;
     const ext = this.getBackupFileExtension();
 
-    // If an existing cache exists and the prefix/extension matches, reuse it.
-    if (
-      this.backupFileName != null
-      && this.backupFileName.startsWith(`${prefix}-`)
-      && this.backupFileName.endsWith(`.${ext}`)
-    ) {
-      return this.backupFileName;
+    // If an existing cache exists and the prefix/extension matches, reuse it (use RegExp for comparison)
+    if (this.backupFileName != null) {
+      const regex = new RegExp(`^${prefix}-\\d{14}${ext}$`);
+      if (regex.test(this.backupFileName)) {
+        return this.backupFileName;
+      }
     }
 
     // generate new backup file name
@@ -199,7 +198,7 @@ export class BackupCommand extends StorageServiceClientCommand {
   }
 
   /**
-   * Get backup file extension.
+   * Get backup file extension. (e.g. .gz, .bz2, .tar.gz)
    * Override this method in each DB-specific command to set correct extension.
    * @returns backup file extension
    */
