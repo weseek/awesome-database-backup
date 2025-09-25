@@ -396,13 +396,13 @@
     tslib "^2.6.2"
 
 "@aws-sdk/lib-storage@^3.777.0":
-  version "3.895.0"
-  resolved "https://registry.yarnpkg.com/@aws-sdk/lib-storage/-/lib-storage-3.895.0.tgz#3215e2c016a8b6af16fe651c3e1f8ffd7b8cbe52"
-  integrity sha512-zTiDLJJYctvDfNCLvdb7xrXpIY69dy2dLBLdMdvJM8EMZiwPtbO1efnGSM/9dclEINax7NTgmARvIIF52QB9oA==
+  version "3.896.0"
+  resolved "https://registry.yarnpkg.com/@aws-sdk/lib-storage/-/lib-storage-3.896.0.tgz#c65350f32867c1e2783dde2f7a1d4b85b5922104"
+  integrity sha512-EJWXL/5LxBJFujsOud3+EfRbIwy/SZiWy5ld70RdoqLS/RsfZh9+mZMJGvd3hewy7xHgDYVbxZfDh14bsvfYIQ==
   dependencies:
     "@smithy/abort-controller" "^4.1.1"
-    "@smithy/middleware-endpoint" "^4.2.3"
-    "@smithy/smithy-client" "^4.6.3"
+    "@smithy/middleware-endpoint" "^4.2.4"
+    "@smithy/smithy-client" "^4.6.4"
     buffer "5.6.0"
     events "3.3.0"
     stream-browserify "3.0.0"
@@ -1466,6 +1466,22 @@
     tslib "^2.6.2"
     uuid "^9.0.1"
 
+"@smithy/core@^3.12.0":
+  version "3.12.0"
+  resolved "https://registry.yarnpkg.com/@smithy/core/-/core-3.12.0.tgz#81bb6a2a113e334ddaede9d502ff17ce4d8a2cc6"
+  integrity sha512-zJeAgogZfbwlPGL93y4Z/XNeIN37YCreRUd6YMIRvaq+6RnBK8PPYYIQ85Is/GglPh3kNImD5riDCXbVSDpCiQ==
+  dependencies:
+    "@smithy/middleware-serde" "^4.1.1"
+    "@smithy/protocol-http" "^5.2.1"
+    "@smithy/types" "^4.5.0"
+    "@smithy/util-base64" "^4.1.0"
+    "@smithy/util-body-length-browser" "^4.1.0"
+    "@smithy/util-middleware" "^4.1.1"
+    "@smithy/util-stream" "^4.3.2"
+    "@smithy/util-utf8" "^4.1.0"
+    "@smithy/uuid" "^1.0.0"
+    tslib "^2.6.2"
+
 "@smithy/credential-provider-imds@^4.1.2":
   version "4.1.2"
   resolved "https://registry.yarnpkg.com/@smithy/credential-provider-imds/-/credential-provider-imds-4.1.2.tgz#68662c873dbe812c13159cb2be3c4ba8aeb52149"
@@ -1602,12 +1618,12 @@
     "@smithy/types" "^4.5.0"
     tslib "^2.6.2"
 
-"@smithy/middleware-endpoint@^4.2.3":
-  version "4.2.3"
-  resolved "https://registry.yarnpkg.com/@smithy/middleware-endpoint/-/middleware-endpoint-4.2.3.tgz#6d64026923420971f2da937d6ea642011471f7a5"
-  integrity sha512-+1H5A28DeffRVrqmVmtqtRraEjoaC6JVap3xEQdVoBh2EagCVY7noPmcBcG4y7mnr9AJitR1ZAse2l+tEtK5vg==
+"@smithy/middleware-endpoint@^4.2.3", "@smithy/middleware-endpoint@^4.2.4":
+  version "4.2.4"
+  resolved "https://registry.yarnpkg.com/@smithy/middleware-endpoint/-/middleware-endpoint-4.2.4.tgz#d815d27b7869a66ee97b41932053ca5d5ec6315e"
+  integrity sha512-FZ4hzupOmthm8Q8ujYrd0I+/MHwVMuSTdkDtIQE0xVuvJt9pLT6Q+b0p4/t+slDyrpcf+Wj7SN+ZqT5OryaaZg==
   dependencies:
-    "@smithy/core" "^3.11.1"
+    "@smithy/core" "^3.12.0"
     "@smithy/middleware-serde" "^4.1.1"
     "@smithy/node-config-provider" "^4.2.2"
     "@smithy/shared-ini-file-loader" "^4.2.0"
@@ -1732,13 +1748,13 @@
     "@smithy/util-utf8" "^4.1.0"
     tslib "^2.6.2"
 
-"@smithy/smithy-client@^4.6.3":
-  version "4.6.3"
-  resolved "https://registry.yarnpkg.com/@smithy/smithy-client/-/smithy-client-4.6.3.tgz#5ec0c2c993371c246e061ac29550ab4f63db99bc"
-  integrity sha512-K27LqywsaqKz4jusdUQYJh/YP2VbnbdskZ42zG8xfV+eovbTtMc2/ZatLWCfSkW0PDsTUXlpvlaMyu8925HsOw==
+"@smithy/smithy-client@^4.6.3", "@smithy/smithy-client@^4.6.4":
+  version "4.6.4"
+  resolved "https://registry.yarnpkg.com/@smithy/smithy-client/-/smithy-client-4.6.4.tgz#3a66bb71c91dadf1806adab664ba2e164a1139ab"
+  integrity sha512-qL7O3VDyfzCSN9r+sdbQXGhaHtrfSJL30En6Jboj0I3bobf2g1/T0eP2L4qxqrEW26gWhJ4THI4ElVVLjYyBHg==
   dependencies:
-    "@smithy/core" "^3.11.1"
-    "@smithy/middleware-endpoint" "^4.2.3"
+    "@smithy/core" "^3.12.0"
+    "@smithy/middleware-endpoint" "^4.2.4"
     "@smithy/middleware-stack" "^4.1.1"
     "@smithy/protocol-http" "^5.2.1"
     "@smithy/types" "^4.5.0"
@@ -1908,6 +1924,13 @@
   dependencies:
     "@smithy/abort-controller" "^4.1.1"
     "@smithy/types" "^4.5.0"
+    tslib "^2.6.2"
+
+"@smithy/uuid@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@smithy/uuid/-/uuid-1.0.0.tgz#a0fd3aa879d57e2f2fd6a7308deee864a412e1cf"
+  integrity sha512-OlA/yZHh0ekYFnbUkmYBDQPE6fGfdrvgz39ktp8Xf+FA6BfxLejPTMDOG0Nfk5/rDySAz1dRbFf24zaAFYVXlQ==
+  dependencies:
     tslib "^2.6.2"
 
 "@tootallnate/once@2":
