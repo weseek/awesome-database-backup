@@ -394,9 +394,9 @@
     tslib "^2.6.2"
 
 "@aws-sdk/lib-storage@^3.777.0":
-  version "3.910.0"
-  resolved "https://registry.yarnpkg.com/@aws-sdk/lib-storage/-/lib-storage-3.910.0.tgz#f8bccea70bdd1d2efac08ed731fccd58347ac8a4"
-  integrity sha512-EGuVvVnz02P3wxXg/s36OKNSsZXGP0c7yESbGeAlRZEIGiGYCMz/ukb1+CrhoP/vj61F0BMj7gXp3Anh1GjFvQ==
+  version "3.911.0"
+  resolved "https://registry.yarnpkg.com/@aws-sdk/lib-storage/-/lib-storage-3.911.0.tgz#eb7036404b4b1913275f303d8b0608008ba855ff"
+  integrity sha512-6VeqqQ2rvh73Bqt0bjxbaRFlmDsS9KrM1bqA75ChpPKhv64CDRkPy7qzk1H0GnTL6F7F17B+WxgKF9BjFOn1TA==
   dependencies:
     "@smithy/abort-controller" "^4.2.2"
     "@smithy/middleware-endpoint" "^4.3.3"
@@ -1413,7 +1413,7 @@
     "@types/node" ">=8.9.0"
     axios "^0.21.1"
 
-"@smithy/abort-controller@^4.2.0", "@smithy/abort-controller@^4.2.2":
+"@smithy/abort-controller@^4.2.2":
   version "4.2.2"
   resolved "https://registry.yarnpkg.com/@smithy/abort-controller/-/abort-controller-4.2.2.tgz#b8f20189bfd6d8489ff79aa2e40d44f0eab58d60"
   integrity sha512-fPbcmEI+A6QiGOuumTpKSo7z+9VYr5DLN8d5/8jDJOwmt4HAKy/UGuRstCMpKbtr+FMaHH4pvFinSAbIAYCHZQ==
@@ -1599,7 +1599,7 @@
     "@smithy/types" "^4.7.1"
     tslib "^2.6.2"
 
-"@smithy/middleware-endpoint@^4.3.1", "@smithy/middleware-endpoint@^4.3.3":
+"@smithy/middleware-endpoint@^4.3.3":
   version "4.3.3"
   resolved "https://registry.yarnpkg.com/@smithy/middleware-endpoint/-/middleware-endpoint-4.3.3.tgz#af8b097f0ac16e9478c6467b73bb2a0379b1105d"
   integrity sha512-CfxQ6X9L87/3C67Po6AGWXsx8iS4w2BO8vQEZJD6hwqg2vNRC/lMa2O5wXYCG9tKotdZ0R8KG33TS7kpUnYKiw==
@@ -1728,7 +1728,7 @@
     "@smithy/util-utf8" "^4.2.0"
     tslib "^2.6.2"
 
-"@smithy/smithy-client@^4.7.1", "@smithy/smithy-client@^4.8.1":
+"@smithy/smithy-client@^4.8.1":
   version "4.8.1"
   resolved "https://registry.yarnpkg.com/@smithy/smithy-client/-/smithy-client-4.8.1.tgz#b929fba7780f2e7ceb9a4278b52ccf9fd983e1fa"
   integrity sha512-N5wK57pVThzLVK5NgmHxocTy5auqGDGQ+JsL5RjCTriPt8JLYgXT0Awa915zCpzc9hXHDOKqDX5g9BFdwkSfUA==
@@ -1741,7 +1741,7 @@
     "@smithy/util-stream" "^4.5.2"
     tslib "^2.6.2"
 
-"@smithy/types@^4.6.0", "@smithy/types@^4.7.1":
+"@smithy/types@^4.7.1":
   version "4.7.1"
   resolved "https://registry.yarnpkg.com/@smithy/types/-/types-4.7.1.tgz#9171d1bcfbbc4579d73d96cb9a7e1895b291e8e9"
   integrity sha512-WwP7vzoDyzvIFLzF5UhLQ6AsEx/PvSObzlNtJNW3lLy+BaSvTqCU628QKVvcJI/dydlAS1mSHQP7anKcxDcOxA==
