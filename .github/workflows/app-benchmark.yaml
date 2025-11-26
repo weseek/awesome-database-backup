@@ -38,8 +38,8 @@ jobs:
         comment_on_pr: false         # Output results in PR comments
         job_summary: true            # Output results to Job Summary
 
-    - uses: actions/checkout@v5
-    - uses: actions/setup-node@v5
+    - uses: actions/checkout@v6
+    - uses: actions/setup-node@v6
       with:
         node-version-file: package.json
         cache: "yarn"
@@ -105,8 +105,8 @@ jobs:
         comment_on_pr: false         # Output results in PR comments
         job_summary: true            # Output results to Job Summary
 
-    - uses: actions/checkout@v5
-    - uses: actions/setup-node@v5
+    - uses: actions/checkout@v6
+    - uses: actions/setup-node@v6
       with:
         node-version-file: package.json
         cache: "yarn"
