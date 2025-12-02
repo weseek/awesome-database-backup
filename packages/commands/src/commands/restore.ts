@@ -10,6 +10,7 @@ import * as StreamPromises from 'stream/promises';
 import {
   createReadStream, createWriteStream, ReadStream, WriteStream,
 } from 'fs';
+import { Decompress } from 'fzstd';
 import { IRestoreCommandOption } from './interfaces';
 import { StorageServiceClientCommand } from './common';
 import loggerFactory from '../logger/factory';
@@ -18,6 +19,51 @@ const logger = loggerFactory('restore');
 const tmp = require('tmp');
 const tar = require('tar');
 const bz2 = require('unbzip2-stream');
+
+class FzstdDecompressStream extends Transform {
+
+  private decompressor: Decompress;
+
+  private chunks: Uint8Array[] = [];
+
+  constructor() {
+    super();
+    this.decompressor = new Decompress((chunk, isLast) => {
+      // 解凍されたチャンクを保存
+      this.chunks.push(chunk);
+
+      if (isLast) {
+        // 最後のチャンクまで来たら全て push
+        for (const c of this.chunks) {
+          this.push(Buffer.from(c));
+        }
+        this.push(null); // ストリーム終了
+      }
+    });
+  }
+
+  _transform(chunk: Buffer, _encoding: string, callback: (error?: Error | null) => void) {
+    try {
+      this.decompressor.push(new Uint8Array(chunk));
+      callback();
+    }
+    catch (error) {
+      callback(error instanceof Error ? error : new Error(String(error)));
+    }
+  }
+
+  _flush(callback: (error?: Error | null) => void) {
+    try {
+      // 空のチャンクで終了を通知
+      this.decompressor.push(new Uint8Array(0), true);
+      callback();
+    }
+    catch (error) {
+      callback(error instanceof Error ? error : new Error(String(error)));
+    }
+  }
+
+}
 
 /**
  * Define actions, options, and arguments that are commonly required for restore command from the CLI, regardless of the database type.
@@ -45,6 +91,7 @@ export class RestoreCommand extends StorageServiceClientCommand {
     const processors: Record<string, Transform> = {
       '.gz': createGunzip(),
       '.bz2': bz2(),
+      '.zst': new FzstdDecompressStream(),
       '.tar': new tar.Unpack({ cwd: dirname(backupFilePath) }),
     };
 

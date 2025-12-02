@@ -24,7 +24,7 @@ class MongoDBBackupCommand extends BackupCommand {
   }
 
   getBackupFileExtension(): string {
-    return '.gz';
+    return '.zst';
   }
 
   async dumpDB(options: IBackupCommandOption):
@@ -34,7 +34,7 @@ class MongoDBBackupCommand extends BackupCommand {
 
     logger.info(`backup ${dbDumpFilePath}...`);
     logger.info('dump MongoDB...');
-    const { stdout, stderr } = await exec(`mongodump --gzip --archive=${dbDumpFilePath} ${options.backupToolOptions}`);
+    const { stdout, stderr } = await exec(`mongodump --archive ${options.backupToolOptions} | zstd > ${dbDumpFilePath}`);
     return { stdout, stderr, dbDumpFilePath };
   }
 
@@ -48,7 +48,7 @@ class MongoDBBackupCommand extends BackupCommand {
     logger.info('dump MongoDB as stream...');
 
     // Execute mongodump command with stdout as a pipe
-    const mongodump = spawn(`mongodump --gzip --archive ${options.backupToolOptions}`, { shell: true, stdio: ['ignore', 'pipe', 'pipe'] });
+    const mongodump = spawn(`mongodump --archive ${options.backupToolOptions} | zstd`, { shell: true, stdio: ['ignore', 'pipe', 'pipe'] });
 
     // Log stderr output
     mongodump.stderr.on('data', (data) => {
