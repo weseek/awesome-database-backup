@@ -46,7 +46,7 @@ describe('restore', () => {
   });
 
   describe('when valid S3 options are specified', () => {
-    const objectURI = `${testS3BucketURI}/${testMongoDBName}.tar.gz`;
+    const objectURI = `${testS3BucketURI}/${testMongoDBName}.tar.zst`;
     const commandLine = `${execRestoreCommand} \
       --aws-endpoint-url ${s3ClientConfig.endpoint} \
       --aws-region ${s3ClientConfig.region} \
@@ -72,7 +72,7 @@ describe('restore', () => {
   });
 
   describe('when valid GCS options are specified', () => {
-    const objectURI = `${testGCSBucketURI}/${testMongoDBName}.tar.gz`;
+    const objectURI = `${testGCSBucketURI}/${testMongoDBName}.tar.zst`;
     const commandLine = `${execRestoreCommand} \
       --gcp-endpoint-url ${storageConfig.apiEndpoint} \
       --gcp-project-id ${storageConfig.projectId} \
