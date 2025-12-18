@@ -589,13 +589,13 @@
     tslib "^2.6.2"
 
 "@aws-sdk/lib-storage@^3.777.0":
-  version "3.953.0"
-  resolved "https://registry.yarnpkg.com/@aws-sdk/lib-storage/-/lib-storage-3.953.0.tgz#8ba93351169aa2a12e75f95bbc30372d769714f0"
-  integrity sha512-P7FHmOkrXO4V3ZC+JCTMUGk9XNmOyMt8VB2vXTQQ07vT4Rc0cENwOFWxBQsvBTkO5NkEjomDZ1X1ia1DhoGPRA==
+  version "3.954.0"
+  resolved "https://registry.yarnpkg.com/@aws-sdk/lib-storage/-/lib-storage-3.954.0.tgz#d319b566cc2d10c505edbaac6c7fc006475ae71b"
+  integrity sha512-NdqDWorjG5dvnp/sfDsrru5S52O8gCKo92wcQe8A7M+6JUaQ6Qtnmzh7104SYCc/OdZwrjg7OL1pViGfw+lZxQ==
   dependencies:
     "@smithy/abort-controller" "^4.2.6"
-    "@smithy/middleware-endpoint" "^4.3.15"
-    "@smithy/smithy-client" "^4.10.0"
+    "@smithy/middleware-endpoint" "^4.4.0"
+    "@smithy/smithy-client" "^4.10.1"
     buffer "5.6.0"
     events "3.3.0"
     stream-browserify "3.0.0"
