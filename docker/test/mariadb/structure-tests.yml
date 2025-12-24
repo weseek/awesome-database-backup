@@ -36,6 +36,10 @@ commandTests:
   command: which
   args: ["bzip2"]
 
+- name: expect "which zstd" return valid path
+  command: which
+  args: ["zstd"]
+
 - name: expect "which mariadb-dump" return valid path
   command: which
   args: ["mariadb-dump"]
