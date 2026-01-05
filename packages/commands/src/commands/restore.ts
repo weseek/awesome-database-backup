@@ -25,6 +25,7 @@ class FzstdDecompressStream extends Transform {
   private decompressor: Decompress;
 
   private _pendingCallback: (() => void) | null = null;
+
   private _flushCallback: ((error?: Error | null) => void) | null = null;
 
   constructor() {
