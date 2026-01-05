@@ -24,55 +24,33 @@ class FzstdDecompressStream extends Transform {
 
   private decompressor: Decompress;
 
-  private _pendingCallback: (() => void) | null = null;
-
-  private _flushCallback: ((error?: Error | null) => void) | null = null;
-
   constructor() {
     super();
     this.decompressor = new Decompress((chunk, isLast) => {
-      // Push decompressed chunk immediately
-      if (chunk && chunk.length > 0) {
-        this.push(Buffer.from(chunk));
-      }
-      // If this was the last chunk, end the stream
+      // Emit each decompressed chunk immediately
+      this.push(Buffer.from(chunk));
       if (isLast) {
-        this.push(null);
-        if (this._flushCallback) {
-          const cb = this._flushCallback;
-          this._flushCallback = null;
-          cb();
-        }
-      }
-      // If a transform callback is pending, call it now
-      if (this._pendingCallback) {
-        const cb = this._pendingCallback;
-        this._pendingCallback = null;
-        cb();
+        this.push(null); // Signal end of stream
       }
     });
   }
 
   _transform(chunk: Buffer, _encoding: string, callback: (error?: Error | null) => void) {
     try {
-      // Set the callback to be called after decompression
-      this._pendingCallback = callback;
       this.decompressor.push(new Uint8Array(chunk));
+      callback();
     }
     catch (error) {
-      this._pendingCallback = null;
       callback(error instanceof Error ? error : new Error(String(error)));
     }
   }
 
   _flush(callback: (error?: Error | null) => void) {
     try {
-      // Set the flush callback to be called after the last chunk is processed
-      this._flushCallback = callback;
       this.decompressor.push(new Uint8Array(0), true);
+      callback();
     }
     catch (error) {
-      this._flushCallback = null;
       callback(error instanceof Error ? error : new Error(String(error)));
     }
   }
