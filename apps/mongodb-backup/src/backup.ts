@@ -36,7 +36,7 @@ class MongoDBBackupCommand extends BackupCommand {
     logger.info('dump MongoDB...');
     const { stdout, stderr } = await exec(
       `set -o pipefail; mongodump --archive ${options.backupToolOptions} | zstd > ${dbDumpFilePath}`,
-      { shell: '/bin/bash' }
+      { shell: '/bin/bash' },
     );
     return { stdout, stderr, dbDumpFilePath };
   }
@@ -53,7 +53,7 @@ class MongoDBBackupCommand extends BackupCommand {
     // Execute mongodump command with stdout as a pipe
     const mongodump = spawn(
       `set -o pipefail; mongodump --archive ${options.backupToolOptions} | zstd`,
-      { shell: '/bin/bash', stdio: ['ignore', 'pipe', 'pipe'] }
+      { shell: '/bin/bash', stdio: ['ignore', 'pipe', 'pipe'] },
     );
 
     // Log stderr output
