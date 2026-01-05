@@ -34,7 +34,10 @@ class MongoDBBackupCommand extends BackupCommand {
 
     logger.info(`backup ${dbDumpFilePath}...`);
     logger.info('dump MongoDB...');
-    const { stdout, stderr } = await exec(`mongodump --archive ${options.backupToolOptions} | zstd > ${dbDumpFilePath}`);
+    const { stdout, stderr } = await exec(
+      `set -o pipefail; mongodump --archive ${options.backupToolOptions} | zstd > ${dbDumpFilePath}`,
+      { shell: '/bin/bash' }
+    );
     return { stdout, stderr, dbDumpFilePath };
   }
 
