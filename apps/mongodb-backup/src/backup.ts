@@ -51,7 +51,10 @@ class MongoDBBackupCommand extends BackupCommand {
     logger.info('dump MongoDB as stream...');
 
     // Execute mongodump command with stdout as a pipe
-    const mongodump = spawn(`mongodump --archive ${options.backupToolOptions} | zstd`, { shell: true, stdio: ['ignore', 'pipe', 'pipe'] });
+    const mongodump = spawn(
+      `set -o pipefail; mongodump --archive ${options.backupToolOptions} | zstd`,
+      { shell: '/bin/bash', stdio: ['ignore', 'pipe', 'pipe'] }
+    );
 
     // Log stderr output
     mongodump.stderr.on('data', (data) => {
