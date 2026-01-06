@@ -59,7 +59,7 @@ RUN yarn run turbo run build --filter="${packageFilter}..."
 FROM base AS tool-common
 
 RUN apt-get update \
-      && apt-get install -y bzip2 curl ca-certificates gnupg \
+      && apt-get install -y bzip2 zstd curl ca-certificates gnupg \
       && apt-get clean \
       && rm -rf /var/lib/apt/lists/*
 

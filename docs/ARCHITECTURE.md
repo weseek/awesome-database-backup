@@ -83,7 +83,7 @@ The restore command restores the database using the following steps:
    - Save to a temporary directory
 
 2. Extract backup file
-   - Extract file according to compression format (.gz, .bz2, .tar, .tar.gz, etc.)
+   - Extract file according to compression format (.gz, .bz2, .zst, .tar, .tar.gz, etc.)
    - Supported extensions differ by database type
    - Implementation example:
      ```typescript
@@ -252,7 +252,7 @@ Docker images are created using multi-stage builds:
 5. Tool stage: Install database-specific tools
    ```dockerfile
    FROM base AS tool-common
-   RUN apt-get update && apt-get install -y bzip2 curl ca-certificates gnupg
+   RUN apt-get update && apt-get install -y bzip2 zstd curl ca-certificates gnupg
 
    FROM tool-common AS mongodb-tools
    ARG dbToolVersion

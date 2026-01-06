@@ -66,7 +66,7 @@ export function createMongoDBBackup(fileName: string): string {
   mkdirSync(docDirPath, { recursive: true });
   const docFilePath = join(docDirPath, 'dummy.bson');
   const docMetaFilePath = join(docDirPath, 'dummy.metadata.json');
-  const docBackupedFilePath = join(tmpdir.name, `${fileName}.tar.gz`);
+  const docBackupedFilePath = join(tmpdir.name, `${fileName}.tar.zst`);
 
   writeFileSync(docFilePath, BSON.serialize(doc));
   writeFileSync(docMetaFilePath, JSON.stringify(docMetadata));
@@ -77,7 +77,7 @@ export function createMongoDBBackup(fileName: string): string {
   tar.c(
     {
       sync: true,
-      gzip: true,
+      zstd: true,
       file: docBackupedFilePath,
       cwd: tmpdir.name,
     },
