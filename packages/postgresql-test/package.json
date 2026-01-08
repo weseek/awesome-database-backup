@@ -1,6 +1,6 @@
 {
   "name": "@awesome-database-backup/postgresql-test",
-  "version": "0.3.5",
+  "version": "1.0.0",
   "description": "Functions of PostgreSQL to support test",
   "author": "Ryu Sato <ryu@weseek.co.jp>",
   "license": "MIT",
@@ -16,7 +16,7 @@
   "main": "src/index.ts",
   "dependencies": {
     "uuid": "^8.3.2",
-    "tar": "^6.1.11",
+    "tar": "^7.5.2",
     "tmp": "^0.2.1",
     "bsonfy": "^1.0.2"
   },

@@ -10,6 +10,7 @@ import * as StreamPromises from 'stream/promises';
 import {
   createReadStream, createWriteStream, ReadStream, WriteStream,
 } from 'fs';
+import { Decompress } from 'fzstd';
 import { IRestoreCommandOption } from './interfaces';
 import { StorageServiceClientCommand } from './common';
 import loggerFactory from '../logger/factory';
@@ -18,6 +19,43 @@ const logger = loggerFactory('restore');
 const tmp = require('tmp');
 const tar = require('tar');
 const bz2 = require('unbzip2-stream');
+
+class FzstdDecompressStream extends Transform {
+
+  private decompressor: Decompress;
+
+  constructor() {
+    super();
+    this.decompressor = new Decompress((chunk, isLast) => {
+      // Emit each decompressed chunk immediately
+      this.push(Buffer.from(chunk));
+      if (isLast) {
+        this.push(null); // Signal end of stream
+      }
+    });
+  }
+
+  _transform(chunk: Buffer, _encoding: string, callback: (error?: Error | null) => void) {
+    try {
+      this.decompressor.push(new Uint8Array(chunk));
+      callback();
+    }
+    catch (error) {
+      callback(error instanceof Error ? error : new Error(String(error)));
+    }
+  }
+
+  _flush(callback: (error?: Error | null) => void) {
+    try {
+      this.decompressor.push(new Uint8Array(0), true);
+      callback();
+    }
+    catch (error) {
+      callback(error instanceof Error ? error : new Error(String(error)));
+    }
+  }
+
+}
 
 /**
  * Define actions, options, and arguments that are commonly required for restore command from the CLI, regardless of the database type.
@@ -45,6 +83,7 @@ export class RestoreCommand extends StorageServiceClientCommand {
     const processors: Record<string, Transform> = {
       '.gz': createGunzip(),
       '.bz2': bz2(),
+      '.zst': new FzstdDecompressStream(),
       '.tar': new tar.Unpack({ cwd: dirname(backupFilePath) }),
     };
 
