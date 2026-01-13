@@ -160,7 +160,7 @@ export class GCSStorageServiceClient implements IStorageServiceClient {
     const destination = join(destinationGCSUri.filepath, fileName);
     const file = destinationBucket.file(destination);
 
-    const contentType = this.customMime.getType(fileName) || 'application/octet-stream';
+    const contentType = this.customMime.getType(fileName) || 'application/gzip';
     const writeStream = file.createWriteStream({
       resumable: true,
       contentType,
