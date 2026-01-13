@@ -668,7 +668,7 @@ describe('GCSStorageServiceClient', () => {
         });
 
         describe('when file has unrecognized extension', () => {
-          it('should call createWriteStream with fallback application/gzip contentType', async() => {
+          it('should call createWriteStream with fallback application/octet-stream contentType', async() => {
             const writeStreamMock = vi.fn().mockResolvedValue(undefined);
             const createWriteStreamMock = vi.fn().mockReturnValue(writeStreamMock);
             const fileMock = {
@@ -687,14 +687,14 @@ describe('GCSStorageServiceClient', () => {
 
             expect(createWriteStreamMock).toHaveBeenCalledWith(
               expect.objectContaining({
-                contentType: 'application/gzip',
+                contentType: 'application/octet-stream',
               }),
             );
           });
         });
 
         describe('when file has no extension', () => {
-          it('should call createWriteStream with fallback application/gzip contentType', async() => {
+          it('should call createWriteStream with fallback application/octet-stream contentType', async() => {
             const writeStreamMock = vi.fn().mockResolvedValue(undefined);
             const createWriteStreamMock = vi.fn().mockReturnValue(writeStreamMock);
             const fileMock = {
@@ -713,7 +713,7 @@ describe('GCSStorageServiceClient', () => {
 
             expect(createWriteStreamMock).toHaveBeenCalledWith(
               expect.objectContaining({
-                contentType: 'application/gzip',
+                contentType: 'application/octet-stream',
               }),
             );
           });
