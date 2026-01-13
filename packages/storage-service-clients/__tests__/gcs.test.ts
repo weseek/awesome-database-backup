@@ -102,6 +102,34 @@ describe('GCSStorageServiceClient', () => {
         });
       });
     });
+
+    describe('customMime initialization', () => {
+      const StorageMock = vi.fn();
+      const config = {
+        gcpProjectId: 'validProjectId',
+        gcpClientEmail: 'validClientEmail',
+        gcpPrivateKey: 'validPrivateKey',
+      };
+
+      beforeEach(() => {
+        vi.resetModules();
+        vi.doMock('@google-cloud/storage', () => ({
+          Storage: StorageMock,
+        }));
+      });
+
+      it('should return application/zstd for .zst extension', async() => {
+        const gcs = await import('../src/gcs');
+        const client = new gcs.GCSStorageServiceClient(config);
+        expect(client.customMime.getType('file.zst')).toBe('application/zstd');
+      });
+
+      it('should return application/zstd for .zstd extension', async() => {
+        const gcs = await import('../src/gcs');
+        const client = new gcs.GCSStorageServiceClient(config);
+        expect(client.customMime.getType('file.zstd')).toBe('application/zstd');
+      });
+    });
   });
 
   beforeEach(async() => {
