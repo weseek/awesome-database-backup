@@ -3,6 +3,9 @@ import { basename, join } from 'path';
 import { Readable } from 'stream';
 import { pipeline } from 'stream/promises';
 import { getHeapStatistics } from 'v8';
+import { Mime } from 'mime';
+import standardTypes from 'mime/types/standard.js';
+import otherTypes from 'mime/types/other.js';
 import {
   IStorageServiceClient,
   listGCSFilesOptions,
@@ -21,6 +24,8 @@ export class GCSStorageServiceClient implements IStorageServiceClient {
   name: string;
 
   client: Storage;
+
+  customMime: Mime;
 
   constructor(config: GCSStorageServiceClientConfig) {
     const storageconfig: StorageOptions = {};
@@ -49,6 +54,12 @@ export class GCSStorageServiceClient implements IStorageServiceClient {
 
     this.name = 'GCS';
     this.client = new Storage(storageconfig);
+
+    // Define custom MIME for zstandard
+    this.customMime = new Mime(standardTypes, otherTypes);
+    this.customMime.define({
+      'application/zstd': ['zst', 'zstd'],
+    });
   }
 
   async exists(url: string): Promise<boolean> {
@@ -149,9 +160,10 @@ export class GCSStorageServiceClient implements IStorageServiceClient {
     const destination = join(destinationGCSUri.filepath, fileName);
     const file = destinationBucket.file(destination);
 
+    const contentType = this.customMime.getType(fileName) || 'application/gzip';
     const writeStream = file.createWriteStream({
       resumable: true,
-      contentType: 'application/gzip',
+      contentType,
       chunkSize: this._chunkSizeCalculatedFromHeapSize(),
     });
 
