@@ -102,6 +102,34 @@ describe('GCSStorageServiceClient', () => {
         });
       });
     });
+
+    describe('customMime initialization', () => {
+      const StorageMock = vi.fn();
+      const config = {
+        gcpProjectId: 'validProjectId',
+        gcpClientEmail: 'validClientEmail',
+        gcpPrivateKey: 'validPrivateKey',
+      };
+
+      beforeEach(() => {
+        vi.resetModules();
+        vi.doMock('@google-cloud/storage', () => ({
+          Storage: StorageMock,
+        }));
+      });
+
+      it('should return application/zstd for .zst extension', async() => {
+        const gcs = await import('../src/gcs');
+        const client = new gcs.GCSStorageServiceClient(config);
+        expect(client.customMime.getType('file.zst')).toBe('application/zstd');
+      });
+
+      it('should return application/zstd for .zstd extension', async() => {
+        const gcs = await import('../src/gcs');
+        const client = new gcs.GCSStorageServiceClient(config);
+        expect(client.customMime.getType('file.zstd')).toBe('application/zstd');
+      });
+    });
   });
 
   beforeEach(async() => {
@@ -557,6 +585,138 @@ describe('GCSStorageServiceClient', () => {
           stream.push(null); // End of stream
 
           await expect(gcsServiceClient.uploadStream(stream, 'backupFileName', uploadDestinationUri)).rejects.toThrow('stream error');
+        });
+      });
+
+      describe('MIME type detection', () => {
+        describe('when file has .zst extension', () => {
+          it('should call createWriteStream with application/zstd contentType', async() => {
+            const writeStreamMock = vi.fn().mockResolvedValue(undefined);
+            const createWriteStreamMock = vi.fn().mockReturnValue(writeStreamMock);
+            const fileMock = {
+              createWriteStream: createWriteStreamMock,
+            };
+            const bucketMock = {
+              file: vi.fn().mockReturnValue(fileMock),
+            };
+            gcsServiceClient.client.bucket = vi.fn().mockReturnValue(bucketMock);
+
+            const stream = new Readable();
+            stream.push('test data');
+            stream.push(null); // End of stream
+
+            await gcsServiceClient.uploadStream(stream, 'backup.zst', uploadDestinationUri);
+
+            expect(createWriteStreamMock).toHaveBeenCalledWith(
+              expect.objectContaining({
+                contentType: 'application/zstd',
+              }),
+            );
+          });
+        });
+
+        describe('when file has .zstd extension', () => {
+          it('should call createWriteStream with application/zstd contentType', async() => {
+            const writeStreamMock = vi.fn().mockResolvedValue(undefined);
+            const createWriteStreamMock = vi.fn().mockReturnValue(writeStreamMock);
+            const fileMock = {
+              createWriteStream: createWriteStreamMock,
+            };
+            const bucketMock = {
+              file: vi.fn().mockReturnValue(fileMock),
+            };
+            gcsServiceClient.client.bucket = vi.fn().mockReturnValue(bucketMock);
+
+            const stream = new Readable();
+            stream.push('test data');
+            stream.push(null); // End of stream
+
+            await gcsServiceClient.uploadStream(stream, 'backup.zstd', uploadDestinationUri);
+
+            expect(createWriteStreamMock).toHaveBeenCalledWith(
+              expect.objectContaining({
+                contentType: 'application/zstd',
+              }),
+            );
+          });
+        });
+
+        describe('when file has .gz extension', () => {
+          it('should call createWriteStream with application/gzip contentType', async() => {
+            const writeStreamMock = vi.fn().mockResolvedValue(undefined);
+            const createWriteStreamMock = vi.fn().mockReturnValue(writeStreamMock);
+            const fileMock = {
+              createWriteStream: createWriteStreamMock,
+            };
+            const bucketMock = {
+              file: vi.fn().mockReturnValue(fileMock),
+            };
+            gcsServiceClient.client.bucket = vi.fn().mockReturnValue(bucketMock);
+
+            const stream = new Readable();
+            stream.push('test data');
+            stream.push(null); // End of stream
+
+            await gcsServiceClient.uploadStream(stream, 'backup.gz', uploadDestinationUri);
+
+            expect(createWriteStreamMock).toHaveBeenCalledWith(
+              expect.objectContaining({
+                contentType: 'application/gzip',
+              }),
+            );
+          });
+        });
+
+        describe('when file has unrecognized extension', () => {
+          it('should call createWriteStream with fallback application/octet-stream contentType', async() => {
+            const writeStreamMock = vi.fn().mockResolvedValue(undefined);
+            const createWriteStreamMock = vi.fn().mockReturnValue(writeStreamMock);
+            const fileMock = {
+              createWriteStream: createWriteStreamMock,
+            };
+            const bucketMock = {
+              file: vi.fn().mockReturnValue(fileMock),
+            };
+            gcsServiceClient.client.bucket = vi.fn().mockReturnValue(bucketMock);
+
+            const stream = new Readable();
+            stream.push('test data');
+            stream.push(null); // End of stream
+
+            await gcsServiceClient.uploadStream(stream, 'backup.unknown', uploadDestinationUri);
+
+            expect(createWriteStreamMock).toHaveBeenCalledWith(
+              expect.objectContaining({
+                contentType: 'application/octet-stream',
+              }),
+            );
+          });
+        });
+
+        describe('when file has no extension', () => {
+          it('should call createWriteStream with fallback application/octet-stream contentType', async() => {
+            const writeStreamMock = vi.fn().mockResolvedValue(undefined);
+            const createWriteStreamMock = vi.fn().mockReturnValue(writeStreamMock);
+            const fileMock = {
+              createWriteStream: createWriteStreamMock,
+            };
+            const bucketMock = {
+              file: vi.fn().mockReturnValue(fileMock),
+            };
+            gcsServiceClient.client.bucket = vi.fn().mockReturnValue(bucketMock);
+
+            const stream = new Readable();
+            stream.push('test data');
+            stream.push(null); // End of stream
+
+            await gcsServiceClient.uploadStream(stream, 'backupfile', uploadDestinationUri);
+
+            expect(createWriteStreamMock).toHaveBeenCalledWith(
+              expect.objectContaining({
+                contentType: 'application/octet-stream',
+              }),
+            );
+          });
         });
       });
     });
