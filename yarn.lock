@@ -372,9 +372,9 @@
     tslib "^2.6.2"
 
 "@aws-sdk/lib-storage@^3.777.0":
-  version "3.998.0"
-  resolved "https://registry.yarnpkg.com/@aws-sdk/lib-storage/-/lib-storage-3.998.0.tgz#ba86af564dead6e0616a32996b967d01f921b7fa"
-  integrity sha512-zFh4NZckgKOq5qx74WdpOEZ53NgRmbmboEyWnYHgfJWB9eOweF/HAaDgctSe5byS53ESthF2hUr5CurfzFTgrQ==
+  version "3.999.0"
+  resolved "https://registry.yarnpkg.com/@aws-sdk/lib-storage/-/lib-storage-3.999.0.tgz#185ff5b1792d091449fb83976f8fe78586da03fe"
+  integrity sha512-qoTdw8/LWZelGabV9biLUGMseIHU38Bji52mnslV/uHfCLeZNjmCzO6K/4H/v3OHMlydMCPRF0L+k/U8W83I6Q==
   dependencies:
     "@smithy/abort-controller" "^4.2.10"
     "@smithy/middleware-endpoint" "^4.4.20"
