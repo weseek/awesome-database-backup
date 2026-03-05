@@ -36,7 +36,7 @@ jobs:
         db-type: ${{ matrix.db_tool.db_type }}
         db-tool-version: ${{ matrix.db_tool.version }}
         is-latest-tag: true
-    - uses: docker/login-action@v3
+    - uses: docker/login-action@v4
       with:
         username: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
         password: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
