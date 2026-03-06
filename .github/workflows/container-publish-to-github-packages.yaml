@@ -46,7 +46,7 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
         registry: ghcr.io
-    - uses: docker/setup-buildx-action@v3
+    - uses: docker/setup-buildx-action@v4
     - name: Build and push container
       id: push
       uses: docker/build-push-action@v7
