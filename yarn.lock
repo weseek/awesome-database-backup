@@ -129,15 +129,15 @@
     tslib "^2.6.2"
 
 "@aws-sdk/client-s3@^3.723.0", "@aws-sdk/client-s3@^3.85.0":
-  version "3.1007.0"
-  resolved "https://registry.yarnpkg.com/@aws-sdk/client-s3/-/client-s3-3.1007.0.tgz#51bad95e020d5103941159c2b084a2ff63e3c87a"
-  integrity sha512-QdFNDy+eKpcbv3ieGNl7XsDhpOj5mfb2xwnNM/YC108JpNJ5Ox79mbwtsKKqmQfen0JeaJml58vFnRHjfkjw9w==
+  version "3.1008.0"
+  resolved "https://registry.yarnpkg.com/@aws-sdk/client-s3/-/client-s3-3.1008.0.tgz#1f8742e9facabe72506012d54279e42fd0b97b0e"
+  integrity sha512-w/SIRD25v2zVMbkn8CYIxUsac8yf5Jghkhw5j7EsNWdJhl56m/nWpUX7t1etFUW1cnzpFjZV0lXt0dNFSnbXwA==
   dependencies:
     "@aws-crypto/sha1-browser" "5.2.0"
     "@aws-crypto/sha256-browser" "5.2.0"
     "@aws-crypto/sha256-js" "5.2.0"
     "@aws-sdk/core" "^3.973.19"
-    "@aws-sdk/credential-provider-node" "^3.972.19"
+    "@aws-sdk/credential-provider-node" "^3.972.20"
     "@aws-sdk/middleware-bucket-endpoint" "^3.972.7"
     "@aws-sdk/middleware-expect-continue" "^3.972.7"
     "@aws-sdk/middleware-flexible-checksums" "^3.973.5"
@@ -153,7 +153,7 @@
     "@aws-sdk/types" "^3.973.5"
     "@aws-sdk/util-endpoints" "^3.996.4"
     "@aws-sdk/util-user-agent-browser" "^3.972.7"
-    "@aws-sdk/util-user-agent-node" "^3.973.5"
+    "@aws-sdk/util-user-agent-node" "^3.973.6"
     "@smithy/config-resolver" "^4.4.10"
     "@smithy/core" "^3.23.9"
     "@smithy/eventstream-serde-browser" "^4.2.11"
@@ -288,7 +288,7 @@
     "@smithy/types" "^4.13.0"
     tslib "^2.6.2"
 
-"@aws-sdk/credential-provider-node@^3.972.19", "@aws-sdk/credential-provider-node@^3.972.20":
+"@aws-sdk/credential-provider-node@^3.972.20":
   version "3.972.20"
   resolved "https://registry.yarnpkg.com/@aws-sdk/credential-provider-node/-/credential-provider-node-3.972.20.tgz#52dca96a7d817ab2fbb1d41e7e9fe0c0764fba87"
   integrity sha512-0xHca2BnPY0kzjDYPH7vk8YbfdBPpWVS67rtqQMalYDQUCBYS37cZ55K6TuFxCoIyNZgSCFrVKr9PXC5BVvQQw==
@@ -630,17 +630,6 @@
     "@aws-sdk/types" "^3.973.5"
     "@smithy/types" "^4.13.0"
     bowser "^2.11.0"
-    tslib "^2.6.2"
-
-"@aws-sdk/util-user-agent-node@^3.973.5":
-  version "3.973.5"
-  resolved "https://registry.yarnpkg.com/@aws-sdk/util-user-agent-node/-/util-user-agent-node-3.973.5.tgz#cbb11aae2d761e2cb3d3ad4be7b88f6d4726fb83"
-  integrity sha512-Dyy38O4GeMk7UQ48RupfHif//gqnOPbq/zlvRssc11E2mClT+aUfc3VS2yD8oLtzqO3RsqQ9I3gOBB4/+HjPOw==
-  dependencies:
-    "@aws-sdk/middleware-user-agent" "^3.972.20"
-    "@aws-sdk/types" "^3.973.5"
-    "@smithy/node-config-provider" "^4.3.11"
-    "@smithy/types" "^4.13.0"
     tslib "^2.6.2"
 
 "@aws-sdk/util-user-agent-node@^3.973.6":
