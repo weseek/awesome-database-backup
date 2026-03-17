@@ -83,10 +83,10 @@
     "@smithy/util-utf8" "^2.0.0"
     tslib "^2.6.2"
 
-"@aws-sdk/client-cognito-identity@3.1009.0":
-  version "3.1009.0"
-  resolved "https://registry.yarnpkg.com/@aws-sdk/client-cognito-identity/-/client-cognito-identity-3.1009.0.tgz#5b4f754e356b33febb1a3657c6ed5c259931782d"
-  integrity sha512-4+lBLB2sIdrnGruxqsfPM2AOSME3DVDRX7R5OXcgd2jfrUSyYdHJN1kT9hO/vwK4uajRZsQNP5hLJMttkjkoAQ==
+"@aws-sdk/client-cognito-identity@3.1010.0":
+  version "3.1010.0"
+  resolved "https://registry.yarnpkg.com/@aws-sdk/client-cognito-identity/-/client-cognito-identity-3.1010.0.tgz#22f403b1eec97e43d5eb94020843209379a7f679"
+  integrity sha512-VEh7D8MPQbb2XAc2Liq9n4t9CdTvpcx3YIWL+QL6HlD1tUnNqlITSWxyeVMr05uBJOYnA5afowyxr1pbe7V8SA==
   dependencies:
     "@aws-crypto/sha256-browser" "5.2.0"
     "@aws-crypto/sha256-js" "5.2.0"
@@ -346,11 +346,11 @@
     tslib "^2.6.2"
 
 "@aws-sdk/credential-providers@^3.186.0", "@aws-sdk/credential-providers@^3.758.0":
-  version "3.1009.0"
-  resolved "https://registry.yarnpkg.com/@aws-sdk/credential-providers/-/credential-providers-3.1009.0.tgz#97fc8076f7aea0685e077c8aebb9e7e084b52d0a"
-  integrity sha512-URs590x3cCOHvjgDz8J0iqxDQ87NjF550pnWmd1jQm+w5ZHTxuUEYjivBQQkAB603IlEdeadqO1+LSjtMznhwA==
+  version "3.1010.0"
+  resolved "https://registry.yarnpkg.com/@aws-sdk/credential-providers/-/credential-providers-3.1010.0.tgz#e06726059598fa50a7bdea0c454403f77c81a8b9"
+  integrity sha512-6TTaCoOOyFSBIDHPBPG8jLYa9xr2+hirtf5yu4ERvk9/luoRfrfE+frHVlpq7Fb7uV619/COMg5xmN39LrXvaA==
   dependencies:
-    "@aws-sdk/client-cognito-identity" "3.1009.0"
+    "@aws-sdk/client-cognito-identity" "3.1010.0"
     "@aws-sdk/core" "^3.973.20"
     "@aws-sdk/credential-provider-cognito-identity" "^3.972.13"
     "@aws-sdk/credential-provider-env" "^3.972.18"
@@ -1393,7 +1393,7 @@
     "@types/node" ">=8.9.0"
     axios "^0.21.1"
 
-"@smithy/abort-controller@^4.2.11", "@smithy/abort-controller@^4.2.12":
+"@smithy/abort-controller@^4.2.12":
   version "4.2.12"
   resolved "https://registry.yarnpkg.com/@smithy/abort-controller/-/abort-controller-4.2.12.tgz#80c86416f232b0b4e79cef530877ef87d626ac42"
   integrity sha512-xolrFw6b+2iYGl6EcOL7IJY71vvyZ0DJ3mcKtpykqPe2uscwtzDZJa1uVQXyP7w9Dd+kGwYnPbMsJrGISKiY/Q==
@@ -1580,7 +1580,7 @@
     "@smithy/types" "^4.13.1"
     tslib "^2.6.2"
 
-"@smithy/middleware-endpoint@^4.4.23", "@smithy/middleware-endpoint@^4.4.25":
+"@smithy/middleware-endpoint@^4.4.25":
   version "4.4.25"
   resolved "https://registry.yarnpkg.com/@smithy/middleware-endpoint/-/middleware-endpoint-4.4.25.tgz#f064b77eac2a6124cc1e1dc875ad4d6be5a1c4a7"
   integrity sha512-dqjLwZs2eBxIUG6Qtw8/YZ4DvzHGIf0DA18wrgtfP6a50UIO7e2nY0FPdcbv5tVJKqWCCU5BmGMOUwT7Puan+A==
@@ -1710,7 +1710,7 @@
     "@smithy/util-utf8" "^4.2.2"
     tslib "^2.6.2"
 
-"@smithy/smithy-client@^4.12.3", "@smithy/smithy-client@^4.12.5":
+"@smithy/smithy-client@^4.12.5":
   version "4.12.5"
   resolved "https://registry.yarnpkg.com/@smithy/smithy-client/-/smithy-client-4.12.5.tgz#2128204f2ca735956356dab89106370c66902902"
   integrity sha512-UqwYawyqSr/aog8mnLnfbPurS0gi4G7IYDcD28cUIBhsvWs1+rQcL2IwkUQ+QZ7dibaoRzhNF99fAQ9AUcO00w==
@@ -1723,7 +1723,7 @@
     "@smithy/util-stream" "^4.5.19"
     tslib "^2.6.2"
 
-"@smithy/types@^4.13.0", "@smithy/types@^4.13.1":
+"@smithy/types@^4.13.1":
   version "4.13.1"
   resolved "https://registry.yarnpkg.com/@smithy/types/-/types-4.13.1.tgz#8aaf15bb0f42b4e7c93c87018a3678a06d74691d"
   integrity sha512-787F3yzE2UiJIQ+wYW1CVg2odHjmaWLGksnKQHUrK/lYZSEcy1msuLVvxaR/sI2/aDe9U+TBuLsXnr3vod1g0g==
