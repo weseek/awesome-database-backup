@@ -129,15 +129,15 @@
     tslib "^2.6.2"
 
 "@aws-sdk/client-s3@^3.723.0", "@aws-sdk/client-s3@^3.85.0":
-  version "3.1018.0"
-  resolved "https://registry.yarnpkg.com/@aws-sdk/client-s3/-/client-s3-3.1018.0.tgz#3fccd2a3e5110c9327610032522f6a11cb316166"
-  integrity sha512-BiGKMjrkAJkyse1ECpVyxVYugf82FB3cM9zgKpx3boFuWobyolG5ri6XjoMIY8fpHddaO8ZClXEedACyelSLWA==
+  version "3.1019.0"
+  resolved "https://registry.yarnpkg.com/@aws-sdk/client-s3/-/client-s3-3.1019.0.tgz#def01c292c064b0d982fdbb9371ef0ff4c59307a"
+  integrity sha512-0pb9x7PPhS4oEi4c0rL3vzQQoXA4cWKtPuGga/UfVYLZ68yrqdq0NDKg0fr55qzdhNvWFCpmGx73g9Iyy03kkA==
   dependencies:
     "@aws-crypto/sha1-browser" "5.2.0"
     "@aws-crypto/sha256-browser" "5.2.0"
     "@aws-crypto/sha256-js" "5.2.0"
     "@aws-sdk/core" "^3.973.25"
-    "@aws-sdk/credential-provider-node" "^3.972.26"
+    "@aws-sdk/credential-provider-node" "^3.972.27"
     "@aws-sdk/middleware-bucket-endpoint" "^3.972.8"
     "@aws-sdk/middleware-expect-continue" "^3.972.8"
     "@aws-sdk/middleware-flexible-checksums" "^3.974.5"
@@ -288,7 +288,7 @@
     "@smithy/types" "^4.13.1"
     tslib "^2.6.2"
 
-"@aws-sdk/credential-provider-node@^3.972.26", "@aws-sdk/credential-provider-node@^3.972.27":
+"@aws-sdk/credential-provider-node@^3.972.27":
   version "3.972.27"
   resolved "https://registry.yarnpkg.com/@aws-sdk/credential-provider-node/-/credential-provider-node-3.972.27.tgz#083a99a817f5d3b430e174057b590075f48d46ba"
   integrity sha512-jXpxSolfFnPVj6GCTtx3xIdWNoDR7hYC/0SbetGZxOC9UnNmipHeX1k6spVstf7eWJrMhXNQEgXC0pD1r5tXIg==
