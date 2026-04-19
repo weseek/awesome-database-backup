@@ -16,7 +16,7 @@ You can write issues and PRs in English or Japanese.
 
 * Make sure to post PRs based on the latest master branch.
 * Please make sure to pass the test suite before posting your PR.
-    * Run `yarn test`
+    * Run `pnpm test`
 
 ## Coding Rules
 

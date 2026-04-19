@@ -23,7 +23,7 @@ import {
 
 const exec = promisify(execOriginal);
 
-const execRestoreCommand = 'yarn run ts-node src/restore';
+const execRestoreCommand = 'pnpm exec ts-node src/restore';
 
 describe('restore', () => {
   describe('when option --help is specified', () => {

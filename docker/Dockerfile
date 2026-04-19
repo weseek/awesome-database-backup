@@ -30,8 +30,8 @@ WORKDIR ${optDir}
 COPY --from=pruned-package --chown=node:node \
   ${optDir}/out/json/ .
 COPY --from=pruned-package --chown=node:node \
-  ${optDir}/out/yarn.lock ./yarn.lock
-RUN yarn --frozen-lockfile
+  ${optDir}/out/pnpm-lock.yaml ./pnpm-lock.yaml
+RUN npm install -g pnpm && pnpm install --frozen-lockfile
 
 
 ##
@@ -50,7 +50,7 @@ COPY --from=pruned-package --chown=node:node \
   ${optDir}/out/full/ ${optDir}/
 COPY .gitignore .gitignore
 
-RUN yarn run turbo run build --filter="${packageFilter}..."
+RUN pnpm exec turbo run build --filter="${packageFilter}..."
 
 
 ##

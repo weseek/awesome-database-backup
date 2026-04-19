@@ -39,10 +39,11 @@ jobs:
         job_summary: true            # Output results to Job Summary
 
     - uses: actions/checkout@v6
+    - uses: pnpm/action-setup@v4
     - uses: actions/setup-node@v6
       with:
         node-version-file: package.json
-        cache: "yarn"
+        cache: "pnpm"
     - name: Create bucket "gs://test-performance"
       run: >-
         node -e "
@@ -57,10 +58,10 @@ jobs:
         .catch(console.error)"
       env:
         NODE_TLS_REJECT_UNAUTHORIZED: 0
-    - run: yarn install
-    - run: yarn build --filter "@awesome-database-backup/file-backup"
+    - run: pnpm install
+    - run: pnpm build --filter "@awesome-database-backup/file-backup"
     - name: Run performance test - ${{ matrix.run-script-name }}
-      run: yarn run ${{ matrix.run-script-name }} --filter "@awesome-database-backup/file-backup"
+      run: pnpm run ${{ matrix.run-script-name }} --filter "@awesome-database-backup/file-backup"
       env:
         GCP_ENDPOINT_URL: https://localhost:4443
         NODE_TLS_REJECT_UNAUTHORIZED: 0
@@ -106,10 +107,11 @@ jobs:
         job_summary: true            # Output results to Job Summary
 
     - uses: actions/checkout@v6
+    - uses: pnpm/action-setup@v4
     - uses: actions/setup-node@v6
       with:
         node-version-file: package.json
-        cache: "yarn"
+        cache: "pnpm"
     - name: Create bucket "s3://test-performance"
       run: aws --endpoint-url http://localhost:9000/ s3 mb s3://test-performance
       env:
@@ -117,10 +119,10 @@ jobs:
         AWS_SECRET_ACCESS_KEY: minioadmin
         AWS_DEFAULT_REGION: us-east-1
 
-    - run: yarn install
-    - run: yarn build --filter "@awesome-database-backup/file-backup"
+    - run: pnpm install
+    - run: pnpm build --filter "@awesome-database-backup/file-backup"
     - name: Run performance test - ${{ matrix.run-script-name }}
-      run: yarn run ${{ matrix.run-script-name }} --filter "@awesome-database-backup/file-backup"
+      run: pnpm run ${{ matrix.run-script-name }} --filter "@awesome-database-backup/file-backup"
       env:
         AWS_ENDPOINT_URL: http://localhost:9000
         AWS_FORCE_PATH_STYLE: true

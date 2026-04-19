@@ -11,8 +11,8 @@ node_modules
 /packages/*/reports
 # ignore all ctrf reports
 **/vitest-ctrf/report.json
-# ignore logs
-yarn-error.log
+# pnpm store
+.pnpm-store
 
 # ignore files related to Turborepo
 .turbo

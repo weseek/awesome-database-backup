@@ -21,7 +21,7 @@ import {
 
 const exec = promisify(execOriginal);
 
-const execBackupCommand = 'yarn run ts-node src/backup';
+const execBackupCommand = 'pnpm exec ts-node src/backup';
 
 describe('backup', () => {
   describe('when option --help is specified', () => {
