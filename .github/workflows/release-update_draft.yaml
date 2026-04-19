@@ -31,7 +31,6 @@ jobs:
         name: v${{ steps.package-json.outputs.full }}
         tag: v${{ steps.package-json.outputs.full }}
         version: ${{ steps.package-json.outputs.full }}
-        disable-autolabeler: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
