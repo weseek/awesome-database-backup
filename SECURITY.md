@@ -7,7 +7,7 @@ Older major versions are not actively maintained with security patches.
 
 | Version | Supported          |
 | ------- | ------------------ |
-| 1.x (latest) | :white_check_mark: |
+| 1.x (latest patch of each minor) | :white_check_mark: |
 | < 1.0   | :x:                |
 
 ### Database Tool Version Support
