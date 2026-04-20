@@ -372,9 +372,9 @@
     tslib "^2.6.2"
 
 "@aws-sdk/lib-storage@^3.777.0":
-  version "3.1031.0"
-  resolved "https://registry.yarnpkg.com/@aws-sdk/lib-storage/-/lib-storage-3.1031.0.tgz#406e3bda783aa417c825c6aa45e581c6905efcf3"
-  integrity sha512-QC6MwdeXWZt9wnOV6/rgxSnVUcDeoHr5TCnCm0UPuSQOwuLX1/2QJa6oo7PdfdHg+i3G+VOnmG8QZ3tYxvBGRA==
+  version "3.1032.0"
+  resolved "https://registry.yarnpkg.com/@aws-sdk/lib-storage/-/lib-storage-3.1032.0.tgz#6f2c9191055de30552aa640454b5c8d424dafe48"
+  integrity sha512-jXXKbrRWYvLlCCO8suiOiFrkcsO/zVYjdPZpVnDLSO6Nled7VvxwRkjnM1/l5CnOHAW6VGhR3nrU/+LmqeGQYg==
   dependencies:
     "@smithy/middleware-endpoint" "^4.4.30"
     "@smithy/protocol-http" "^5.3.14"
@@ -1573,7 +1573,7 @@
     "@smithy/types" "^4.14.1"
     tslib "^2.6.2"
 
-"@smithy/middleware-endpoint@^4.4.29", "@smithy/middleware-endpoint@^4.4.30":
+"@smithy/middleware-endpoint@^4.4.30":
   version "4.4.30"
   resolved "https://registry.yarnpkg.com/@smithy/middleware-endpoint/-/middleware-endpoint-4.4.30.tgz#4f7a301ae414b743ef23384245c531891c317163"
   integrity sha512-qS2XqhKeXmdZ4nEQ4cOxIczSP/Y91wPAHYuRwmWDCh975B7/57uxsm5d6sisnUThn2u2FwzMdJNM7AbO1YPsPg==
@@ -1649,7 +1649,7 @@
     "@smithy/types" "^4.14.1"
     tslib "^2.6.2"
 
-"@smithy/protocol-http@^5.3.13", "@smithy/protocol-http@^5.3.14":
+"@smithy/protocol-http@^5.3.14":
   version "5.3.14"
   resolved "https://registry.yarnpkg.com/@smithy/protocol-http/-/protocol-http-5.3.14.tgz#ed1e65cdb0fffb7fd00dce997c04baa236f180cc"
   integrity sha512-dN5F8kHx8RNU0r+pCwNmFZyz6ChjMkzShy/zup6MtkRmmix4vZzJdW+di7x//b1LiynIev88FM18ie+wwPcQtQ==
@@ -1703,7 +1703,7 @@
     "@smithy/util-utf8" "^4.2.2"
     tslib "^2.6.2"
 
-"@smithy/smithy-client@^4.12.11", "@smithy/smithy-client@^4.12.9":
+"@smithy/smithy-client@^4.12.11":
   version "4.12.11"
   resolved "https://registry.yarnpkg.com/@smithy/smithy-client/-/smithy-client-4.12.11.tgz#547dd901c7674e8c39c9558348b864f0222d2a8f"
   integrity sha512-wzz/Wa1CH/Tlhxh0s4DQPEcXSxSVfJ59AZcUh9Gu0c6JTlKuwGf4o/3P2TExv0VbtPFt8odIBG+eQGK2+vTECg==
@@ -1716,7 +1716,7 @@
     "@smithy/util-stream" "^4.5.23"
     tslib "^2.6.2"
 
-"@smithy/types@^4.14.0", "@smithy/types@^4.14.1":
+"@smithy/types@^4.14.1":
   version "4.14.1"
   resolved "https://registry.yarnpkg.com/@smithy/types/-/types-4.14.1.tgz#aba92b4cdb406f2a2b062e82f1e3728d809a7c23"
   integrity sha512-59b5HtSVrVR/eYNei3BUj3DCPKD/G7EtDDe7OEJE7i7FtQFugYo6MxbotS8mVJkLNVf8gYaAlEBwwtJ9HzhWSg==
