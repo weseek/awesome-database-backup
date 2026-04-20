@@ -372,9 +372,9 @@
     tslib "^2.6.2"
 
 "@aws-sdk/lib-storage@^3.777.0":
-  version "3.1031.0"
-  resolved "https://registry.yarnpkg.com/@aws-sdk/lib-storage/-/lib-storage-3.1031.0.tgz#406e3bda783aa417c825c6aa45e581c6905efcf3"
-  integrity sha512-QC6MwdeXWZt9wnOV6/rgxSnVUcDeoHr5TCnCm0UPuSQOwuLX1/2QJa6oo7PdfdHg+i3G+VOnmG8QZ3tYxvBGRA==
+  version "3.1032.0"
+  resolved "https://registry.yarnpkg.com/@aws-sdk/lib-storage/-/lib-storage-3.1032.0.tgz#6f2c9191055de30552aa640454b5c8d424dafe48"
+  integrity sha512-jXXKbrRWYvLlCCO8suiOiFrkcsO/zVYjdPZpVnDLSO6Nled7VvxwRkjnM1/l5CnOHAW6VGhR3nrU/+LmqeGQYg==
   dependencies:
     "@smithy/middleware-endpoint" "^4.4.30"
     "@smithy/protocol-http" "^5.3.14"
