@@ -37,8 +37,8 @@
   },
   "devDependencies": {
     "@awesome-database-backup/tsconfig": "^1.0.3",
-    "@awesome-database-backup/storage-service-test": "^1.0.2",
-    "@awesome-database-backup/mongodb-test": "^1.0.2",
+    "@awesome-database-backup/storage-service-test": "^1.0.3",
+    "@awesome-database-backup/mongodb-test": "^1.0.3",
     "cross-env": "^7.0.3",
     "tsconfig-paths": "^4.0.0",
     "@types/bunyan": "^1.8.8"

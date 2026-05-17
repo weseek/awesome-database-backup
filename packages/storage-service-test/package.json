@@ -19,7 +19,7 @@
   "main": "src/index.ts",
   "dependencies": {
     "@awesome-database-backup/file-test": "^1.0.3",
-    "@awesome-database-backup/mariadb-test": "^1.0.2",
+    "@awesome-database-backup/mariadb-test": "^1.0.3",
     "@awesome-database-backup/mongodb-test": "^1.0.3",
     "@awesome-database-backup/postgresql-test": "^1.0.3",
     "uuid": "^8.3.2"
