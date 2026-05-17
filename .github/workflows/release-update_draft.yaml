@@ -25,13 +25,12 @@ jobs:
       id: package-json
 
     # Drafts your next Release notes as Pull Requests are merged into "master"
-    - uses: release-drafter/release-drafter@v6
+    - uses: release-drafter/release-drafter@v7
       id: release-drafter
       with:
         name: v${{ steps.package-json.outputs.full }}
         tag: v${{ steps.package-json.outputs.full }}
         version: ${{ steps.package-json.outputs.full }}
-        disable-autolabeler: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

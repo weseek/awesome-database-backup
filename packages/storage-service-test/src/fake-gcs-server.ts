@@ -1,6 +1,6 @@
 import { Storage } from '@google-cloud/storage';
 import { createPGBackup } from '@awesome-database-backup/postgresql-test';
-import { createMongoDBBackup } from '@awesome-database-backup/mongodb-test';
+import { createMongoDBBackup, createMongoDBArchiveBackup } from '@awesome-database-backup/mongodb-test';
 import { createMariaDBBackup } from '@awesome-database-backup/mariadb-test';
 import { createFileBackup } from '@awesome-database-backup/file-test';
 import { basename } from 'path';
@@ -47,6 +47,13 @@ export async function uploadMongoDBFixtureToTestGCSBucket(fixtureName: string): 
       destination: basename(fixturePath),
     },
   );
+}
+
+export async function uploadMongoDBArchiveFixtureToTestGCSBucket(fixtureName: string): Promise<void> {
+  const fixturePath = await createMongoDBArchiveBackup(fixtureName);
+  await storage.bucket(testGCSBucketName).upload(fixturePath, {
+    destination: basename(fixturePath),
+  });
 }
 
 export async function uploadMariaDBFixtureToTestGCSBucket(fixtureName: string): Promise<void> {

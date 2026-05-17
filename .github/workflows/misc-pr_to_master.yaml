@@ -17,11 +17,7 @@ jobs:
       !contains( github.event.pull_request.labels.*.name, 'flag/exclude-from-changelog' )
 
     steps:
-    - uses: release-drafter/release-drafter@v6
-      with:
-        disable-releaser: true
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - uses: release-drafter/release-drafter/autolabeler@v7
 
   misc-pr_to_master-check-title:
     runs-on: ubuntu-latest
@@ -56,7 +52,7 @@ jobs:
 
     steps:
     - name: Slack Notification
-      uses:  act10ns/slack@v2.1.0
+      uses:  act10ns/slack@v2.2.0
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
       with:

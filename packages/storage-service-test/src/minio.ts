@@ -9,7 +9,7 @@ import {
 } from '@aws-sdk/client-s3';
 import { readFileSync } from 'fs';
 import { createPGBackup } from '@awesome-database-backup/postgresql-test';
-import { createMongoDBBackup } from '@awesome-database-backup/mongodb-test';
+import { createMongoDBBackup, createMongoDBArchiveBackup } from '@awesome-database-backup/mongodb-test';
 import { createMariaDBBackup } from '@awesome-database-backup/mariadb-test';
 import { createFileBackup } from '@awesome-database-backup/file-test';
 import { basename } from 'path';
@@ -41,6 +41,15 @@ export async function uploadPGFixtureToTestS3Bucket(fixtureName: string): Promis
 
 export async function uploadMongoDBFixtureToTestS3Bucket(fixtureName: string): Promise<void> {
   const fixturePath = createMongoDBBackup(fixtureName);
+  await s3client.send(new PutObjectCommand({
+    Bucket: testS3BucketName,
+    Key: basename(fixturePath),
+    Body: readFileSync(fixturePath),
+  }));
+}
+
+export async function uploadMongoDBArchiveFixtureToTestS3Bucket(fixtureName: string): Promise<void> {
+  const fixturePath = await createMongoDBArchiveBackup(fixtureName);
   await s3client.send(new PutObjectCommand({
     Bucket: testS3BucketName,
     Key: basename(fixturePath),

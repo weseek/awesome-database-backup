@@ -37,9 +37,9 @@ jobs:
         db-tool-version: ${{ matrix.db_tool.version }}
         is-latest-tag: true
     # The "docker-container" driver is used
-    - uses: docker/setup-buildx-action@v3
+    - uses: docker/setup-buildx-action@v4
     - name: Build container (No push)
-      uses: docker/build-push-action@v6
+      uses: docker/build-push-action@v7
       with:
         file: ./docker/Dockerfile
         build-args: |
