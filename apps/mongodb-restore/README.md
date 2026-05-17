@@ -22,10 +22,32 @@ Options:
   --gcp-client-email <GCP_CLIENT_EMAIL>                                    GCP Client Email (env: GCP_CLIENT_EMAIL)
   --gcp-service-account-key-json-path <GCP_SERVICE_ACCOUNT_KEY_JSON_PATH>  JSON file path to your GCP Service Account Key (env: GCP_SERVICE_ACCOUNT_KEY_JSON_PATH)
   --restore-tool-options <OPTIONS_STRING>                                  pass options to restore tool exec (env: RESTORE_TOOL_OPTIONS)
+  --mongodb-archive-format                                                 restore from a MongoDB archive format backup file (env: MONGODB_ARCHIVE_FORMAT)
   -h, --help                                                               display help for command
 
 NOTICE:
   You can pass mongoDB options by set "--restore-tool-options". (ex. "--host db.example.com --username admin")
+```
+
+### Restoring a MongoDB archive format backup
+
+`mongodb-backup` stores backups in MongoDB archive format (created with `mongodump --archive`).
+To restore such a backup, add the `--mongodb-archive-format` flag:
+
+```
+restore \
+  --target-bucket-url s3://my-bucket/backup-20240101-120000.zst \
+  --mongodb-archive-format \
+  --restore-tool-options "--uri mongodb://root:password@mongo/?authSource=admin"
+```
+
+Or with the environment variable:
+
+```
+MONGODB_ARCHIVE_FORMAT=true \
+TARGET_BUCKET_URL=s3://my-bucket/backup-20240101-120000.zst \
+RESTORE_TOOL_OPTIONS="--uri mongodb://root:password@mongo/?authSource=admin" \
+restore
 ```
 
 ## Authentication
