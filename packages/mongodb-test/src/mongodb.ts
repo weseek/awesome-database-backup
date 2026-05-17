@@ -3,12 +3,13 @@ import { MongoClient } from 'mongodb';
 import { BSON } from 'bsonfy';
 import { basename, join } from 'path';
 import {
-  writeFileSync, mkdirSync, createWriteStream,
+  writeFileSync, mkdirSync,
 } from 'fs';
-import * as StreamPromises from 'stream/promises';
+import { exec as execOriginal } from 'child_process';
+import { promisify } from 'util';
 import { mongodbURI } from './config/mongodb';
-import { createGzip } from 'zlib';
 
+const exec = promisify(execOriginal);
 const tar = require('tar');
 const tmp = require('tmp');
 
@@ -85,4 +86,14 @@ export function createMongoDBBackup(fileName: string): string {
   );
 
   return docBackupedFilePath;
+}
+
+export async function createMongoDBArchiveBackup(fileName: string): Promise<string> {
+  const tmpdir = tmp.dirSync({ unsafeCleanup: true });
+  const archivePath = join(tmpdir.name, `${fileName}.zst`);
+  await exec(
+    `set -o pipefail; mongodump --archive --uri ${mongodbURI} --db ${testMongoDBName} | zstd > ${archivePath}`,
+    { shell: '/bin/bash' },
+  );
+  return archivePath;
 }

@@ -17,6 +17,12 @@ class MongoDBRestoreCommand extends RestoreCommand {
 
   async restoreDB(sourcePath: string, userSpecifiedOption?: string): Promise<{ stdout: string; stderr: string; }> {
     logger.info('restore MongoDB...');
+    // When --archive is specified, inject the temp file path as --archive=<path>
+    // because mongorestore treats the positional arg as a directory, conflicting with archive format
+    if (userSpecifiedOption != null && /--archive(?:=[^\s]*)?(?!\w)/.test(userSpecifiedOption)) {
+      const optionsWithPath = userSpecifiedOption.replace(/--archive(?:=[^\s]*)?(?!\w)/, `--archive=${sourcePath}`);
+      return exec(`mongorestore ${optionsWithPath}`);
+    }
     return exec(`mongorestore ${sourcePath} ${userSpecifiedOption}`);
   }
 

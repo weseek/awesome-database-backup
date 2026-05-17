@@ -8,14 +8,17 @@ import {
   testS3BucketURI,
   cleanTestS3Bucket,
   uploadMongoDBFixtureToTestS3Bucket,
+  uploadMongoDBArchiveFixtureToTestS3Bucket,
   storageConfig,
   testGCSBucketURI,
   initFakeGCSServer,
   cleanTestGCSBucket,
   uploadMongoDBFixtureToTestGCSBucket,
+  uploadMongoDBArchiveFixtureToTestGCSBucket,
 } from '@awesome-database-backup/storage-service-test';
 import {
   dropTestMongoDB,
+  prepareTestMongoDB,
   listCollectionNamesInTestMongoDB,
   mongodbURI,
   testMongoDBName,
@@ -71,6 +74,34 @@ describe('restore', () => {
     });
   });
 
+  describe('when valid S3 options are specified (archive format)', () => {
+    const objectURI = `${testS3BucketURI}/${testMongoDBName}.zst`;
+    const commandLine = `${execRestoreCommand} \
+      --aws-endpoint-url ${s3ClientConfig.endpoint} \
+      --aws-region ${s3ClientConfig.region} \
+      --aws-access-key-id ${s3ClientConfig.credentials.accessKeyId} \
+      --aws-secret-access-key ${s3ClientConfig.credentials.secretAccessKey} \
+      --restore-tool-options "--archive --uri ${mongodbURI}" \
+      --target-bucket-url ${objectURI}`;
+
+    beforeEach(cleanTestS3Bucket);
+    beforeEach(dropTestMongoDB);
+    beforeEach(prepareTestMongoDB);
+    beforeEach(async() => {
+      await uploadMongoDBArchiveFixtureToTestS3Bucket(testMongoDBName);
+    });
+    beforeEach(dropTestMongoDB);
+
+    it('restore mongo archive from S3 bucket', async() => {
+      expect(await listCollectionNamesInTestMongoDB()).toEqual([]);
+      expect(await exec(commandLine)).toEqual({
+        stdout: expect.stringMatching(/=== restore.ts started at .* ===/),
+        stderr: '',
+      });
+      expect(await listCollectionNamesInTestMongoDB()).toEqual(['dummy']);
+    });
+  });
+
   describe('when valid GCS options are specified', () => {
     const objectURI = `${testGCSBucketURI}/${testMongoDBName}.tar.zst`;
     const commandLine = `${execRestoreCommand} \
@@ -89,6 +120,35 @@ describe('restore', () => {
     });
 
     it('restore mongo in bucket', async() => {
+      expect(await listCollectionNamesInTestMongoDB()).toEqual([]);
+      expect(await exec(commandLine)).toEqual({
+        stdout: expect.stringMatching(/=== restore.ts started at .* ===/),
+        stderr: '',
+      });
+      expect(await listCollectionNamesInTestMongoDB()).toEqual(['dummy']);
+    });
+  });
+
+  describe('when valid GCS options are specified (archive format)', () => {
+    const objectURI = `${testGCSBucketURI}/${testMongoDBName}.zst`;
+    const commandLine = `${execRestoreCommand} \
+      --gcp-endpoint-url ${storageConfig.apiEndpoint} \
+      --gcp-project-id ${storageConfig.projectId} \
+      --gcp-client-email ${storageConfig.credentials.client_email} \
+      --gcp-private-key ${storageConfig.credentials.private_key} \
+      --restore-tool-options "--archive --uri ${mongodbURI}" \
+      --target-bucket-url ${objectURI}`;
+
+    beforeEach(initFakeGCSServer);
+    beforeEach(cleanTestGCSBucket);
+    beforeEach(dropTestMongoDB);
+    beforeEach(prepareTestMongoDB);
+    beforeEach(async() => {
+      await uploadMongoDBArchiveFixtureToTestGCSBucket(testMongoDBName);
+    });
+    beforeEach(dropTestMongoDB);
+
+    it('restore mongo archive from GCS bucket', async() => {
       expect(await listCollectionNamesInTestMongoDB()).toEqual([]);
       expect(await exec(commandLine)).toEqual({
         stdout: expect.stringMatching(/=== restore.ts started at .* ===/),
