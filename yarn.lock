@@ -302,11 +302,11 @@
     tslib "^2.6.2"
 
 "@aws-sdk/lib-storage@^3.777.0":
-  version "3.1047.0"
-  resolved "https://registry.yarnpkg.com/@aws-sdk/lib-storage/-/lib-storage-3.1047.0.tgz#bd37ad869d4980df61d8aa84c7cdc623305e4870"
-  integrity sha512-PMgo648wwGkpj6i7I8cHygNv8oCOrxwzjwfHNZNAl/XJppXlvaNUWF9zBi9jj8U63IyiC7yDzuA8nQ7GnPJnEQ==
+  version "3.1048.0"
+  resolved "https://registry.yarnpkg.com/@aws-sdk/lib-storage/-/lib-storage-3.1048.0.tgz#06d001a4ebd9354eb04af85497d9c3541e3d707b"
+  integrity sha512-3u+Ycwo84crWoyPU4DrZgv6GO92cUE4CX5/h32vmSMeG8e93XgB40Jz2PqPim/r73IYRuQUrZY8E1P1MHvXZqw==
   dependencies:
-    "@smithy/core" "^3.24.1"
+    "@smithy/core" "^3.24.2"
     "@smithy/types" "^4.14.1"
     buffer "5.6.0"
     events "3.3.0"
