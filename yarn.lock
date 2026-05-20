@@ -288,9 +288,9 @@
     tslib "^2.6.2"
 
 "@aws-sdk/lib-storage@^3.777.0":
-  version "3.1049.0"
-  resolved "https://registry.yarnpkg.com/@aws-sdk/lib-storage/-/lib-storage-3.1049.0.tgz#8e3ac6d99da2584fd5f5f4eec2ce71091bfe1bbd"
-  integrity sha512-lOfzDq9+knTOpkgtpO32R1rtN5kBbPqJ8WHDcqd+1PpXrA4J8kbnHgBJFA3iv6jhmoCL6bG56OISLQmnskFY2A==
+  version "3.1050.0"
+  resolved "https://registry.yarnpkg.com/@aws-sdk/lib-storage/-/lib-storage-3.1050.0.tgz#0f95e7041b0f860c924b139e199e6f90098a2693"
+  integrity sha512-+PyWDxWPRSEi0l4fU1EmhLK9XvRe70cXlfUPdJqHfJ3E3DKWrihj314i7K5Z69bv015qjorIyDeHLKMHcGGp+g==
   dependencies:
     "@smithy/core" "^3.24.2"
     "@smithy/types" "^4.14.1"
