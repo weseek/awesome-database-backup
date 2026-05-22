@@ -288,12 +288,12 @@
     tslib "^2.6.2"
 
 "@aws-sdk/lib-storage@^3.777.0":
-  version "3.1051.0"
-  resolved "https://registry.yarnpkg.com/@aws-sdk/lib-storage/-/lib-storage-3.1051.0.tgz#d669faefe4faf146ca103c47361b755c794ff0c1"
-  integrity sha512-uxGHpi35WvQMpb05LnAq/koQPJtdTxFOCGJJk6Gu33aU/WhS4PDjBUeV2MnVu3g+xNHUN6ClwtuEchTxs+MpkA==
+  version "3.1052.0"
+  resolved "https://registry.yarnpkg.com/@aws-sdk/lib-storage/-/lib-storage-3.1052.0.tgz#bc5f829a43cc3a410fed1b4ed49e233f5ed2ca6c"
+  integrity sha512-7agYCtfeOm3ylg95ysiXnmeGKo1rZY5EzDsD9t02hUL8+oo1wO3DuwF2c3IHdez/hB+QSOSKfmk/ZC5/3ybNHQ==
   dependencies:
-    "@smithy/core" "^3.24.2"
-    "@smithy/types" "^4.14.1"
+    "@smithy/core" "^3.24.3"
+    "@smithy/types" "^4.14.2"
     buffer "5.6.0"
     events "3.3.0"
     stream-browserify "3.0.0"
