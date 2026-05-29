@@ -288,11 +288,11 @@
     tslib "^2.6.2"
 
 "@aws-sdk/lib-storage@^3.777.0":
-  version "3.1055.0"
-  resolved "https://registry.yarnpkg.com/@aws-sdk/lib-storage/-/lib-storage-3.1055.0.tgz#e19e1eaf000253f5a168e1278b6de94f1ac9ecd1"
-  integrity sha512-wlTeeGJYkEMmTk1wiYkhMz7mvjEoeJlWMQ7kMNJ+GOAbvHYd+u8qQ/PCt7XNPVqnYej1WZs0fskOBMTYzsqIJw==
+  version "3.1056.0"
+  resolved "https://registry.yarnpkg.com/@aws-sdk/lib-storage/-/lib-storage-3.1056.0.tgz#8fc4ef5cbc0f753e64c3ed7da6947da90119c26e"
+  integrity sha512-+Gg4n2/1RVyREDiI53VlUYSjXg1g70uhhujojnUqwH1FyQ8bTFPZ23zJNdNAU5QCIAusgNkqhZS03fVk2bXCRA==
   dependencies:
-    "@smithy/core" "^3.24.3"
+    "@smithy/core" "^3.24.5"
     "@smithy/types" "^4.14.2"
     buffer "5.6.0"
     events "3.3.0"
@@ -1172,10 +1172,10 @@
     "@types/node" ">=8.9.0"
     axios "^0.21.1"
 
-"@smithy/core@^3.24.3", "@smithy/core@^3.24.4":
-  version "3.24.4"
-  resolved "https://registry.yarnpkg.com/@smithy/core/-/core-3.24.4.tgz#aded2ba46962b5cceaaa75f646433ac4813c2e17"
-  integrity sha512-3UNRKEyQyAgVgM0LGlerCLm+ChZWZ1GPfde+jBEW6bm6bSBGU1p0EbblaUV3unbhwvidjLA5Zs3sOs7mnZwvAw==
+"@smithy/core@^3.24.3", "@smithy/core@^3.24.4", "@smithy/core@^3.24.5":
+  version "3.24.5"
+  resolved "https://registry.yarnpkg.com/@smithy/core/-/core-3.24.5.tgz#396ca5662afc6d83a8f41b7e492e427c48a0924e"
+  integrity sha512-Kt8phUg45M15EjhYAbZ+fFikYneijLu9Liugz8ZsYz2i8j0hzGv27LWKpEHYRfvj+LyCOSijpcR/2i8RouV+cA==
   dependencies:
     "@aws-crypto/crc32" "5.2.0"
     "@smithy/types" "^4.14.2"
