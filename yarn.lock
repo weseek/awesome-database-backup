@@ -793,9 +793,9 @@
   integrity sha512-Orxzlfb9c67A15cq2JQEyVc7wEsmFBmHjZWZYQMUyJ1qivXyMwdyNOs9odi79hze+2zqdTtu1E19IM/FtqZ10g==
 
 "@google-cloud/storage@^7.15.2":
-  version "7.19.0"
-  resolved "https://registry.yarnpkg.com/@google-cloud/storage/-/storage-7.19.0.tgz#34fb7cc4eacede5a2f1f0d6cefa0c70a22078c5b"
-  integrity sha512-n2FjE7NAOYyshogdc7KQOl/VZb4sneqPjWouSyia9CMDdMhRX5+RIbqalNmC7LOLzuLAN89VlF2HvG8na9G+zQ==
+  version "7.21.0"
+  resolved "https://registry.yarnpkg.com/@google-cloud/storage/-/storage-7.21.0.tgz#46b89afbdc3014e18b60afdfba5d9212a23e7b58"
+  integrity sha512-l+IFTkd+6Y5LoAuXyYCKNAKtw/Ci+rAMqgdTB1jv4iZiLhw0rtq+0qjIRbBizXkNzEFmXiXUW0H7sZQQvk1ffA==
   dependencies:
     "@google-cloud/paginator" "^5.0.0"
     "@google-cloud/projectify" "^4.0.0"
@@ -811,7 +811,6 @@
     p-limit "^3.0.1"
     retry-request "^7.0.0"
     teeny-request "^9.0.0"
-    uuid "^8.0.0"
 
 "@humanwhocodes/config-array@^0.11.14":
   version "0.11.14"
@@ -3313,7 +3312,7 @@ fast-xml-builder@^1.1.7:
     path-expression-matcher "^1.5.0"
     xml-naming "^0.1.0"
 
-fast-xml-parser@5.7.3:
+fast-xml-parser@5.7.3, fast-xml-parser@^5.3.4:
   version "5.7.3"
   resolved "https://registry.yarnpkg.com/fast-xml-parser/-/fast-xml-parser-5.7.3.tgz#309b04b08d835defc62ab657a0bb340c0e0fbe6a"
   integrity sha512-C0AaNuC+mscy6vrAQKAc/rMq+zAPHodfHGZu4sGVehvAQt/JLG1O5zEcYcXSY5zSqr4YVgxsB+pHXTq0i7eDlg==
@@ -3322,13 +3321,6 @@ fast-xml-parser@5.7.3:
     fast-xml-builder "^1.1.7"
     path-expression-matcher "^1.5.0"
     strnum "^2.2.3"
-
-fast-xml-parser@^5.3.4:
-  version "5.3.4"
-  resolved "https://registry.yarnpkg.com/fast-xml-parser/-/fast-xml-parser-5.3.4.tgz#06f39aafffdbc97bef0321e626c7ddd06a043ecf"
-  integrity sha512-EFd6afGmXlCx8H8WTZHhAoDaWaGyuIBoZJ2mknrNxug+aZKjkp0a0dlars9Izl+jF+7Gu1/5f/2h68cQpe0IiA==
-  dependencies:
-    strnum "^2.1.0"
 
 fastq@^1.6.0:
   version "1.13.0"
@@ -6531,11 +6523,6 @@ strip-json-comments@^3.1.1:
   resolved "https://registry.yarnpkg.com/strip-json-comments/-/strip-json-comments-3.1.1.tgz#31f1281b3832630434831c310c01cccda8cbe006"
   integrity sha512-6fPc+R4ihwqP6N/aIv2f1gMH8lOVtWQHoqC4yK6oSDVVocumAsfCqjkXnqiYMhmMwS/mEHLp7Vehlt3ql6lEig==
 
-strnum@^2.1.0:
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/strnum/-/strnum-2.1.1.tgz#cf2a6e0cf903728b8b2c4b971b7e36b4e82d46ab"
-  integrity sha512-7ZvoFTiCnGxBtDqJ//Cu6fWtZtc7Y3x+QOirG15wztbdngGSkht27o2pyGWrVy0b4WAy3jbKmnoK6g5VlVNUUw==
-
 strnum@^2.2.3:
   version "2.2.3"
   resolved "https://registry.yarnpkg.com/strnum/-/strnum-2.2.3.tgz#0119fce02749a11bb126a4d686ac5dbdf6e57586"
@@ -7082,7 +7069,7 @@ uuid@^3.3.2:
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.4.0.tgz#b23e4358afa8a202fe7a100af1f5f883f02007ee"
   integrity sha512-HjSDRw6gZE5JMggctHBcjVak08+KEVhSIiDzFnT9S9aegmp85S/bReBVTb4QTFaRNptJ9kuYaNhnbNEOkbKb/A==
 
-uuid@^8.0.0, uuid@^8.3.2:
+uuid@^8.3.2:
   version "8.3.2"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-8.3.2.tgz#80d5b5ced271bb9af6c445f21a1a04c606cefbe2"
   integrity sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==
