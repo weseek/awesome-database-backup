@@ -2,7 +2,7 @@ import {
   vi, afterEach, afterAll, describe, beforeAll, beforeEach, it, expect,
   type MockInstance,
 } from 'vitest';
-import { PassThrough, Readable } from 'stream';
+import { PassThrough, Readable } from 'node:stream';
 import { S3URI, S3StorageServiceClientConfig, listS3FilesOptions } from '../src/interfaces';
 import type { S3StorageServiceClient } from '../src/s3';
 

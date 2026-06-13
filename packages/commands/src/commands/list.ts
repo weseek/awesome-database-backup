@@ -1,4 +1,4 @@
-import { EOL } from 'os';
+import { EOL } from 'node:os';
 import { StorageServiceClientCommand } from './common';
 import loggerFactory from '../logger/factory';
 import { IListCommandOption } from './interfaces';
