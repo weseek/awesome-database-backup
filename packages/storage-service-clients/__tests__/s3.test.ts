@@ -116,6 +116,41 @@ describe('S3StorageServiceClient', () => {
       });
     });
 
+    describe('when config has awsForcePathStyle set to true', () => {
+      const config: S3StorageServiceClientConfig = {
+        awsRegion: 'us-east-1',
+        awsEndpointUrl: new URL('https://custom-endpoint.example.com'),
+        awsForcePathStyle: true,
+      };
+
+      it('sets forcePathStyle to true in S3Client config', async() => {
+        const { S3StorageServiceClient } = await import('../src/s3');
+        expect(() => new S3StorageServiceClient(config)).not.toThrow();
+        expect(S3ClientMock).toHaveBeenCalledWith({
+          region: 'us-east-1',
+          endpoint: 'https://custom-endpoint.example.com/',
+          forcePathStyle: true,
+          credentials: {},
+        });
+      });
+    });
+
+    describe('when config has awsForcePathStyle set to false', () => {
+      const config: S3StorageServiceClientConfig = {
+        awsRegion: 'us-east-1',
+        awsForcePathStyle: false,
+      };
+
+      it('does not set forcePathStyle in S3Client config', async() => {
+        const { S3StorageServiceClient } = await import('../src/s3');
+        expect(() => new S3StorageServiceClient(config)).not.toThrow();
+        expect(S3ClientMock).toHaveBeenCalledWith({
+          region: 'us-east-1',
+          credentials: {},
+        });
+      });
+    });
+
     describe('when using STS with WebIdentity token', () => {
       beforeEach(() => {
         // Set environment variables for STS
