@@ -1,8 +1,8 @@
 import {
   describe, beforeEach, it, expect,
 } from 'vitest';
-import { exec as execOriginal } from 'child_process';
-import { promisify } from 'util';
+import { exec as execOriginal } from 'node:child_process';
+import { promisify } from 'node:util';
 import {
   s3ClientConfig,
   testS3BucketURI,
