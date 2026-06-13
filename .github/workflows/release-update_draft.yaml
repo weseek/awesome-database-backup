@@ -49,11 +49,16 @@ jobs:
         RELEASE_ID: ${{ steps.release-drafter.outputs.id }}
       with:
         script: |
+          const releaseId = Number(process.env.RELEASE_ID);
+          if (!Number.isFinite(releaseId) || releaseId <= 0) {
+            throw new Error(`Invalid RELEASE_ID: ${process.env.RELEASE_ID}`);
+          }
+
           await github.rest.repos.updateRelease({
             owner: context.repo.owner,
             repo: context.repo.repo,
-            release_id: Number(process.env.RELEASE_ID),
-            body: process.env.RELEASE_BODY,
+            release_id: releaseId,
+            body: process.env.RELEASE_BODY ?? '',
           });
 
   # Refs: https://github.com/bakunyo/git-pr-release-action
