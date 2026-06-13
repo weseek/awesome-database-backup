@@ -117,14 +117,14 @@ You can authenticate with Amazon S3 using one of the following methods:
    - `AWS_ACCESS_KEY_ID`: Your IAM Access Key ID
    - `AWS_SECRET_ACCESS_KEY`: Your IAM Secret Access Key
    - `AWS_ENDPOINT_URL`: URL to send the request to (for S3-compatible services)
-   - `AWS_FORCE_PATH_STYLE`: Set to `true` to enable path-style addressing for S3 (required by some S3-compatible services such as MinIO)
+   - `AWS_FORCE_PATH_STYLE`: [**DEPRECATED**] Set to `true` to enable path-style addressing for S3 (required by some S3-compatible services such as MinIO)
 
 2. **Command Line Options**:
    - `--aws-region`: AWS Region
    - `--aws-access-key-id`: Your IAM Access Key ID
    - `--aws-secret-access-key`: Your IAM Secret Access Key
    - `--aws-endpoint-url`: URL to send the request to (for S3-compatible services)
-   - `--aws-force-path-style`: Enable path-style addressing for S3 (required by some S3-compatible services such as MinIO)
+   - `--aws-force-path-style`: [**DEPRECATED**] Enable path-style addressing for S3 (required by some S3-compatible services such as MinIO)
 
 3. **AWS STS with Web Identity Federation** (for Kubernetes environments):
    - `AWS_ROLE_ARN`: ARN of the role to assume
