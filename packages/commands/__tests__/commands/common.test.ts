@@ -28,9 +28,11 @@ describe('StorageServiceClientCommand', () => {
         expect(option?.defaultValue).toBe(false);
       });
 
-      it('defaults to false', () => {
+      it('parses to false when neither the flag nor the env var is set', () => {
         const command = new StorageServiceClientCommand();
-        command.addStorageOptions();
+        // command.opts() is only reliable after parse() has run in commander
+        // (defaults are applied during parsing).
+        command.addStorageOptions().parse(['--target-bucket-url', 's3://bucket'], { from: 'user' });
 
         expect(command.opts().awsForcePathStyle).toBe(false);
       });
