@@ -34,7 +34,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    # Consolidates consecutive dependency bump entries for the same package/author
+    # Consolidates dependency bump entries for the same package/author (within each list section)
     # into a single line spanning the overall version range
     - name: Consolidate dependabot bump entries
       id: consolidate-dependabot-bumps
