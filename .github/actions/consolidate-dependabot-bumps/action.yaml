@@ -1,6 +1,6 @@
 name: Consolidate dependabot bump entries
 description: >
-  Consolidates consecutive release-drafter changelog entries that bump the same
+  Consolidates release-drafter changelog entries that bump the same
   package by the same author into a single line spanning the overall version range.
 
 inputs:
