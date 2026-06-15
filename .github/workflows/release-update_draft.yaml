@@ -43,7 +43,7 @@ jobs:
         body: ${{ steps.release-drafter.outputs.body }}
 
     - name: Update draft release with consolidated release notes
-      uses: actions/github-script@v7
+      uses: actions/github-script@v9
       env:
         RELEASE_BODY: ${{ steps.consolidate-dependabot-bumps.outputs.body }}
         RELEASE_ID: ${{ steps.release-drafter.outputs.id }}
