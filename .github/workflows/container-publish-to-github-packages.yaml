@@ -41,7 +41,7 @@ jobs:
         db-type: ${{ matrix.db_tool.db_type }}
         db-tool-version: ${{ matrix.db_tool.version }}
         registry: ghcr.io
-    - uses: docker/login-action@v3
+    - uses: docker/login-action@v4
       with:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
