@@ -1,12 +1,12 @@
 import { v4 as uuidv4 } from 'uuid';
 import { MongoClient } from 'mongodb';
 import { BSON } from 'bsonfy';
-import { basename, join } from 'path';
+import { basename, join } from 'node:path';
 import {
   writeFileSync, mkdirSync,
-} from 'fs';
-import { exec as execOriginal } from 'child_process';
-import { promisify } from 'util';
+} from 'node:fs';
+import { exec as execOriginal } from 'node:child_process';
+import { promisify } from 'node:util';
 import { mongodbURI } from './config/mongodb';
 
 const exec = promisify(execOriginal);

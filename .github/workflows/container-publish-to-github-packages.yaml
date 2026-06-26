@@ -12,7 +12,7 @@ jobs:
     outputs:
       toolPatterns: ${{ steps.set-tool-version-patterns.outputs.toolPatterns }}
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
     - uses: ./.github/actions/set-tool-version-patterns
       id: set-tool-version-patterns
 
@@ -29,7 +29,7 @@ jobs:
         db_tool: ${{ fromJson(needs.set-matrix.outputs.toolPatterns) }}
       fail-fast: false
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
     - name: Set up metadata
       id: pkg-meta
       run: |
@@ -41,7 +41,7 @@ jobs:
         db-type: ${{ matrix.db_tool.db_type }}
         db-tool-version: ${{ matrix.db_tool.version }}
         registry: ghcr.io
-    - uses: docker/login-action@v3
+    - uses: docker/login-action@v4
       with:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}

@@ -3,8 +3,8 @@
  * Execute with --help to see usage instructions.
  */
 import { BackupCommand, IBackupCommandOption } from '@awesome-database-backup/commands';
-import { join } from 'path';
-import { PassThrough, Readable } from 'stream';
+import { join } from 'node:path';
+import { PassThrough, Readable } from 'node:stream';
 import * as tar from 'tar';
 import loggerFactory from './logger/factory';
 

@@ -1,10 +1,10 @@
 import { format } from 'date-fns';
-import { basename } from 'path';
+import { basename } from 'node:path';
 import { Option } from 'commander';
 import axios from 'axios';
 import axiosRetry from 'axios-retry';
-import { EOL } from 'os';
-import { Readable } from 'stream';
+import { EOL } from 'node:os';
+import { Readable } from 'node:stream';
 import { IBackupCommandOption } from './interfaces';
 import { StorageServiceClientCommand } from './common';
 import loggerFactory from '../logger/factory';
