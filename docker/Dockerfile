@@ -1,4 +1,5 @@
 ARG dbType
+ARG PNPM_VERSION=11.9.0
 
 # You should set same Node.js version and Linux distribution as .devcontainer/Dockerfile
 FROM node:22.13.1-bullseye-slim AS base
@@ -27,11 +28,13 @@ FROM base AS deps-resolver
 ENV optDir=/opt
 WORKDIR ${optDir}
 
+RUN npm install -g pnpm@${PNPM_VERSION}
+
 COPY --from=pruned-package --chown=node:node \
   ${optDir}/out/json/ .
 COPY --from=pruned-package --chown=node:node \
   ${optDir}/out/pnpm-lock.yaml ./pnpm-lock.yaml
-RUN npm install -g pnpm && pnpm install --frozen-lockfile
+RUN pnpm install --frozen-lockfile
 
 
 ##
@@ -43,6 +46,8 @@ ARG packageFilter
 ENV NODE_ENV=production
 ENV optDir=/opt
 WORKDIR ${optDir}
+
+RUN npm install -g pnpm@${PNPM_VERSION}
 
 COPY --from=deps-resolver --chown=node:node \
   ${optDir}/ ${optDir}/
