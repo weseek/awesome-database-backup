@@ -30,6 +30,7 @@
     "lint:fix": "eslint src --ext .ts --fix"
   },
   "dependencies": {
+    "@awesome-database-backup/postgresql-restore": "workspace:*",
     "@awesome-database-backup/commands": "^1.0.3",
     "bunyan": "^1.8.15",
     "universal-bunyan": "^0.9.2",
