@@ -2,7 +2,7 @@ import {
   vi, afterEach, afterAll, describe, beforeAll, beforeEach, it, expect,
   type MockInstance,
 } from 'vitest';
-import { PassThrough, Readable } from 'stream';
+import { PassThrough, Readable } from 'node:stream';
 import { S3URI, S3StorageServiceClientConfig, listS3FilesOptions } from '../src/interfaces';
 import type { S3StorageServiceClient } from '../src/s3';
 
@@ -113,6 +113,41 @@ describe('S3StorageServiceClient', () => {
           credentials: {},
         });
         expect(fromNodeProviderChainMock).toHaveBeenCalled();
+      });
+    });
+
+    describe('when config has awsForcePathStyle set to true', () => {
+      const config: S3StorageServiceClientConfig = {
+        awsRegion: 'us-east-1',
+        awsEndpointUrl: new URL('https://custom-endpoint.example.com'),
+        awsForcePathStyle: true,
+      };
+
+      it('sets forcePathStyle to true in S3Client config', async() => {
+        const { S3StorageServiceClient } = await import('../src/s3');
+        expect(() => new S3StorageServiceClient(config)).not.toThrow();
+        expect(S3ClientMock).toHaveBeenCalledWith({
+          region: 'us-east-1',
+          endpoint: 'https://custom-endpoint.example.com/',
+          forcePathStyle: true,
+          credentials: {},
+        });
+      });
+    });
+
+    describe('when config has awsForcePathStyle set to false', () => {
+      const config: S3StorageServiceClientConfig = {
+        awsRegion: 'us-east-1',
+        awsForcePathStyle: false,
+      };
+
+      it('does not set forcePathStyle in S3Client config', async() => {
+        const { S3StorageServiceClient } = await import('../src/s3');
+        expect(() => new S3StorageServiceClient(config)).not.toThrow();
+        expect(S3ClientMock).toHaveBeenCalledWith({
+          region: 'us-east-1',
+          credentials: {},
+        });
       });
     });
 

@@ -15,10 +15,10 @@ jobs:
 
     outputs:
       RELEASE_VERSION: ${{ steps.package-json.outputs.full }}
-      RELEASE_DRAFT_BODY: ${{ steps.release-drafter.outputs.body }}
+      RELEASE_DRAFT_BODY: ${{ steps.consolidate-dependabot-bumps.outputs.body }}
 
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
 
     - name: Retrieve information from package.json
       uses: xile611/read-package-version-action@v2.1
@@ -34,6 +34,33 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+    # Consolidates dependency bump entries for the same package/author (within each list section)
+    # into a single line spanning the overall version range
+    - name: Consolidate dependabot bump entries
+      id: consolidate-dependabot-bumps
+      uses: ./.github/actions/consolidate-dependabot-bumps
+      with:
+        body: ${{ steps.release-drafter.outputs.body }}
+
+    - name: Update draft release with consolidated release notes
+      uses: actions/github-script@v9
+      env:
+        RELEASE_BODY: ${{ steps.consolidate-dependabot-bumps.outputs.body }}
+        RELEASE_ID: ${{ steps.release-drafter.outputs.id }}
+      with:
+        script: |
+          const releaseId = Number(process.env.RELEASE_ID);
+          if (!Number.isFinite(releaseId) || releaseId <= 0) {
+            throw new Error(`Invalid RELEASE_ID: ${process.env.RELEASE_ID}`);
+          }
+
+          await github.rest.repos.updateRelease({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            release_id: releaseId,
+            body: process.env.RELEASE_BODY ?? '',
+          });
+
   # Refs: https://github.com/bakunyo/git-pr-release-action
   update-release-pr:
     needs: release-update_draft
@@ -41,7 +68,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
       with:
         fetch-depth: 0
 
