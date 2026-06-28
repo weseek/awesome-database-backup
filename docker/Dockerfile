@@ -5,7 +5,7 @@ ARG dbType
 ARG COREPACK_VERSION=0.34.6
 
 # You should set same Node.js version and Linux distribution as .devcontainer/Dockerfile
-FROM node:22.13.1-bullseye-slim AS base
+FROM node:24.18.0-bullseye-slim AS base
 
 ##
 ## Prepare a subset of this monorepo
