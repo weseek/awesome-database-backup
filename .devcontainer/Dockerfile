@@ -23,9 +23,12 @@ ARG USER_GID=$USER_UID
 # Pin pnpm to the version declared in package.json's "packageManager" field (single source of truth),
 # so the devcontainer matches production (docker/Dockerfile).
 # Corepack reads that field and provisions the exact version automatically.
-# NOTE: Corepack is bundled only up to Node.js 24 (TSC voted on 2025-03-19 to unbundle it).
-#       When bumping the base image to Node.js 25+, add `RUN npm install -g corepack` before enabling it.
-RUN corepack enable
+# Pin and update Corepack first: a bundled version that is too old fails pnpm's signature verification
+# ("Cannot find matching keyid"). This also future-proofs Node.js 25+, where Corepack is unbundled
+# (TSC voted on 2025-03-19 to unbundle it).
+# Keep COREPACK_VERSION in sync with docker/Dockerfile.
+ARG COREPACK_VERSION=0.34.6
+RUN npm install -g corepack@${COREPACK_VERSION} && corepack enable
 
 RUN mkdir -p /awesome-database-backup/node_modules
 

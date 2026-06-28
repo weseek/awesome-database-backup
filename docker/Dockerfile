@@ -1,5 +1,9 @@
 ARG dbType
 
+# Corepack version (single source of truth for this Dockerfile; shared by all stages below).
+# Keep in sync with .devcontainer/Dockerfile's COREPACK_VERSION.
+ARG COREPACK_VERSION=0.34.6
+
 # You should set same Node.js version and Linux distribution as .devcontainer/Dockerfile
 FROM node:22.13.1-bullseye-slim AS base
 
@@ -24,14 +28,17 @@ RUN npx turbo@2 prune --docker "${packageFilter}" \
 ##
 FROM base AS deps-resolver
 
+ARG COREPACK_VERSION
 ENV optDir=/opt
 WORKDIR ${optDir}
 
 # Use the pnpm version pinned by the "packageManager" field in package.json (single source of truth).
 # Corepack reads that field and provisions the exact version automatically.
-# NOTE: Corepack is bundled only up to Node.js 24 (TSC voted on 2025-03-19 to unbundle it).
-#       When upgrading to Node.js 25+, add `RUN npm install -g corepack` before enabling it.
-RUN corepack enable
+# We pin and update Corepack first: the version bundled with this Node base image is too old and
+# fails pnpm's signature verification ("Cannot find matching keyid").
+# This explicit install also future-proofs Node.js 25+, where Corepack is no longer bundled
+# (TSC voted on 2025-03-19 to unbundle it).
+RUN npm install -g corepack@${COREPACK_VERSION} && corepack enable
 
 COPY --from=pruned-package --chown=node:node \
   ${optDir}/out/json/ .
@@ -46,13 +53,14 @@ RUN pnpm install --frozen-lockfile
 FROM base AS builder
 
 ARG packageFilter
+ARG COREPACK_VERSION
 ENV NODE_ENV=production
 ENV optDir=/opt
 WORKDIR ${optDir}
 
-# See the note in the deps-resolver stage: pnpm version comes from package.json's "packageManager".
-# NOTE: When upgrading to Node.js 25+, add `RUN npm install -g corepack` before enabling it.
-RUN corepack enable
+# See the note in the deps-resolver stage: pnpm version comes from package.json's "packageManager",
+# and Corepack is pinned/updated first to avoid the bundled version's signature-verification failure.
+RUN npm install -g corepack@${COREPACK_VERSION} && corepack enable
 
 COPY --from=deps-resolver --chown=node:node \
   ${optDir}/ ${optDir}/
