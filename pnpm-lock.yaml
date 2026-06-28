@@ -140,9 +140,6 @@ importers:
       '@awesome-database-backup/commands':
         specifier: ^1.0.3
         version: link:../../packages/commands
-      '@awesome-database-backup/file-backup':
-        specifier: workspace:*
-        version: 'link:'
       browser-bunyan:
         specifier: ^1.6.3
         version: 1.8.0
@@ -183,9 +180,6 @@ importers:
       '@awesome-database-backup/commands':
         specifier: ^1.0.3
         version: link:../../packages/commands
-      '@awesome-database-backup/file-restore':
-        specifier: workspace:*
-        version: 'link:'
       browser-bunyan:
         specifier: ^1.6.3
         version: 1.8.0
@@ -220,9 +214,6 @@ importers:
       '@awesome-database-backup/commands':
         specifier: ^1.0.3
         version: link:../../packages/commands
-      '@awesome-database-backup/list':
-        specifier: workspace:*
-        version: 'link:'
       browser-bunyan:
         specifier: ^1.6.3
         version: 1.8.0
@@ -254,9 +245,6 @@ importers:
       '@awesome-database-backup/commands':
         specifier: ^1.0.3
         version: link:../../packages/commands
-      '@awesome-database-backup/mariadb-backup':
-        specifier: workspace:*
-        version: 'link:'
       browser-bunyan:
         specifier: ^1.6.3
         version: 1.8.0
@@ -294,9 +282,6 @@ importers:
       '@awesome-database-backup/commands':
         specifier: ^1.0.3
         version: link:../../packages/commands
-      '@awesome-database-backup/mariadb-restore':
-        specifier: workspace:*
-        version: 'link:'
       browser-bunyan:
         specifier: ^1.6.3
         version: 1.8.0
@@ -331,9 +316,6 @@ importers:
       '@awesome-database-backup/commands':
         specifier: ^1.0.3
         version: link:../../packages/commands
-      '@awesome-database-backup/mongodb-backup':
-        specifier: workspace:*
-        version: 'link:'
       browser-bunyan:
         specifier: ^1.6.3
         version: 1.8.0
@@ -371,9 +353,6 @@ importers:
       '@awesome-database-backup/commands':
         specifier: ^1.0.3
         version: link:../../packages/commands
-      '@awesome-database-backup/mongodb-restore':
-        specifier: workspace:*
-        version: 'link:'
       browser-bunyan:
         specifier: ^1.6.3
         version: 1.8.0
@@ -408,9 +387,6 @@ importers:
       '@awesome-database-backup/commands':
         specifier: ^1.0.3
         version: link:../../packages/commands
-      '@awesome-database-backup/postgresql-backup':
-        specifier: workspace:*
-        version: 'link:'
       browser-bunyan:
         specifier: ^1.6.3
         version: 1.8.0
@@ -448,9 +424,6 @@ importers:
       '@awesome-database-backup/commands':
         specifier: ^1.0.3
         version: link:../../packages/commands
-      '@awesome-database-backup/postgresql-restore':
-        specifier: workspace:*
-        version: 'link:'
       browser-bunyan:
         specifier: ^1.6.3
         version: 1.8.0
@@ -485,9 +458,6 @@ importers:
       '@awesome-database-backup/commands':
         specifier: ^1.0.3
         version: link:../../packages/commands
-      '@awesome-database-backup/prune':
-        specifier: workspace:*
-        version: 'link:'
       browser-bunyan:
         specifier: ^1.6.3
         version: 1.8.0

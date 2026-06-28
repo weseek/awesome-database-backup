@@ -4,10 +4,10 @@
  */
 import { exec as execOriginal } from 'node:child_process';
 import { promisify } from 'node:util';
-import { RestoreCommand } from '@awesome-database-backup/commands';
+import { RestoreCommand, getPackageVersion } from '@awesome-database-backup/commands';
 import loggerFactory from './logger/factory';
 
-const version = require('@awesome-database-backup/postgresql-restore/package.json').version;
+const version = getPackageVersion(__dirname);
 
 const logger = loggerFactory('postgresql-restore');
 

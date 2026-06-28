@@ -2,13 +2,13 @@
  * An executable file that stores files to a storage service.
  * Execute with --help to see usage instructions.
  */
-import { BackupCommand, IBackupCommandOption } from '@awesome-database-backup/commands';
+import { BackupCommand, IBackupCommandOption, getPackageVersion } from '@awesome-database-backup/commands';
 import { join } from 'node:path';
 import { PassThrough, Readable } from 'node:stream';
 import * as tar from 'tar';
 import loggerFactory from './logger/factory';
 
-const version = require('@awesome-database-backup/file-backup/package.json').version;
+const version = getPackageVersion(__dirname);
 const tmp = require('tmp');
 
 const logger = loggerFactory('file-backup');
