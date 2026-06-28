@@ -15,9 +15,9 @@
   "// Use Typescript as is, so Typescript must be enabled for use with mocks. (ex. enable ts-jest)": "",
   "main": "src/index.ts",
   "dependencies": {
-    "uuid": "^8.3.2"
+    "uuid": "catalog:"
   },
   "devDependencies": {
-    "@types/uuid": "^8.3.4"
+    "@types/uuid": "catalog:"
   }
 }

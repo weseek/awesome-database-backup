@@ -2,6 +2,39 @@ packages:
   - "apps/*"
   - "packages/*"
   - "misc/*"
+
+# pnpm 11 only reads auth/registry settings from .npmrc; all other settings must live here.
+# (Migrated from .npmrc, where these were silently ignored.)
+engineStrict: true
+# Link internal workspace packages even when referenced by a version range (e.g. "^1.0.3"),
+# not only via the "workspace:" protocol. Without this, such deps are fetched from the registry.
+linkWorkspacePackages: true
+
+# Single source of truth for shared dependency versions across the workspace.
+# Reference from a package.json with "<pkg>": "catalog:". Only deps used by 2+ packages
+# are cataloged here; root-only tooling (turbo, typescript, eslint, vitest, ...) stays in
+# the root package.json. Mismatched versions were unified to the newer one when cataloged.
+catalog:
+  date-fns: ^2.28.0
+  # were mismatched across packages, unified here:
+  tar: ^7.5.2                       # was ^7.4.3 (file-backup) / ^7.5.2
+  "@aws-sdk/client-s3": ^3.723.0    # was ^3.85.0 (storage-service-test) / ^3.723.0
+  # duplicated across many packages (versions already consistent):
+  bunyan: ^1.8.15
+  browser-bunyan: ^1.6.3
+  universal-bunyan: ^0.9.2
+  "@types/bunyan": ^1.8.8
+  cross-env: ^7.0.3
+  tsconfig-paths: ^4.0.0
+  tmp: ^0.2.1
+  uuid: ^8.3.2
+  "@types/uuid": ^8.3.4
+  "@google-cloud/storage": ^7.15.2
+  bsonfy: ^1.0.2
+  axios: ^0.27.2
+  axios-retry: ^3.2.5
+  node-schedule: ^2.1.0
+
 # pnpm 10+ blocks dependency build scripts by default for security; each must be
 # reviewed as true (allow) / false (skip), otherwise `pnpm install` fails with
 # ERR_PNPM_IGNORED_BUILDS. (pnpm 11 unified this into `allowBuilds`; in pnpm 10 it

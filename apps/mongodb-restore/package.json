@@ -31,17 +31,17 @@
   },
   "dependencies": {
     "@awesome-database-backup/commands": "^1.0.3",
-    "bunyan": "^1.8.15",
-    "universal-bunyan": "^0.9.2",
-    "browser-bunyan": "^1.6.3"
+    "bunyan": "catalog:",
+    "universal-bunyan": "catalog:",
+    "browser-bunyan": "catalog:"
   },
   "devDependencies": {
     "@awesome-database-backup/tsconfig": "^1.0.3",
     "@awesome-database-backup/storage-service-test": "^1.0.3",
     "@awesome-database-backup/mongodb-test": "^1.0.3",
-    "cross-env": "^7.0.3",
-    "tsconfig-paths": "^4.0.0",
-    "@types/bunyan": "^1.8.8"
+    "cross-env": "catalog:",
+    "tsconfig-paths": "catalog:",
+    "@types/bunyan": "catalog:"
   },
   "engines": {
     "node": ">= 22 < 23",

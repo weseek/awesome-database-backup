@@ -16,7 +16,6 @@
     "@vitest/eslint-plugin": "1.1.38",
     "@vitest/ui": "^3.0.8",
     "babel-eslint": "^10.1.0",
-    "commander": "^9.2.0",
     "eslint": "^8.14.0",
     "eslint-config-weseek": "^1.1.0",
     "eslint-import-resolver-typescript": "^2.7.1",
