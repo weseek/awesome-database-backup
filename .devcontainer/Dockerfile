@@ -27,8 +27,10 @@ ARG USER_GID=$USER_UID
 # ("Cannot find matching keyid"). This also future-proofs Node.js 25+, where Corepack is unbundled
 # (TSC voted on 2025-03-19 to unbundle it).
 # Keep COREPACK_VERSION in sync with docker/Dockerfile.
+# --force: this base image already has Corepack enabled, so its pnpm/yarn shims exist in the
+# npm-global bin and would otherwise cause EEXIST. They are recreated by `corepack enable` below.
 ARG COREPACK_VERSION=0.34.6
-RUN npm install -g corepack@${COREPACK_VERSION} && corepack enable
+RUN npm install -g --force corepack@${COREPACK_VERSION} && corepack enable
 
 RUN mkdir -p /awesome-database-backup/node_modules
 
