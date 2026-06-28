@@ -2,3 +2,12 @@ packages:
   - "apps/*"
   - "packages/*"
   - "misc/*"
+# pnpm 10+ blocks dependency build scripts by default for security; each must be
+# reviewed as true (allow) / false (skip), otherwise `pnpm install` fails with
+# ERR_PNPM_IGNORED_BUILDS. (pnpm 11 unified this into `allowBuilds`; in pnpm 10 it
+# was onlyBuiltDependencies / ignoredBuiltDependencies.)
+allowBuilds:
+  # postinstall sets up esbuild's platform binary; required by vitest/vite.
+  esbuild: true
+  # optional native addon (via bunyan); not functional on Linux, safe to skip.
+  dtrace-provider: false
