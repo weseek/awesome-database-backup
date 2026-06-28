@@ -1,5 +1,4 @@
 ARG dbType
-ARG PNPM_VERSION=11.9.0
 
 # You should set same Node.js version and Linux distribution as .devcontainer/Dockerfile
 FROM node:22.13.1-bullseye-slim AS base
@@ -28,7 +27,11 @@ FROM base AS deps-resolver
 ENV optDir=/opt
 WORKDIR ${optDir}
 
-RUN npm install -g pnpm@${PNPM_VERSION}
+# Use the pnpm version pinned by the "packageManager" field in package.json (single source of truth).
+# Corepack reads that field and provisions the exact version automatically.
+# NOTE: Corepack is bundled only up to Node.js 24 (TSC voted on 2025-03-19 to unbundle it).
+#       When upgrading to Node.js 25+, add `RUN npm install -g corepack` before enabling it.
+RUN corepack enable
 
 COPY --from=pruned-package --chown=node:node \
   ${optDir}/out/json/ .
@@ -47,7 +50,9 @@ ENV NODE_ENV=production
 ENV optDir=/opt
 WORKDIR ${optDir}
 
-RUN npm install -g pnpm@${PNPM_VERSION}
+# See the note in the deps-resolver stage: pnpm version comes from package.json's "packageManager".
+# NOTE: When upgrading to Node.js 25+, add `RUN npm install -g corepack` before enabling it.
+RUN corepack enable
 
 COPY --from=deps-resolver --chown=node:node \
   ${optDir}/ ${optDir}/

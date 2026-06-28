@@ -20,6 +20,13 @@ ARG USERNAME=node
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
 
+# Pin pnpm to the version declared in package.json's "packageManager" field (single source of truth),
+# so the devcontainer matches production (docker/Dockerfile).
+# Corepack reads that field and provisions the exact version automatically.
+# NOTE: Corepack is bundled only up to Node.js 24 (TSC voted on 2025-03-19 to unbundle it).
+#       When bumping the base image to Node.js 25+, add `RUN npm install -g corepack` before enabling it.
+RUN corepack enable
+
 RUN mkdir -p /awesome-database-backup/node_modules
 
 # [Optional] Update UID/GID if needed
