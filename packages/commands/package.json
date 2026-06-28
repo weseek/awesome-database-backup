@@ -12,8 +12,8 @@
   "bugs": {
     "url": "https://github.com/weseek/awesome-database-backup/issues"
   },
-  "// Use Typescript as is, so Typescript must be enabled": "",
-  "main": "src/index.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "directories": {
     "test": "__tests__"
   },

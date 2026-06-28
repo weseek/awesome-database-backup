@@ -16,7 +16,7 @@
     "test": "__tests__"
   },
   "files": ["dist"],
-  "main": "dist/apps/postgresql-backup/src/backup.js",
+  "main": "dist/backup.js",
   "bin": {
     "backup": "bin/backup.js"
   },

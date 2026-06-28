@@ -16,7 +16,7 @@
     "test": "__tests__"
   },
   "files": ["dist"],
-  "main": "dist/apps/list/src/list.js",
+  "main": "dist/list.js",
   "bin": {
     "list": "bin/list.js"
   },

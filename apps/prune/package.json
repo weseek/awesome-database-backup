@@ -16,7 +16,7 @@
     "test": "__tests__"
   },
   "files": ["dist"],
-  "main": "dist/apps/prune/src/prune.js",
+  "main": "dist/prune.js",
   "bin": {
     "prune": "bin/prune.js"
   },

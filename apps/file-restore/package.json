@@ -16,7 +16,7 @@
     "test": "__tests__"
   },
   "files": ["dist"],
-  "main": "dist/apps/file-restore/src/restore.js",
+  "main": "dist/restore.js",
   "bin": {
     "restore": "bin/restore.js"
   },

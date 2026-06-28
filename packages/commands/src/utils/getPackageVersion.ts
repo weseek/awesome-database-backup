@@ -9,8 +9,8 @@ import { dirname, join } from 'node:path';
  * because pnpm does not create a symlink for a package to itself, so the import is
  * unresolvable both at lint time and at runtime.
  *
- * Passing `__dirname` works regardless of how the compiled output is nested
- * (e.g. "dist/apps/xxx/src"), in development (ts-node-dev) and once published.
+ * Passing `__dirname` works regardless of where the compiled output lives
+ * (e.g. "dist/"), in development (ts-node-dev) and once published.
  */
 export function getPackageVersion(fromDir: string): string {
   const packageJsonPath = join(fromDir, 'package.json');
