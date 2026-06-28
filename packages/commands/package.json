@@ -34,7 +34,6 @@
     "browser-bunyan": "catalog:",
     "bunyan": "catalog:",
     "commander": "^9.2.0",
-    "cross-env": "catalog:",
     "date-fns": "catalog:",
     "fzstd": "^0.1.1",
     "node-schedule": "catalog:",
@@ -45,7 +44,8 @@
   },
   "devDependencies": {
     "@awesome-database-backup/tsconfig": "^1.0.3",
-    "@types/bunyan": "catalog:"
+    "@types/bunyan": "catalog:",
+    "cross-env": "catalog:"
   },
   "engines": {
     "node": ">= 22 < 23",

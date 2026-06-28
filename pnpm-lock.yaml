@@ -7,7 +7,7 @@ settings:
 catalogs:
   default:
     '@aws-sdk/client-s3':
-      specifier: ^3.723.0
+      specifier: ^3.85.0
       version: 3.1032.0
     '@google-cloud/storage':
       specifier: ^7.15.2
@@ -570,9 +570,6 @@ importers:
       commander:
         specifier: ^9.2.0
         version: 9.5.0
-      cross-env:
-        specifier: 'catalog:'
-        version: 7.0.3
       date-fns:
         specifier: 'catalog:'
         version: 2.30.0
@@ -601,6 +598,9 @@ importers:
       '@types/bunyan':
         specifier: 'catalog:'
         version: 1.8.11
+      cross-env:
+        specifier: 'catalog:'
+        version: 7.0.3
 
   packages/common-tsconfig: {}
 
@@ -703,9 +703,6 @@ importers:
       bunyan:
         specifier: 'catalog:'
         version: 1.8.15
-      cross-env:
-        specifier: 'catalog:'
-        version: 7.0.3
       mime:
         specifier: ^4.1.0
         version: 4.1.0
@@ -725,6 +722,9 @@ importers:
       '@types/bunyan':
         specifier: 'catalog:'
         version: 1.8.11
+      cross-env:
+        specifier: 'catalog:'
+        version: 7.0.3
 
   packages/storage-service-test:
     dependencies:

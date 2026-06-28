@@ -34,7 +34,6 @@
     "axios-retry": "catalog:",
     "browser-bunyan": "catalog:",
     "bunyan": "catalog:",
-    "cross-env": "catalog:",
     "mime": "^4.1.0",
     "node-schedule": "catalog:",
     "tmp": "catalog:",
@@ -42,7 +41,8 @@
   },
   "devDependencies": {
     "@awesome-database-backup/tsconfig": "^1.0.3",
-    "@types/bunyan": "catalog:"
+    "@types/bunyan": "catalog:",
+    "cross-env": "catalog:"
   },
   "engines": {
     "node": ">= 22 < 23",
