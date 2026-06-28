@@ -1,3 +1,4 @@
+export { Option } from 'commander';
 export * from './commands/interfaces';
 export * from './commands/backup';
 export * from './commands/list';

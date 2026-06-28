@@ -4,8 +4,7 @@
  */
 import { exec as execOriginal } from 'node:child_process';
 import { promisify } from 'node:util';
-import { Option } from 'commander';
-import { RestoreCommand, getPackageVersion } from '@awesome-database-backup/commands';
+import { Option, RestoreCommand, getPackageVersion } from '@awesome-database-backup/commands';
 import loggerFactory from './logger/factory';
 
 const version = getPackageVersion(__dirname);
