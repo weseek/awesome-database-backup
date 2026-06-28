@@ -17,7 +17,7 @@ import {
 
 const exec = promisify(execOriginal);
 
-const execListCommand = 'yarn run ts-node src/list';
+const execListCommand = 'pnpm exec ts-node src/list';
 
 describe('list', () => {
   describe('when option --help is specified', () => {

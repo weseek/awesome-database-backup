@@ -16,12 +16,12 @@
   "main": "src/index.ts",
   "dependencies": {
     "mysql2": "^2.3.3",
-    "uuid": "^8.3.2",
-    "tar": "^7.5.2",
-    "tmp": "^0.2.1",
-    "bsonfy": "^1.0.2"
+    "uuid": "catalog:",
+    "tar": "catalog:",
+    "tmp": "catalog:",
+    "bsonfy": "catalog:"
   },
   "devDependencies": {
-    "@types/uuid": "^8.3.4"
+    "@types/uuid": "catalog:"
   }
 }

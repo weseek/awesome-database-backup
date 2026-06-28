@@ -21,7 +21,7 @@ import {
 
 const exec = promisify(execOriginal);
 
-const execBackupCommand = 'yarn run ts-node src/backup';
+const execBackupCommand = 'pnpm exec ts-node src/backup';
 
 describe('backup', () => {
   describe('when option --help is specified', () => {
@@ -59,7 +59,7 @@ describe('backup', () => {
 
       it('backup mongo in bucket', async() => {
         expect(await exec(commandLine)).toEqual({
-          stdout: expect.stringMatching(/=== backup.ts started at .* ===/),
+          stdout: expect.stringMatching(/=== backup started at .* ===/),
           stderr: '',
         });
       });
@@ -82,7 +82,7 @@ describe('backup', () => {
       it('backup mongo in bucket using stream mode', async() => {
         expect((await listFileNamesInTestS3Bucket()).length).toBe(0);
         expect(await exec(commandLine)).toEqual({
-          stdout: expect.stringMatching(/=== backup.ts started at .* \(stream mode\) ===/),
+          stdout: expect.stringMatching(/=== backup started at .* \(stream mode\) ===/),
           stderr: '',
         });
         expect((await listFileNamesInTestS3Bucket()).length).toBe(1);
@@ -108,7 +108,7 @@ describe('backup', () => {
       it('backup mongo in bucket', async() => {
         expect((await listFileNamesInTestGCSBucket()).length).toBe(0);
         expect(await exec(commandLine)).toEqual({
-          stdout: expect.stringMatching(/=== backup.ts started at .* ===/),
+          stdout: expect.stringMatching(/=== backup started at .* ===/),
           stderr: '',
         });
         expect((await listFileNamesInTestGCSBucket()).length).toBe(1);
@@ -133,7 +133,7 @@ describe('backup', () => {
       it('backup mongo in bucket using stream mode', async() => {
         expect((await listFileNamesInTestGCSBucket()).length).toBe(0);
         expect(await exec(commandLine)).toEqual({
-          stdout: expect.stringMatching(/=== backup.ts started at .* \(stream mode\) ===/),
+          stdout: expect.stringMatching(/=== backup started at .* \(stream mode\) ===/),
           stderr: '',
         });
         expect((await listFileNamesInTestGCSBucket()).length).toBe(1);

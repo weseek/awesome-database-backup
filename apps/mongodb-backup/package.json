@@ -16,7 +16,7 @@
     "test": "__tests__"
   },
   "files": ["dist"],
-  "main": "dist/apps/mongodb-backup/src/backup.js",
+  "main": "dist/backup.js",
   "bin": {
     "backup": "bin/backup.js"
   },
@@ -31,21 +31,21 @@
   },
   "dependencies": {
     "@awesome-database-backup/commands": "^1.0.3",
-    "bunyan": "^1.8.15",
-    "universal-bunyan": "^0.9.2",
-    "browser-bunyan": "^1.6.3",
-    "tmp": "^0.2.1"
+    "bunyan": "catalog:",
+    "universal-bunyan": "catalog:",
+    "browser-bunyan": "catalog:",
+    "tmp": "catalog:"
   },
   "devDependencies": {
     "@awesome-database-backup/tsconfig": "^1.0.3",
     "@awesome-database-backup/storage-service-test": "^1.0.3",
     "@awesome-database-backup/mongodb-test": "^1.0.3",
-    "cross-env": "^7.0.3",
-    "tsconfig-paths": "^4.0.0",
-    "@types/bunyan": "^1.8.8"
+    "cross-env": "catalog:",
+    "tsconfig-paths": "catalog:",
+    "@types/bunyan": "catalog:"
   },
   "engines": {
     "node": ">= 22 < 23",
-    "yarn": ">= 1.22.22"
+    "pnpm": ">= 11"
   }
 }

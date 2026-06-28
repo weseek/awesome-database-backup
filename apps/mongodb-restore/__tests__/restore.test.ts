@@ -26,7 +26,7 @@ import {
 
 const exec = promisify(execOriginal);
 
-const execRestoreCommand = 'yarn run ts-node src/restore';
+const execRestoreCommand = 'pnpm exec ts-node src/restore';
 
 describe('restore', () => {
   describe('when option --help is specified', () => {
@@ -67,7 +67,7 @@ describe('restore', () => {
     it('restore mongo in bucket', async() => {
       expect(await listCollectionNamesInTestMongoDB()).toEqual([]);
       expect(await exec(commandLine)).toEqual({
-        stdout: expect.stringMatching(/=== restore.ts started at .* ===/),
+        stdout: expect.stringMatching(/=== restore started at .* ===/),
         stderr: '',
       });
       expect(await listCollectionNamesInTestMongoDB()).toEqual(['dummy']);
@@ -96,7 +96,7 @@ describe('restore', () => {
     it('restore mongo archive from S3 bucket', async() => {
       expect(await listCollectionNamesInTestMongoDB()).toEqual([]);
       expect(await exec(commandLine)).toEqual({
-        stdout: expect.stringMatching(/=== restore.ts started at .* ===/),
+        stdout: expect.stringMatching(/=== restore started at .* ===/),
         stderr: '',
       });
       expect(await listCollectionNamesInTestMongoDB()).toEqual(['dummy']);
@@ -123,7 +123,7 @@ describe('restore', () => {
     it('restore mongo in bucket', async() => {
       expect(await listCollectionNamesInTestMongoDB()).toEqual([]);
       expect(await exec(commandLine)).toEqual({
-        stdout: expect.stringMatching(/=== restore.ts started at .* ===/),
+        stdout: expect.stringMatching(/=== restore started at .* ===/),
         stderr: '',
       });
       expect(await listCollectionNamesInTestMongoDB()).toEqual(['dummy']);
@@ -153,7 +153,7 @@ describe('restore', () => {
     it('restore mongo archive from GCS bucket', async() => {
       expect(await listCollectionNamesInTestMongoDB()).toEqual([]);
       expect(await exec(commandLine)).toEqual({
-        stdout: expect.stringMatching(/=== restore.ts started at .* ===/),
+        stdout: expect.stringMatching(/=== restore started at .* ===/),
         stderr: '',
       });
       expect(await listCollectionNamesInTestMongoDB()).toEqual(['dummy']);

@@ -19,11 +19,13 @@
   "main": "src/index.ts",
   "dependencies": {
     "@awesome-database-backup/file-test": "^1.0.3",
+    "@awesome-database-backup/mariadb-test": "^1.0.3",
     "@awesome-database-backup/mongodb-test": "^1.0.3",
-    "@awesome-database-backup/postgresql-test": "^1.0.3"
+    "@awesome-database-backup/postgresql-test": "^1.0.3",
+    "uuid": "catalog:"
   },
   "devDependencies": {
-    "@aws-sdk/client-s3": "^3.85.0",
-    "@google-cloud/storage": "^7.15.2"
+    "@aws-sdk/client-s3": "catalog:",
+    "@google-cloud/storage": "catalog:"
   }
 }
