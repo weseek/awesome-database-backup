@@ -15,21 +15,21 @@ linkWorkspacePackages: true
 # are cataloged here; root-only tooling (turbo, typescript, eslint, vitest, ...) stays in
 # the root package.json. Mismatched versions were unified to the newer one when cataloged.
 catalog:
+  # Core dependencies of the workspace, used by multiple packages.
+  "@aws-sdk/client-s3": ^3.85.0
+  "@google-cloud/storage": ^7.15.2
+  # Common dependencies across the workspace, used by multiple packages.
   date-fns: ^2.28.0
-  # were mismatched across packages, unified here:
-  tar: ^7.5.2                       # was ^7.4.3 (file-backup) / ^7.5.2
-  "@aws-sdk/client-s3": ^3.723.0    # was ^3.85.0 (storage-service-test) / ^3.723.0
-  # duplicated across many packages (versions already consistent):
+  cross-env: ^7.0.3
   bunyan: ^1.8.15
   browser-bunyan: ^1.6.3
   universal-bunyan: ^0.9.2
   "@types/bunyan": ^1.8.8
-  cross-env: ^7.0.3
   tsconfig-paths: ^4.0.0
+  tar: ^7.5.2
   tmp: ^0.2.1
   uuid: ^8.3.2
   "@types/uuid": ^8.3.4
-  "@google-cloud/storage": ^7.15.2
   bsonfy: ^1.0.2
   axios: ^0.27.2
   axios-retry: ^3.2.5
