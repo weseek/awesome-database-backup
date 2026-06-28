@@ -1,5 +1,5 @@
 import { format } from 'date-fns';
-import { basename } from 'node:path';
+import { basename, extname } from 'node:path';
 import { Option } from 'commander';
 import axios from 'axios';
 import axiosRetry from 'axios-retry';
@@ -63,7 +63,7 @@ export class BackupCommand extends StorageServiceClientCommand {
   async backupOnce(options: IBackupCommandOption): Promise<void> {
     if (this.storageServiceClient == null) throw new Error('URL scheme is not that of a supported provider.');
 
-    logger.info(`=== ${basename(__filename)} started at ${format(Date.now(), 'yyyy/MM/dd HH:mm:ss')} ===`);
+    logger.info(`=== ${basename(__filename, extname(__filename))} started at ${format(Date.now(), 'yyyy/MM/dd HH:mm:ss')} ===`);
 
     const { stdout, stderr, dbDumpFilePath } = await this.dumpDB(options);
     if (stdout) stdout.split(EOL).forEach(line => logger.info(line));
@@ -84,7 +84,7 @@ export class BackupCommand extends StorageServiceClientCommand {
   async backupOnceWithStream(options: IBackupCommandOption): Promise<void> {
     if (this.storageServiceClient == null) throw new Error('URL scheme is not that of a supported provider.');
 
-    logger.info(`=== ${basename(__filename)} started at ${format(Date.now(), 'yyyy/MM/dd HH:mm:ss')} (stream mode) ===`);
+    logger.info(`=== ${basename(__filename, extname(__filename))} started at ${format(Date.now(), 'yyyy/MM/dd HH:mm:ss')} (stream mode) ===`);
 
     const stream = await this.dumpDBAsStream(options);
     const backupFileName = this.getBackupFileName(options);

@@ -112,7 +112,7 @@ export class RestoreCommand extends StorageServiceClientCommand {
   async restore(options: IRestoreCommandOption): Promise<void> {
     if (this.storageServiceClient == null) throw new Error('URL scheme is not that of a supported provider.');
 
-    logger.info(`=== ${basename(__filename)} started at ${format(Date.now(), 'yyyy/MM/dd HH:mm:ss')} ===`);
+    logger.info(`=== ${basename(__filename, extname(__filename))} started at ${format(Date.now(), 'yyyy/MM/dd HH:mm:ss')} ===`);
 
     tmp.setGracefulCleanup();
     const tmpdir = tmp.dirSync({ unsafeCleanup: true });

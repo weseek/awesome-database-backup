@@ -65,7 +65,7 @@ describe('restore', () => {
     it('restore PostgreSQL in bucket', async() => {
       expect(await listTableNamesInTestPG()).toEqual([]);
       expect(await exec(commandLine)).toEqual({
-        stdout: expect.stringMatching(/=== restore.ts started at .* ===/),
+        stdout: expect.stringMatching(/=== restore started at .* ===/),
         stderr: '',
       });
       expect(await listTableNamesInTestPG()).toEqual(['dummy']);
@@ -92,7 +92,7 @@ describe('restore', () => {
     it('restore PostgreSQL in bucket', async() => {
       expect(await listTableNamesInTestPG()).toEqual([]);
       expect(await exec(commandLine)).toEqual({
-        stdout: expect.stringMatching(/=== restore.ts started at .* ===/),
+        stdout: expect.stringMatching(/=== restore started at .* ===/),
         stderr: '',
       });
       expect(await listTableNamesInTestPG()).toEqual(['dummy']);
