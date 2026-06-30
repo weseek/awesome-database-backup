@@ -2,7 +2,6 @@
   "extends": "@awesome-database-backup/tsconfig/tsconfig.base.json",
   "compilerOptions": {
     "outDir": "./dist",
-    "baseUrl": "."
   },
   "include": [
     "src"

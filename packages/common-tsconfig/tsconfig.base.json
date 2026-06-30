@@ -1,6 +1,4 @@
 {
-  "lib": "es2019",
-
   /* default compiler options */
   "compilerOptions": {
     "strict": true,
@@ -10,22 +8,19 @@
     "sourceMap": true,
     "noEmit": false,
     "inlineSources": true,
-    "target": "es2019",
+    "target": "es2022",
+    "lib": ["es2022"],
     "module": "commonjs",
 
-    /* Module Resolution Options */
-    "esModuleInterop": true,
-
     /*
-     * basic aliases
+     * Module Resolution Options
      *
-     * This is an assumption inherited by "tsconfig.json", which is placed in the top directory of each package.
+     * Workspace packages (e.g. "commands", "storage-service-clients") are resolved
+     * via node_modules to their built output ("main"/"types"), NOT aliased to their
+     * source. This keeps each package's transitive dependencies resolvable from the
+     * package's own node_modules under pnpm's isolated layout, instead of bundling
+     * the dependency's source into every consumer's "dist".
      */
-    "paths": {
-      "@awesome-database-backup/commands": ["../../packages/commands/src"],
-      "@awesome-database-backup/commands/*": ["../../packages/commands/src/*"],
-      "@awesome-database-backup/storage-service-clients": ["../../packages/storage-service-clients/src"],
-      "@awesome-database-backup/storage-service-clients/*": ["../../packages/storage-service-clients/src/*"],
-    }
+    "esModuleInterop": true
   }
 }

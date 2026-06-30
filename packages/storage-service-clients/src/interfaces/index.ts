@@ -1,4 +1,4 @@
-import { Readable } from 'stream';
+import { Readable } from 'node:stream';
 import { listS3FilesOptions } from './method-options/s3';
 import { listGCSFilesOptions } from './method-options/gcs';
 

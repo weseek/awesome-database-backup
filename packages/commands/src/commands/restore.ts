@@ -1,15 +1,15 @@
 import { format } from 'date-fns';
 import {
   basename, dirname, extname, join,
-} from 'path';
+} from 'node:path';
 import { Option } from 'commander';
-import { EOL } from 'os';
-import { createGunzip } from 'zlib';
-import { Transform } from 'stream';
-import * as StreamPromises from 'stream/promises';
+import { EOL } from 'node:os';
+import { createGunzip } from 'node:zlib';
+import { Transform } from 'node:stream';
+import * as StreamPromises from 'node:stream/promises';
 import {
   createReadStream, createWriteStream, ReadStream, WriteStream,
-} from 'fs';
+} from 'node:fs';
 import { Decompress } from 'fzstd';
 import { IRestoreCommandOption } from './interfaces';
 import { StorageServiceClientCommand } from './common';
@@ -112,7 +112,7 @@ export class RestoreCommand extends StorageServiceClientCommand {
   async restore(options: IRestoreCommandOption): Promise<void> {
     if (this.storageServiceClient == null) throw new Error('URL scheme is not that of a supported provider.');
 
-    logger.info(`=== ${basename(__filename)} started at ${format(Date.now(), 'yyyy/MM/dd HH:mm:ss')} ===`);
+    logger.info(`=== ${basename(__filename, extname(__filename))} started at ${format(Date.now(), 'yyyy/MM/dd HH:mm:ss')} ===`);
 
     tmp.setGracefulCleanup();
     const tmpdir = tmp.dirSync({ unsafeCleanup: true });

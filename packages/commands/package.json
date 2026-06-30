@@ -1,6 +1,6 @@
 {
   "name": "@awesome-database-backup/commands",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "commands of awesome-database-backup",
   "author": "Ryu Sato <ryu@weseek.co.jp>",
   "license": "MIT",
@@ -12,8 +12,8 @@
   "bugs": {
     "url": "https://github.com/weseek/awesome-database-backup/issues"
   },
-  "// Use Typescript as is, so Typescript must be enabled": "",
-  "main": "src/index.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "directories": {
     "test": "__tests__"
   },
@@ -26,28 +26,29 @@
     "lint:fix": "eslint src --ext .ts --fix"
   },
   "dependencies": {
-    "@awesome-database-backup/storage-service-clients": "^1.0.2",
-    "@aws-sdk/client-s3": "^3.723.0",
-    "@google-cloud/storage": "^7.15.2",
-    "axios": "^0.27.2",
-    "axios-retry": "^3.2.5",
-    "browser-bunyan": "^1.6.3",
-    "bunyan": "^1.8.15",
-    "cross-env": "^7.0.3",
-    "date-fns": "^2.28.0",
+    "@awesome-database-backup/storage-service-clients": "^1.0.3",
+    "@aws-sdk/client-s3": "catalog:",
+    "@google-cloud/storage": "catalog:",
+    "axios": "catalog:",
+    "axios-retry": "catalog:",
+    "browser-bunyan": "catalog:",
+    "bunyan": "catalog:",
+    "commander": "^9.2.0",
+    "date-fns": "catalog:",
     "fzstd": "^0.1.1",
-    "node-schedule": "^2.1.0",
-    "tar": "^7.5.2",
-    "tmp": "^0.2.1",
+    "node-schedule": "catalog:",
+    "tar": "catalog:",
+    "tmp": "catalog:",
     "unbzip2-stream": "^1.4.3",
-    "universal-bunyan": "^0.9.2"
+    "universal-bunyan": "catalog:"
   },
   "devDependencies": {
-    "@awesome-database-backup/tsconfig": "^1.0.2",
-    "@types/bunyan": "^1.8.8"
+    "@awesome-database-backup/tsconfig": "^1.0.3",
+    "@types/bunyan": "catalog:",
+    "cross-env": "catalog:"
   },
   "engines": {
-    "node": ">= 22 < 23",
-    "yarn": ">= 1.22.22"
+    "node": ">= 24 < 25",
+    "pnpm": ">= 11"
   }
 }

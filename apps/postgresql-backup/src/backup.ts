@@ -2,14 +2,14 @@
  * An executable file that stores backups for Postgresql to a storage service.
  * Execute with --help to see usage instructions.
  */
-import { exec as execOriginal, spawn } from 'child_process';
-import { BackupCommand, IBackupCommandOption } from '@awesome-database-backup/commands';
-import { join } from 'path';
-import { promisify } from 'util';
-import { Readable } from 'stream';
+import { exec as execOriginal, spawn } from 'node:child_process';
+import { BackupCommand, IBackupCommandOption, getPackageVersion } from '@awesome-database-backup/commands';
+import { join } from 'node:path';
+import { promisify } from 'node:util';
+import { Readable } from 'node:stream';
 import loggerFactory from './logger/factory';
 
-const version = require('@awesome-database-backup/postgresql-backup/package.json').version;
+const version = getPackageVersion(__dirname);
 const tmp = require('tmp');
 
 const exec = promisify(execOriginal);

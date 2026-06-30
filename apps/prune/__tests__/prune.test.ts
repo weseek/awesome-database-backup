@@ -1,10 +1,10 @@
 import {
   describe, beforeEach, it, expect,
 } from 'vitest';
-import { exec as execOriginal } from 'child_process';
-import { promisify } from 'util';
+import { exec as execOriginal } from 'node:child_process';
+import { promisify } from 'node:util';
 import { format } from 'date-fns';
-import { basename } from 'path';
+import { basename } from 'node:path';
 import {
   s3ClientConfig,
   testS3BucketURI,
@@ -21,7 +21,7 @@ import {
 
 const exec = promisify(execOriginal);
 
-const execPruneCommand = 'yarn run ts-node src/prune';
+const execPruneCommand = 'pnpm exec ts-node src/prune';
 
 describe('prune', () => {
   describe('when option --help is specified', () => {
