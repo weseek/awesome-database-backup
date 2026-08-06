@@ -235,8 +235,8 @@ Docker images are created using multi-stage builds:
    ```dockerfile
    FROM base AS deps-resolver
    COPY --from=pruned-package --chown=node:node ${optDir}/out/json/ .
-   COPY --from=pruned-package --chown=node:node ${optDir}/out/yarn.lock ./yarn.lock
-   RUN yarn --frozen-lockfile
+   COPY --from=pruned-package --chown=node:node ${optDir}/out/pnpm-lock.yaml ./pnpm-lock.yaml
+   RUN npm install -g pnpm && pnpm install --frozen-lockfile
    ```
 
 4. Build stage: Build the application
@@ -246,7 +246,7 @@ Docker images are created using multi-stage builds:
    ENV NODE_ENV=production
    COPY --from=deps-resolver --chown=node:node ${optDir}/ ${optDir}/
    COPY --from=pruned-package --chown=node:node ${optDir}/out/full/ ${optDir}/
-   RUN yarn run turbo run build --filter="${packageFilter}..."
+   RUN pnpm exec turbo run build --filter="${packageFilter}..."
    ```
 
 5. Tool stage: Install database-specific tools
@@ -384,7 +384,7 @@ jobs:
         docker compose -f .devcontainer/compose.yml up -d
     - name: Run test
       run:
-        docker compose -f .devcontainer/compose.yml exec -e NODE_OPTIONS -e CI -T -- node bash -c 'yarn install && yarn test'
+        docker compose -f .devcontainer/compose.yml exec -e NODE_OPTIONS -e CI -T -- node bash -c 'pnpm install && pnpm test'
     - name: Show test report to result of action
       if: success() || failure()
       uses: ctrf-io/github-test-reporter@v1

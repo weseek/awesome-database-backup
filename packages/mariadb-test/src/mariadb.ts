@@ -1,10 +1,10 @@
 import { v4 as uuidv4 } from 'uuid';
 import { createPool, RowDataPacket, FieldPacket } from 'mysql2/promise';
-import { join } from 'path';
-import { createWriteStream } from 'fs';
-import * as StreamPromises from 'stream/promises';
-import { createGzip } from 'zlib';
-import { Readable } from 'stream';
+import { join } from 'node:path';
+import { createWriteStream } from 'node:fs';
+import * as StreamPromises from 'node:stream/promises';
+import { createGzip } from 'node:zlib';
+import { Readable } from 'node:stream';
 import { mariadbConfig } from './config/mariadb';
 
 const tmp = require('tmp');

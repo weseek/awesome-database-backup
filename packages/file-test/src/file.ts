@@ -1,8 +1,8 @@
 import { v4 as uuidv4 } from 'uuid';
-import { join } from 'path';
-import { readdirSync, writeFileSync } from 'fs';
-import { execFile as execFileOriginal } from 'child_process';
-import { promisify } from 'util';
+import { join } from 'node:path';
+import { readdirSync, writeFileSync } from 'node:fs';
+import { execFile as execFileOriginal } from 'node:child_process';
+import { promisify } from 'node:util';
 import tempDir from './temp-dir';
 
 const tar = require('tar');

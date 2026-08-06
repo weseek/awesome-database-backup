@@ -1,7 +1,6 @@
-import os from 'os';
+import os from 'node:os';
 import { Upload } from '@aws-sdk/lib-storage';
-import { readFileSync, createWriteStream } from 'fs';
-import { basename } from 'path';
+import { readFileSync, createWriteStream } from 'node:fs';
 import {
   S3Client, S3ClientConfig,
   GetObjectCommand, GetObjectCommandInput,
@@ -10,9 +9,9 @@ import {
   ListObjectsCommand,
 } from '@aws-sdk/client-s3';
 import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
-import { promises as StreamPromises, Readable } from 'stream';
-import { getHeapStatistics } from 'v8';
-import path from 'node:path';
+import { promises as StreamPromises, Readable } from 'node:stream';
+import { getHeapStatistics } from 'node:v8';
+import path, { basename } from 'node:path';
 import {
   IStorageServiceClient,
   listS3FilesOptions,

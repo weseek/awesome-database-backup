@@ -2,7 +2,7 @@
 
 # You must set same Node.js version and Linux distribution as docker/Dockerfile
 # [Choice] Node.js version (use -bullseye variants on local arm64/Apple Silicon): 16, 14, 12, 16-bullseye, 14-bullseye, 12-bullseye, 16-buster, 14-buster, 12-buster
-ARG VARIANT="22"
+ARG VARIANT="24"
 FROM mcr.microsoft.com/vscode/devcontainers/typescript-node:dev-${VARIANT}-bullseye
 
 # [Optional] Uncomment this section to install additional OS packages.
@@ -19,6 +19,18 @@ FROM mcr.microsoft.com/vscode/devcontainers/typescript-node:dev-${VARIANT}-bulls
 ARG USERNAME=node
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
+
+# Pin pnpm to the version declared in package.json's "packageManager" field (single source of truth),
+# so the devcontainer matches production (docker/Dockerfile).
+# Corepack reads that field and provisions the exact version automatically.
+# Pin and update Corepack first: a bundled version that is too old fails pnpm's signature verification
+# ("Cannot find matching keyid"). This also future-proofs Node.js 25+, where Corepack is unbundled
+# (TSC voted on 2025-03-19 to unbundle it).
+# Keep COREPACK_VERSION in sync with docker/Dockerfile.
+# --force: this base image already has Corepack enabled, so its pnpm/yarn shims exist in the
+# npm-global bin and would otherwise cause EEXIST. They are recreated by `corepack enable` below.
+ARG COREPACK_VERSION=0.34.6
+RUN npm install -g --force corepack@${COREPACK_VERSION} && corepack enable
 
 RUN mkdir -p /awesome-database-backup/node_modules
 

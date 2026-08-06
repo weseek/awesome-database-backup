@@ -1,0 +1,46 @@
+packages:
+  - "apps/*"
+  - "packages/*"
+  - "misc/*"
+
+# pnpm 11 only reads auth/registry settings from .npmrc; all other settings must live here.
+# (Migrated from .npmrc, where these were silently ignored.)
+engineStrict: true
+# Link internal workspace packages even when referenced by a version range (e.g. "^1.0.3"),
+# not only via the "workspace:" protocol. Without this, such deps are fetched from the registry.
+linkWorkspacePackages: true
+
+# Single source of truth for shared dependency versions across the workspace.
+# Reference from a package.json with "<pkg>": "catalog:". Only deps used by 2+ packages
+# are cataloged here; root-only tooling (turbo, typescript, eslint, vitest, ...) stays in
+# the root package.json. Mismatched versions were unified to the newer one when cataloged.
+catalog:
+  # --- Shipped in the apps' production artifact (imported by runtime code) ---
+  "@aws-sdk/client-s3": ^3.85.0
+  "@google-cloud/storage": ^7.15.2
+  date-fns: ^2.28.0
+  bunyan: ^1.8.15
+  universal-bunyan: ^0.9.2
+  browser-bunyan: ^1.6.3        # indirect: peer/dep of universal-bunyan (not executed under Node)
+  tar: ^7.5.2
+  tmp: ^0.2.1
+  axios: ^0.27.2
+  axios-retry: ^3.2.5
+  node-schedule: ^2.1.0
+  # --- Not in the artifact (dev / test / type-only) ---
+  cross-env: ^7.0.3             # npm-script CLI only
+  tsconfig-paths: ^4.0.0        # dev/build; production resolves paths via tsc-alias
+  uuid: ^8.3.2                  # used only by *-test helper packages
+  bsonfy: ^1.0.2                # used only by mongodb-test
+  "@types/bunyan": ^1.8.8       # types (compile-time only)
+  "@types/uuid": ^8.3.4         # types (compile-time only)
+
+# pnpm 10+ blocks dependency build scripts by default for security; each must be
+# reviewed as true (allow) / false (skip), otherwise `pnpm install` fails with
+# ERR_PNPM_IGNORED_BUILDS. (pnpm 11 unified this into `allowBuilds`; in pnpm 10 it
+# was onlyBuiltDependencies / ignoredBuiltDependencies.)
+allowBuilds:
+  # postinstall sets up esbuild's platform binary; required by vitest/vite.
+  esbuild: true
+  # optional native addon (via bunyan); not functional on Linux, safe to skip.
+  dtrace-provider: false

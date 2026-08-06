@@ -2,12 +2,12 @@
  * An executable file that restore for MariaDB from a backup in a storage service.
  * Execute with --help to see usage instructions.
  */
-import { exec as execOriginal } from 'child_process';
-import { promisify } from 'util';
-import { RestoreCommand } from '@awesome-database-backup/commands';
+import { exec as execOriginal } from 'node:child_process';
+import { promisify } from 'node:util';
+import { RestoreCommand, getPackageVersion } from '@awesome-database-backup/commands';
 import loggerFactory from './logger/factory';
 
-const version = require('@awesome-database-backup/mariadb-restore/package.json').version;
+const version = getPackageVersion(__dirname);
 
 const logger = loggerFactory('mariadb-restore');
 

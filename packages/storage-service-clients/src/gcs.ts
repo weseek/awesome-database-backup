@@ -1,8 +1,8 @@
 import { Storage, File, type StorageOptions } from '@google-cloud/storage';
-import { basename, join } from 'path';
-import { Readable } from 'stream';
-import { pipeline } from 'stream/promises';
-import { getHeapStatistics } from 'v8';
+import { basename, join } from 'node:path';
+import { Readable } from 'node:stream';
+import { pipeline } from 'node:stream/promises';
+import { getHeapStatistics } from 'node:v8';
 import { Mime } from 'mime';
 import standardTypes from 'mime/types/standard.js';
 import otherTypes from 'mime/types/other.js';

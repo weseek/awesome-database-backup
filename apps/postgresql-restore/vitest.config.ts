@@ -1,22 +1,9 @@
-import { defineConfig } from 'vitest/config';
+import { defineConfig, mergeConfig } from 'vitest/config';
 
-export default defineConfig({
+import rootConfig from '../../vitest.config';
+
+export default mergeConfig(rootConfig, defineConfig({
   test: {
-    globals: false,
-    environment: 'node',
-    include: ['**/__tests__/**/*.test.ts'],
-    clearMocks: true,
-    coverage: {
-      provider: 'v8',
-      enabled: true,
-      reporter: ['text', 'json', 'html', 'lcov'],
-      reportsDirectory: './coverage',
-    },
-    ...(process.env.CI
-      ? {
-        reporters: ['vitest-ctrf-json-reporter'],
-      }
-      : {}),
     testTimeout: 20000,
   },
-});
+}));

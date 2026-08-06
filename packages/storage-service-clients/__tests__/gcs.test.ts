@@ -1,7 +1,7 @@
 import {
   vi, afterEach, describe, beforeEach, it, expect,
 } from 'vitest';
-import { Readable } from 'stream';
+import { Readable } from 'node:stream';
 import { GCSURI, GCSStorageServiceClientConfig } from '../src/interfaces';
 import { type GCSStorageServiceClient } from '../src/gcs';
 

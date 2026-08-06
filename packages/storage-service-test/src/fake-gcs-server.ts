@@ -3,7 +3,7 @@ import { createPGBackup } from '@awesome-database-backup/postgresql-test';
 import { createMongoDBBackup, createMongoDBArchiveBackup } from '@awesome-database-backup/mongodb-test';
 import { createMariaDBBackup } from '@awesome-database-backup/mariadb-test';
 import { createFileBackup } from '@awesome-database-backup/file-test';
-import { basename } from 'path';
+import { basename } from 'node:path';
 import { storageConfig, testGCSBucketName } from './config/fake-gcs-server';
 
 const storage = new Storage(storageConfig);

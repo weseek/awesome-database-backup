@@ -12,7 +12,9 @@
     },
     "test": {
       "cache": true,
-      "dependsOn": [],
+      "dependsOn": [
+        "^build"
+      ],
       "outputs": [
         "coverage/**",
         "vitest-ctrf/**"
@@ -21,6 +23,9 @@
     },
     "lint": {
       "cache": false,
+      "dependsOn": [
+        "^build"
+      ],
       "outputs": [],
       "env": ["*"]
     },

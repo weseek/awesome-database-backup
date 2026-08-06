@@ -7,12 +7,12 @@ import {
   ListObjectsCommand,
   PutObjectCommand,
 } from '@aws-sdk/client-s3';
-import { readFileSync } from 'fs';
+import { readFileSync } from 'node:fs';
 import { createPGBackup } from '@awesome-database-backup/postgresql-test';
 import { createMongoDBBackup, createMongoDBArchiveBackup } from '@awesome-database-backup/mongodb-test';
 import { createMariaDBBackup } from '@awesome-database-backup/mariadb-test';
 import { createFileBackup } from '@awesome-database-backup/file-test';
-import { basename } from 'path';
+import { basename } from 'node:path';
 import { s3ClientConfig, testS3BucketName } from './config/minio';
 
 const s3client = new S3Client(s3ClientConfig);
